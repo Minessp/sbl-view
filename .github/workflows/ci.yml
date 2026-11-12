@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Tipos
+        run: npm run typecheck
+      - name: Testes (motor, dados, contraste)
+        run: npm test
+      - name: Build
+        run: npm run build
+      - name: Orçamento da shell (JS inicial, gzip)
+        run: |
+          f=$(ls dist/assets/index-*.js)
+          size=$(gzip -c "$f" | wc -c)
+          echo "shell: $size bytes gzip"
+          test "$size" -lt 81920

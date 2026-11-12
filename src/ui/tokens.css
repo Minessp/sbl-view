@@ -1,0 +1,124 @@
+/*
+ * SBL View — tokens. Fonte única de cor, tipo, espaço e movimento.
+ * Cores são lidas também pelo WebGL (src/scene/palette.ts) e pelo teste de contraste.
+ * Formato das cores: hex de 6 dígitos (o teste depende disso).
+ */
+
+:root {
+  /* Papel vegetal (claro) */
+  --c-bg: #e7eae3;
+  --c-bg-2: #dde1d8;
+  --c-ink: #15191d;
+  --c-ink-2: #545b61;
+  --c-rule: #b9bfb6;
+  --c-accent: #a81c4b;
+  --c-on-accent: #f4f5f1;
+  --c-bone: #f1f2ec;
+
+  color-scheme: light;
+}
+
+/* Ardósia de estúdio (escuro): segue o sistema, a menos que o usuário fixe claro. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --c-bg: #1e2428;
+    --c-bg-2: #252c31;
+    --c-ink: #e6e4da;
+    --c-ink-2: #9aa2a2;
+    --c-rule: #3a4247;
+    --c-accent: #f06a92;
+    --c-on-accent: #1e2428;
+    --c-bone: #2c3439;
+
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --c-bg: #1e2428;
+  --c-bg-2: #252c31;
+  --c-ink: #e6e4da;
+  --c-ink-2: #9aa2a2;
+  --c-rule: #3a4247;
+  --c-accent: #f06a92;
+  --c-on-accent: #1e2428;
+  --c-bone: #2c3439;
+
+  color-scheme: dark;
+}
+
+:root {
+  /* Rampa de coloração (eosina): volume, ativação, intensidade. Um matiz só. */
+  --c-stain-1: color-mix(in oklch, var(--c-accent) 14%, var(--c-bg));
+  --c-stain-2: color-mix(in oklch, var(--c-accent) 32%, var(--c-bg));
+  --c-stain-3: color-mix(in oklch, var(--c-accent) 52%, var(--c-bg));
+  --c-stain-4: color-mix(in oklch, var(--c-accent) 74%, var(--c-bg));
+  --c-stain-5: var(--c-accent);
+  /* Milimetrado: grade de fundo dos gráficos. */
+  --c-grid: color-mix(in oklch, var(--c-rule) 55%, transparent);
+
+  /* Tipo */
+  --font-sans: 'Archivo Variable', 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --font-serif: 'Newsreader Variable', 'Newsreader', Georgia, 'Times New Roman', serif;
+
+  /* Escala modular ~1,25, com saltos no topo reservados a números. */
+  --fs-1: 0.75rem;   /* 12 */
+  --fs-2: 0.875rem;  /* 14 */
+  --fs-3: 1rem;      /* 16 */
+  --fs-4: 1.25rem;   /* 20 */
+  --fs-5: 1.5625rem; /* 25 */
+  --fs-6: 1.9375rem; /* 31 */
+  --fs-7: clamp(2.25rem, 1.6rem + 2.6vw, 3.0625rem);   /* até 49 */
+  --fs-8: clamp(3rem, 1.9rem + 4.6vw, 4.75rem);        /* até 76 */
+  --fs-9: clamp(4rem, 2.2rem + 7.6vw, 7.4375rem);      /* até 119 */
+
+  /* Largura (eixo wdth do Archivo) codifica densidade. */
+  --wd-tight: 68%;
+  --wd-cond: 82%;
+  --wd-normal: 100%;
+  --wd-wide: 118%;
+  --wd-max: 125%;
+
+  --lh-tight: 1.02;
+  --lh-ui: 1.3;
+  --lh-text: 1.55;
+
+  /* Espaço: base 4 */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 72px;
+  --s-9: 112px;
+  --touch: 48px;
+  --measure: 34rem;
+
+  /* Raio: papel é reto. Só o que o polegar arrasta é redondo. */
+  --r-0: 0;
+  --r-thumb: 999px;
+
+  /* Traço */
+  --lw-hair: 1px;
+  --lw-curve: 2px;
+  --lw-active: 3px;
+
+  /* Movimento */
+  --t-fast: 90ms;
+  --t-mid: 220ms;
+  --t-slow: 480ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+
+  --header-h: 52px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --t-fast: 0ms;
+    --t-mid: 0ms;
+    --t-slow: 0ms;
+  }
+}

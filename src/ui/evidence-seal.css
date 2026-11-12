@@ -1,0 +1,18 @@
+.seal {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--fs-1);
+  font-stretch: var(--wd-cond);
+  color: var(--c-ink-2);
+  white-space: nowrap;
+}
+
+.seal__mark {
+  flex: none;
+  color: var(--c-ink);
+}
+
+.seal[data-hypothesis='true'] .seal__text {
+  font-style: italic;
+}

@@ -1,0 +1,146 @@
+{
+  "stature": 1.75,
+  "segments": [
+    {
+      "id": "pelvis",
+      "parent": null,
+      "origin": [0, 0.9275, 0],
+      "tip": [0, 1.0325, -0.035],
+      "bilateral": false,
+      "joint": null,
+      "dofs": [
+        { "id": "pelvis_tilt", "positive": "anteversao", "axis": "x", "sign": 1, "romDeg": [-90, 90],
+          "rom": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Raiz livre; limite só evita pose absurda." } },
+        { "id": "pelvis_list", "positive": "obliquidade", "axis": "z", "sign": 1, "romDeg": [-30, 30],
+          "rom": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo" } },
+        { "id": "pelvis_rot", "positive": "rotacao", "axis": "y", "sign": 1, "romDeg": [-90, 90],
+          "rom": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo" } }
+      ],
+      "geometry": { "source": [{ "refId": "winter2009", "locator": "Fig. 4.1" }, { "refId": "sbl_authored" }], "confidence": "provavel",
+        "note": "Centro do quadril a 0,530 H. Posição da junção lombossacral ajustada visualmente." }
+    },
+    {
+      "id": "trunk",
+      "parent": "pelvis",
+      "origin": [0, 1.0325, -0.035],
+      "tip": [0, 1.47, -0.02],
+      "bilateral": false,
+      "joint": "lumbar",
+      "dofs": [
+        { "id": "lumbar_flex", "positive": "flexao", "axis": "x", "sign": 1, "romDeg": [-25, 60],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } },
+        { "id": "lumbar_bend", "positive": "inclinacao", "axis": "z", "sign": 1, "romDeg": [-30, 30],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } },
+        { "id": "lumbar_rot", "positive": "rotacao", "axis": "y", "sign": 1, "romDeg": [-30, 30],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } }
+      ],
+      "geometry": { "source": [{ "refId": "winter2009", "locator": "Fig. 4.1" }], "confidence": "provavel",
+        "note": "Ombro a 0,818 H. Tronco tratado como um bloco rígido acima da lombar." }
+    },
+    {
+      "id": "head",
+      "parent": "trunk",
+      "origin": [0, 1.47, -0.02],
+      "tip": [0, 1.75, 0],
+      "bilateral": false,
+      "joint": "neck",
+      "dofs": [
+        { "id": "neck_flex", "positive": "flexao", "axis": "x", "sign": 1, "romDeg": [-50, 45],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } }
+      ],
+      "geometry": { "source": [{ "refId": "winter2009", "locator": "Fig. 4.1" }], "confidence": "provavel" }
+    },
+    {
+      "id": "thigh_r",
+      "parent": "pelvis",
+      "origin": [-0.0875, 0.9275, 0],
+      "tip": [-0.0875, 0.49875, 0],
+      "bilateral": true,
+      "joint": "hip_r",
+      "dofs": [
+        { "id": "hip_flex_r", "positive": "flexao", "axis": "x", "sign": -1, "romDeg": [-30, 125],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } },
+        { "id": "hip_abd_r", "positive": "abducao", "axis": "z", "sign": -1, "romDeg": [-30, 45],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } },
+        { "id": "hip_rot_r", "positive": "rotacao_interna", "axis": "y", "sign": 1, "romDeg": [-45, 45],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } }
+      ],
+      "geometry": { "source": [{ "refId": "winter2009", "locator": "Fig. 4.1" }, { "refId": "sbl_authored" }], "confidence": "provavel",
+        "note": "Joelho a 0,285 H (coxa 0,245 H). Distância entre centros do quadril (0,10 H) ajustada visualmente." }
+    },
+    {
+      "id": "shank_r",
+      "parent": "thigh_r",
+      "origin": [-0.0875, 0.49875, 0],
+      "tip": [-0.0875, 0.06825, 0],
+      "bilateral": true,
+      "joint": "knee_r",
+      "dofs": [
+        { "id": "knee_flex_r", "positive": "flexao", "axis": "x", "sign": 1, "romDeg": [-5, 155],
+          "rom": { "source": [{ "refId": "greene1994" }, { "refId": "hemmerich2006" }], "confidence": "provavel",
+            "note": "Limite superior vem do agachamento profundo com carga corporal (Hemmerich 2006), maior que a amplitude ativa clínica." } }
+      ],
+      "geometry": { "source": [{ "refId": "winter2009", "locator": "Fig. 4.1" }], "confidence": "provavel",
+        "note": "Tornozelo a 0,039 H (perna 0,246 H)." }
+    },
+    {
+      "id": "foot_r",
+      "parent": "shank_r",
+      "origin": [-0.0875, 0.06825, 0],
+      "tip": [-0.0875, 0.012, 0.2],
+      "bilateral": true,
+      "joint": "ankle_r",
+      "dofs": [
+        { "id": "ankle_dorsi_r", "positive": "dorsiflexao", "axis": "x", "sign": -1, "romDeg": [-50, 40],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "especulativo",
+            "note": "Valor clínico ativo é ~20°. Com carga no agachamento profundo a dorsiflexão passa disso; 40° é estimativa até conferir dados com carga." } }
+      ],
+      "geometry": { "source": [{ "refId": "winter2009", "locator": "Fig. 4.1" }], "confidence": "provavel",
+        "note": "Comprimento do pé 0,152 H; calcanhar ~5 cm atrás do tornozelo." }
+    },
+    {
+      "id": "upperarm_r",
+      "parent": "trunk",
+      "origin": [-0.185, 1.4315, -0.01],
+      "tip": [-0.185, 1.1025, -0.01],
+      "bilateral": true,
+      "joint": "shoulder_r",
+      "dofs": [
+        { "id": "shoulder_flex_r", "positive": "flexao", "axis": "x", "sign": -1, "romDeg": [-60, 180],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel", "note": "Inclui o ritmo escapuloumeral; a escápula não é modelada à parte." } },
+        { "id": "shoulder_abd_r", "positive": "abducao", "axis": "z", "sign": -1, "romDeg": [-30, 180],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } },
+        { "id": "shoulder_rot_r", "positive": "rotacao_interna", "axis": "y", "sign": 1, "romDeg": [-90, 70],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } }
+      ],
+      "geometry": { "source": [{ "refId": "winter2009", "locator": "Fig. 4.1" }, { "refId": "sbl_authored" }], "confidence": "provavel",
+        "note": "Cotovelo a 0,630 H. Largura entre ombros ajustada visualmente." }
+    },
+    {
+      "id": "forearm_r",
+      "parent": "upperarm_r",
+      "origin": [-0.185, 1.1025, -0.01],
+      "tip": [-0.185, 0.849, -0.01],
+      "bilateral": true,
+      "joint": "elbow_r",
+      "dofs": [
+        { "id": "elbow_flex_r", "positive": "flexao", "axis": "x", "sign": -1, "romDeg": [0, 150],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } }
+      ],
+      "geometry": { "source": [{ "refId": "winter2009", "locator": "Fig. 4.1" }], "confidence": "provavel", "note": "Punho a 0,485 H." }
+    },
+    {
+      "id": "hand_r",
+      "parent": "forearm_r",
+      "origin": [-0.185, 0.849, -0.01],
+      "tip": [-0.185, 0.66, -0.01],
+      "bilateral": true,
+      "joint": "wrist_r",
+      "dofs": [
+        { "id": "wrist_flex_r", "positive": "flexao", "axis": "x", "sign": -1, "romDeg": [-70, 80],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } }
+      ],
+      "geometry": { "source": [{ "refId": "winter2009", "locator": "Fig. 4.1" }], "confidence": "provavel", "note": "Comprimento da mão 0,108 H." }
+    }
+  ]
+}

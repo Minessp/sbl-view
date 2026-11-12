@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="Atlas 3D de biomecânica para quem treina: como o comprimento do músculo, o ângulo da articulação e a carga se encontram em cada exercício." />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#E7EAE3" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1E2428" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>SBL View</title>
+    <script>
+      // Aplica o tema salvo antes da primeira pintura (evita piscar).
+      try {
+        var t = localStorage.getItem('sbl-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>O SBL View precisa de JavaScript para desenhar o corpo e os gráficos.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
