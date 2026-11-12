@@ -27,6 +27,7 @@ export function Shell({ children }: { children: ReactNode }) {
         </Link>
         <nav className="site-nav" aria-label={t.nav.label}>
           <NavLink href="/">{t.nav.home}</NavLink>
+          <NavLink href="/lab/agachamento">{t.nav.lab}</NavLink>
           <NavLink href="/sistema">{t.nav.system}</NavLink>
         </nav>
         <ThemeSwitch />

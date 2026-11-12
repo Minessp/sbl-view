@@ -22,7 +22,7 @@
     "citation": "de Leva P. Adjustments to Zatsiorsky-Seluyanov's segment inertia parameters. Journal of Biomechanics. 1996;29(9):1223-1230.",
     "doi": "10.1016/0021-9290(95)00178-6",
     "verified": true,
-    "note": "Bibliografia conferida. Valores de massa e centro de massa por segmento ainda a conferir na Tabela 4 antes de entrar no motor."
+    "note": "Conferido na Tabela 4 (p. 1228) e Fig. 1 (p. 1227): massa e CM longitudinal por segmento, colunas masculinas (M = 73,0 kg; 1,741 m). CM referenciado a centros articulares."
   },
   {
     "id": "greene1994",
@@ -71,5 +71,73 @@
     "license": "CC BY 4.0",
     "verified": true,
     "note": "Releases antigas sob CC BY-SA 2.1 JP. Conferir a versão baixada."
+  },
+  {
+    "id": "hip_torque_angle_2019",
+    "citation": "Estudo de torque isométrico de extensores e flexores do quadril a 15°, 60°, 90° e 100° de flexão em mulheres idosas (PubMed 31563360).",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/31563360/",
+    "verified": false,
+    "note": "Lido só o resumo: extensores com pico a 100°. Autores e periódico a conferir."
+  },
+  {
+    "id": "hip_torque_hhd_2017",
+    "citation": "Estudo com dinamômetro manual: torque extensor do quadril a 0°, 30° e 90° de flexão (International Journal of Sports Physical Therapy, 2017).",
+    "url": "https://ijspt.scholasticahq.com/article/124117.pdf",
+    "verified": false,
+    "note": "Resumo via busca: maior torque a 90° (1,43 ± 0,50 N·m/kg·m), menor a 0°. Autores a conferir."
+  },
+  {
+    "id": "knee_torque_angle_lit",
+    "citation": "Literatura de dinamometria do joelho: pico do torque extensor isométrico entre ~50° e ~60° de flexão em parte dos estudos; outros relatam ângulos maiores conforme convenção e método.",
+    "verified": false,
+    "note": "Fonte específica ainda não escolhida. A forma da curva de capacidade do joelho no Lab é ilustrativa."
+  },
+  {
+    "id": "statics_textbook",
+    "citation": "Estática de corpos rígidos aplicada ao movimento humano: momento articular líquido = soma dos pesos distais vezes o braço de momento horizontal (análise quase estática).",
+    "verified": true,
+    "note": "Princípio físico, não um número. Ver Winter (2009), cap. de cinética, para o tratamento completo."
+  },
+  {
+    "id": "maeo2021_hamstrings",
+    "citation": "Maeo S, et al. Greater Hamstrings Muscle Hypertrophy but Similar Damage Protection after Training at Long versus Short Muscle Lengths. Medicine & Science in Sports & Exercise. 2021;53(4):825-837.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/33009197/",
+    "verified": true,
+    "note": "Resumo conferido: mesa flexora sentada > deitada em volume dos isquiotibiais (+14% vs +9%), 12 semanas, 20 adultos não treinados, desenho intrapessoal."
+  },
+  {
+    "id": "maeo2023_triceps",
+    "citation": "Maeo S, et al. Triceps brachii hypertrophy is substantially greater after elbow extension training performed in the overhead versus neutral arm position. European Journal of Sport Science. 2023;23(7):1240-1250.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35819335/",
+    "verified": true,
+    "note": "Resumo conferido: braço acima da cabeça > neutro; tríceps inteiro +19,9% vs +13,9%; cabeça longa +28,5% vs +19,6%. 21 adultos."
+  },
+  {
+    "id": "pedrosa2022",
+    "citation": "Pedrosa GF, et al. Partial range of motion training elicits favorable improvements in muscular adaptations when carried out at long muscle lengths. European Journal of Sport Science. 2022;22(8):1250-1260.",
+    "doi": "10.1080/17461391.2021.1927199",
+    "verified": true,
+    "note": "Bibliografia conferida; detalhes do desenho só por fontes secundárias (mulheres não treinadas, cadeira extensora)."
+  },
+  {
+    "id": "kassiano2023",
+    "citation": "Kassiano W, et al. Greater Gastrocnemius Muscle Hypertrophy After Partial Range of Motion Training Performed at Long Muscle Lengths. Journal of Strength and Conditioning Research. 2023;37(9):1746-1753.",
+    "doi": "10.1519/JSC.0000000000004460",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37015016/",
+    "verified": true,
+    "note": "Resumo conferido: parcial inicial (alongado) > completo > parcial final no gastrocnêmio medial (+15,2% vs +6,7% vs +3,4%). 42 mulheres jovens, 8 semanas."
+  },
+  {
+    "id": "larsen2024_preprint",
+    "citation": "Larsen S, et al. The effects of hip flexion angle on quadriceps femoris muscle hypertrophy in the leg extension exercise. SportRxiv (preprint), 2024.",
+    "doi": "10.51224/SRXIV.407",
+    "verified": false,
+    "note": "Preprint sem revisão por pares; relata mais hipertrofia do reto femoral reclinado (40° de quadril) que sentado (90°). Autores a conferir."
+  },
+  {
+    "id": "thelen2003",
+    "citation": "Thelen DG. Adjustment of muscle mechanics model parameters to simulate dynamic contractions in older adults. Journal of Biomechanical Engineering. 2003;125(1):70-77.",
+    "verified": true,
+    "note": "Bibliografia conferida. Forma ativa gaussiana (γ = 0,45) e passiva exponencial vistas só em fontes secundárias (documentação do OpenSim)."
   }
 ]

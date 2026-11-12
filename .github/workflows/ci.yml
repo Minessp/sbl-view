@@ -32,3 +32,21 @@ jobs:
           size=$(gzip -c "$f" | wc -c)
           echo "shell: $size bytes gzip"
           test "$size" -lt 81920
+
+  smoke:
+    runs-on: ubuntu-latest
+    needs: check
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Teste de fumaça (abertura, sistema, lab, registro de série)
+        run: |
+          npx vite preview --port 4173 --strictPort &
+          npx --yes wait-on@8 http://localhost:4173
+          node scripts/smoke.mjs http://localhost:4173

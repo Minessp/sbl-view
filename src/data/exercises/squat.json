@@ -1,0 +1,259 @@
+{
+  "id": "squat",
+  "name": "Agachamento",
+  "status": "consolidado",
+  "equipment": [
+    "barra",
+    "anilhas",
+    "rack"
+  ],
+  "targets": [
+    {
+      "group": "quadriceps",
+      "role": "alvo"
+    },
+    {
+      "group": "gluteals",
+      "role": "alvo"
+    },
+    {
+      "group": "adductors",
+      "role": "alvo"
+    },
+    {
+      "group": "spinal_erectors",
+      "role": "sinergista"
+    },
+    {
+      "group": "triceps_surae",
+      "role": "sinergista"
+    }
+  ],
+  "variants": [
+    {
+      "id": "high_bar",
+      "label": "Barra alta",
+      "short": "Alta",
+      "trajectory": {
+        "kind": "squat",
+        "depthDeg": 115,
+        "ankleMaxDeg": 30,
+        "heelWedgeDeg": 0,
+        "evidence": {
+          "source": [
+            {
+              "refId": "statics_textbook"
+            },
+            {
+              "refId": "sbl_authored"
+            }
+          ],
+          "confidence": "especulativo",
+          "note": "Equilíbrio é física estabelecida; a dorsiflexão máxima de 30° é escolha do modelo, ajustável no Lab."
+        }
+      },
+      "resistance": {
+        "kind": "gravity",
+        "segment": "trunk",
+        "point": [
+          0,
+          1.455,
+          -0.078
+        ],
+        "evidence": {
+          "source": [
+            {
+              "refId": "sbl_authored"
+            }
+          ],
+          "confidence": "especulativo",
+          "note": "Barra sobre o trapézio superior, posição estimada."
+        }
+      },
+      "holdDeg": {
+        "shoulder_abd": 50,
+        "shoulder_flex": 70,
+        "shoulder_rot": -90,
+        "elbow_flex": 150
+      },
+      "rationale": {
+        "text": "Barra sobre o trapézio superior. Para o centro de massa ficar sobre o meio do pé, o tronco inclina menos e o joelho avança mais. No modelo, isso desloca demanda do quadril para o joelho.",
+        "source": [
+          {
+            "refId": "statics_textbook"
+          }
+        ],
+        "confidence": "provavel",
+        "note": "Direção do efeito vem da estática; o tamanho depende das proporções e da mobilidade de cada pessoa."
+      }
+    },
+    {
+      "id": "low_bar",
+      "label": "Barra baixa",
+      "short": "Baixa",
+      "trajectory": {
+        "kind": "squat",
+        "depthDeg": 105,
+        "ankleMaxDeg": 24,
+        "heelWedgeDeg": 0,
+        "evidence": {
+          "source": [
+            {
+              "refId": "statics_textbook"
+            },
+            {
+              "refId": "sbl_authored"
+            }
+          ],
+          "confidence": "especulativo",
+          "note": "Profundidade padrão um pouco menor (paralelo), típica da barra baixa; dorsiflexão menor que na barra alta é convenção do modelo."
+        }
+      },
+      "resistance": {
+        "kind": "gravity",
+        "segment": "trunk",
+        "point": [
+          0,
+          1.392,
+          -0.108
+        ],
+        "evidence": {
+          "source": [
+            {
+              "refId": "sbl_authored"
+            }
+          ],
+          "confidence": "especulativo",
+          "note": "Barra sobre a espinha da escápula, alguns centímetros abaixo e atrás da barra alta."
+        }
+      },
+      "holdDeg": {
+        "shoulder_abd": 55,
+        "shoulder_flex": 110,
+        "shoulder_rot": -90,
+        "elbow_flex": 145
+      },
+      "rationale": {
+        "text": "Barra mais baixa e mais atrás nas costas. Para equilibrar, o tronco inclina mais à frente: o braço de momento no quadril cresce e o do joelho encolhe.",
+        "source": [
+          {
+            "refId": "statics_textbook"
+          }
+        ],
+        "confidence": "provavel"
+      }
+    },
+    {
+      "id": "front",
+      "label": "Frontal",
+      "short": "Frontal",
+      "trajectory": {
+        "kind": "squat",
+        "depthDeg": 115,
+        "ankleMaxDeg": 34,
+        "heelWedgeDeg": 0,
+        "evidence": {
+          "source": [
+            {
+              "refId": "statics_textbook"
+            },
+            {
+              "refId": "sbl_authored"
+            }
+          ],
+          "confidence": "especulativo",
+          "note": ""
+        }
+      },
+      "resistance": {
+        "kind": "gravity",
+        "segment": "trunk",
+        "point": [
+          0,
+          1.43,
+          0.08
+        ],
+        "evidence": {
+          "source": [
+            {
+              "refId": "sbl_authored"
+            }
+          ],
+          "confidence": "especulativo",
+          "note": "Barra apoiada sobre o deltoide anterior."
+        }
+      },
+      "holdDeg": {
+        "shoulder_abd": 60,
+        "shoulder_flex": 35,
+        "shoulder_rot": 30,
+        "elbow_flex": 150
+      },
+      "rationale": {
+        "text": "Carga à frente do tronco. O equilíbrio pede tronco quase vertical e joelho bem à frente: no modelo, a maior demanda de joelho das quatro variações, e a que mais exige dorsiflexão.",
+        "source": [
+          {
+            "refId": "statics_textbook"
+          }
+        ],
+        "confidence": "provavel"
+      }
+    },
+    {
+      "id": "heels_raised",
+      "label": "Calcanhar elevado",
+      "short": "Calço",
+      "trajectory": {
+        "kind": "squat",
+        "depthDeg": 115,
+        "ankleMaxDeg": 30,
+        "heelWedgeDeg": 12,
+        "evidence": {
+          "source": [
+            {
+              "refId": "statics_textbook"
+            },
+            {
+              "refId": "sbl_authored"
+            }
+          ],
+          "confidence": "especulativo",
+          "note": "Calço de 12° sob o calcanhar."
+        }
+      },
+      "resistance": {
+        "kind": "gravity",
+        "segment": "trunk",
+        "point": [
+          0,
+          1.455,
+          -0.078
+        ],
+        "evidence": {
+          "source": [
+            {
+              "refId": "sbl_authored"
+            }
+          ],
+          "confidence": "especulativo"
+        }
+      },
+      "holdDeg": {
+        "shoulder_abd": 50,
+        "shoulder_flex": 70,
+        "shoulder_rot": -90,
+        "elbow_flex": 150
+      },
+      "rationale": {
+        "text": "Barra alta com calço sob o calcanhar. A perna inclina mais à frente sem pedir mais do tornozelo, o tronco fica mais vertical e a demanda migra para o joelho.",
+        "source": [
+          {
+            "refId": "statics_textbook"
+          }
+        ],
+        "confidence": "provavel",
+        "note": "Útil para quem tem dorsiflexão limitada. Efeito no modelo, não medido."
+      }
+    }
+  ]
+}

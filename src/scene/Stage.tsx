@@ -3,6 +3,7 @@
  * frameloop="demand": só desenha quando algo muda. DPR limitado no celular.
  */
 import { Canvas } from '@react-three/fiber';
+import { LabScene } from './lab/LabScene';
 import { OpeningScene } from './opening/OpeningScene';
 import { useStage } from './stageStore';
 
@@ -22,6 +23,7 @@ export default function Stage() {
       onCreated={({ gl }) => gl.setClearColor(0x000000, 0)}
     >
       {scene === 'opening' && <OpeningScene />}
+      {scene === 'lab' && <LabScene />}
     </Canvas>
   );
 }

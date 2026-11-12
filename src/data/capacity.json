@@ -1,0 +1,28 @@
+[
+  {
+    "joint": "knee",
+    "dof": "knee_flex",
+    "label": "Extensores do joelho",
+    "peakDeg": 60,
+    "widthDeg": 45,
+    "floor": 0.45,
+    "evidence": {
+      "source": [{ "refId": "knee_torque_angle_lit" }],
+      "confidence": "especulativo",
+      "note": "Pico perto de 60° aparece em parte da literatura; a forma (sino sobre um piso de 45%) é ilustrativa e não foi ajustada a dados."
+    }
+  },
+  {
+    "joint": "hip",
+    "dof": "hip_flex",
+    "label": "Extensores do quadril",
+    "peakDeg": 95,
+    "widthDeg": 55,
+    "floor": 0.45,
+    "evidence": {
+      "source": [{ "refId": "hip_torque_hhd_2017" }, { "refId": "hip_torque_angle_2019" }],
+      "confidence": "especulativo",
+      "note": "Dois estudos (só resumos lidos) apontam torque extensor maior perto de 90°–100° de flexão. A forma da curva é ilustrativa."
+    }
+  }
+]

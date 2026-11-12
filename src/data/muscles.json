@@ -1,166 +1,2142 @@
 [
-  { "id": "gluteus_maximus", "latin": "Gluteus maximus", "name": "Glúteo máximo", "group": "gluteals", "parts": [
-    { "id": "gluteus_maximus_sup", "name": "Fibras superiores", "layer": "superficial", "radius": 0.034, "tendon": [0.05, 0.15],
-      "path": [{ "s": "pelvis", "p": [-0.055, 1.05, -0.105] }, { "s": "pelvis", "p": [-0.15, 0.96, -0.08] }, { "s": "thigh_r", "p": [-0.152, 0.86, -0.02] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } },
-    { "id": "gluteus_maximus_inf", "name": "Fibras inferiores", "layer": "superficial", "radius": 0.04, "tendon": [0.05, 0.15],
-      "path": [{ "s": "pelvis", "p": [-0.025, 0.97, -0.115] }, { "s": "pelvis", "p": [-0.115, 0.875, -0.105] }, { "s": "thigh_r", "p": [-0.135, 0.8, -0.035] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "gluteus_medius", "latin": "Gluteus medius", "name": "Glúteo médio", "group": "gluteals", "parts": [
-    { "id": "gluteus_medius", "name": "Glúteo médio", "layer": "deep", "radius": 0.032, "tendon": [0.0, 0.2],
-      "path": [{ "s": "pelvis", "p": [-0.145, 1.055, -0.035] }, { "s": "pelvis", "p": [-0.16, 0.985, -0.02] }, { "s": "thigh_r", "p": [-0.14, 0.93, -0.008] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "iliopsoas", "latin": "Iliopsoas", "name": "Iliopsoas", "group": "hip_flexors", "parts": [
-    { "id": "iliopsoas", "name": "Iliopsoas", "layer": "deep", "radius": 0.022, "tendon": [0.0, 0.25],
-      "path": [{ "s": "trunk", "p": [-0.045, 1.12, -0.03] }, { "s": "pelvis", "p": [-0.085, 0.95, 0.05] }, { "s": "thigh_r", "p": [-0.075, 0.875, -0.01] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "rectus_femoris", "latin": "Rectus femoris", "name": "Reto femoral", "group": "quadriceps", "parts": [
-    { "id": "rectus_femoris", "name": "Reto femoral", "layer": "superficial", "radius": 0.03, "tendon": [0.08, 0.28],
-      "path": [{ "s": "pelvis", "p": [-0.1, 0.965, 0.055] }, { "s": "thigh_r", "p": [-0.095, 0.72, 0.07] }, { "s": "thigh_r", "p": [-0.0875, 0.545, 0.058] }, { "s": "shank_r", "p": [-0.0875, 0.44, 0.038] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "vastus_lateralis", "latin": "Vastus lateralis", "name": "Vasto lateral", "group": "quadriceps", "parts": [
-    { "id": "vastus_lateralis", "name": "Vasto lateral", "layer": "superficial", "radius": 0.042, "tendon": [0.04, 0.22],
-      "path": [{ "s": "thigh_r", "p": [-0.135, 0.885, 0.0] }, { "s": "thigh_r", "p": [-0.142, 0.7, 0.022] }, { "s": "thigh_r", "p": [-0.105, 0.55, 0.05] }, { "s": "shank_r", "p": [-0.0875, 0.44, 0.038] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "vastus_medialis", "latin": "Vastus medialis", "name": "Vasto medial", "group": "quadriceps", "parts": [
-    { "id": "vastus_medialis", "name": "Vasto medial", "layer": "superficial", "radius": 0.034, "tendon": [0.05, 0.2],
-      "path": [{ "s": "thigh_r", "p": [-0.072, 0.82, 0.025] }, { "s": "thigh_r", "p": [-0.05, 0.62, 0.04] }, { "s": "thigh_r", "p": [-0.068, 0.54, 0.052] }, { "s": "shank_r", "p": [-0.0875, 0.44, 0.038] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "vastus_intermedius", "latin": "Vastus intermedius", "name": "Vasto intermédio", "group": "quadriceps", "parts": [
-    { "id": "vastus_intermedius", "name": "Vasto intermédio", "layer": "deep", "radius": 0.03, "tendon": [0.04, 0.22],
-      "path": [{ "s": "thigh_r", "p": [-0.098, 0.86, 0.028] }, { "s": "thigh_r", "p": [-0.092, 0.66, 0.042] }, { "s": "thigh_r", "p": [-0.0875, 0.545, 0.048] }, { "s": "shank_r", "p": [-0.0875, 0.44, 0.038] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "adductor_magnus", "latin": "Adductor magnus", "name": "Adutor magno", "group": "adductors", "parts": [
-    { "id": "adductor_magnus", "name": "Adutor magno", "layer": "deep", "radius": 0.036, "tendon": [0.03, 0.12],
-      "path": [{ "s": "pelvis", "p": [-0.045, 0.86, -0.035] }, { "s": "thigh_r", "p": [-0.068, 0.7, -0.015] }, { "s": "thigh_r", "p": [-0.06, 0.53, -0.008] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "adductor_longus", "latin": "Adductor longus", "name": "Adutor longo", "group": "adductors", "parts": [
-    { "id": "adductor_longus", "name": "Adutor longo", "layer": "superficial", "radius": 0.024, "tendon": [0.08, 0.1],
-      "path": [{ "s": "pelvis", "p": [-0.022, 0.885, 0.058] }, { "s": "thigh_r", "p": [-0.05, 0.8, 0.04] }, { "s": "thigh_r", "p": [-0.072, 0.72, 0.018] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "biceps_femoris", "latin": "Biceps femoris", "name": "Bíceps femoral", "group": "hamstrings", "parts": [
-    { "id": "biceps_femoris_long", "name": "Cabeça longa", "layer": "superficial", "radius": 0.029, "tendon": [0.08, 0.2],
-      "path": [{ "s": "pelvis", "p": [-0.062, 0.86, -0.05] }, { "s": "thigh_r", "p": [-0.112, 0.68, -0.055] }, { "s": "shank_r", "p": [-0.127, 0.47, -0.022] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "semitendinosus", "latin": "Semitendinosus", "name": "Semitendíneo", "group": "hamstrings", "parts": [
-    { "id": "semitendinosus", "name": "Semitendíneo", "layer": "superficial", "radius": 0.024, "tendon": [0.06, 0.3],
-      "path": [{ "s": "pelvis", "p": [-0.055, 0.86, -0.056] }, { "s": "thigh_r", "p": [-0.07, 0.68, -0.06] }, { "s": "shank_r", "p": [-0.066, 0.45, 0.022] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "semimembranosus", "latin": "Semimembranosus", "name": "Semimembranáceo", "group": "hamstrings", "parts": [
-    { "id": "semimembranosus", "name": "Semimembranáceo", "layer": "deep", "radius": 0.026, "tendon": [0.15, 0.1],
-      "path": [{ "s": "pelvis", "p": [-0.066, 0.855, -0.042] }, { "s": "thigh_r", "p": [-0.066, 0.66, -0.048] }, { "s": "shank_r", "p": [-0.066, 0.48, -0.025] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "gastrocnemius", "latin": "Gastrocnemius", "name": "Gastrocnêmio", "group": "triceps_surae", "parts": [
-    { "id": "gastrocnemius_med", "name": "Cabeça medial", "layer": "superficial", "radius": 0.031, "tendon": [0.04, 0.45],
-      "path": [{ "s": "thigh_r", "p": [-0.066, 0.53, -0.028] }, { "s": "shank_r", "p": [-0.072, 0.37, -0.062] }, { "s": "foot_r", "p": [-0.0875, 0.03, -0.062] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } },
-    { "id": "gastrocnemius_lat", "name": "Cabeça lateral", "layer": "superficial", "radius": 0.026, "tendon": [0.04, 0.48],
-      "path": [{ "s": "thigh_r", "p": [-0.11, 0.53, -0.028] }, { "s": "shank_r", "p": [-0.106, 0.385, -0.055] }, { "s": "foot_r", "p": [-0.0875, 0.03, -0.062] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "soleus", "latin": "Soleus", "name": "Sóleo", "group": "triceps_surae", "parts": [
-    { "id": "soleus", "name": "Sóleo", "layer": "deep", "radius": 0.032, "tendon": [0.02, 0.3],
-      "path": [{ "s": "shank_r", "p": [-0.1, 0.45, -0.03] }, { "s": "shank_r", "p": [-0.09, 0.25, -0.05] }, { "s": "foot_r", "p": [-0.0875, 0.03, -0.062] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "tibialis_anterior", "latin": "Tibialis anterior", "name": "Tibial anterior", "group": "shin", "parts": [
-    { "id": "tibialis_anterior", "name": "Tibial anterior", "layer": "superficial", "radius": 0.019, "tendon": [0.03, 0.42],
-      "path": [{ "s": "shank_r", "p": [-0.106, 0.44, 0.026] }, { "s": "shank_r", "p": [-0.1, 0.25, 0.036] }, { "s": "shank_r", "p": [-0.078, 0.085, 0.058] }, { "s": "foot_r", "p": [-0.07, 0.03, 0.092] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "rectus_abdominis", "latin": "Rectus abdominis", "name": "Reto do abdome", "group": "abdominals", "parts": [
-    { "id": "rectus_abdominis", "name": "Reto do abdome", "layer": "superficial", "radius": 0.026, "tendon": [0.06, 0.02],
-      "path": [{ "s": "pelvis", "p": [-0.028, 0.89, 0.072] }, { "s": "trunk", "p": [-0.045, 1.06, 0.112] }, { "s": "trunk", "p": [-0.06, 1.25, 0.114] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "external_oblique", "latin": "Obliquus externus abdominis", "name": "Oblíquo externo", "group": "abdominals", "parts": [
-    { "id": "external_oblique", "name": "Oblíquo externo", "layer": "superficial", "radius": 0.028, "tendon": [0.0, 0.15],
-      "path": [{ "s": "trunk", "p": [-0.142, 1.25, 0.04] }, { "s": "trunk", "p": [-0.132, 1.1, 0.065] }, { "s": "pelvis", "p": [-0.085, 0.98, 0.078] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "erector_spinae", "latin": "Erector spinae", "name": "Eretores da espinha", "group": "spinal_erectors", "parts": [
-    { "id": "erector_spinae", "name": "Eretores da espinha", "layer": "deep", "radius": 0.026, "tendon": [0.08, 0.04],
-      "path": [{ "s": "pelvis", "p": [-0.035, 0.985, -0.105] }, { "s": "trunk", "p": [-0.04, 1.15, -0.118] }, { "s": "trunk", "p": [-0.035, 1.38, -0.098] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "latissimus_dorsi", "latin": "Latissimus dorsi", "name": "Latíssimo do dorso", "group": "lats", "parts": [
-    { "id": "latissimus_dorsi", "name": "Latíssimo do dorso", "layer": "superficial", "radius": 0.032, "tendon": [0.04, 0.16],
-      "path": [{ "s": "trunk", "p": [-0.04, 1.08, -0.118] }, { "s": "trunk", "p": [-0.142, 1.22, -0.095] }, { "s": "upperarm_r", "p": [-0.17, 1.36, 0.0] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "trapezius", "latin": "Trapezius", "name": "Trapézio", "group": "traps", "parts": [
-    { "id": "trapezius_sup", "name": "Fibras superiores", "layer": "superficial", "radius": 0.022, "tendon": [0.05, 0.05],
-      "path": [{ "s": "head", "p": [-0.02, 1.58, -0.065] }, { "s": "trunk", "p": [-0.09, 1.485, -0.055] }, { "s": "trunk", "p": [-0.18, 1.455, -0.022] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } },
-    { "id": "trapezius_mid", "name": "Fibras médias", "layer": "superficial", "radius": 0.019, "tendon": [0.05, 0.05],
-      "path": [{ "s": "trunk", "p": [-0.01, 1.4, -0.11] }, { "s": "trunk", "p": [-0.16, 1.425, -0.07] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } },
-    { "id": "trapezius_inf", "name": "Fibras inferiores", "layer": "superficial", "radius": 0.018, "tendon": [0.05, 0.08],
-      "path": [{ "s": "trunk", "p": [-0.01, 1.22, -0.118] }, { "s": "trunk", "p": [-0.1, 1.36, -0.108] }, { "s": "trunk", "p": [-0.15, 1.42, -0.07] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "pectoralis_major", "latin": "Pectoralis major", "name": "Peitoral maior", "group": "chest", "parts": [
-    { "id": "pectoralis_major_clav", "name": "Porção clavicular", "layer": "superficial", "radius": 0.022, "tendon": [0.03, 0.12],
-      "path": [{ "s": "trunk", "p": [-0.055, 1.435, 0.065] }, { "s": "trunk", "p": [-0.14, 1.405, 0.068] }, { "s": "upperarm_r", "p": [-0.176, 1.36, 0.022] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } },
-    { "id": "pectoralis_major_stern", "name": "Porção esternocostal", "layer": "superficial", "radius": 0.032, "tendon": [0.03, 0.12],
-      "path": [{ "s": "trunk", "p": [-0.02, 1.32, 0.105] }, { "s": "trunk", "p": [-0.12, 1.33, 0.095] }, { "s": "upperarm_r", "p": [-0.176, 1.355, 0.022] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "deltoid", "latin": "Deltoideus", "name": "Deltoide", "group": "delts", "parts": [
-    { "id": "deltoid_ant", "name": "Porção anterior", "layer": "superficial", "radius": 0.022, "tendon": [0.03, 0.12],
-      "path": [{ "s": "trunk", "p": [-0.13, 1.45, 0.045] }, { "s": "upperarm_r", "p": [-0.208, 1.43, 0.038] }, { "s": "upperarm_r", "p": [-0.207, 1.28, 0.006] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } },
-    { "id": "deltoid_lat", "name": "Porção lateral", "layer": "superficial", "radius": 0.024, "tendon": [0.03, 0.12],
-      "path": [{ "s": "trunk", "p": [-0.195, 1.462, -0.005] }, { "s": "upperarm_r", "p": [-0.228, 1.42, -0.01] }, { "s": "upperarm_r", "p": [-0.209, 1.28, -0.005] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } },
-    { "id": "deltoid_post", "name": "Porção posterior", "layer": "superficial", "radius": 0.022, "tendon": [0.03, 0.12],
-      "path": [{ "s": "trunk", "p": [-0.15, 1.445, -0.072] }, { "s": "upperarm_r", "p": [-0.208, 1.42, -0.052] }, { "s": "upperarm_r", "p": [-0.207, 1.285, -0.016] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "biceps_brachii", "latin": "Biceps brachii", "name": "Bíceps braquial", "group": "elbow_flexors", "parts": [
-    { "id": "biceps_brachii", "name": "Bíceps braquial", "layer": "superficial", "radius": 0.024, "tendon": [0.2, 0.15],
-      "path": [{ "s": "trunk", "p": [-0.168, 1.43, 0.022] }, { "s": "upperarm_r", "p": [-0.19, 1.25, 0.034] }, { "s": "forearm_r", "p": [-0.186, 1.07, 0.012] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "brachialis", "latin": "Brachialis", "name": "Braquial", "group": "elbow_flexors", "parts": [
-    { "id": "brachialis", "name": "Braquial", "layer": "deep", "radius": 0.02, "tendon": [0.02, 0.15],
-      "path": [{ "s": "upperarm_r", "p": [-0.192, 1.24, 0.004] }, { "s": "upperarm_r", "p": [-0.188, 1.14, 0.018] }, { "s": "forearm_r", "p": [-0.185, 1.08, 0.004] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "triceps_brachii", "latin": "Triceps brachii", "name": "Tríceps braquial", "group": "elbow_extensors", "parts": [
-    { "id": "triceps_brachii_long", "name": "Cabeça longa", "layer": "superficial", "radius": 0.025, "tendon": [0.08, 0.15],
-      "path": [{ "s": "trunk", "p": [-0.172, 1.41, -0.038] }, { "s": "upperarm_r", "p": [-0.185, 1.25, -0.045] }, { "s": "forearm_r", "p": [-0.185, 1.09, -0.036] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } },
-    { "id": "triceps_brachii_lat", "name": "Cabeça lateral", "layer": "superficial", "radius": 0.022, "tendon": [0.03, 0.15],
-      "path": [{ "s": "upperarm_r", "p": [-0.206, 1.35, -0.028] }, { "s": "upperarm_r", "p": [-0.204, 1.2, -0.038] }, { "s": "forearm_r", "p": [-0.185, 1.09, -0.036] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] },
-  { "id": "forearm_flexors", "latin": "Flexores antebrachii", "name": "Flexores do antebraço", "group": "forearm", "parts": [
-    { "id": "forearm_flexors", "name": "Flexores do antebraço", "layer": "superficial", "radius": 0.02, "tendon": [0.04, 0.35],
-      "path": [{ "s": "upperarm_r", "p": [-0.162, 1.1, 0.0] }, { "s": "forearm_r", "p": [-0.172, 0.97, 0.018] }, { "s": "hand_r", "p": [-0.182, 0.84, 0.012] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Grupo agregado. Caminho ilustrativo." } }
-  ] },
-  { "id": "forearm_extensors", "latin": "Extensores antebrachii", "name": "Extensores do antebraço", "group": "forearm", "parts": [
-    { "id": "forearm_extensors", "name": "Extensores do antebraço", "layer": "superficial", "radius": 0.019, "tendon": [0.04, 0.35],
-      "path": [{ "s": "upperarm_r", "p": [-0.214, 1.11, -0.006] }, { "s": "forearm_r", "p": [-0.205, 0.97, -0.012] }, { "s": "hand_r", "p": [-0.19, 0.84, -0.012] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Grupo agregado. Caminho ilustrativo." } }
-  ] },
-  { "id": "sternocleidomastoid", "latin": "Sternocleidomastoideus", "name": "Esternocleidomastóideo", "group": "neck", "parts": [
-    { "id": "sternocleidomastoid", "name": "Esternocleidomastóideo", "layer": "superficial", "radius": 0.014, "tendon": [0.08, 0.05],
-      "path": [{ "s": "trunk", "p": [-0.022, 1.425, 0.062] }, { "s": "head", "p": [-0.04, 1.52, 0.03] }, { "s": "head", "p": [-0.055, 1.6, -0.012] }],
-      "pathEvidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Caminho ilustrativo." } }
-  ] }
+ {
+  "id": "gluteus_maximus",
+  "latin": "Gluteus maximus",
+  "name": "Glúteo máximo",
+  "group": "gluteals",
+  "parts": [
+   {
+    "id": "gluteus_maximus_sup",
+    "name": "Fibras superiores",
+    "layer": "superficial",
+    "radius": 0.034,
+    "tendon": [
+     0.05,
+     0.15
+    ],
+    "path": [
+     {
+      "s": "pelvis",
+      "p": [
+       -0.055,
+       1.05,
+       -0.105
+      ]
+     },
+     {
+      "s": "pelvis",
+      "p": [
+       -0.15,
+       0.96,
+       -0.08
+      ]
+     },
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.152,
+       0.86,
+       -0.02
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    },
+    "wrap": {
+     "span": 1,
+     "segment": "pelvis",
+     "center": [
+      -0.0875,
+      0.9275,
+      0
+     ],
+     "radius": 0.06,
+     "side": [
+      0,
+      -0.3,
+      -1
+     ],
+     "evidence": {
+      "source": [
+       {
+        "refId": "sbl_authored"
+       }
+      ],
+      "confidence": "especulativo",
+      "note": "Cilindro de contorno ilustrativo; raio escolhido para manter a linha fora do osso."
+     }
+    }
+   },
+   {
+    "id": "gluteus_maximus_inf",
+    "name": "Fibras inferiores",
+    "layer": "superficial",
+    "radius": 0.04,
+    "tendon": [
+     0.05,
+     0.15
+    ],
+    "path": [
+     {
+      "s": "pelvis",
+      "p": [
+       -0.025,
+       0.97,
+       -0.115
+      ]
+     },
+     {
+      "s": "pelvis",
+      "p": [
+       -0.12,
+       0.905,
+       -0.115
+      ]
+     },
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.135,
+       0.8,
+       -0.035
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    },
+    "wrap": {
+     "span": 1,
+     "segment": "pelvis",
+     "center": [
+      -0.0875,
+      0.9275,
+      0
+     ],
+     "radius": 0.06,
+     "side": [
+      0,
+      -1,
+      -1
+     ],
+     "evidence": {
+      "source": [
+       {
+        "refId": "sbl_authored"
+       }
+      ],
+      "confidence": "especulativo",
+      "note": "Cilindro de contorno ilustrativo; raio escolhido para manter a linha fora do osso."
+     }
+    }
+   }
+  ]
+ },
+ {
+  "id": "gluteus_medius",
+  "latin": "Gluteus medius",
+  "name": "Glúteo médio",
+  "group": "gluteals",
+  "parts": [
+   {
+    "id": "gluteus_medius",
+    "name": "Glúteo médio",
+    "layer": "deep",
+    "radius": 0.032,
+    "tendon": [
+     0,
+     0.2
+    ],
+    "path": [
+     {
+      "s": "pelvis",
+      "p": [
+       -0.145,
+       1.055,
+       -0.035
+      ]
+     },
+     {
+      "s": "pelvis",
+      "p": [
+       -0.16,
+       0.985,
+       -0.02
+      ]
+     },
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.14,
+       0.93,
+       -0.008
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    }
+   }
+  ]
+ },
+ {
+  "id": "iliopsoas",
+  "latin": "Iliopsoas",
+  "name": "Iliopsoas",
+  "group": "hip_flexors",
+  "parts": [
+   {
+    "id": "iliopsoas",
+    "name": "Iliopsoas",
+    "layer": "deep",
+    "radius": 0.022,
+    "tendon": [
+     0,
+     0.25
+    ],
+    "path": [
+     {
+      "s": "trunk",
+      "p": [
+       -0.045,
+       1.12,
+       -0.03
+      ]
+     },
+     {
+      "s": "pelvis",
+      "p": [
+       -0.085,
+       0.95,
+       0.05
+      ]
+     },
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.075,
+       0.875,
+       -0.01
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    }
+   }
+  ]
+ },
+ {
+  "id": "rectus_femoris",
+  "latin": "Rectus femoris",
+  "name": "Reto femoral",
+  "group": "quadriceps",
+  "parts": [
+   {
+    "id": "rectus_femoris",
+    "name": "Reto femoral",
+    "layer": "superficial",
+    "radius": 0.03,
+    "tendon": [
+     0.08,
+     0.28
+    ],
+    "path": [
+     {
+      "s": "pelvis",
+      "p": [
+       -0.1,
+       0.965,
+       0.055
+      ]
+     },
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.095,
+       0.72,
+       0.07
+      ]
+     },
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.0875,
+       0.545,
+       0.058
+      ]
+     },
+     {
+      "s": "shank_r",
+      "p": [
+       -0.0875,
+       0.44,
+       0.038
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    },
+    "wrap": {
+     "span": 2,
+     "segment": "thigh_r",
+     "center": [
+      -0.0875,
+      0.49875,
+      0
+     ],
+     "radius": 0.042,
+     "side": [
+      0,
+      0,
+      1
+     ],
+     "evidence": {
+      "source": [
+       {
+        "refId": "sbl_authored"
+       }
+      ],
+      "confidence": "especulativo",
+      "note": "Cilindro de contorno ilustrativo; raio escolhido para manter a linha fora do osso."
+     }
+    }
+   }
+  ]
+ },
+ {
+  "id": "vastus_lateralis",
+  "latin": "Vastus lateralis",
+  "name": "Vasto lateral",
+  "group": "quadriceps",
+  "parts": [
+   {
+    "id": "vastus_lateralis",
+    "name": "Vasto lateral",
+    "layer": "superficial",
+    "radius": 0.042,
+    "tendon": [
+     0.04,
+     0.22
+    ],
+    "path": [
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.135,
+       0.885,
+       0
+      ]
+     },
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.142,
+       0.7,
+       0.022
+      ]
+     },
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.105,
+       0.55,
+       0.05
+      ]
+     },
+     {
+      "s": "shank_r",
+      "p": [
+       -0.0875,
+       0.44,
+       0.038
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    },
+    "wrap": {
+     "span": 2,
+     "segment": "thigh_r",
+     "center": [
+      -0.0875,
+      0.49875,
+      0
+     ],
+     "radius": 0.042,
+     "side": [
+      0,
+      0,
+      1
+     ],
+     "evidence": {
+      "source": [
+       {
+        "refId": "sbl_authored"
+       }
+      ],
+      "confidence": "especulativo",
+      "note": "Cilindro de contorno ilustrativo; raio escolhido para manter a linha fora do osso."
+     }
+    }
+   }
+  ]
+ },
+ {
+  "id": "vastus_medialis",
+  "latin": "Vastus medialis",
+  "name": "Vasto medial",
+  "group": "quadriceps",
+  "parts": [
+   {
+    "id": "vastus_medialis",
+    "name": "Vasto medial",
+    "layer": "superficial",
+    "radius": 0.034,
+    "tendon": [
+     0.05,
+     0.2
+    ],
+    "path": [
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.072,
+       0.82,
+       0.025
+      ]
+     },
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.05,
+       0.62,
+       0.04
+      ]
+     },
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.068,
+       0.54,
+       0.052
+      ]
+     },
+     {
+      "s": "shank_r",
+      "p": [
+       -0.0875,
+       0.44,
+       0.038
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    },
+    "wrap": {
+     "span": 2,
+     "segment": "thigh_r",
+     "center": [
+      -0.0875,
+      0.49875,
+      0
+     ],
+     "radius": 0.042,
+     "side": [
+      0,
+      0,
+      1
+     ],
+     "evidence": {
+      "source": [
+       {
+        "refId": "sbl_authored"
+       }
+      ],
+      "confidence": "especulativo",
+      "note": "Cilindro de contorno ilustrativo; raio escolhido para manter a linha fora do osso."
+     }
+    }
+   }
+  ]
+ },
+ {
+  "id": "vastus_intermedius",
+  "latin": "Vastus intermedius",
+  "name": "Vasto intermédio",
+  "group": "quadriceps",
+  "parts": [
+   {
+    "id": "vastus_intermedius",
+    "name": "Vasto intermédio",
+    "layer": "deep",
+    "radius": 0.03,
+    "tendon": [
+     0.04,
+     0.22
+    ],
+    "path": [
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.098,
+       0.86,
+       0.028
+      ]
+     },
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.092,
+       0.66,
+       0.042
+      ]
+     },
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.0875,
+       0.545,
+       0.048
+      ]
+     },
+     {
+      "s": "shank_r",
+      "p": [
+       -0.0875,
+       0.44,
+       0.038
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    },
+    "wrap": {
+     "span": 2,
+     "segment": "thigh_r",
+     "center": [
+      -0.0875,
+      0.49875,
+      0
+     ],
+     "radius": 0.042,
+     "side": [
+      0,
+      0,
+      1
+     ],
+     "evidence": {
+      "source": [
+       {
+        "refId": "sbl_authored"
+       }
+      ],
+      "confidence": "especulativo",
+      "note": "Cilindro de contorno ilustrativo; raio escolhido para manter a linha fora do osso."
+     }
+    }
+   }
+  ]
+ },
+ {
+  "id": "adductor_magnus",
+  "latin": "Adductor magnus",
+  "name": "Adutor magno",
+  "group": "adductors",
+  "parts": [
+   {
+    "id": "adductor_magnus",
+    "name": "Adutor magno",
+    "layer": "deep",
+    "radius": 0.036,
+    "tendon": [
+     0.03,
+     0.12
+    ],
+    "path": [
+     {
+      "s": "pelvis",
+      "p": [
+       -0.045,
+       0.86,
+       -0.035
+      ]
+     },
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.068,
+       0.7,
+       -0.015
+      ]
+     },
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.06,
+       0.53,
+       -0.008
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    }
+   }
+  ]
+ },
+ {
+  "id": "adductor_longus",
+  "latin": "Adductor longus",
+  "name": "Adutor longo",
+  "group": "adductors",
+  "parts": [
+   {
+    "id": "adductor_longus",
+    "name": "Adutor longo",
+    "layer": "superficial",
+    "radius": 0.024,
+    "tendon": [
+     0.08,
+     0.1
+    ],
+    "path": [
+     {
+      "s": "pelvis",
+      "p": [
+       -0.022,
+       0.885,
+       0.058
+      ]
+     },
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.05,
+       0.8,
+       0.04
+      ]
+     },
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.072,
+       0.72,
+       0.018
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    }
+   }
+  ]
+ },
+ {
+  "id": "biceps_femoris",
+  "latin": "Biceps femoris",
+  "name": "Bíceps femoral",
+  "group": "hamstrings",
+  "parts": [
+   {
+    "id": "biceps_femoris_long",
+    "name": "Cabeça longa",
+    "layer": "superficial",
+    "radius": 0.029,
+    "tendon": [
+     0.08,
+     0.2
+    ],
+    "path": [
+     {
+      "s": "pelvis",
+      "p": [
+       -0.062,
+       0.86,
+       -0.05
+      ]
+     },
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.112,
+       0.68,
+       -0.055
+      ]
+     },
+     {
+      "s": "shank_r",
+      "p": [
+       -0.127,
+       0.47,
+       -0.022
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    },
+    "wrap": {
+     "span": 1,
+     "segment": "thigh_r",
+     "center": [
+      -0.0875,
+      0.49875,
+      0
+     ],
+     "radius": 0.036,
+     "side": [
+      0,
+      0,
+      -1
+     ],
+     "evidence": {
+      "source": [
+       {
+        "refId": "sbl_authored"
+       }
+      ],
+      "confidence": "especulativo",
+      "note": "Cilindro de contorno ilustrativo; raio escolhido para manter a linha fora do osso."
+     }
+    }
+   }
+  ]
+ },
+ {
+  "id": "semitendinosus",
+  "latin": "Semitendinosus",
+  "name": "Semitendíneo",
+  "group": "hamstrings",
+  "parts": [
+   {
+    "id": "semitendinosus",
+    "name": "Semitendíneo",
+    "layer": "superficial",
+    "radius": 0.024,
+    "tendon": [
+     0.06,
+     0.3
+    ],
+    "path": [
+     {
+      "s": "pelvis",
+      "p": [
+       -0.055,
+       0.86,
+       -0.056
+      ]
+     },
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.07,
+       0.68,
+       -0.06
+      ]
+     },
+     {
+      "s": "shank_r",
+      "p": [
+       -0.066,
+       0.45,
+       0.022
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    },
+    "wrap": {
+     "span": 1,
+     "segment": "thigh_r",
+     "center": [
+      -0.0875,
+      0.49875,
+      0
+     ],
+     "radius": 0.036,
+     "side": [
+      0,
+      0,
+      -1
+     ],
+     "evidence": {
+      "source": [
+       {
+        "refId": "sbl_authored"
+       }
+      ],
+      "confidence": "especulativo",
+      "note": "Cilindro de contorno ilustrativo; raio escolhido para manter a linha fora do osso."
+     }
+    }
+   }
+  ]
+ },
+ {
+  "id": "semimembranosus",
+  "latin": "Semimembranosus",
+  "name": "Semimembranáceo",
+  "group": "hamstrings",
+  "parts": [
+   {
+    "id": "semimembranosus",
+    "name": "Semimembranáceo",
+    "layer": "deep",
+    "radius": 0.026,
+    "tendon": [
+     0.15,
+     0.1
+    ],
+    "path": [
+     {
+      "s": "pelvis",
+      "p": [
+       -0.066,
+       0.855,
+       -0.042
+      ]
+     },
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.066,
+       0.66,
+       -0.048
+      ]
+     },
+     {
+      "s": "shank_r",
+      "p": [
+       -0.066,
+       0.48,
+       -0.025
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    },
+    "wrap": {
+     "span": 1,
+     "segment": "thigh_r",
+     "center": [
+      -0.0875,
+      0.49875,
+      0
+     ],
+     "radius": 0.036,
+     "side": [
+      0,
+      0,
+      -1
+     ],
+     "evidence": {
+      "source": [
+       {
+        "refId": "sbl_authored"
+       }
+      ],
+      "confidence": "especulativo",
+      "note": "Cilindro de contorno ilustrativo; raio escolhido para manter a linha fora do osso."
+     }
+    }
+   }
+  ]
+ },
+ {
+  "id": "gastrocnemius",
+  "latin": "Gastrocnemius",
+  "name": "Gastrocnêmio",
+  "group": "triceps_surae",
+  "parts": [
+   {
+    "id": "gastrocnemius_med",
+    "name": "Cabeça medial",
+    "layer": "superficial",
+    "radius": 0.031,
+    "tendon": [
+     0.04,
+     0.45
+    ],
+    "path": [
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.066,
+       0.53,
+       -0.028
+      ]
+     },
+     {
+      "s": "shank_r",
+      "p": [
+       -0.072,
+       0.37,
+       -0.062
+      ]
+     },
+     {
+      "s": "foot_r",
+      "p": [
+       -0.0875,
+       0.03,
+       -0.062
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    },
+    "wrap": {
+     "span": 0,
+     "segment": "thigh_r",
+     "center": [
+      -0.0875,
+      0.49875,
+      0
+     ],
+     "radius": 0.04,
+     "side": [
+      0,
+      0,
+      -1
+     ],
+     "evidence": {
+      "source": [
+       {
+        "refId": "sbl_authored"
+       }
+      ],
+      "confidence": "especulativo",
+      "note": "Cilindro de contorno ilustrativo; raio escolhido para manter a linha fora do osso."
+     }
+    }
+   },
+   {
+    "id": "gastrocnemius_lat",
+    "name": "Cabeça lateral",
+    "layer": "superficial",
+    "radius": 0.026,
+    "tendon": [
+     0.04,
+     0.48
+    ],
+    "path": [
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.11,
+       0.53,
+       -0.028
+      ]
+     },
+     {
+      "s": "shank_r",
+      "p": [
+       -0.106,
+       0.385,
+       -0.055
+      ]
+     },
+     {
+      "s": "foot_r",
+      "p": [
+       -0.0875,
+       0.03,
+       -0.062
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    },
+    "wrap": {
+     "span": 0,
+     "segment": "thigh_r",
+     "center": [
+      -0.0875,
+      0.49875,
+      0
+     ],
+     "radius": 0.04,
+     "side": [
+      0,
+      0,
+      -1
+     ],
+     "evidence": {
+      "source": [
+       {
+        "refId": "sbl_authored"
+       }
+      ],
+      "confidence": "especulativo",
+      "note": "Cilindro de contorno ilustrativo; raio escolhido para manter a linha fora do osso."
+     }
+    }
+   }
+  ]
+ },
+ {
+  "id": "soleus",
+  "latin": "Soleus",
+  "name": "Sóleo",
+  "group": "triceps_surae",
+  "parts": [
+   {
+    "id": "soleus",
+    "name": "Sóleo",
+    "layer": "deep",
+    "radius": 0.032,
+    "tendon": [
+     0.02,
+     0.3
+    ],
+    "path": [
+     {
+      "s": "shank_r",
+      "p": [
+       -0.1,
+       0.45,
+       -0.03
+      ]
+     },
+     {
+      "s": "shank_r",
+      "p": [
+       -0.09,
+       0.25,
+       -0.05
+      ]
+     },
+     {
+      "s": "foot_r",
+      "p": [
+       -0.0875,
+       0.03,
+       -0.062
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    }
+   }
+  ]
+ },
+ {
+  "id": "tibialis_anterior",
+  "latin": "Tibialis anterior",
+  "name": "Tibial anterior",
+  "group": "shin",
+  "parts": [
+   {
+    "id": "tibialis_anterior",
+    "name": "Tibial anterior",
+    "layer": "superficial",
+    "radius": 0.019,
+    "tendon": [
+     0.03,
+     0.42
+    ],
+    "path": [
+     {
+      "s": "shank_r",
+      "p": [
+       -0.106,
+       0.44,
+       0.026
+      ]
+     },
+     {
+      "s": "shank_r",
+      "p": [
+       -0.1,
+       0.25,
+       0.036
+      ]
+     },
+     {
+      "s": "shank_r",
+      "p": [
+       -0.078,
+       0.085,
+       0.058
+      ]
+     },
+     {
+      "s": "foot_r",
+      "p": [
+       -0.07,
+       0.03,
+       0.092
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    }
+   }
+  ]
+ },
+ {
+  "id": "rectus_abdominis",
+  "latin": "Rectus abdominis",
+  "name": "Reto do abdome",
+  "group": "abdominals",
+  "parts": [
+   {
+    "id": "rectus_abdominis",
+    "name": "Reto do abdome",
+    "layer": "superficial",
+    "radius": 0.026,
+    "tendon": [
+     0.06,
+     0.02
+    ],
+    "path": [
+     {
+      "s": "pelvis",
+      "p": [
+       -0.028,
+       0.89,
+       0.072
+      ]
+     },
+     {
+      "s": "trunk",
+      "p": [
+       -0.045,
+       1.06,
+       0.112
+      ]
+     },
+     {
+      "s": "trunk",
+      "p": [
+       -0.06,
+       1.25,
+       0.114
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    }
+   }
+  ]
+ },
+ {
+  "id": "external_oblique",
+  "latin": "Obliquus externus abdominis",
+  "name": "Oblíquo externo",
+  "group": "abdominals",
+  "parts": [
+   {
+    "id": "external_oblique",
+    "name": "Oblíquo externo",
+    "layer": "superficial",
+    "radius": 0.028,
+    "tendon": [
+     0,
+     0.15
+    ],
+    "path": [
+     {
+      "s": "trunk",
+      "p": [
+       -0.142,
+       1.25,
+       0.04
+      ]
+     },
+     {
+      "s": "trunk",
+      "p": [
+       -0.132,
+       1.1,
+       0.065
+      ]
+     },
+     {
+      "s": "pelvis",
+      "p": [
+       -0.085,
+       0.98,
+       0.078
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    }
+   }
+  ]
+ },
+ {
+  "id": "erector_spinae",
+  "latin": "Erector spinae",
+  "name": "Eretores da espinha",
+  "group": "spinal_erectors",
+  "parts": [
+   {
+    "id": "erector_spinae",
+    "name": "Eretores da espinha",
+    "layer": "deep",
+    "radius": 0.026,
+    "tendon": [
+     0.08,
+     0.04
+    ],
+    "path": [
+     {
+      "s": "pelvis",
+      "p": [
+       -0.035,
+       0.985,
+       -0.105
+      ]
+     },
+     {
+      "s": "trunk",
+      "p": [
+       -0.04,
+       1.15,
+       -0.118
+      ]
+     },
+     {
+      "s": "trunk",
+      "p": [
+       -0.035,
+       1.38,
+       -0.098
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    }
+   }
+  ]
+ },
+ {
+  "id": "latissimus_dorsi",
+  "latin": "Latissimus dorsi",
+  "name": "Latíssimo do dorso",
+  "group": "lats",
+  "parts": [
+   {
+    "id": "latissimus_dorsi",
+    "name": "Latíssimo do dorso",
+    "layer": "superficial",
+    "radius": 0.032,
+    "tendon": [
+     0.04,
+     0.16
+    ],
+    "path": [
+     {
+      "s": "trunk",
+      "p": [
+       -0.04,
+       1.08,
+       -0.118
+      ]
+     },
+     {
+      "s": "trunk",
+      "p": [
+       -0.142,
+       1.22,
+       -0.095
+      ]
+     },
+     {
+      "s": "upperarm_r",
+      "p": [
+       -0.17,
+       1.36,
+       0
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    }
+   }
+  ]
+ },
+ {
+  "id": "trapezius",
+  "latin": "Trapezius",
+  "name": "Trapézio",
+  "group": "traps",
+  "parts": [
+   {
+    "id": "trapezius_sup",
+    "name": "Fibras superiores",
+    "layer": "superficial",
+    "radius": 0.022,
+    "tendon": [
+     0.05,
+     0.05
+    ],
+    "path": [
+     {
+      "s": "head",
+      "p": [
+       -0.02,
+       1.58,
+       -0.065
+      ]
+     },
+     {
+      "s": "trunk",
+      "p": [
+       -0.09,
+       1.485,
+       -0.055
+      ]
+     },
+     {
+      "s": "trunk",
+      "p": [
+       -0.18,
+       1.455,
+       -0.022
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    }
+   },
+   {
+    "id": "trapezius_mid",
+    "name": "Fibras médias",
+    "layer": "superficial",
+    "radius": 0.019,
+    "tendon": [
+     0.05,
+     0.05
+    ],
+    "path": [
+     {
+      "s": "trunk",
+      "p": [
+       -0.01,
+       1.4,
+       -0.11
+      ]
+     },
+     {
+      "s": "trunk",
+      "p": [
+       -0.16,
+       1.425,
+       -0.07
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    }
+   },
+   {
+    "id": "trapezius_inf",
+    "name": "Fibras inferiores",
+    "layer": "superficial",
+    "radius": 0.018,
+    "tendon": [
+     0.05,
+     0.08
+    ],
+    "path": [
+     {
+      "s": "trunk",
+      "p": [
+       -0.01,
+       1.22,
+       -0.118
+      ]
+     },
+     {
+      "s": "trunk",
+      "p": [
+       -0.1,
+       1.36,
+       -0.108
+      ]
+     },
+     {
+      "s": "trunk",
+      "p": [
+       -0.15,
+       1.42,
+       -0.07
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    }
+   }
+  ]
+ },
+ {
+  "id": "pectoralis_major",
+  "latin": "Pectoralis major",
+  "name": "Peitoral maior",
+  "group": "chest",
+  "parts": [
+   {
+    "id": "pectoralis_major_clav",
+    "name": "Porção clavicular",
+    "layer": "superficial",
+    "radius": 0.022,
+    "tendon": [
+     0.03,
+     0.12
+    ],
+    "path": [
+     {
+      "s": "trunk",
+      "p": [
+       -0.055,
+       1.435,
+       0.065
+      ]
+     },
+     {
+      "s": "trunk",
+      "p": [
+       -0.14,
+       1.405,
+       0.068
+      ]
+     },
+     {
+      "s": "upperarm_r",
+      "p": [
+       -0.176,
+       1.36,
+       0.022
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    }
+   },
+   {
+    "id": "pectoralis_major_stern",
+    "name": "Porção esternocostal",
+    "layer": "superficial",
+    "radius": 0.032,
+    "tendon": [
+     0.03,
+     0.12
+    ],
+    "path": [
+     {
+      "s": "trunk",
+      "p": [
+       -0.02,
+       1.32,
+       0.105
+      ]
+     },
+     {
+      "s": "trunk",
+      "p": [
+       -0.12,
+       1.33,
+       0.095
+      ]
+     },
+     {
+      "s": "upperarm_r",
+      "p": [
+       -0.176,
+       1.355,
+       0.022
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    }
+   }
+  ]
+ },
+ {
+  "id": "deltoid",
+  "latin": "Deltoideus",
+  "name": "Deltoide",
+  "group": "delts",
+  "parts": [
+   {
+    "id": "deltoid_ant",
+    "name": "Porção anterior",
+    "layer": "superficial",
+    "radius": 0.022,
+    "tendon": [
+     0.03,
+     0.12
+    ],
+    "path": [
+     {
+      "s": "trunk",
+      "p": [
+       -0.13,
+       1.45,
+       0.045
+      ]
+     },
+     {
+      "s": "upperarm_r",
+      "p": [
+       -0.208,
+       1.43,
+       0.038
+      ]
+     },
+     {
+      "s": "upperarm_r",
+      "p": [
+       -0.207,
+       1.28,
+       0.006
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    }
+   },
+   {
+    "id": "deltoid_lat",
+    "name": "Porção lateral",
+    "layer": "superficial",
+    "radius": 0.024,
+    "tendon": [
+     0.03,
+     0.12
+    ],
+    "path": [
+     {
+      "s": "trunk",
+      "p": [
+       -0.195,
+       1.462,
+       -0.005
+      ]
+     },
+     {
+      "s": "upperarm_r",
+      "p": [
+       -0.228,
+       1.42,
+       -0.01
+      ]
+     },
+     {
+      "s": "upperarm_r",
+      "p": [
+       -0.209,
+       1.28,
+       -0.005
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    }
+   },
+   {
+    "id": "deltoid_post",
+    "name": "Porção posterior",
+    "layer": "superficial",
+    "radius": 0.022,
+    "tendon": [
+     0.03,
+     0.12
+    ],
+    "path": [
+     {
+      "s": "trunk",
+      "p": [
+       -0.15,
+       1.445,
+       -0.072
+      ]
+     },
+     {
+      "s": "upperarm_r",
+      "p": [
+       -0.208,
+       1.42,
+       -0.052
+      ]
+     },
+     {
+      "s": "upperarm_r",
+      "p": [
+       -0.207,
+       1.285,
+       -0.016
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    }
+   }
+  ]
+ },
+ {
+  "id": "biceps_brachii",
+  "latin": "Biceps brachii",
+  "name": "Bíceps braquial",
+  "group": "elbow_flexors",
+  "parts": [
+   {
+    "id": "biceps_brachii",
+    "name": "Bíceps braquial",
+    "layer": "superficial",
+    "radius": 0.024,
+    "tendon": [
+     0.2,
+     0.15
+    ],
+    "path": [
+     {
+      "s": "trunk",
+      "p": [
+       -0.168,
+       1.43,
+       0.022
+      ]
+     },
+     {
+      "s": "upperarm_r",
+      "p": [
+       -0.19,
+       1.25,
+       0.034
+      ]
+     },
+     {
+      "s": "forearm_r",
+      "p": [
+       -0.186,
+       1.07,
+       0.012
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    }
+   }
+  ]
+ },
+ {
+  "id": "brachialis",
+  "latin": "Brachialis",
+  "name": "Braquial",
+  "group": "elbow_flexors",
+  "parts": [
+   {
+    "id": "brachialis",
+    "name": "Braquial",
+    "layer": "deep",
+    "radius": 0.02,
+    "tendon": [
+     0.02,
+     0.15
+    ],
+    "path": [
+     {
+      "s": "upperarm_r",
+      "p": [
+       -0.192,
+       1.24,
+       0.004
+      ]
+     },
+     {
+      "s": "upperarm_r",
+      "p": [
+       -0.188,
+       1.14,
+       0.018
+      ]
+     },
+     {
+      "s": "forearm_r",
+      "p": [
+       -0.185,
+       1.08,
+       0.004
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    }
+   }
+  ]
+ },
+ {
+  "id": "triceps_brachii",
+  "latin": "Triceps brachii",
+  "name": "Tríceps braquial",
+  "group": "elbow_extensors",
+  "parts": [
+   {
+    "id": "triceps_brachii_long",
+    "name": "Cabeça longa",
+    "layer": "superficial",
+    "radius": 0.025,
+    "tendon": [
+     0.08,
+     0.15
+    ],
+    "path": [
+     {
+      "s": "trunk",
+      "p": [
+       -0.172,
+       1.41,
+       -0.038
+      ]
+     },
+     {
+      "s": "upperarm_r",
+      "p": [
+       -0.185,
+       1.25,
+       -0.045
+      ]
+     },
+     {
+      "s": "forearm_r",
+      "p": [
+       -0.185,
+       1.09,
+       -0.036
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    }
+   },
+   {
+    "id": "triceps_brachii_lat",
+    "name": "Cabeça lateral",
+    "layer": "superficial",
+    "radius": 0.022,
+    "tendon": [
+     0.03,
+     0.15
+    ],
+    "path": [
+     {
+      "s": "upperarm_r",
+      "p": [
+       -0.206,
+       1.35,
+       -0.028
+      ]
+     },
+     {
+      "s": "upperarm_r",
+      "p": [
+       -0.204,
+       1.2,
+       -0.038
+      ]
+     },
+     {
+      "s": "forearm_r",
+      "p": [
+       -0.185,
+       1.09,
+       -0.036
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    }
+   }
+  ]
+ },
+ {
+  "id": "forearm_flexors",
+  "latin": "Flexores antebrachii",
+  "name": "Flexores do antebraço",
+  "group": "forearm",
+  "parts": [
+   {
+    "id": "forearm_flexors",
+    "name": "Flexores do antebraço",
+    "layer": "superficial",
+    "radius": 0.02,
+    "tendon": [
+     0.04,
+     0.35
+    ],
+    "path": [
+     {
+      "s": "upperarm_r",
+      "p": [
+       -0.162,
+       1.1,
+       0
+      ]
+     },
+     {
+      "s": "forearm_r",
+      "p": [
+       -0.172,
+       0.97,
+       0.018
+      ]
+     },
+     {
+      "s": "hand_r",
+      "p": [
+       -0.182,
+       0.84,
+       0.012
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Grupo agregado. Caminho ilustrativo."
+    }
+   }
+  ]
+ },
+ {
+  "id": "forearm_extensors",
+  "latin": "Extensores antebrachii",
+  "name": "Extensores do antebraço",
+  "group": "forearm",
+  "parts": [
+   {
+    "id": "forearm_extensors",
+    "name": "Extensores do antebraço",
+    "layer": "superficial",
+    "radius": 0.019,
+    "tendon": [
+     0.04,
+     0.35
+    ],
+    "path": [
+     {
+      "s": "upperarm_r",
+      "p": [
+       -0.214,
+       1.11,
+       -0.006
+      ]
+     },
+     {
+      "s": "forearm_r",
+      "p": [
+       -0.205,
+       0.97,
+       -0.012
+      ]
+     },
+     {
+      "s": "hand_r",
+      "p": [
+       -0.19,
+       0.84,
+       -0.012
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Grupo agregado. Caminho ilustrativo."
+    }
+   }
+  ]
+ },
+ {
+  "id": "sternocleidomastoid",
+  "latin": "Sternocleidomastoideus",
+  "name": "Esternocleidomastóideo",
+  "group": "neck",
+  "parts": [
+   {
+    "id": "sternocleidomastoid",
+    "name": "Esternocleidomastóideo",
+    "layer": "superficial",
+    "radius": 0.014,
+    "tendon": [
+     0.08,
+     0.05
+    ],
+    "path": [
+     {
+      "s": "trunk",
+      "p": [
+       -0.022,
+       1.425,
+       0.062
+      ]
+     },
+     {
+      "s": "head",
+      "p": [
+       -0.04,
+       1.52,
+       0.03
+      ]
+     },
+     {
+      "s": "head",
+      "p": [
+       -0.055,
+       1.6,
+       -0.012
+      ]
+     }
+    ],
+    "pathEvidence": {
+     "source": [
+      {
+       "refId": "sbl_authored"
+      }
+     ],
+     "confidence": "especulativo",
+     "note": "Caminho ilustrativo."
+    }
+   }
+  ]
+ }
 ]

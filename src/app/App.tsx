@@ -5,6 +5,7 @@ import { Shell } from './Shell';
 
 // Rotas além da abertura carregam sob demanda.
 const Sistema = lazy(() => import('@/features/sistema/Sistema'));
+const Lab = lazy(() => import('@/features/lab/Lab'));
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -24,6 +25,8 @@ export function App() {
         <Suspense fallback={null}>
           <Switch>
             <Route path="/" component={Abertura} />
+            <Route path="/lab/agachamento" component={Lab} />
+            <Route path="/lab" component={Lab} />
             <Route path="/sistema" component={Sistema} />
             <Route>
               <main id="conteudo" className="page">

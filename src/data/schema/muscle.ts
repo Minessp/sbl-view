@@ -42,6 +42,18 @@ export const MusclePartDef = z.object({
   /** Fração do caminho que é tendão em cada ponta [proximal, distal]. Ilustrativo. */
   tendon: z.tuple([z.number().min(0).max(0.6), z.number().min(0).max(0.6)]),
   pathEvidence: Evidence,
+  /** Cilindro de contorno (eixo X do segmento) entre path[span] e path[span+1]. */
+  wrap: z
+    .object({
+      span: z.number().int().min(0),
+      segment: z.string(),
+      center: Vec3,
+      radius: z.number().positive(),
+      /** Lado por onde a linha contorna, no frame do segmento (pose neutra). */
+      side: Vec3,
+      evidence: Evidence,
+    })
+    .optional(),
 });
 export type MusclePartDef = z.infer<typeof MusclePartDef>;
 

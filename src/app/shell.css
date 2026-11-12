@@ -88,14 +88,52 @@
   color: var(--c-bg);
 }
 
-@media (max-width: 520px) {
+.theme-cycle {
+  display: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.theme-cycle svg {
+  width: 20px;
+  height: 20px;
+}
+
+.theme-cycle circle {
+  fill: none;
+  stroke: var(--c-ink);
+  stroke-width: 1.4;
+}
+
+.theme-cycle path {
+  fill: var(--c-ink);
+}
+
+.theme-cycle path[data-mode='light'] {
+  fill: none;
+}
+
+.theme-cycle path[data-mode='dark'] {
+  d: path('M8 1.8a6.2 6.2 0 1 1 0 12.4a6.2 6.2 0 1 1 0-12.4z');
+}
+
+@media (max-width: 560px) {
   .site-header {
-    gap: var(--s-2);
-    padding: 0 var(--s-3);
+    gap: var(--s-1);
+    padding: 0 var(--s-2) 0 var(--s-3);
   }
-  .theme-switch button {
-    min-width: 36px;
+  .site-nav a {
     padding: 0 6px;
+  }
+  .theme-switch {
+    display: none;
+  }
+  .theme-cycle {
+    display: grid;
   }
 }
 
@@ -236,4 +274,23 @@
     padding-left: var(--s-7);
     padding-right: var(--s-7);
   }
+}
+
+/* Lab: o canvas cobre a viewport e desenha só nos retângulos das vistas, acima do conteúdo. */
+.stage[data-scene='lab'] {
+  inset: 0;
+  left: 0;
+  right: 0;
+  z-index: 15;
+}
+
+.stage[data-scene='lab'] .stage__loading {
+  display: none;
+}
+
+/* R3F põe pointer-events: auto inline no wrapper. O palco nunca recebe toque (não há interação 3D),
+   senão no Lab, onde o canvas fica acima do conteúdo, nenhum clique passaria. */
+.stage__canvas,
+.stage__canvas * {
+  pointer-events: none !important;
 }

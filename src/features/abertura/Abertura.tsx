@@ -168,10 +168,10 @@ export default function Abertura() {
           </h2>
           <ul className="next-plates">
             <li>
-              <span className="next-plates__item" aria-disabled="true">
+              <Link href="/lab/agachamento" className="next-plates__item next-plates__item--link">
                 <span className="next-plates__name">{t.opening.end.lab}</span>
                 <span className="next-plates__status">{t.opening.end.labStatus}</span>
-              </span>
+              </Link>
             </li>
             <li>
               <Link href="/sistema" className="next-plates__item next-plates__item--link">

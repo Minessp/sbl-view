@@ -1,0 +1,99 @@
+.chart {
+  display: grid;
+  gap: var(--s-1);
+  min-width: 0;
+}
+
+.chart__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-2);
+}
+
+.chart__title {
+  font-size: var(--fs-2);
+  font-weight: 650;
+  font-stretch: var(--wd-cond);
+}
+
+.chart__unit {
+  font-size: var(--fs-1);
+  font-stretch: var(--wd-cond);
+  color: var(--c-ink-2);
+}
+
+.chart__svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  background: var(--c-bg);
+  border-top: var(--lw-hair) solid var(--c-ink);
+}
+
+.chart__grid line {
+  stroke: var(--c-grid);
+  stroke-width: 0.5;
+}
+
+.chart__grid line[data-major='true'] {
+  stroke: var(--c-rule);
+  stroke-width: 0.8;
+}
+
+.chart__zero {
+  stroke: var(--c-ink-2);
+  stroke-width: 0.8;
+}
+
+.chart__axis text {
+  font-family: var(--font-sans);
+  font-size: 8.5px;
+  font-stretch: var(--wd-cond);
+  font-variant-numeric: tabular-nums;
+  fill: var(--c-ink-2);
+}
+
+.chart__line {
+  fill: none;
+  stroke: var(--c-ink);
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+}
+
+.chart__line--ghost {
+  stroke: var(--c-ink-2);
+  stroke-width: 0.7;
+  opacity: 0.7;
+}
+
+.chart__marker {
+  stroke: var(--c-accent);
+  stroke-width: 1.2;
+}
+
+.chart__dot {
+  fill: var(--c-bg);
+  stroke: var(--c-accent);
+  stroke-width: 1.4;
+}
+
+.chart__value {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  fill: var(--c-accent);
+}
+
+.chart__band rect {
+  fill: var(--c-accent);
+}
+
+.chart__foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1) var(--s-3);
+  font-size: var(--fs-1);
+  color: var(--c-ink-2);
+}
