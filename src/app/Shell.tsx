@@ -5,10 +5,12 @@ import { StageHost } from '@/scene/StageHost';
 import { ThemeSwitch } from '@/ui/ThemeSwitch';
 import './shell.css';
 
-function NavLink({ href, children }: { href: string; children: ReactNode }) {
-  const [active] = useRoute(href);
+/** Ativo na rota e nas filhas (`/atlas` acende em `/atlas/soleus`). */
+function NavLink({ href, children, className }: { href: string; children: ReactNode; className?: string }) {
+  const [exact] = useRoute(href);
+  const [nested] = useRoute(`${href}/*`);
   return (
-    <Link href={href} aria-current={active ? 'page' : undefined}>
+    <Link href={href} aria-current={exact || nested ? 'page' : undefined} className={className}>
       {children}
     </Link>
   );
@@ -26,9 +28,13 @@ export function Shell({ children }: { children: ReactNode }) {
           <span className="wordmark__view">View</span>
         </Link>
         <nav className="site-nav" aria-label={t.nav.label}>
-          <NavLink href="/">{t.nav.home}</NavLink>
-          <NavLink href="/lab/agachamento">{t.nav.lab}</NavLink>
-          <NavLink href="/sistema">{t.nav.system}</NavLink>
+          <NavLink href="/atlas">{t.nav.atlas}</NavLink>
+          <NavLink href="/exercicios">{t.nav.library}</NavLink>
+          <NavLink href="/lab">{t.nav.lab}</NavLink>
+          <NavLink href="/treino">{t.nav.training}</NavLink>
+          <NavLink href="/sistema" className="site-nav__extra">
+            {t.nav.system}
+          </NavLink>
         </nav>
         <ThemeSwitch />
       </header>

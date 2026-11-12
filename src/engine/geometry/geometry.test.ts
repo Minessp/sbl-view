@@ -98,3 +98,23 @@ describe('fuso', () => {
     expect(agree / total).toBeGreaterThan(0.99);
   });
 });
+
+describe('fuso achatado', () => {
+  it('seção vira elipse: largo perpendicular à face, fino ao longo dela', async () => {
+    const { vertexCount, writeSpindle } = await import('./spindle');
+    const L = { rings: 9, sides: 16 } as const;
+    const n = vertexCount(L);
+    const pos = new Float32Array(n * 3);
+    const nor = new Float32Array(n * 3);
+    // Eixo vertical, face para +Z: espessura em Z, largura em X.
+    writeSpindle(L, [[0, 0, 0], [0, 1, 0]], 0.1, [0, 0], pos, nor, { face: [0, 0, 1], width: 2, thickness: 0.5 });
+    const ring = 4 * (L.sides + 1);
+    let maxX = 0, maxZ = 0;
+    for (let k = 0; k <= L.sides; k++) {
+      maxX = Math.max(maxX, Math.abs(pos[(ring + k) * 3] ?? 0));
+      maxZ = Math.max(maxZ, Math.abs(pos[(ring + k) * 3 + 2] ?? 0));
+    }
+    expect(maxX / maxZ).toBeCloseTo(4, 1);
+    for (let i = 0; i < n; i++) expect(Math.hypot(nor[i * 3] ?? 0, nor[i * 3 + 1] ?? 0, nor[i * 3 + 2] ?? 0)).toBeCloseTo(1, 5);
+  });
+});

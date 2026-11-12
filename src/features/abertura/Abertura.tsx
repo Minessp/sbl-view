@@ -174,6 +174,18 @@ export default function Abertura() {
               </Link>
             </li>
             <li>
+              <Link href="/atlas" className="next-plates__item next-plates__item--link">
+                <span className="next-plates__name">{t.opening.end.atlas}</span>
+                <span className="next-plates__status">{t.opening.end.atlasStatus}</span>
+              </Link>
+            </li>
+            <li>
+              <Link href="/exercicios" className="next-plates__item next-plates__item--link">
+                <span className="next-plates__name">{t.opening.end.library}</span>
+                <span className="next-plates__status">{t.opening.end.libraryStatus}</span>
+              </Link>
+            </li>
+            <li>
               <Link href="/sistema" className="next-plates__item next-plates__item--link">
                 <span className="next-plates__name">{t.opening.end.system}</span>
               </Link>

@@ -2,6 +2,7 @@
 @import '@fontsource-variable/newsreader/wght.css';
 @import '@fontsource-variable/newsreader/wght-italic.css';
 @import './tokens.css';
+@import './primitives.css';
 
 *,
 *::before,

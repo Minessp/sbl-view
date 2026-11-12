@@ -53,6 +53,34 @@ export const Exercise = z.object({
 });
 export type Exercise = z.infer<typeof Exercise>;
 
+export const MovementPattern = z.enum(['agachamento', 'dobradica', 'empurrar_horizontal', 'empurrar_vertical', 'puxar_horizontal', 'puxar_vertical', 'isolado']);
+export type MovementPattern = z.infer<typeof MovementPattern>;
+
+export const Equipment = z.enum(['barra', 'halteres', 'maquina', 'polia', 'banco', 'rack', 'peso_corporal']);
+export type Equipment = z.infer<typeof Equipment>;
+
+/** Onde a carga pega o músculo-alvo: alongado, na faixa média ou encurtado. */
+export const LengthEmphasis = z.enum(['alongado', 'intermediario', 'encurtado']);
+export type LengthEmphasis = z.infer<typeof LengthEmphasis>;
+
+/** Exercício da biblioteca. Os que têm `labId` também têm solver e variações no Lab. */
+export const LibraryExercise = z.object({
+  id: z.string().regex(/^[a-z_]+$/),
+  name: z.string(),
+  pattern: MovementPattern,
+  equipment: z.array(Equipment).min(1),
+  /** hipotese = a razão de escolher o exercício ainda não foi testada direito. */
+  status: z.enum(['consolidado', 'hipotese']),
+  labId: z.string().optional(),
+  summary: z.string(),
+  targets: z
+    .array(z.object({ muscle: z.string(), role: z.enum(['alvo', 'sinergista']), parts: z.array(z.string()).optional() }))
+    .min(1),
+  length: Evidence.extend({ emphasis: LengthEmphasis, text: z.string() }),
+});
+export type LibraryExercise = z.infer<typeof LibraryExercise>;
+export const LibraryFile = z.array(LibraryExercise);
+
 export const CapacityCurve = z.object({
   joint: z.enum(['hip', 'knee', 'ankle']),
   dof: z.string(),

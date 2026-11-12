@@ -4,8 +4,8 @@ import { BufferAttribute, BufferGeometry, type Mesh, type PerspectiveCamera, Vec
 import { muscleDefs, skeletonDef } from '@/data';
 import { forwardKinematics, pointToWorld } from '@/engine/kinematics/fk';
 import { bilateral, buildSkeleton, degToAngles } from '@/engine/kinematics/skeleton';
-import { buildMusclePaths, pathWorldPoints, type MusclePath } from '@/engine/muscle/paths';
-import { sampleCurve, spindleIndices, spindleUVs, vertexCount, writeSpindle } from '@/engine/geometry/spindle';
+import { buildMusclePaths, pathFlat, pathWorldPoints, type MusclePath } from '@/engine/muscle/paths';
+import { sampleCurve, spindleIndices, spindleUVs, vertexCount, writeSpindle, type SpindleFlat } from '@/engine/geometry/spindle';
 import { at, must } from '@/engine/math/arr';
 import { scale, type Vec3 } from '@/engine/math/vec';
 import { CALLOUTS } from '@/features/abertura/callouts';
@@ -23,11 +23,11 @@ const OPENING_POSE = degToAngles(bilateral({ shoulder_abd: 13, elbow_flex: 8, hi
 const BASE_STAIN = { superficial: 0.26, deep: 0.4 } as const;
 const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-function spindleGeometry(points: Vec3[], path: MusclePath): BufferGeometry {
+function spindleGeometry(points: Vec3[], path: MusclePath, flat: SpindleFlat | null): BufferGeometry {
   const n = vertexCount(LAYOUT);
   const pos = new Float32Array(n * 3);
   const nor = new Float32Array(n * 3);
-  writeSpindle(LAYOUT, points, path.radius, path.tendon, pos, nor);
+  writeSpindle(LAYOUT, points, path.radius, path.tendon, pos, nor, flat);
   const g = new BufferGeometry();
   g.setAttribute('position', new BufferAttribute(pos, 3));
   g.setAttribute('normal', new BufferAttribute(nor, 3));
@@ -50,7 +50,7 @@ export function OpeningScene() {
     const paths = buildMusclePaths(sk, muscleDefs);
     const muscles = paths.map((p) => {
       const pts = pathWorldPoints(pose, p);
-      return { path: p, points: pts, geometry: spindleGeometry(pts, p) };
+      return { path: p, points: pts, geometry: spindleGeometry(pts, p, pathFlat(pose, p)) };
     });
     const bones = buildBones(sk);
     const skin = buildSkinGeometry(sk, pose);

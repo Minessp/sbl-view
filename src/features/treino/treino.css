@@ -1,0 +1,26 @@
+.log-day + .log-day {
+  margin-top: var(--s-4);
+}
+
+.log-day__title {
+  padding-bottom: var(--s-1);
+  font-size: var(--fs-2);
+  font-weight: 650;
+  font-stretch: var(--wd-cond);
+  color: var(--c-ink-2);
+  border-bottom: var(--lw-hair) solid var(--c-ink);
+}
+
+.log-day__title::first-letter {
+  text-transform: uppercase;
+}
+
+.logger__ex {
+  font-weight: 560;
+}
+
+@media (min-width: 900px) {
+  .sheet .logger__form {
+    max-width: 720px;
+  }
+}

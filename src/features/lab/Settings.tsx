@@ -53,8 +53,8 @@ export function LabSettingsPanel() {
   const patch = (p: Partial<LabSettings>) => set(p);
 
   return (
-    <section className="lab-section settings" aria-labelledby="sec-settings">
-      <header className="lab-section__head">
+    <section className="section settings" aria-labelledby="sec-settings">
+      <header className="section__head">
         <h2 id="sec-settings">{L.title}</h2>
       </header>
       <div className="settings__grid">

@@ -1,7 +1,8 @@
 /**
  * Teste de fumaça no navegador real (Edge/Chrome do sistema):
- * abre cada rota, falha com erro de console; no Lab, reproduz, registra uma série,
- * recarrega e confere que a série persistiu no IndexedDB.
+ * abre cada rota, falha com erro de console; no Lab, reproduz e troca variação; no Atlas, desenha
+ * o músculo e as curvas; na biblioteca, filtra; no Treino, registra uma série, recarrega e confere
+ * que ela persistiu no IndexedDB.
  *   node scripts/smoke.mjs [base-url]
  */
 import { chromium } from 'playwright';
@@ -56,16 +57,37 @@ await step('alternar variação troca a vista', async () => {
   await page.waitForFunction(() => document.querySelectorAll('.view-slot').length === 3);
 });
 
-await step('registrar série persiste após recarregar', async () => {
+await step('atlas: índice lista músculos e a prancha desenha corpo e curvas', async () => {
+  await page.goto(`${base}/atlas`, { waitUntil: 'networkidle' });
+  await page.getByRole('link', { name: /Semimembranáceo/ }).click();
+  await page.getByRole('heading', { level: 1, name: 'Semimembranáceo' }).waitFor();
+  await page.waitForSelector('.stage[data-ready="true"]', { timeout: 20000 });
+  await page.getByRole('button', { name: 'Perfil' }).click();
+  const charts = await page.locator('.curve .chart').count();
+  if (charts < 4) throw new Error(`só ${charts} gráficos`);
+});
+
+await step('biblioteca: filtro de comprimento longo + hipótese deixa um exercício', async () => {
+  await page.goto(`${base}/exercicios`, { waitUntil: 'networkidle' });
+  await page.getByText('Só carga no músculo alongado').click();
+  await page.getByRole('button', { name: 'Hipótese' }).click();
+  await page.getByRole('status').filter({ hasText: '1 exercício' }).waitFor();
+  await page.getByRole('link', { name: /Cadeira extensora reclinada/ }).click();
+  await page.getByRole('heading', { level: 1, name: 'Cadeira extensora reclinada' }).waitFor();
+});
+
+await step('treino: registrar série persiste após recarregar', async () => {
   const marker = `fumaça ${Date.now()}`;
-  await page.getByLabel('Carga (kg)').fill('102,5');
-  await page.getByLabel('Repetições', { exact: true }).fill('4');
+  await page.goto(`${base}/treino?exercicio=seated_leg_curl`, { waitUntil: 'networkidle' });
+  await page.getByLabel('Carga (kg)').fill('42,5');
+  await page.getByLabel('Repetições', { exact: true }).fill('11');
   await page.getByLabel('Nota', { exact: true }).fill(marker);
   await page.getByRole('button', { name: 'Registrar série' }).click();
   await page.getByRole('status').filter({ hasText: 'Série registrada' }).waitFor();
   await page.reload({ waitUntil: 'networkidle' });
   await page.getByText(marker).waitFor({ timeout: 5000 });
-  await page.getByText('102,5 kg × 4').first().waitFor();
+  await page.getByText('42,5 kg × 11').first().waitFor();
+  await page.locator('.logger__ex', { hasText: 'Mesa flexora sentada' }).first().waitFor();
 });
 
 if (errors.length) {

@@ -110,8 +110,20 @@ export function radiusProfile(s: number, belly: number, tendon: readonly [number
 }
 
 /**
+ * Seção achatada (músculo largo e fino: peitoral, latíssimo, glúteo…).
+ * `face` = para onde a face larga aponta (mundo, unitário ou não). Elipse com semieixos
+ * raio×thickness ao longo de `face` e raio×width no outro sentido.
+ */
+export interface SpindleFlat {
+  readonly face: Vec3;
+  readonly width: number;
+  readonly thickness: number;
+}
+
+/**
  * Escreve posições e normais do fuso para os pontos de controle dados.
- * Frames por transporte paralelo (sem torção brusca).
+ * Frames por transporte paralelo (sem torção brusca). Com `flat`, cada anel é orientado
+ * pela projeção de `face` no plano do anel (cai no transporte se a face for quase tangente).
  */
 export function writeSpindle(
   l: SpindleLayout,
@@ -120,6 +132,7 @@ export function writeSpindle(
   tendon: readonly [number, number],
   positions: Float32Array,
   normals: Float32Array,
+  flat?: SpindleFlat | null,
 ): void {
   const pts = sampleCurve(ctrl, l.rings);
   const R = pts.length;
@@ -127,24 +140,36 @@ export function writeSpindle(
   const t0 = tangent(0);
   const helper: Vec3 = Math.abs(t0[1]) < 0.9 ? [0, 1, 0] : [1, 0, 0];
   let n = normalize(cross(cross(t0, helper), t0));
+  const ax = flat ? flat.thickness : 1; // ao longo de n (face)
+  const bx = flat ? flat.width : 1; // ao longo de bn
   let o = 0;
   for (let r = 0; r < R; r++) {
     const t = tangent(r);
     // Transporte paralelo: projeta a normal anterior no plano perpendicular à nova tangente.
     if (r > 0) n = normalize(sub(n, scale(t, dot(n, t))));
+    if (flat) {
+      const f = sub(flat.face, scale(t, dot(flat.face, t)));
+      if (length(f) > 0.2 * length(flat.face)) {
+        const nf = normalize(f);
+        // Mantém o sentido para não girar a costura (u da textura) entre anéis.
+        n = dot(nf, n) < 0 ? scale(nf, -1) : nf;
+      }
+    }
     const bn = cross(t, n);
     const rad = radiusProfile(r / (R - 1), belly, tendon);
     const c = at(pts, r);
     for (let k = 0; k <= l.sides; k++) {
       const ang = (k / l.sides) * Math.PI * 2;
       const ca = Math.cos(ang), sa = Math.sin(ang);
-      const dx = n[0] * ca + bn[0] * sa, dy = n[1] * ca + bn[1] * sa, dz = n[2] * ca + bn[2] * sa;
-      positions[o] = c[0] + dx * rad;
-      positions[o + 1] = c[1] + dy * rad;
-      positions[o + 2] = c[2] + dz * rad;
-      normals[o] = dx;
-      normals[o + 1] = dy;
-      normals[o + 2] = dz;
+      positions[o] = c[0] + (n[0] * ca * ax + bn[0] * sa * bx) * rad;
+      positions[o + 1] = c[1] + (n[1] * ca * ax + bn[1] * sa * bx) * rad;
+      positions[o + 2] = c[2] + (n[2] * ca * ax + bn[2] * sa * bx) * rad;
+      // Normal da elipse: gradiente (cos/a, sin/b).
+      const gx = n[0] * (ca / ax) + bn[0] * (sa / bx), gy = n[1] * (ca / ax) + bn[1] * (sa / bx), gz = n[2] * (ca / ax) + bn[2] * (sa / bx);
+      const gl = Math.hypot(gx, gy, gz) || 1;
+      normals[o] = gx / gl;
+      normals[o + 1] = gy / gl;
+      normals[o + 2] = gz / gl;
       o += 3;
     }
   }

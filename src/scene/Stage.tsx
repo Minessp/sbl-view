@@ -3,6 +3,7 @@
  * frameloop="demand": só desenha quando algo muda. DPR limitado no celular.
  */
 import { Canvas } from '@react-three/fiber';
+import { AtlasScene } from './atlas/AtlasScene';
 import { LabScene } from './lab/LabScene';
 import { OpeningScene } from './opening/OpeningScene';
 import { useStage } from './stageStore';
@@ -24,6 +25,7 @@ export default function Stage() {
     >
       {scene === 'opening' && <OpeningScene />}
       {scene === 'lab' && <LabScene />}
+      {scene === 'atlas' && <AtlasScene />}
     </Canvas>
   );
 }

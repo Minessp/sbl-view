@@ -34,6 +34,8 @@ interface Props {
   footer?: ReactNode;
   /** Descrição textual para leitor de tela. */
   description: string;
+  /** Curva desenhada só até o cursor (Lab). false = curva inteira em tinta (Atlas). */
+  reveal?: boolean;
 }
 
 const W = 300, H = 150;
@@ -60,11 +62,11 @@ function niceTicks(lo: number, hi: number, n = 4): number[] {
   const mag = 10 ** Math.floor(Math.log10(step0));
   const step = [1, 2, 2.5, 5, 10].map((m) => m * mag).find((s) => s >= step0) ?? step0;
   const out: number[] = [];
-  for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) out.push(Math.round(v / step) * step);
+  for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) out.push(Math.round(v / step) * step || 0); // || 0: sem "-0"
   return out;
 }
 
-export function LineChart({ title, unit, x, series, marker, yDomain, yFormat = (v) => String(Math.round(v)), band, zeroLine, xLabels = ['Em pé', 'Fundo'], footer, description }: Props) {
+export function LineChart({ title, unit, x, series, marker, yDomain, yFormat = (v) => String(Math.round(v)), band, zeroLine, xLabels = ['Em pé', 'Fundo'], footer, description, reveal = true }: Props) {
   const uid = useId().replace(/:/g, '');
   const all = series.flatMap((s) => s.values);
   const lo = yDomain?.[0] ?? Math.min(0, ...all);
@@ -127,7 +129,7 @@ export function LineChart({ title, unit, x, series, marker, yDomain, yFormat = (
         {series.map((s) => (
           <path key={`f-${s.id}`} d={path(s.values)} className="chart__line chart__line--ghost" strokeDasharray={DASH[s.pattern]} />
         ))}
-        <g clipPath={`url(#rev-${uid})`}>
+        <g clipPath={reveal ? `url(#rev-${uid})` : undefined}>
           {series.map((s) => (
             <path key={`s-${s.id}`} d={path(s.values)} className="chart__line" strokeDasharray={DASH[s.pattern]} strokeLinecap={s.pattern === 'dotted' ? 'round' : 'butt'} />
           ))}

@@ -50,6 +50,20 @@
     "verified": true
   },
   {
+    "id": "openstax_ap2e",
+    "citation": "Betts JG, Young KA, Wise JA, et al. Anatomy and Physiology 2e. Houston: OpenStax; 2022. Cap. 11 (sistema muscular).",
+    "url": "https://openstax.org/books/anatomy-and-physiology-2e/pages/11-introduction",
+    "license": "CC BY 4.0",
+    "verified": false,
+    "note": "Livro aberto. Origem, inserção e ação de cada músculo ainda não conferidas linha a linha nas tabelas do capítulo."
+  },
+  {
+    "id": "sbl_reasoning",
+    "citation": "SBL View. Raciocínio biomecânico a partir da anatomia funcional e do modelo geométrico do próprio site. Não testado diretamente.",
+    "verified": true,
+    "note": "Usar só com confiança \"especulativo\". Serve para dizer onde a carga pega o músculo alongado quando não há estudo de hipertrofia sobre o exercício."
+  },
+  {
     "id": "rajagopal2016",
     "citation": "Rajagopal A, Dembia CL, DeMers MS, Delp DD, Hicks JL, Delp SL. Full-body musculoskeletal model for muscle-driven simulation of human gait. IEEE Transactions on Biomedical Engineering. 2016;63(10):2068-2079.",
     "url": "https://simtk.org/home/full_body",

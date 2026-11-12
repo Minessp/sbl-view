@@ -16,7 +16,7 @@ import { spindleIndices, spindleUVs, vertexCount, writeSpindle } from '@/engine/
 import { must } from '@/engine/math/arr';
 import type { Vec3 } from '@/engine/math/vec';
 import { relativeCapacity } from '@/engine/muscle/capacity';
-import { pathWorldPoints } from '@/engine/muscle/paths';
+import { pathFlat, pathWorldPoints } from '@/engine/muscle/paths';
 import { capacityCurves, getLabBody, makeSolver, variantById } from '@/features/lab/model';
 import { useLab } from '@/features/lab/store';
 import { useTheme } from '@/ui/theme';
@@ -156,7 +156,7 @@ export function VariantBody({ variantId, slot, overlay }: { variantId: string; s
     for (const m of muscles) {
       const pos = m.geometry.getAttribute('position') as BufferAttribute;
       const nor = m.geometry.getAttribute('normal') as BufferAttribute;
-      writeSpindle(LAYOUT, pathWorldPoints(f.pose, m.path), m.path.radius, m.path.tendon, pos.array as Float32Array, nor.array as Float32Array);
+      writeSpindle(LAYOUT, pathWorldPoints(f.pose, m.path), m.path.radius, m.path.tendon, pos.array as Float32Array, nor.array as Float32Array, pathFlat(f.pose, m.path));
       pos.needsUpdate = true;
       nor.needsUpdate = true;
       m.geometry.computeBoundingSphere();

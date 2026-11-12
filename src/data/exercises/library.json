@@ -1,0 +1,316 @@
+[
+  {
+    "id": "squat",
+    "name": "Agachamento livre",
+    "pattern": "agachamento",
+    "equipment": ["barra", "rack"],
+    "status": "consolidado",
+    "labId": "squat",
+    "summary": "Barra nas costas, descer flexionando quadril, joelho e tornozelo ao mesmo tempo e subir de volta. O equilíbrio decide quanto o tronco inclina.",
+    "targets": [
+      { "muscle": "vastus_lateralis", "role": "alvo" },
+      { "muscle": "vastus_medialis", "role": "alvo" },
+      { "muscle": "vastus_intermedius", "role": "alvo" },
+      { "muscle": "gluteus_maximus", "role": "alvo" },
+      { "muscle": "adductor_magnus", "role": "alvo" },
+      { "muscle": "rectus_femoris", "role": "sinergista" },
+      { "muscle": "erector_spinae", "role": "sinergista" },
+      { "muscle": "soleus", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "No fundo, vastos, glúteo máximo e adutor magno estão perto do maior comprimento do movimento, e é ali que o torque extensor pedido é alto. Quanto mais fundo, mais a carga pega esses músculos alongados.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo",
+      "note": "Sai do modelo do Lab. Não há aqui estudo de hipertrofia comparando profundidades."
+    }
+  },
+  {
+    "id": "romanian_deadlift",
+    "name": "Levantamento terra romeno",
+    "pattern": "dobradica",
+    "equipment": ["barra"],
+    "status": "consolidado",
+    "summary": "Joelhos quase estendidos, o quadril vai para trás e o tronco inclina com a barra rente às coxas, até sentir a parte de trás da coxa esticar.",
+    "targets": [
+      { "muscle": "semimembranosus", "role": "alvo" },
+      { "muscle": "semitendinosus", "role": "alvo" },
+      { "muscle": "biceps_femoris", "role": "alvo" },
+      { "muscle": "gluteus_maximus", "role": "alvo" },
+      { "muscle": "adductor_magnus", "role": "sinergista" },
+      { "muscle": "erector_spinae", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "No ponto mais baixo o quadril está fletido e o joelho quase estendido: os isquiotibiais ficam no maior comprimento do exercício, justo onde o braço de momento da barra no quadril é maior.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "hip_thrust",
+    "name": "Elevação pélvica",
+    "pattern": "dobradica",
+    "equipment": ["barra", "banco"],
+    "status": "consolidado",
+    "summary": "Costas apoiadas no banco, barra sobre o quadril, estender o quadril até o tronco ficar alinhado com as coxas.",
+    "targets": [
+      { "muscle": "gluteus_maximus", "role": "alvo" },
+      { "muscle": "semimembranosus", "role": "sinergista" },
+      { "muscle": "vastus_lateralis", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "encurtado",
+      "text": "A barra pesa na vertical; o maior braço de momento aparece perto do quadril estendido, quando o glúteo máximo está curto. No fundo, glúteo alongado, a exigência é menor.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "leg_extension",
+    "name": "Cadeira extensora",
+    "pattern": "isolado",
+    "equipment": ["maquina"],
+    "status": "consolidado",
+    "summary": "Sentado, estender o joelho contra o rolo. Isola o quadríceps; o encosto deixa o quadril fletido perto de 90°.",
+    "targets": [
+      { "muscle": "vastus_lateralis", "role": "alvo" },
+      { "muscle": "vastus_medialis", "role": "alvo" },
+      { "muscle": "vastus_intermedius", "role": "alvo" },
+      { "muscle": "rectus_femoris", "role": "alvo" }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "Os vastos ficam alongados no começo, com o joelho fletido. Em mulheres não treinadas, repetições parciais só nessa faixa alongada deram adaptações iguais ou melhores que na faixa curta. O reto femoral fica encurtado no quadril pelo encosto.",
+      "source": [{ "refId": "pedrosa2022" }],
+      "confidence": "provavel",
+      "note": "Um estudo, amostra pequena e não treinada."
+    }
+  },
+  {
+    "id": "reclined_leg_extension",
+    "name": "Cadeira extensora reclinada",
+    "pattern": "isolado",
+    "equipment": ["maquina"],
+    "status": "hipotese",
+    "summary": "A mesma cadeira com o encosto bem inclinado para trás, quadril perto de 40°. Muda o comprimento do reto femoral, não o dos vastos.",
+    "targets": [
+      { "muscle": "rectus_femoris", "role": "alvo" },
+      { "muscle": "vastus_lateralis", "role": "alvo" },
+      { "muscle": "vastus_medialis", "role": "alvo" },
+      { "muscle": "vastus_intermedius", "role": "alvo" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Com o quadril menos fletido, o reto femoral (biarticular) trabalha mais alongado. Um preprint relata mais hipertrofia do reto femoral na posição reclinada que na sentada.",
+      "source": [{ "refId": "larsen2024_preprint" }],
+      "confidence": "especulativo",
+      "note": "Preprint sem revisão por pares."
+    }
+  },
+  {
+    "id": "seated_leg_curl",
+    "name": "Mesa flexora sentada",
+    "pattern": "isolado",
+    "equipment": ["maquina"],
+    "status": "consolidado",
+    "summary": "Sentado, flexionar o joelho contra o rolo. Com o quadril fletido, os isquiotibiais começam bem alongados.",
+    "targets": [
+      { "muscle": "semimembranosus", "role": "alvo" },
+      { "muscle": "semitendinosus", "role": "alvo" },
+      { "muscle": "biceps_femoris", "role": "alvo" },
+      { "muscle": "gastrocnemius", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Em 12 semanas, a versão sentada aumentou mais o volume dos isquiotibiais que a deitada (+14% contra +9%), com o mesmo número de séries. Sentado, o quadril fletido alonga os biarticulares.",
+      "source": [{ "refId": "maeo2021_hamstrings" }],
+      "confidence": "provavel",
+      "note": "Um estudo intrapessoal com 20 adultos não treinados."
+    }
+  },
+  {
+    "id": "lying_leg_curl",
+    "name": "Mesa flexora deitada",
+    "pattern": "isolado",
+    "equipment": ["maquina"],
+    "status": "consolidado",
+    "summary": "Deitado de bruços, flexionar o joelho contra o rolo. O quadril fica estendido.",
+    "targets": [
+      { "muscle": "semimembranosus", "role": "alvo" },
+      { "muscle": "semitendinosus", "role": "alvo" },
+      { "muscle": "biceps_femoris", "role": "alvo" },
+      { "muscle": "gastrocnemius", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "encurtado",
+      "text": "Com o quadril estendido, os isquiotibiais trabalham mais curtos que na mesa sentada. No estudo que comparou as duas, a deitada cresceu menos.",
+      "source": [{ "refId": "maeo2021_hamstrings" }],
+      "confidence": "provavel"
+    }
+  },
+  {
+    "id": "standing_calf_raise",
+    "name": "Panturrilha em pé",
+    "pattern": "isolado",
+    "equipment": ["maquina"],
+    "status": "consolidado",
+    "summary": "Em pé, joelho estendido, ponta do pé no degrau: descer o calcanhar abaixo do degrau e subir na ponta.",
+    "targets": [
+      { "muscle": "gastrocnemius", "role": "alvo" },
+      { "muscle": "soleus", "role": "alvo" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Com o joelho estendido o gastrocnêmio pode ser alongado no tornozelo. Repetições parciais só na faixa de baixo (calcanhar abaixo do degrau) cresceram mais o gastrocnêmio medial que a amplitude completa, e esta mais que a parcial de cima (+15,2%, +6,7%, +3,4%).",
+      "source": [{ "refId": "kassiano2023" }],
+      "confidence": "provavel",
+      "note": "Um estudo com 42 mulheres jovens, 8 semanas."
+    }
+  },
+  {
+    "id": "seated_calf_raise",
+    "name": "Panturrilha sentado",
+    "pattern": "isolado",
+    "equipment": ["maquina"],
+    "status": "consolidado",
+    "summary": "Sentado, joelho fletido perto de 90°, apoio sobre a coxa: subir e descer o calcanhar.",
+    "targets": [
+      { "muscle": "soleus", "role": "alvo" },
+      { "muscle": "gastrocnemius", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "O joelho fletido encurta o gastrocnêmio, que cruza o joelho. O sóleo, que só cruza o tornozelo, não muda e fica com mais da carga.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "bench_press",
+    "name": "Supino reto",
+    "pattern": "empurrar_horizontal",
+    "equipment": ["barra", "banco", "rack"],
+    "status": "consolidado",
+    "summary": "Deitado no banco, descer a barra até o peito e empurrar de volta, com os braços abertos entre 45° e 75° do tronco.",
+    "targets": [
+      { "muscle": "pectoralis_major", "role": "alvo" },
+      { "muscle": "deltoid", "role": "sinergista", "parts": ["deltoid_ant"] },
+      { "muscle": "triceps_brachii", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "O peitoral fica mais alongado com a barra no peito, e a barra limita quanto o ombro estende. Halteres deixam descer um pouco mais.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "overhead_press",
+    "name": "Desenvolvimento em pé",
+    "pattern": "empurrar_vertical",
+    "equipment": ["barra"],
+    "status": "consolidado",
+    "summary": "Em pé, empurrar a barra da altura dos ombros até acima da cabeça, com os braços estendidos.",
+    "targets": [
+      { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_ant", "deltoid_lat"] },
+      { "muscle": "triceps_brachii", "role": "sinergista" },
+      { "muscle": "trapezius", "role": "sinergista", "parts": ["trapezius_sup", "trapezius_inf"] }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "O deltoide anterior trabalha do comprimento médio ao curto. O trapézio sobe a escápula para o braço passar acima da cabeça.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "lat_pulldown",
+    "name": "Puxada alta",
+    "pattern": "puxar_vertical",
+    "equipment": ["polia"],
+    "status": "consolidado",
+    "summary": "Sentado, puxar a barra da polia de cima até a altura do queixo, levando os cotovelos para baixo e para trás.",
+    "targets": [
+      { "muscle": "latissimus_dorsi", "role": "alvo" },
+      { "muscle": "trapezius", "role": "sinergista", "parts": ["trapezius_inf"] },
+      { "muscle": "biceps_brachii", "role": "sinergista" },
+      { "muscle": "brachialis", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Com os braços estendidos acima da cabeça, o latíssimo está no maior comprimento, e a polia mantém a tensão ali, ao contrário de uma barra fixa na parada em cima.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "seated_cable_row",
+    "name": "Remada sentada na polia",
+    "pattern": "puxar_horizontal",
+    "equipment": ["polia"],
+    "status": "consolidado",
+    "summary": "Sentado, pés apoiados, puxar o triângulo até o abdome e aproximar as escápulas.",
+    "targets": [
+      { "muscle": "latissimus_dorsi", "role": "alvo" },
+      { "muscle": "trapezius", "role": "alvo", "parts": ["trapezius_mid"] },
+      { "muscle": "deltoid", "role": "sinergista", "parts": ["deltoid_post"] },
+      { "muscle": "biceps_brachii", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "Deixar a escápula ir à frente no início alonga trapézio médio e romboides; o latíssimo trabalha numa faixa média do ombro.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "incline_dumbbell_curl",
+    "name": "Rosca no banco inclinado",
+    "pattern": "isolado",
+    "equipment": ["halteres", "banco"],
+    "status": "consolidado",
+    "summary": "Sentado num banco inclinado, braços pendendo atrás do tronco, flexionar os cotovelos.",
+    "targets": [
+      { "muscle": "biceps_brachii", "role": "alvo" },
+      { "muscle": "brachialis", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "O ombro estendido alonga o bíceps, que cruza o ombro, e o halter pesa mais com o cotovelo pouco fletido. O braquial, que só cruza o cotovelo, não muda.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "overhead_triceps_extension",
+    "name": "Tríceps acima da cabeça",
+    "pattern": "isolado",
+    "equipment": ["polia"],
+    "status": "consolidado",
+    "summary": "Braços acima da cabeça, estender os cotovelos a partir da posição fletida atrás da nuca.",
+    "targets": [{ "muscle": "triceps_brachii", "role": "alvo" }],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Com o ombro fletido, a cabeça longa do tríceps fica alongada. Em 12 semanas, o tríceps cresceu mais nessa posição que com o braço ao lado do corpo (+19,9% contra +13,9%; cabeça longa +28,5% contra +19,6%).",
+      "source": [{ "refId": "maeo2023_triceps" }],
+      "confidence": "provavel",
+      "note": "Um estudo com 21 adultos."
+    }
+  },
+  {
+    "id": "triceps_pushdown",
+    "name": "Tríceps na polia",
+    "pattern": "isolado",
+    "equipment": ["polia"],
+    "status": "consolidado",
+    "summary": "Em pé, cotovelos junto ao corpo, estender o cotovelo empurrando a barra da polia para baixo.",
+    "targets": [{ "muscle": "triceps_brachii", "role": "alvo" }],
+    "length": {
+      "emphasis": "encurtado",
+      "text": "Braço ao lado do corpo: a cabeça longa trabalha mais curta que no exercício acima da cabeça, que cresceu mais no estudo que comparou as duas posições.",
+      "source": [{ "refId": "maeo2023_triceps" }],
+      "confidence": "provavel"
+    }
+  }
+]

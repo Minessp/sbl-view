@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { Link } from 'wouter';
 import { LineChart, type ChartSeries } from '@/charts/LineChart';
 import { getReference } from '@/data';
 import type { Confidence } from '@/data/schema/evidence';
@@ -9,7 +10,6 @@ import { useStage } from '@/scene/stageStore';
 import { EvidenceSeal } from '@/ui/EvidenceSeal';
 import { effortRefs, rawEffort, sampleAt } from './derive';
 import { getLabBody, seriesFor, squat, TRACKED_MUSCLES, variantById, type VariantSeries } from './model';
-import { SetLogger } from './SetLogger';
 import { LabSettingsPanel } from './Settings';
 import { PATTERNS, useLab, useLabSlots } from './store';
 import { Scrubber } from './Scrubber';
@@ -202,8 +202,8 @@ function Charts({ series }: { series: VariantSeries[] }) {
 
   return (
     <>
-      <section className="lab-section" aria-labelledby="sec-angles">
-        <header className="lab-section__head">
+      <section className="section" aria-labelledby="sec-angles">
+        <header className="section__head">
           <h2 id="sec-angles">{t.lab.sections.angles}</h2>
           <p>{t.lab.sections.anglesNote}</p>
         </header>
@@ -215,8 +215,8 @@ function Charts({ series }: { series: VariantSeries[] }) {
         </div>
       </section>
 
-      <section className="lab-section" aria-labelledby="sec-torque">
-        <header className="lab-section__head">
+      <section className="section" aria-labelledby="sec-torque">
+        <header className="section__head">
           <h2 id="sec-torque">{t.lab.sections.torque}</h2>
           <p>{t.lab.sections.torqueNote}</p>
           <EvidenceSeal confidence="provavel" />
@@ -228,8 +228,8 @@ function Charts({ series }: { series: VariantSeries[] }) {
         </div>
       </section>
 
-      <section className="lab-section" aria-labelledby="sec-effort">
-        <header className="lab-section__head">
+      <section className="section" aria-labelledby="sec-effort">
+        <header className="section__head">
           <h2 id="sec-effort">{t.lab.sections.effort}</h2>
           <p>{t.lab.sections.effortNote}</p>
           <EvidenceSeal confidence="especulativo" unverified />
@@ -243,8 +243,8 @@ function Charts({ series }: { series: VariantSeries[] }) {
         </div>
       </section>
 
-      <section className="lab-section" aria-labelledby="sec-length">
-        <header className="lab-section__head">
+      <section className="section" aria-labelledby="sec-length">
+        <header className="section__head">
           <h2 id="sec-length">{t.lab.sections.length}</h2>
           <p>{t.lab.sections.lengthNote}</p>
           <EvidenceSeal confidence="especulativo" />
@@ -276,8 +276,8 @@ function Charts({ series }: { series: VariantSeries[] }) {
 
 function NumberTable({ series, u }: { series: VariantSeries[]; u: number }) {
   return (
-    <section className="lab-section" aria-labelledby="sec-table">
-      <header className="lab-section__head">
+    <section className="section" aria-labelledby="sec-table">
+      <header className="section__head">
         <h2 id="sec-table">{t.lab.sections.table}</h2>
       </header>
       <div className="table-wrap">
@@ -326,8 +326,8 @@ function ModelNotes({ series }: { series: VariantSeries[] }) {
     return [...ids];
   }, [series]);
   return (
-    <section className="lab-section lab-section--notes" aria-labelledby="sec-model">
-      <header className="lab-section__head">
+    <section className="section section--notes" aria-labelledby="sec-model">
+      <header className="section__head">
         <h2 id="sec-model">{t.lab.model.title}</h2>
         <p>{t.lab.model.lead}</p>
       </header>
@@ -407,7 +407,15 @@ export default function Lab() {
         </div>
       </div>
       <div className="lab__after">
-        <SetLogger />
+        <section className="section lab-log" aria-labelledby="sec-log">
+          <header className="section__head">
+            <h2 id="sec-log">{t.lab.log.title}</h2>
+            <p>{t.lab.log.body}</p>
+          </header>
+          <Link href="/treino?exercicio=squat" className="btn-secondary">
+            {t.lab.log.link}
+          </Link>
+        </section>
         <ModelNotes series={series} />
       </div>
       <Scrubber series={series} />

@@ -48,5 +48,7 @@ export interface NewSet {
 export interface TrainingRepository {
   logSet(input: NewSet, now?: number): Promise<SetEntry>;
   recentSets(exerciseId: string, limit?: number): Promise<SetEntry[]>;
+  /** Últimas séries de qualquer exercício, mais recentes primeiro. */
+  recentAll(limit?: number): Promise<SetEntry[]>;
   deleteSet(id: string, now?: number): Promise<void>;
 }

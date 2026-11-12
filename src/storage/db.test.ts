@@ -39,4 +39,15 @@ describe('repositório de treino (IndexedDB)', () => {
     const list = await repo.recentSets('squat');
     expect(list.map((s) => s.loadKg)).toEqual([90]);
   });
+
+  it('lista geral junta exercícios, mais recentes primeiro, sem apagadas', async () => {
+    const repo = fresh();
+    const t0 = Date.UTC(2026, 10, 12, 10);
+    await repo.logSet({ exerciseId: 'squat', reps: 5, loadKg: 100 }, t0);
+    const b = await repo.logSet({ exerciseId: 'leg_extension', reps: 12, loadKg: 40 }, t0 + 60_000);
+    await repo.logSet({ exerciseId: 'seated_leg_curl', reps: 10, loadKg: 35 }, t0 + 120_000);
+    await repo.deleteSet(b.id, t0 + 130_000);
+    const all = await repo.recentAll(10);
+    expect(all.map((s) => s.exerciseId)).toEqual(['seated_leg_curl', 'squat']);
+  });
 });

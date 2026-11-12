@@ -69,6 +69,14 @@ export function createDexieRepository(db: SblDb): TrainingRepository {
         .toArray();
       return rows;
     },
+    async recentAll(limit = 40) {
+      return db.sets
+        .orderBy('createdAt')
+        .reverse()
+        .filter((s) => !s.deletedAt)
+        .limit(limit)
+        .toArray();
+    },
     async deleteSet(id, now = Date.now()) {
       await db.sets.update(id, { deletedAt: now, updatedAt: now });
     },

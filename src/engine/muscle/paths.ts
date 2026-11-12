@@ -3,6 +3,7 @@ import { distance, mirrorX, rotate, sub, type Vec3 } from '../math/vec';
 import { pointToWorld } from '../kinematics/fk';
 import { mirrorId } from '../kinematics/skeleton';
 import type { EngineSkeleton, Pose } from '../kinematics/types';
+import type { SpindleFlat } from '../geometry/spindle';
 import { wrappedLength3D } from './wrap';
 
 type Tuple3 = readonly [number, number, number];
@@ -18,6 +19,7 @@ export interface MusclePathInput {
     readonly tendon: readonly [number, number];
     readonly path: readonly { readonly s: string; readonly p: Tuple3 }[];
     readonly wrap?: { readonly span: number; readonly segment: string; readonly center: Tuple3; readonly radius: number; readonly side: Tuple3 } | undefined;
+    readonly shape?: { readonly face: Tuple3; readonly width: number; readonly thickness: number } | undefined;
   }[];
 }
 
@@ -44,6 +46,8 @@ export interface MusclePath {
   readonly tendon: readonly [number, number];
   readonly points: readonly { readonly segment: string; readonly local: Vec3 }[];
   readonly wrap: PathWrap | null;
+  /** Seção achatada: face no frame do segmento do ponto do meio do caminho. Só desenho. */
+  readonly flat: { readonly segment: string; readonly face: Vec3; readonly width: number; readonly thickness: number } | null;
 }
 
 /**
@@ -80,6 +84,13 @@ export function buildMusclePaths(sk: EngineSkeleton, muscles: readonly MusclePat
             side: side === 'r' ? sideV : mirrorX(sideV),
           };
         }
+        let flat: MusclePath['flat'] = null;
+        if (part.shape) {
+          const mid = at(points, Math.floor((points.length - 1) / 2));
+          const f: Vec3 = [part.shape.face[0], part.shape.face[1], part.shape.face[2]];
+          // Pose neutra: frames paralelos ao mundo, então a direção local = a do mundo.
+          flat = { segment: mid.segment, face: side === 'r' ? f : mirrorX(f), width: part.shape.width, thickness: part.shape.thickness };
+        }
         out.push({
           key: `${part.id}_${side}`,
           muscleId: m.id,
@@ -91,6 +102,7 @@ export function buildMusclePaths(sk: EngineSkeleton, muscles: readonly MusclePat
           tendon: part.tendon,
           points,
           wrap,
+          flat,
         });
       }
     }
@@ -100,6 +112,13 @@ export function buildMusclePaths(sk: EngineSkeleton, muscles: readonly MusclePat
 
 export function pathWorldPoints(pose: Pose, path: MusclePath): Vec3[] {
   return path.points.map((pt) => pointToWorld(pose, pt.segment, pt.local));
+}
+
+/** Seção achatada na pose dada (face girada com o segmento), ou null para fuso redondo. */
+export function pathFlat(pose: Pose, path: MusclePath): SpindleFlat | null {
+  if (!path.flat) return null;
+  const t = must(pose.world, path.flat.segment, 'segmento');
+  return { face: rotate(t.rotation, path.flat.face), width: path.flat.width, thickness: path.flat.thickness };
 }
 
 /** Comprimento como polilinha pelos pontos de passagem (m). */

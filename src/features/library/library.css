@@ -1,0 +1,189 @@
+/* ---------- Filtros ---------- */
+.filters {
+  display: grid;
+  gap: var(--s-4);
+  padding: var(--s-5) 0;
+  border-bottom: var(--lw-hair) solid var(--c-rule);
+}
+
+.filters__row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: var(--s-3);
+  max-width: 640px;
+}
+
+.filters__row .field select {
+  font-size: var(--fs-3);
+}
+
+.filters__set {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.filters__set legend {
+  padding: 0;
+  margin-bottom: var(--s-2);
+  font-size: var(--fs-1);
+  color: var(--c-ink-2);
+}
+
+.filters__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+.filters__hint {
+  margin-top: var(--s-1);
+  font-size: var(--fs-1);
+  color: var(--c-ink-2);
+}
+
+.filters__foot {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-4);
+}
+
+.filters__count {
+  font-size: var(--fs-4);
+  font-weight: 700;
+  font-stretch: var(--wd-cond);
+}
+
+/* ---------- Cartões ---------- */
+.ex-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 0 var(--s-5);
+  padding-top: var(--s-2);
+}
+
+.ex-card {
+  display: grid;
+  gap: var(--s-2);
+  align-content: start;
+  justify-items: start;
+  padding: var(--s-4) 0 var(--s-5);
+  border-bottom: var(--lw-hair) solid var(--c-rule);
+}
+
+.ex-card__link {
+  display: grid;
+  gap: 2px;
+  text-decoration: none;
+}
+
+.ex-card__name {
+  font-size: var(--fs-5);
+  font-weight: 700;
+  font-stretch: 104%;
+  line-height: 1.1;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: var(--lw-curve);
+  text-underline-offset: 0.18em;
+  transition: text-decoration-color var(--t-fast) var(--ease);
+}
+
+.ex-card__link:hover .ex-card__name {
+  text-decoration-color: var(--c-accent);
+}
+
+.ex-card__pattern {
+  font-size: var(--fs-2);
+  font-stretch: var(--wd-cond);
+  color: var(--c-ink-2);
+}
+
+.ex-card__meta {
+  display: grid;
+  gap: var(--s-1);
+  font-size: var(--fs-2);
+}
+
+.ex-card__meta div {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: var(--s-2);
+}
+
+.ex-card__meta dt {
+  font-stretch: var(--wd-cond);
+  color: var(--c-ink-2);
+}
+
+.ex-card__length,
+.emph-line {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--fs-2);
+  font-weight: 560;
+}
+
+.ex-empty {
+  padding: var(--s-6) 0;
+  font-family: var(--font-serif);
+  font-size: var(--fs-4);
+  font-style: italic;
+  color: var(--c-ink-2);
+}
+
+/* Régua de comprimento. */
+.emph {
+  flex: none;
+  overflow: visible;
+}
+
+.emph__rule {
+  stroke: var(--c-ink-2);
+  stroke-width: 1;
+}
+
+.emph__mark {
+  fill: var(--c-ink);
+}
+
+.emph[data-emphasis='alongado'] .emph__mark {
+  fill: var(--c-accent);
+}
+
+/* ---------- Lista de músculos / exercícios relacionados ---------- */
+.target-list li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px var(--s-3);
+  align-items: baseline;
+  padding: var(--s-2) 0;
+  border-bottom: var(--lw-hair) solid var(--c-rule);
+}
+
+.target-list__name {
+  font-size: var(--fs-4);
+  font-weight: 620;
+  text-decoration-color: var(--c-accent);
+}
+
+.target-list li[data-role='sinergista'] .target-list__name {
+  font-weight: 450;
+}
+
+.target-list__role {
+  grid-column: 2;
+  grid-row: 1;
+  font-size: var(--fs-1);
+  font-stretch: var(--wd-cond);
+  color: var(--c-ink-2);
+}
+
+.target-list__parts {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--fs-2);
+  color: var(--c-ink-2);
+}
