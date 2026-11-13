@@ -10,7 +10,7 @@ import { PlaneGeometry, ShaderMaterial, Vector3 } from 'three';
 import type { Vec3 } from '@/engine/math/vec';
 import { rig } from './rig';
 
-const MAX_FEET = 4;
+const MAX_FEET = 8;
 
 const vertex = /* glsl */ `
   uniform vec3 uCenter;
@@ -96,6 +96,14 @@ export function ContactShadow({ feet, strength = 0.8 }: { feet: () => readonly V
       center.z += p[2] / n;
     }
     if (u.uCount) u.uCount.value = n;
+    // Largura acompanha o espalhamento dos apoios (camadas abertas na abertura).
+    let r = 0;
+    for (let i = 0; i < n; i++) {
+      const q = list[i];
+      if (q) r = Math.max(r, Math.hypot(q.x - center.x, q.z - center.z));
+    }
+    const size = u.uSize?.value as number[];
+    size[0] = Math.max(0.9, 2 * r + 0.5);
   });
 
   return <mesh geometry={geometry} material={material} renderOrder={-1} frustumCulled={false} />;

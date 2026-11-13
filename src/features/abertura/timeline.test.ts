@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CUT_OFF, CUT_WINDOWS, cutHeight, introCut, introDolly, openingFrame } from './timeline';
+import { assembleFrame, CUT_OFF, CUT_WINDOWS, cutHeight, EXPLODE_WINDOW, finaleExplode, introCut, introDolly, LAYER_WINDOWS, openingFrame } from './timeline';
 
 describe('coreografia da abertura', () => {
   it('nenhum corte no início; tudo cortado no fim', () => {
@@ -25,9 +25,28 @@ describe('coreografia da abertura', () => {
     expect(CUT_WINDOWS.superficial[1]).toBeLessThanOrEqual(CUT_WINDOWS.deep[0]);
   });
 
-  it('câmera termina de perfil', () => {
+  it('câmera chega ao perfil no osso e termina de perfil depois de uma volta inteira', () => {
     expect(openingFrame(0).azimuth).toBeCloseTo(0, 6);
-    expect(openingFrame(1).azimuth).toBeCloseTo(-Math.PI / 2, 6);
+    expect(openingFrame(EXPLODE_WINDOW[0]).azimuth).toBeCloseTo(-Math.PI / 2, 6);
+    expect(openingFrame(1).azimuth).toBeCloseTo(-Math.PI / 2 - 2 * Math.PI, 6);
+  });
+
+  it('camadas só abrem depois da leitura do osso começar', () => {
+    expect(finaleExplode(LAYER_WINDOWS.bone[0] + 0.02)).toBe(0);
+    expect(finaleExplode(EXPLODE_WINDOW[1])).toBe(1);
+    expect(finaleExplode(1)).toBe(1);
+  });
+});
+
+describe('montagem de entrada', () => {
+  it('começa aberta e girando, termina junta e parada', () => {
+    const a = assembleFrame(0), z = assembleFrame(1);
+    expect(a.explode).toBe(1);
+    expect(a.spin).toBeGreaterThan(0);
+    expect(z.explode).toBe(0);
+    expect(z.spin).toBe(0);
+    expect(z.orbit).toBe(0);
+    expect(assembleFrame(0.5).explode).toBeLessThan(0.5);
   });
 });
 

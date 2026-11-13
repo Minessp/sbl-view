@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'wouter';
 import { fmt, t } from '@/i18n';
 import { bindAnchor } from '@/scene/annotations';
 import { useStage } from '@/scene/stageStore';
 import { CALLOUTS, type CalloutDef } from './callouts';
-import { openingFrame, type LayerId } from './timeline';
+import { finaleExplode, LAYER_WINDOWS, openingFrame, type LayerId } from './timeline';
 import './abertura.css';
 
 const LAYERS: LayerId[] = ['skin', 'superficial', 'deep', 'bone'];
@@ -103,6 +103,97 @@ function Callout({ def, n }: { def: CalloutDef; n: number }) {
   );
 }
 
+/** Texto quebrado em letras (cada uma com índice) para a entrada cinética; palavras não quebram no meio. */
+function Split({ text }: { text: string }) {
+  let i = 0;
+  return (
+    <span className="split" aria-hidden="true">
+      {text.split(' ').map((w, wi) => (
+        <Fragment key={wi}>
+          {wi > 0 && ' '}
+          <span className="split__word">
+            {[...w].map((ch) => (
+              <span key={i} className="split__ch" style={{ '--i': i++ } as CSSProperties}>
+                {ch}
+              </span>
+            ))}
+          </span>
+        </Fragment>
+      ))}
+    </span>
+  );
+}
+
+const BODY_IMG = `url(${import.meta.env.BASE_URL}fallback/corpo-frente.webp)`;
+const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
+
+/**
+ * Coluna esquerda (desktop): pilha isométrica das quatro camadas, nome da camada em letras que giram em 3D, texto da
+ * camada e progresso. Espelha a cena 3D: a camada em leitura levanta e acende, as cortadas saem voando, no fim todas
+ * abrem e giram junto com a câmera. Decorativa para leitor de tela (as seções abaixo têm o mesmo texto).
+ */
+function LayerDeck() {
+  const p = useStage((s) => s.progress);
+  const f = openingFrame(p);
+  const fin = finaleExplode(p);
+  let idx = 0;
+  LAYERS.forEach((l, i) => {
+    if (p >= LAYER_WINDOWS[l][0]) idx = i;
+  });
+  const layer = LAYERS[idx] ?? 'skin';
+  const open = fin > 0.02;
+  const copy = t.opening.layers[layer];
+  const legend = byLayer(layer);
+  const turn = (-f.azimuth * 180) / Math.PI;
+  const style = {
+    '--deck-on': clamp01((p - 0.025) / 0.05),
+    '--turn': `${(-40 + turn * 0.6).toFixed(2)}deg`,
+    '--gap': `${(38 + fin * 26).toFixed(1)}px`,
+    '--body-img': BODY_IMG,
+  } as CSSProperties;
+  return (
+    <div className="deck" style={style} data-open={open} aria-hidden="true">
+      <p className="deck__count">
+        <span className="deck__count-now">{String(open ? 4 : idx + 1).padStart(2, '0')}</span> {t.opening.deckOf} 04
+      </p>
+      <p key={open ? 'fin' : layer} className="deck__word">
+        <Split text={open ? t.opening.deckFinale : copy.name} />
+      </p>
+      <div className="deck__stage">
+        <div className="stack">
+          {LAYERS.map((l, i) => {
+            const state = open ? 'open' : i < idx ? 'peeled' : i === idx ? 'active' : 'below';
+            return (
+              <div key={l} className="plate" data-layer={l} data-state={state} style={{ '--k': 3 - i } as CSSProperties}>
+                <span className="plate__body" />
+                <span className="plate__label">{t.opening.layers[l].name}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <div key={open ? 'fin-body' : `${layer}-body`} className="deck__body" data-hidden={open}>
+        <p className="deck__text">{copy.body}</p>
+        {legend.length > 0 && (
+          <ol className="deck__legend">
+            {legend.map((c, i) => (
+              <li key={c.id} style={{ '--i': i } as CSSProperties}>
+                <span className="legend__num">{i + 1}</span>
+                {c.label}
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+      <ol className="deck__bar">
+        {LAYERS.map((l, i) => (
+          <li key={l} data-on={open || i <= idx} />
+        ))}
+      </ol>
+    </div>
+  );
+}
+
 function Callouts() {
   const [host, setHost] = useState<HTMLElement | null>(null);
   useEffect(() => setHost(document.getElementById('stage-overlay')), []);
@@ -129,7 +220,8 @@ export default function Abertura() {
     <main id="conteudo" ref={root} className="opening">
       <section className="opening__intro" aria-labelledby="opening-title">
         <h1 id="opening-title" className="opening__title">
-          {t.opening.title}
+          <span className="visually-hidden">{t.opening.title}</span>
+          <Split text={t.opening.title} />
         </h1>
         <p className="opening__lead prose">{t.opening.lead}</p>
       </section>
@@ -194,6 +286,7 @@ export default function Abertura() {
         </div>
       </section>
 
+      <LayerDeck />
       <CutRuler />
       <Callouts />
     </main>

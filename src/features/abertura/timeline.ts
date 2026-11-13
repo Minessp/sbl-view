@@ -72,9 +72,31 @@ export function openingFrame(p: number): OpeningFrame {
     const weight = windowWeight(p, LAYER_WINDOWS[id]);
     if (weight > 0) focus = { layer: id, weight };
   }
-  // Frente → três quartos → perfil (o plano sagital é onde o Lab trabalha).
-  const azimuth = -(Math.PI / 2) * smooth(clamp01((p - 0.04) / 0.9));
+  // Frente → três quartos → perfil (o plano sagital é onde o Lab trabalha); no fim, uma volta inteira com as camadas abertas.
+  const azimuth = -(Math.PI / 2) * smooth(clamp01((p - 0.04) / 0.76)) - 2 * Math.PI * smooth(clamp01((p - EXPLODE_WINDOW[0]) / (1 - EXPLODE_WINDOW[0])));
   return { cuts, activeCut, azimuth, focus };
+}
+
+/** Fim da página: as camadas se reconstroem e abrem lado a lado. */
+export const EXPLODE_WINDOW = [0.84, 0.94] as const;
+
+/** Abertura das camadas no fim (0 = juntas, 1 = lado a lado). */
+export function finaleExplode(p: number): number {
+  return smooth(clamp01((p - EXPLODE_WINDOW[0]) / (EXPLODE_WINDOW[1] - EXPLODE_WINDOW[0])));
+}
+
+/** Ordem das camadas da esquerda para a direita quando abertas (múltiplos do espaçamento). */
+export const EXPLODE_SLOT: Record<LayerId, number> = { skin: -1.5, superficial: -0.5, deep: 0.5, bone: 1.5 };
+/** Espaçamento entre camadas abertas (m). */
+export const EXPLODE_SPACING = 0.62;
+
+/** Duração da montagem de entrada (s): as camadas chegam separadas e girando e se juntam. */
+export const ASSEMBLE_SECONDS = 2.6;
+
+/** Montagem de entrada: abertura das camadas e giro próprio de cada uma (rad), para t = 0..1 do tempo. */
+export function assembleFrame(t: number): { explode: number; spin: number; orbit: number } {
+  const u = 1 - (1 - clamp01(t)) ** 4;
+  return { explode: 1 - u, spin: (1 - u) * Math.PI * 0.9, orbit: (1 - u) * 0.7 };
 }
 
 /** Duração da entrada (s): o corpo é "entintado" dos pés à cabeça antes do primeiro scroll. */

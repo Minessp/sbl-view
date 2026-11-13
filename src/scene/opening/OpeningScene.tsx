@@ -8,7 +8,20 @@ import { skinMatrices, skinPositions } from '@/engine/kinematics/skinning';
 import { at, must } from '@/engine/math/arr';
 import { scale, type Vec3 } from '@/engine/math/vec';
 import { CALLOUTS } from '@/features/abertura/callouts';
-import { CUT_OFF, INTRO_SECONDS, introCut, introDolly, LAYER_WINDOWS, openingFrame, windowWeight } from '@/features/abertura/timeline';
+import {
+  ASSEMBLE_SECONDS,
+  assembleFrame,
+  CUT_OFF,
+  EXPLODE_SLOT,
+  EXPLODE_SPACING,
+  finaleExplode,
+  INTRO_SECONDS,
+  introCut,
+  introDolly,
+  LAYER_WINDOWS,
+  openingFrame,
+  windowWeight,
+} from '@/features/abertura/timeline';
 import { anchors, setAnchorWorld, type Anchor } from '../annotations';
 import type { BodyModel } from '../body/model';
 import { ContactShadow } from '../body/ContactShadow';
@@ -20,7 +33,9 @@ const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)')
 const sk = buildSkeleton(skeletonDef);
 const pose = forwardKinematics(sk, STANDING);
 const feet = footContacts(sk, pose);
-const getFeet = () => feet;
+/** Tornozelos (um por pé), base da sombra de cada camada quando abertas. */
+const ankles = feet.filter((_, i) => i % 2 === 0);
+const LAYER_IDS = ['skin', 'superficial', 'deep', 'bone'] as const;
 /** Opacidade de cada camada acima do corte (fantasma). */
 const GHOST = { skin: 0.1, superficial: 0.16, deep: 0.12, bone: 0 } as const;
 const BASE_HIGHLIGHT = 0;
@@ -79,6 +94,24 @@ export function OpeningScene() {
   const shown = useRef(useStage.getState().progress);
   // Entrada só na primeira pintura, no topo da página e sem redução de movimento.
   const intro = useRef(reduceMotion() || useStage.getState().progress > 0.02 ? 1 : 0);
+  // Montagem: as camadas chegam abertas e girando e se juntam (mesmas condições da entrada).
+  const assemble = useRef(intro.current);
+  /** Abertura atual e eixo lateral da câmera, para a sombra seguir as camadas. */
+  const spread = useRef({ ex: 0, rx: 1, rz: 0 });
+  const shadowPts = useMemo(() => [] as Vec3[], []);
+  const getFeet = useMemo(
+    () => () => {
+      const { ex, rx, rz } = spread.current;
+      if (ex < 0.01) return feet;
+      shadowPts.length = 0;
+      for (const l of LAYER_IDS) {
+        const o = EXPLODE_SLOT[l] * EXPLODE_SPACING * ex;
+        for (const a of ankles) shadowPts.push([a[0] + rx * o, 0, a[2] + rz * o]);
+      }
+      return shadowPts;
+    },
+    [shadowPts],
+  );
   const target = useMemo(() => new Vector3(0, 0.93, 0), []);
   const tmp = useRef(new Vector3());
 
@@ -99,19 +132,42 @@ export function OpeningScene() {
       intro.current = Math.min(1, intro.current + Math.min(dt, 1 / 30) / INTRO_SECONDS);
       invalidate();
     }
+    if (assemble.current < 1) {
+      assemble.current = Math.min(1, assemble.current + Math.min(dt, 1 / 30) / ASSEMBLE_SECONDS);
+      invalidate();
+    }
+    const asm = assembleFrame(assemble.current);
+    const fin = finaleExplode(p);
+    const ex = Math.max(asm.explode, fin);
+    const az = f.azimuth + asm.orbit;
+
     const ic = introCut(intro.current);
-    const skinCut = Math.min(f.cuts.skin, ic);
-    // Sob a pele intacta nada aparece, mesmo onde a malha de dentro encosta na pele.
+    // No fim as camadas se reconstroem dos pés à cabeça enquanto abrem.
+    const rebuilt = fin > 0 ? introCut(Math.min(1, fin * 1.25)) : -99;
+    const cut = (c: number) => Math.min(Math.max(c, rebuilt), ic);
+    const skinCut = cut(f.cuts.skin);
+    // Sob a pele intacta nada aparece, mesmo onde a malha de dentro encosta na pele; com as camadas abertas, tudo aparece.
+    const hideUnder = ex > 0.001 ? -99 : skinCut;
     body.layer('skin', { cut: skinCut });
-    body.layer('superficial', { cut: Math.min(f.cuts.superficial, ic), showAbove: skinCut });
-    body.layer('deep', { cut: Math.min(f.cuts.deep, ic), showAbove: skinCut });
-    body.layer('bone', { cut: ic, showAbove: skinCut });
+    body.layer('superficial', { cut: cut(f.cuts.superficial), showAbove: hideUnder });
+    body.layer('deep', { cut: cut(f.cuts.deep), showAbove: hideUnder });
+    body.layer('bone', { cut: ic, showAbove: hideUnder });
+
+    // Camadas lado a lado no eixo lateral da câmera; na entrada cada uma gira no próprio eixo.
+    const rx = Math.cos(az), rz = -Math.sin(az);
+    spread.current = { ex, rx, rz };
+    for (const l of LAYER_IDS) {
+      const m = body.meshes[l];
+      const o = EXPLODE_SLOT[l] * EXPLODE_SPACING * ex;
+      m.position.set(rx * o, 0, rz * o);
+      m.rotation.y = asm.spin * (EXPLODE_SLOT[l] / 1.5);
+    }
 
     // Músculos chamados "acendem" enquanto a camada deles está em evidência.
     for (const c of CALLOUTS) {
       const slots = lit.get(c.id);
       if (!slots) continue;
-      const w = windowWeight(p, LAYER_WINDOWS[c.layer], 0.04);
+      const w = windowWeight(p, LAYER_WINDOWS[c.layer], 0.04) * (1 - ex);
       body.fill('highlight', BASE_HIGHLIGHT + (0.9 - BASE_HIGHLIGHT) * w, slots);
     }
     body.commit();
@@ -119,11 +175,12 @@ export function OpeningScene() {
     // Câmera: enquadra 1,9 m de altura; recua em telas estreitas.
     const aspect = size.width / Math.max(1, size.height);
     const fitH = 0.98 / Math.tan((camera.fov * Math.PI) / 360);
-    const fitW = 0.5 / (Math.tan((camera.fov * Math.PI) / 360) * aspect);
+    const halfW = 0.5 + 1.5 * EXPLODE_SPACING * ex;
+    const fitW = halfW / (Math.tan((camera.fov * Math.PI) / 360) * aspect);
     // Celular (retrato): o corpo ocupa a metade de cima; o cartão de texto fica embaixo.
     const portrait = aspect < 0.8;
     const dist = Math.max(fitH, fitW) * (portrait ? 1.75 : 1.04) * introDolly(intro.current);
-    camera.position.set(Math.sin(f.azimuth) * dist, 1.02, Math.cos(f.azimuth) * dist);
+    camera.position.set(Math.sin(az) * dist, 1.02, Math.cos(az) * dist);
     camera.lookAt(target);
     if (portrait) camera.setViewOffset(size.width, size.height, 0, size.height * 0.22, size.width, size.height);
     else camera.clearViewOffset();
@@ -135,7 +192,7 @@ export function OpeningScene() {
     for (const c of CALLOUTS) {
       const a = anchors.get(c.id);
       if (!a?.el || !a.world) continue;
-      const w = windowWeight(p, LAYER_WINDOWS[c.layer], 0.03);
+      const w = windowWeight(p, LAYER_WINDOWS[c.layer], 0.03) * Math.max(0, 1 - ex * 3);
       if (w <= 0.001) {
         a.el.style.visibility = 'hidden';
         if (a.line) a.line.style.opacity = '0';

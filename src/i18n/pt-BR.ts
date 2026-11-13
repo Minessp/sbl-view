@@ -68,6 +68,8 @@ export const ptBR = {
     },
     note: 'Malha anatômica do Z-Anatomy (CC BY-SA 4.0), simplificada; as linhas de ação saem dela e são estimativa, não medida. Os números do Lab vêm de modelos publicados, sempre com fonte e grau de confiança ao lado.',
     loading: 'Montando o corpo',
+    deckFinale: 'Quatro camadas',
+    deckOf: 'de',
   },
 } as const;
 
