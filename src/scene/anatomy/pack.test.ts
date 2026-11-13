@@ -7,25 +7,32 @@ import { skeletonDef as skeletonJson } from '@/data';
 import { forwardKinematics } from '@/engine/kinematics/fk';
 import { buildSkeleton, degToAngles } from '@/engine/kinematics/skeleton';
 import { skinMatrices, skinPositions } from '@/engine/kinematics/skinning';
+import { LODS, type AnatomyLod } from './lod';
 import { parseAnatomyPack, type AnatomyPack, type AnatomyPart } from './pack';
 import { REFERENCE_POSES } from './poses';
 
-const read = async (lod: 'hi' | 'lo') => {
+const read = async (lod: AnatomyLod) => {
   const url = new URL(`../../../public/models/anatomy-${lod}.bin`, import.meta.url);
   const file = readFileSync(url);
   return { pack: await parseAnatomyPack(file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength)), bytes: statSync(url).size };
 };
-const packs = { hi: await read('hi'), lo: await read('lo') };
+const packs = { lo: await read('lo'), mid: await read('mid'), hi: await read('hi'), ultra: await read('ultra') };
 const sk = buildSkeleton(skeletonJson);
 
-/** Razão entre o comprimento de cada aresta posada e o de ligação (direito e cópia espelhada). */
-function edgeStretch(pack: AnatomyPack, part: AnatomyPart, deg: Record<string, number>): Float64Array {
+/**
+ * Razão entre o comprimento de cada aresta posada e o de ligação (direito e cópia espelhada). `maxGrowth`: o maior
+ * alongamento absoluto de uma aresta (m); vértice que explode (peso errado) estica dezenas de centímetros. `area`:
+ * comprimento de ligação ao quadrado, para quantis por área (a mesma dobra pesa igual em qualquer nível).
+ */
+function edgeStretch(pack: AnatomyPack, part: AnatomyPart, deg: Record<string, number>, info: { maxGrowth: number; area?: Float64Array } = { maxGrowth: 0 }): Float64Array {
   const pose = forwardKinematics(sk, degToAngles(deg));
   const M = skinMatrices(sk, pose, pack.joints.map((j) => j.id));
   const copies = part.mirror ? [undefined, pack.jointMirror] : [undefined];
   const I = part.indices;
   const P = part.positions;
   const out = new Float64Array(I.length * copies.length);
+  const area = new Float64Array(out.length);
+  info.area = area;
   let o = 0;
   for (const mirror of copies) {
     const Q = skinPositions(part, M, mirror);
@@ -35,22 +42,44 @@ function edgeStretch(pack: AnatomyPack, part: AnatomyPart, deg: Record<string, n
         const rest = Math.hypot((P[a] ?? 0) - (P[b] ?? 0), (P[a + 1] ?? 0) - (P[b + 1] ?? 0), (P[a + 2] ?? 0) - (P[b + 2] ?? 0));
         const now = Math.hypot((Q[a] ?? 0) - (Q[b] ?? 0), (Q[a + 1] ?? 0) - (Q[b + 1] ?? 0), (Q[a + 2] ?? 0) - (Q[b + 2] ?? 0));
         // Aresta abaixo de 1 mm não aparece: razão não se aplica.
+        area[o] = rest * rest;
         out[o++] = rest > 1e-3 ? now / rest : 1;
+        info.maxGrowth = Math.max(info.maxGrowth, now - rest);
       }
     }
   }
   return out;
+}
+/** Quantil ponderado (histograma logarítmico de 0,01 a 100, 4000 faixas: erro < 0,25%). */
+function areaQuantile(r: Float64Array, w: Float64Array, q: number): number {
+  const B = 4000;
+  const h = new Float64Array(B);
+  let total = 0;
+  for (let i = 0; i < r.length; i++) {
+    const b = Math.min(B - 1, Math.max(0, Math.floor(((Math.log10(r[i] ?? 1) + 2) / 4) * B)));
+    h[b] = (h[b] ?? 0) + (w[i] ?? 0);
+    total += w[i] ?? 0;
+  }
+  let acc = 0;
+  for (let b = 0; b < B; b++) {
+    acc += h[b] ?? 0;
+    if (acc >= q * total) return 10 ** (((b + 0.5) / B) * 4 - 2);
+  }
+  return 100;
 }
 const quantile = (a: Float64Array, q: number) => {
   const s = Float64Array.from(a).sort();
   return s[Math.min(s.length - 1, Math.floor(q * s.length))] ?? NaN;
 };
 
-describe.each(['hi', 'lo'] as const)('pacote anatômico SBL5 (%s)', (lod) => {
+/** Tamanho medido de cada nível com folga: crescer sem querer falha aqui. */
+const BUDGET: Record<AnatomyLod, number> = { lo: 1.2e6, mid: 2.6e6, hi: 7e6, ultra: 12e6 };
+
+describe.each(LODS)('pacote anatômico SBL5 (%s)', (lod) => {
   const { pack, bytes } = packs[lod];
 
-  it('cabe no orçamento (celular ≤ 1,2 MB; desktop ≤ 3 MB)', () => {
-    expect(bytes).toBeLessThanOrEqual(lod === 'lo' ? 1.2e6 : 3e6);
+  it('cabe no orçamento do nível (celular sempre no leve)', () => {
+    expect(bytes).toBeLessThanOrEqual(BUDGET[lod]);
   });
 
   it('tem todo músculo do Atlas, toda parte mapeada, ossos de todo segmento e pele', () => {
@@ -102,7 +131,8 @@ describe.each(['hi', 'lo'] as const)('pacote anatômico SBL5 (%s)', (lod) => {
         let s = 0;
         for (let k = 0; k < 4; k++) {
           s += p.weights[v * 4 + k] ?? 0;
-          expect(p.joints[v * 4 + k] ?? 99).toBeLessThan(pack.joints.length);
+          // Sem expect por vértice: o nível ultra tem mais de um milhão deles.
+          if ((p.joints[v * 4 + k] ?? 99) >= pack.joints.length) throw new Error(`${p.id}: junta inválida`);
         }
         if (Math.abs(s - 1) > 1e-6) throw new Error(`${p.id}: soma ${s}`);
       }
@@ -130,7 +160,7 @@ describe.each(['hi', 'lo'] as const)('pacote anatômico SBL5 (%s)', (lod) => {
 });
 
 describe('linhas centrais do motor (muscle-paths.json) = as do pacote', () => {
-  it.each(['hi', 'lo'] as const)('%s', (lod) => {
+  it.each(LODS)('%s', (lod) => {
     const byId = new Map(packs[lod].pack.parts.map((p) => [p.id, p]));
     const lines = Object.entries(musclePathsJson.parts);
     expect(lines.length).toBeGreaterThan(70);
@@ -143,23 +173,34 @@ describe('linhas centrais do motor (muscle-paths.json) = as do pacote', () => {
   });
 });
 
-describe('deformação do corpo inteiro nas poses de referência (critério da Fase 7)', () => {
-  const { pack } = packs.hi;
+// mid: malhas originais simplificadas; ultra: densificadas, com pesos interpolados.
+describe.each(['mid', 'ultra'] as const)('deformação do corpo inteiro nas poses de referência (critério da Fase 7; %s)', (lod) => {
+  const { pack } = packs[lod];
   const soft = pack.parts.filter((p) => p.kind !== 'bone');
 
   it.each(REFERENCE_POSES.filter((p) => p.id !== 'neutral'))('$label: sem NaN, sem estiramento explosivo', ({ deg }) => {
     for (const p of soft) {
-      const r = edgeStretch(pack, p, deg);
+      const info: { maxGrowth: number; area?: Float64Array } = { maxGrowth: 0 };
+      const r = edgeStretch(pack, p, deg, info);
       for (const x of r) if (!Number.isFinite(x)) throw new Error(`${p.id}: NaN`);
       // Skinning linear: dobras fundas (axila, virilha) estiram e colapsam um pouco; o limite pega explosão
       // (peso errado, junta trocada), não a deformação normal do LBS. Pele: casca contínua, mais exigente.
+      // A razão máxima depende do tamanho da aresta (a malha densificada tem arestas curtas na mesma dobra): vale só
+      // nas malhas originais; o alongamento absoluto máximo vale em todo nível (medido: pele 37 mm no mid, 28 no ultra;
+      // adutor magno 91 e 72 mm). Quantis por área: a densificação põe mais arestas nas dobras (a axila tinha
+      // triângulos grandes), e a contagem simples puniria o nível denso pela mesma deformação.
+      const original = lod === 'mid';
       if (p.kind === 'skin') {
-        expect(quantile(r, 1), p.id).toBeLessThan(12);
-        expect(quantile(r, 0.999), p.id).toBeLessThan(3.5);
-        expect(quantile(r, 0.0005), p.id).toBeGreaterThan(0.15);
+        if (original) expect(quantile(r, 1), p.id).toBeLessThan(12);
+        expect(info.maxGrowth, p.id).toBeLessThan(0.05);
+        expect(areaQuantile(r, info.area ?? r, 0.999), p.id).toBeLessThan(3.5);
+        // Compressão nas dobras fundas (joelho a 140°, axila com o braço acima, virilha): 0,13 a 0,15 medido depois de
+        // tirar o peso errado da mão na coxa (antes a coxa seguia o braço e esticava em vez de dobrar).
+        expect(areaQuantile(r, info.area ?? r, 0.0005), p.id).toBeGreaterThan(0.12);
       } else {
-        expect(quantile(r, 1), p.id).toBeLessThan(25);
-        expect(quantile(r, 0.99), p.id).toBeLessThan(6);
+        if (original) expect(quantile(r, 1), p.id).toBeLessThan(25);
+        expect(info.maxGrowth, p.id).toBeLessThan(0.12);
+        expect(areaQuantile(r, info.area ?? r, 0.99), p.id).toBeLessThan(6);
       }
     }
   });
@@ -211,7 +252,7 @@ function skinEdges(part: AnatomyPart) {
   return { border, seam, nonManifold, flipped };
 }
 
-describe.each(['hi', 'lo'] as const)('pele estanque (%s)', (lod) => {
+describe.each(LODS)('pele estanque (%s)', (lod) => {
   const skin = packs[lod].pack.parts.find((p) => p.kind === 'skin');
   if (!skin) throw new Error('pacote sem pele');
   const e = skinEdges(skin);
@@ -229,7 +270,7 @@ describe.each(['hi', 'lo'] as const)('pele estanque (%s)', (lod) => {
 });
 
 describe('sem genitália (região urogenital fora da pele, buraco tampado)', () => {
-  it.each(['hi', 'lo'] as const)('%s: a pele da virilha não se projeta à frente do púbis', (lod) => {
+  it.each(LODS)('%s: a pele da virilha não se projeta à frente do púbis', (lod) => {
     const skin = packs[lod].pack.parts.find((p) => p.kind === 'skin');
     const P = skin?.positions ?? new Float32Array();
     let zMax = -Infinity;
@@ -239,5 +280,56 @@ describe('sem genitália (região urogenital fora da pele, buraco tampado)', () 
     }
     // Com a região original a ponta chegava a 11,8 cm à frente; o púbis fica em ~8 cm.
     expect(zMax).toBeLessThan(0.09);
+  });
+});
+
+describe('níveis de detalhe', () => {
+  const sig = (p: AnatomyPack) => p.parts.map((q) => [q.id, q.kind, q.mirror, q.layer, q.ends?.join('>'), q.objects.length].join(':')).join(',');
+
+  it('mesmas partes, na mesma ordem, com as mesmas linhas centrais: a troca de nível só muda a malha', () => {
+    for (const lod of LODS) {
+      expect(sig(packs[lod].pack), lod).toBe(sig(packs.lo.pack));
+      packs[lod].pack.parts.forEach((p, i) => expect(p.centerline, `${lod} ${p.id}`).toEqual(packs.lo.pack.parts[i]?.centerline));
+    }
+  });
+
+  it('cada nível tem mais triângulos que o anterior', () => {
+    const tris = LODS.map((l) => packs[l].pack.parts.reduce((n, p) => n + p.indices.length / 3, 0));
+    for (let i = 1; i < tris.length; i++) expect(tris[i], LODS[i]).toBeGreaterThan(1.5 * (tris[i - 1] ?? 0));
+  });
+
+  /** Quantis do comprimento das arestas da pele (m). */
+  const skinEdgeQ = (lod: AnatomyLod, q: number) => {
+    const skin = packs[lod].pack.parts.find((p) => p.kind === 'skin');
+    const P = skin?.positions ?? new Float32Array();
+    const I = skin?.indices ?? new Uint32Array();
+    const L = new Float64Array(I.length);
+    for (let t = 0; t < I.length; t += 3)
+      for (let e = 0; e < 3; e++) {
+        const a = (I[t + e] ?? 0) * 3, b = (I[t + ((e + 1) % 3)] ?? 0) * 3;
+        L[t + e] = Math.hypot((P[a] ?? 0) - (P[b] ?? 0), (P[a + 1] ?? 0) - (P[b + 1] ?? 0), (P[a + 2] ?? 0) - (P[b + 2] ?? 0));
+      }
+    return quantile(L, q);
+  };
+
+  it('pele densificada: arestas até o limite do nível (hi 5 mm, ultra 3,3 mm); a original passa de 18 mm', () => {
+    expect(skinEdgeQ('mid', 0.9)).toBeGreaterThan(0.015);
+    // A suavização dos vértices novos estica algumas arestas além do limite da divisão: p99 no limite, máximo com folga.
+    expect(skinEdgeQ('hi', 0.99)).toBeLessThanOrEqual(0.005);
+    expect(skinEdgeQ('hi', 1)).toBeLessThanOrEqual(0.0075);
+    expect(skinEdgeQ('ultra', 0.99)).toBeLessThanOrEqual(0.0033);
+    expect(skinEdgeQ('ultra', 1)).toBeLessThanOrEqual(0.005);
+  });
+
+  it('densificar preserva a forma: todo vértice da pele original continua na densificada', () => {
+    const key = (P: Float32Array, v: number) => `${Math.round((P[v * 3] ?? 0) * 1e4)},${Math.round((P[v * 3 + 1] ?? 0) * 1e4)},${Math.round((P[v * 3 + 2] ?? 0) * 1e4)}`;
+    const orig = packs.mid.pack.parts.find((p) => p.kind === 'skin')?.positions ?? new Float32Array();
+    for (const lod of ['hi', 'ultra'] as const) {
+      const P = packs[lod].pack.parts.find((p) => p.kind === 'skin')?.positions ?? new Float32Array();
+      const have = new Set(Array.from({ length: P.length / 3 }, (_, v) => key(P, v)));
+      let missing = 0;
+      for (let v = 0; v < orig.length / 3; v++) if (!have.has(key(orig, v))) missing++;
+      expect(missing, lod).toBe(0);
+    }
   });
 });

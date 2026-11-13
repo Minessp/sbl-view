@@ -10,9 +10,11 @@
  * Luz (rig.ts): fluxo linear, key de tungstênio com difusão envolvente (luz atravessa a borda: vermelho no músculo),
  * contraluz fria, hemisfério; ACES e pontilhado de 8 bits no fim ("pós-processamento" dentro do material: o palco
  * desenha várias vistas recortadas, um compositor por vista custaria caro).
- * Músculo: brilho anisotrópico ao longo da fibra (Kajiya-Kay; a direção da fibra é o gradiente do parâmetro t
- * origem→inserção na superfície, por derivada de tela) e tendão claro nas pontas. Osso: marfim fosco.
- * Pele: translúcida, mais opaca na silhueta (Fresnel).
+ * Músculo: brilho anisotrópico ao longo da fibra (Kajiya-Kay; direção da fibra = atributo por vértice, a linha central
+ * projetada na superfície), estrias em relevo (fascículos e fibras: ruído 3D esticado ao longo da fibra, na pose de
+ * ligação, gradiente analítico levado à superfície posada) e transição para o tendão pela fração tendínea do vértice, com borda
+ * irregular. O relevo some antes de o padrão ficar menor que alguns pixels. Osso: marfim fosco, poroso de perto.
+ * Pele: translúcida, mais opaca na silhueta (Fresnel), microrrelevo de perto.
  * Destaque, calor e ativação acendem o músculo (incandescência na cor --c-glow). Deformação: encurtar acende em
  * tungstênio (--c-glow), alongar em aço (--c-stretch).
  * Corte: plano de normal `uCutN` (mundo); do lado positivo, a camada vira fantasma. Padrão = horizontal (altura).
@@ -98,9 +100,14 @@ const vertex = (joints: number) => /* glsl */ `
   attribute vec4 skinWeight;
   attribute float aSlot;
   #ifdef MUSCLE
-  attribute float aAlong;
+  // x = t ao longo da linha central, y = fração tendínea; direção da fibra na ligação (xyz).
+  attribute vec4 aMuscle;
+  attribute vec4 aFiber;
   attribute vec3 aRadial;
   varying float vAlong;
+  varying float vTendon;
+  varying vec3 vT;
+  varying vec3 vF;
   #endif
   uniform mat4 uJoints[JOINTS];
   uniform sampler2D uState;
@@ -108,6 +115,8 @@ const vertex = (joints: number) => /* glsl */ `
   varying vec3 vN;
   varying vec3 vView;
   varying vec3 vW;
+  varying vec3 vP;
+  varying mat3 vMv;
   varying vec4 vS0;
   varying vec4 vS1;
   varying float vSlot;
@@ -119,11 +128,18 @@ const vertex = (joints: number) => /* glsl */ `
     vS0 = texture2D(uState, vec2(u, 0.25));
     vS1 = texture2D(uState, vec2(u, 0.75));
     vSlot = aSlot;
+    // Relevo procedural na pose de ligação: fica preso ao corpo quando ele se move.
+    vP = position;
+    // Ligação → vista (posado): leva o gradiente do relevo para a superfície posada.
+    vMv = mat3(modelViewMatrix) * mat3(M);
     vec4 p = M * vec4(position, 1.0);
     #ifdef MUSCLE
-    vAlong = aAlong;
+    vAlong = aMuscle.x;
+    vTendon = aMuscle.y;
+    vF = aFiber.xyz;
+    vT = mat3(modelViewMatrix) * (mat3(M) * aFiber.xyz);
     // Volume preservado: ao encurtar, o ventre engrossa; as pontas (tendão) quase não mudam.
-    float belly = sin(3.14159265 * clamp(aAlong, 0.0, 1.0));
+    float belly = sin(3.14159265 * clamp(aMuscle.x, 0.0, 1.0));
     p.xyz += mat3(M) * aRadial * (vS1.y * belly);
     #endif
     vec4 w = modelMatrix * p;
@@ -154,14 +170,53 @@ const fragment = /* glsl */ `
   varying vec3 vN;
   varying vec3 vView;
   varying vec3 vW;
+  varying vec3 vP;
+  varying mat3 vMv;
   varying vec4 vS0;
   varying vec4 vS1;
   varying float vSlot;
   #ifdef MUSCLE
   varying float vAlong;
+  varying float vTendon;
+  varying vec3 vT;
+  varying vec3 vF;
   #endif
 
   ${LIGHT_GLSL}
+
+  // Ruído de valor 3D (hash sem textura).
+  float hash3(vec3 p) {
+    p = fract(p * vec3(0.1031, 0.1030, 0.0973));
+    p += dot(p, p.yxz + 33.33);
+    return fract((p.x + p.y) * p.z);
+  }
+  // Ruído de valor 3D com gradiente analítico (Quilez): x = valor 0..1, yzw = derivadas.
+  vec4 noised(vec3 x) {
+    vec3 i = floor(x);
+    vec3 w = fract(x);
+    vec3 u = w * w * (3.0 - 2.0 * w);
+    vec3 du = 6.0 * w * (1.0 - w);
+    float a = hash3(i);
+    float b = hash3(i + vec3(1.0, 0.0, 0.0));
+    float c = hash3(i + vec3(0.0, 1.0, 0.0));
+    float d = hash3(i + vec3(1.0, 1.0, 0.0));
+    float e = hash3(i + vec3(0.0, 0.0, 1.0));
+    float f = hash3(i + vec3(1.0, 0.0, 1.0));
+    float g = hash3(i + vec3(0.0, 1.0, 1.0));
+    float h = hash3(i + vec3(1.0, 1.0, 1.0));
+    float k1 = b - a, k2 = c - a, k3 = e - a, k4 = a - b - c + d, k5 = a - c - e + g, k6 = a - b - e + f, k7 = -a + b + c - d + e - f - g + h;
+    return vec4(
+      a + k1 * u.x + k2 * u.y + k3 * u.z + k4 * u.x * u.y + k5 * u.y * u.z + k6 * u.z * u.x + k7 * u.x * u.y * u.z,
+      du * vec3(k1 + k4 * u.y + k6 * u.z + k7 * u.y * u.z, k2 + k5 * u.z + k4 * u.x + k7 * u.z * u.x, k3 + k6 * u.x + k5 * u.y + k7 * u.x * u.y));
+  }
+  // Relevo: gradiente da altura (m/m) na ligação → vista; a normal inclina contra o gradiente. Sem derivada de tela
+  // (os quadrados de 2 × 2 pixels pontilhavam o brilho).
+  vec3 relief(vec3 n, vec3 gradBind) {
+    vec3 g = vMv * gradBind;
+    return normalize(n - (g - n * dot(n, g)));
+  }
+  // Some quando o padrão de comprimento de onda lambda (m) fica menor que ~3 pixels: sem cintilação ao longe.
+  float detailFade(float lambda, float px) { return 1.0 - smoothstep(lambda * 0.08, lambda * 0.25, px); }
 
   void main() {
     if (vS1.x > 0.5 || vW.y < uShowAbove) discard;
@@ -186,6 +241,8 @@ const fragment = /* glsl */ `
       #endif
       vec3 n = dot(vN, vN) > 1e-12 ? normalize(vN) : vec3(0.0, 0.0, 1.0);
       if (!gl_FrontFacing) n = -n;
+      // Tamanho do pixel na superfície (m).
+      float px = length(fwidth(vView));
       vec3 v = normalize(-vView);
       vec3 L = normalize(uKeyDir);
       vec3 H = normalize(L + v);
@@ -199,8 +256,24 @@ const fragment = /* glsl */ `
 
       #ifdef MUSCLE
         float t = clamp(vAlong, 0.0, 1.0);
-        // Tendão claro nas pontas.
-        float tendon = 1.0 - smoothstep(0.015, 0.1, t) * (1.0 - smoothstep(0.9, 0.985, t));
+        // Estrias: fascículos (~3,6 mm) que correm ao longo da fibra e ondulam devagar no comprimento. Coordenada na
+        // ligação (o desenho fica preso ao músculo), sem costura: ruído 3D esticado na direção da fibra,
+        // x' = A x com A = 280 I − 266 F Fᵀ (280/m através da fibra, 14/m ao longo).
+        vec3 F = normalize(vF + vec3(1e-5));
+        vec3 ng = n;
+        float seed = floor(vSlot + 0.5) * 7.31;
+        vec4 fn = noised(280.0 * vP - 266.0 * F * dot(vP, F) + seed);
+        float fa = fn.x;
+        vec3 dfa = 280.0 * fn.yzw - 266.0 * F * dot(F, fn.yzw);
+        // Crista: 1 − |2 fa − 1|, suavizada.
+        float r0 = 1.0 - abs(fa * 2.0 - 1.0);
+        float ridge = r0 * r0 * (3.0 - 2.0 * r0);
+        vec3 dRidge = 6.0 * r0 * (1.0 - r0) * (-2.0 * sign(fa * 2.0 - 1.0)) * dfa;
+        // Transição músculo-tendão com borda irregular (as fibras entram na aponeurose em alturas diferentes).
+        float tendon = smoothstep(0.3, 0.7, vTendon + (fa - 0.5) * 0.35);
+        float a1 = detailFade(0.0036, px) * (1.0 - tendon);
+        n = relief(n, 0.0002 * a1 * dRidge);
+        albedo *= 1.0 - 0.18 * a1 * (1.0 - ridge);
         albedo = mix(albedo, toLinear(uTendon) * 0.8, tendon * 0.6);
         albedo = mix(albedo, glow * 0.7, lit * 0.45);
         // Deformação: encurtar = tungstênio, alongar = aço (pouco no tendão, que quase não muda).
@@ -209,21 +282,17 @@ const fragment = /* glsl */ `
         vec3 cool = toLinear(uStretch);
         albedo = mix(albedo, glow * 0.75, sh * 0.8);
         albedo = mix(albedo, cool * 0.7, st * 0.85);
-        // Direção da fibra: gradiente de t na superfície.
-        vec3 dp1 = dFdx(vView);
-        vec3 dp2 = dFdy(vView);
-        float dt1 = dFdx(vAlong);
-        float dt2 = dFdy(vAlong);
-        vec3 T = cross(dp2, n) * dt1 + cross(n, dp1) * dt2;
-        T -= n * dot(n, T);
+        // Direção da fibra: atributo por vértice (linha central projetada na superfície), posado; suave entre triângulos.
+        // O brilho estreito da fibra usa a normal geométrica (com o relevo ele cintilava); o relevo vai no difuso.
+        vec3 T = vT - ng * dot(ng, vT);
         float tl = length(T);
-        T = tl > 1e-14 ? T / tl : normalize(cross(n, vec3(0.0, 0.0, 1.0)) + vec3(1e-4));
+        T = tl > 1e-6 ? T / tl : normalize(cross(ng, vec3(0.0, 0.0, 1.0)) + vec3(1e-4));
         col = studio(albedo, n, v, 0.45, vec3(0.9, 0.22, 0.12), ndl);
         float th = dot(T, H);
         float sinTH = sqrt(max(1.0 - th * th, 0.0));
-        float facing = smoothstep(-0.1, 0.35, ndl);
+        float facing = smoothstep(-0.1, 0.35, dot(ng, L));
         float sheen = (pow(sinTH, 110.0) * 0.55 + pow(sinTH, 14.0) * 0.07) * mix(1.0, 0.45, tendon);
-        float tendonSpec = pow(max(dot(n, H), 0.0), 48.0) * 0.3 * tendon;
+        float tendonSpec = pow(max(dot(ng, H), 0.0), 48.0) * 0.3 * tendon;
         col += toLinear(uKeyColor) * smoothstep(0.25, 1.0, uLight) * 1.6 * (sheen + tendonSpec) * facing;
         // Brilho que percorre a fibra da origem à inserção (duas passadas) depois de um destaque novo.
         float ph = (uTime - uPulseStart) / 1.2;
@@ -232,10 +301,15 @@ const fragment = /* glsl */ `
           emit += glow * exp(-pow((t - x) * 7.0, 2.0)) * 1.6 * hl * (1.0 - smoothstep(1.6, 2.0, ph));
         }
       #elif defined(TRANSLUCENT)
+        // Microrrelevo da pele (~1,7 mm), só de perto.
+        n = relief(n, 0.00006 * 600.0 * detailFade(0.0017, px) * noised(vP * 600.0).yzw);
         col = studio(albedo, n, v, 0.6, vec3(1.0, 0.42, 0.3), ndl);
         col += toLinear(uKeyColor) * smoothstep(0.25, 1.0, uLight) * pow(max(dot(n, H), 0.0), 36.0) * 0.5;
       #else
-        // Osso: marfim fosco, levemente quente na borda.
+        // Osso: marfim fosco com textura porosa leve, levemente quente na borda.
+        vec4 pore = noised(vP * 450.0);
+        n = relief(n, 0.00012 * 450.0 * detailFade(0.0022, px) * pore.yzw);
+        albedo *= 0.94 + 0.06 * pore.x;
         col = studio(albedo, n, v, 0.22, vec3(1.0, 0.75, 0.55), ndl);
         col += toLinear(uKeyColor) * smoothstep(0.25, 1.0, uLight) * pow(max(dot(n, H), 0.0), 20.0) * 0.1;
       #endif

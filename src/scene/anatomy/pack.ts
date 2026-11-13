@@ -3,9 +3,10 @@
  * Sem three.js: devolve arrays prontos para virar geometria (runtime) ou para teste.
  */
 import type { Vec3 } from '@/engine/math/vec';
+import type { AnatomyLod } from './lod';
 
+export type { AnatomyLod } from './lod';
 export type AnatomyKind = 'bone' | 'cartilage' | 'muscle' | 'tendon' | 'skin';
-export type AnatomyLod = 'hi' | 'lo';
 
 export interface PackJoint {
   readonly id: string;

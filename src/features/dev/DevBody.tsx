@@ -26,6 +26,7 @@ import { anchorPose, forwardKinematics } from '@/engine/kinematics/fk';
 import { buildSkeleton, degToAngles, mirrorId } from '@/engine/kinematics/skeleton';
 import { skinMatrices, skinPositions } from '@/engine/kinematics/skinning';
 import { loadAnatomyPack, type AnatomyKind, type AnatomyLod, type AnatomyPack } from '@/scene/anatomy/pack';
+import { isLod } from '@/scene/anatomy/lod';
 import { REFERENCE_POSES } from '@/scene/anatomy/poses';
 
 type Layer = 'pele' | 'musculo' | 'osso';
@@ -50,7 +51,8 @@ export default function DevBody() {
   const [deg, setDeg] = useState<Record<string, number>>(() => ({ ...(REFERENCE_POSES.find((p) => p.id === query.get('pose'))?.deg ?? {}) }));
   const [sym, setSym] = useState(false);
   const [layers, setLayers] = useState<ReadonlySet<Layer>>(() => new Set((query.get('camadas') ?? 'musculo,osso').split(',') as Layer[]));
-  const lod: AnatomyLod = query.get('lod') === 'lo' ? 'lo' : 'hi';
+  const lodQuery = query.get('lod');
+  const lod: AnatomyLod = isLod(lodQuery) ? lodQuery : 'hi';
   const world = useRef<{ scene: Scene; render: () => void; items: Item[] } | null>(null);
 
   useEffect(() => {

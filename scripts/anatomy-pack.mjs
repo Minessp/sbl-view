@@ -18,7 +18,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { MeshoptSimplifier } from 'meshoptimizer';
 import { packSBL5 } from './sbl5.mjs';
-import { closeCracks, dropFolds, dropNonManifold, edgeCensus, edgeUse, fillHoles, fixTJunctions, orientationErrors, weld } from './mesh-tools.mjs';
+import { closeCracks, dropFolds, dropNonManifold, edgeCensus, edgeUse, fillHoles, fixTJunctions, orientationErrors, refine, weld } from './mesh-tools.mjs';
 
 const args = process.argv.slice(2);
 const onlyLandmarks = args.includes('--landmarks');
@@ -464,6 +464,9 @@ const smoothstep = (a, b, x) => {
 /**
  * Pesos densos (n × J) → 4 maiores, em u8 somando 255. Vértice na linha média de parte espelhada escolhe
  * juntas laterais aos pares (_r com _l), para a cópia espelhada ficar idêntica.
+ * Corte contínuo: dos 4 escolhidos se subtrai o maior peso que ficou de fora. Cortar seco fazia vértices vizinhos
+ * (a 1 mm, na malha densificada) escolherem 4ª junta diferente (escápula num, clavícula no outro, 8% cada) e a pele
+ * da nuca rasgava em degraus na pose; assim a junta que entra ou sai do top 4 chega lá com peso zero.
  */
 function quantize(W, n, pos, mirror) {
   const out = new Uint8Array(n * 8);
@@ -484,12 +487,17 @@ function quantize(W, n, pos, mirror) {
       }
       while (top.length < 4) top.push(order.find((j) => !top.includes(j) && jMirror[j] === j) ?? 0);
     }
-    const sum = top.reduce((s, j) => s + W[v * J + j], 0);
-    const raw = top.map((j) => (W[v * J + j] / sum) * 255);
+    let cut = 0;
+    for (let j = 0; j < J; j++) if (!top.includes(j)) cut = Math.max(cut, W[v * J + j]);
+    let w = top.map((j) => Math.max(0, W[v * J + j] - cut));
+    if (w.reduce((a, b) => a + b, 0) < 1e-6) w = top.map((j) => W[v * J + j]);
+    const sum = w.reduce((a, b) => a + b, 0);
+    const raw = w.map((x) => (x / sum) * 255);
     const q = raw.map(Math.floor);
     let rest = 255 - q.reduce((a, b) => a + b, 0);
-    const frac = raw.map((r, i) => [r - q[i], i]).sort((a, b) => b[0] - a[0]);
-    for (let k = 0; rest > 0; k++, rest--) q[frac[k % 4][1]]++;
+    // O resto do arredondamento só vai para quem tem peso (junta com zero não ganha 1/255).
+    const frac = raw.map((r, i) => [r - q[i], i]).filter(([, i]) => raw[i] > 0).sort((a, b) => b[0] - a[0]);
+    for (let k = 0; rest > 0; k++, rest--) q[frac[k % frac.length][1]]++;
     if (mirror && Math.abs(pos[v * 3]) < 1e-6) {
       // Par _r/_l com valores diferentes por arredondamento: a unidade extra vai para uma junta central.
       const central = top.findIndex((j) => jMirror[j] === j && q[top.indexOf(j)] > 0);
@@ -517,14 +525,32 @@ function rigidWeights(p) {
   for (let v = 0; v < n; v++) W[v * J + j] = 1;
   return W;
 }
-/** Pesos pela distância à superfície óssea de cada segmento (sem suavizar). */
-function nearestWeights(p) {
+/**
+ * Pesos pela distância à superfície óssea de cada segmento (sem suavizar). Cada vértice tem um segmento mais próximo
+ * (N) e só recebe peso dele e dos vizinhos de cadeia. `islands` (pele): o segmento mais próximo tem de formar uma
+ * região conexa na malha. A ponta dos dedos fica a ~3 cm da coxa, mais perto que o fêmur; sem isso a pele lateral da
+ * coxa levava peso da mão e esticava ao erguer o braço. Ilha (componente que não é a maior daquele segmento) herda o
+ * segmento dos vizinhos, mas só se não for vizinho de cadeia dele (ilha da perna na dobra do joelho fica como está).
+ */
+function nearestWeights(p, { islands = false } = {}) {
   const { pos } = p.mesh;
   const n = pos.length / 3;
   const W = new Float32Array(n * J);
   const lb = new Float64Array(J);
   const ord = Array.from({ length: J }, (_, i) => i);
   const d = new Float64Array(J);
+  const near = new Int32Array(n);
+  const D = islands ? new Float32Array(n * J) : null;
+  const weigh = (v, N, dist) => {
+    let sum = 0;
+    for (const j of candidates[N]) {
+      if (!Number.isFinite(dist[j])) continue;
+      const w = 1 / (dist[j] * dist[j] + 2.5e-5) ** 2;
+      W[v * J + j] = w;
+      sum += w;
+    }
+    for (const j of candidates[N]) W[v * J + j] /= sum;
+  };
   for (let v = 0; v < n; v++) {
     const x = pos[v * 3], y = pos[v * 3 + 1], z = pos[v * 3 + 2];
     for (let j = 0; j < J; j++) lb[j] = boxDist(boxes[j], x, y, z);
@@ -539,15 +565,63 @@ function nearestWeights(p) {
     }
     let N = 0;
     for (let j = 1; j < J; j++) if (d[j] < d[N]) N = j;
-    let sum = 0;
-    for (const j of candidates[N]) {
-      if (!Number.isFinite(d[j])) continue;
-      const w = 1 / (d[j] * d[j] + 2.5e-5) ** 2;
-      W[v * J + j] = w;
-      sum += w;
-    }
-    for (const j of candidates[N]) W[v * J + j] /= sum;
+    near[v] = N;
+    if (D) D.set(d, v * J);
+    else weigh(v, N, d);
   }
+  if (!D) return W;
+  const { start, nb } = adjacency(n, p.mesh.idx);
+  const comp = new Int32Array(n).fill(-1);
+  const sizes = [];
+  const stack = [];
+  for (let v = 0; v < n; v++) {
+    if (comp[v] >= 0) continue;
+    const c = sizes.length;
+    let size = 0;
+    comp[v] = c;
+    stack.push(v);
+    while (stack.length) {
+      const u = stack.pop();
+      size++;
+      for (let k = start[u]; k < start[u + 1]; k++) {
+        const w = nb[k];
+        if (comp[w] < 0 && near[w] === near[u]) (comp[w] = c), stack.push(w);
+      }
+    }
+    sizes.push(size);
+  }
+  const main = new Map();
+  for (let v = 0; v < n; v++) {
+    const m = main.get(near[v]);
+    if (m === undefined || sizes[comp[v]] > sizes[m]) main.set(near[v], comp[v]);
+  }
+  const good = new Uint8Array(n);
+  let queue = [];
+  for (let v = 0; v < n; v++) if (main.get(near[v]) === comp[v]) (good[v] = 1), queue.push(v);
+  const before = near.slice();
+  while (queue.length) {
+    const next = [];
+    for (const u of queue)
+      for (let k = start[u]; k < start[u + 1]; k++) {
+        const w = nb[k];
+        if (good[w]) continue;
+        good[w] = 1;
+        near[w] = near[u];
+        next.push(w);
+      }
+    queue = next;
+  }
+  let relabeled = 0;
+  for (let v = 0; v < n; v++) {
+    if (near[v] !== before[v] && candidates[near[v]].includes(before[v])) near[v] = before[v];
+    if (near[v] !== before[v]) relabeled++;
+  }
+  for (let v = 0; v < n; v++) {
+    const dist = D.subarray(v * J, v * J + J);
+    for (const j of candidates[near[v]]) if (!Number.isFinite(dist[j])) dist[j] = kdNearest(trees[j], pos[v * 3], pos[v * 3 + 1], pos[v * 3 + 2], 1);
+    weigh(v, near[v], dist);
+  }
+  console.log(`${p.id}: ${relabeled} vértices em ilhas de segmento rerrotulados`);
   return W;
 }
 /** Difusão dos pesos pela malha até ~D metros (passos = 2 (D / aresta)²). */
@@ -756,6 +830,7 @@ function muscleAxis(p, W) {
     rmax: r4(rmax),
     ends: [joints[e0].id, joints[e1].id],
     t,
+    radial,
     length: total,
   };
 }
@@ -792,7 +867,7 @@ for (const p of parts) {
     if (p.mirror) symmetrize(p, p.W, 0.01);
     p.skinDepth = skinDepth(p);
   } else {
-    p.W = nearestWeights(p);
+    p.W = nearestWeights(p, { islands: p.kind === 'skin' });
     smoothWeights(p, p.W, SMOOTH[p.kind]);
     if (p.mirror) symmetrize(p, p.W, MIDBAND);
   }
@@ -852,10 +927,55 @@ for (const p of parts) {
 
 // --- Níveis de detalhe e pacote ----------------------------------------------------------------------
 await MeshoptSimplifier.ready;
+/**
+ * Níveis: [fração dos triângulos da malha original, mínimo] simplifica; { refine: m } densifica a partir da original
+ * (arestas acima de m divididas, ver refine em mesh-tools.mjs). Pesos e atributos saem sempre da malha original.
+ */
 const LOD = {
-  hi: { bone: [0.3, 300], cartilage: [0.3, 60], muscle: [0.3, 160], tendon: [0.3, 60], skin: [1, 0] },
   lo: { bone: [0.11, 120], cartilage: [0.12, 30], muscle: [0.11, 60], tendon: [0.12, 30], skin: [0.5, 0] },
+  mid: { bone: [0.3, 300], cartilage: [0.3, 60], muscle: [0.3, 160], tendon: [0.3, 60], skin: [1, 0] },
+  hi: { bone: [0.6, 300], cartilage: [1, 0], muscle: [1, 0], tendon: [1, 0], skin: { refine: 0.005 } },
+  ultra: { bone: [1, 0], cartilage: [1, 0], muscle: { refine: 0.007 }, tendon: { refine: 0.007 }, skin: { refine: 0.0033 } },
 };
+const onlyLod = args.find((a) => a.startsWith('--lod='))?.slice(6).split(',');
+/** Malha do nível: a original simplificada, ou densificada com pesos e atributos interpolados. */
+function lodMesh(p, spec) {
+  if (!('refine' in spec)) return { pos: p.mesh.pos, idx: simplifyIdx(p, spec[0], spec[1]), skin: p.skin, attr: p.attr };
+  const seam = p.mirror ? (v, P) => Math.abs(P[v * 3]) < 1e-6 : () => false;
+  const { mesh, parents, base } = refine(p.mesh, spec.refine, { onSeam: seam });
+  const n = mesh.pos.length / 3;
+  const W = new Float32Array(n * J);
+  W.set(p.W);
+  for (let v = base; v < n; v++) {
+    const a = parents[(v - base) * 2], b = parents[(v - base) * 2 + 1];
+    for (let j = 0; j < J; j++) W[v * J + j] = 0.5 * (W[a * J + j] + W[b * J + j]);
+  }
+  const skin = quantize(W, n, mesh.pos, p.mirror);
+  let attr;
+  if (p.attr) {
+    const t = new Float32Array(n);
+    const rad = new Float32Array(n * 3);
+    t.set(p.t);
+    rad.set(p.radial);
+    for (let v = base; v < n; v++) {
+      const a = parents[(v - base) * 2], b = parents[(v - base) * 2 + 1];
+      t[v] = 0.5 * (t[a] + t[b]);
+      // Radial = média das pontas + o quanto o ponto novo saiu do meio da corda.
+      for (let k = 0; k < 3; k++) rad[v * 3 + k] = 0.5 * (rad[a * 3 + k] + rad[b * 3 + k]) + mesh.pos[v * 3 + k] - 0.5 * (mesh.pos[a * 3 + k] + mesh.pos[b * 3 + k]);
+    }
+    attr = new Uint8Array(n * 4);
+    const i8 = new Int8Array(attr.buffer);
+    for (let v = 0; v < n; v++) {
+      attr[v * 4] = Math.round(t[v] * 255);
+      for (let k = 0; k < 3; k++) i8[v * 4 + 1 + k] = Math.max(-127, Math.min(127, Math.round((rad[v * 3 + k] / p.rmax) * 127)));
+    }
+  }
+  if (p.kind === 'skin') {
+    const census = edgeCensus(mesh, seam);
+    if (census.border.length || census.nonManifold || orientationErrors(mesh.idx)) throw new Error('pele densificada não ficou estanque');
+  }
+  return { pos: mesh.pos, idx: mesh.idx, skin, attr };
+}
 function simplifyIdx(p, ratio, min) {
   const { pos, idx } = p.mesh;
   const target = Math.min(idx.length, Math.max(min * 3, Math.round((idx.length * ratio) / 3) * 3));
@@ -896,18 +1016,21 @@ for (const p of parts) {
   const P = p.mesh.pos;
   for (let i = 0; i < P.length; i += 3) for (let k = 0; k < 3; k++) (bbLo[k] = Math.min(bbLo[k], P[i + k])), (bbHi[k] = Math.max(bbHi[k], P[i + k]));
 }
-const offset = vr4(bbLo.map((x) => x - 1e-4));
-const scale = vr4(bbHi.map((x, k) => x + 1e-4 - offset[k]));
+// Folga de 5 mm: o ponto novo da densificação pode sair um pouco da caixa das malhas originais.
+const offset = vr4(bbLo.map((x) => x - 0.005));
+const scale = vr4(bbHi.map((x, k) => x + 0.005 - offset[k]));
 
 mkdirSync(outDir, { recursive: true });
 for (const [lod, spec] of Object.entries(LOD)) {
+  if (onlyLod && !onlyLod.includes(lod)) continue;
   const packed = [];
   let tris = 0;
+  const byKind = {};
   for (const p of parts) {
-    const [ratio, min] = spec[p.kind];
-    const idx = simplifyIdx(p, ratio, min);
+    const m = lodMesh(p, spec[p.kind]);
+    const idx = m.idx;
     // Compacta: só os vértices usados, com os atributos.
-    const remap = new Int32Array(p.mesh.pos.length / 3).fill(-1);
+    const remap = new Int32Array(m.pos.length / 3).fill(-1);
     const keep = [];
     const out = new Uint32Array(idx.length);
     for (let i = 0; i < idx.length; i++) {
@@ -921,11 +1044,16 @@ for (const [lod, spec] of Object.entries(LOD)) {
     const skin = new Uint8Array(keep.length * 8);
     const muscle = p.attr ? new Uint8Array(keep.length * 4) : undefined;
     keep.forEach((v, i) => {
-      for (let k = 0; k < 3; k++) q[i * 3 + k] = Math.round(((p.mesh.pos[v * 3 + k] - offset[k]) / scale[k]) * 32767);
-      skin.set(p.skin.subarray(v * 8, v * 8 + 8), i * 8);
-      if (muscle) muscle.set(p.attr.subarray(v * 4, v * 4 + 4), i * 4);
+      for (let k = 0; k < 3; k++) {
+        const x = Math.round(((m.pos[v * 3 + k] - offset[k]) / scale[k]) * 32767);
+        if (x < 0 || x > 32767) throw new Error(`${p.id}: vértice fora da caixa de quantização (${lod})`);
+        q[i * 3 + k] = x;
+      }
+      skin.set(m.skin.subarray(v * 8, v * 8 + 8), i * 8);
+      if (muscle) muscle.set(m.attr.subarray(v * 4, v * 4 + 4), i * 4);
     });
     tris += out.length / 3;
+    byKind[p.kind] = (byKind[p.kind] ?? 0) + out.length / 3;
     const metaPart = {
       id: p.id,
       kind: p.kind,
@@ -951,7 +1079,7 @@ for (const [lod, spec] of Object.entries(LOD)) {
   const buf = await packSBL5({ header, parts: packed });
   const file = join(outDir, `anatomy-${lod}.bin`);
   writeFileSync(file, buf);
-  console.log(`${file}: ${parts.length} partes, ${tris} triângulos (lado direito + linha média), ${(buf.length / 1024).toFixed(0)} KB`);
+  console.log(`${file}: ${parts.length} partes, ${tris} triângulos (lado direito + linha média; ${Object.entries(byKind).map(([k, v]) => `${k} ${v}`).join(', ')}), ${(buf.length / 1024).toFixed(0)} KB`);
 }
 const unused = [...objects.values()].filter((o) => !used.has(o.name) && o.kind === 'bone').map((o) => o.name);
 console.log(`ossos do export fora do pacote: ${unused.join(', ')}`);

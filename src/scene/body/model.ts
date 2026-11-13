@@ -3,14 +3,16 @@
  * Cada parte de cada lado vira uma "vaga" (slot) com índice próprio: o shader lê o estado dela numa textura
  * (destaque, opacidade, calor, ativação, oculto, volume) e o passe de seleção devolve o índice.
  * O lado esquerdo sai por espelho em X (juntas _r ↔ _l, triângulos com a ordem invertida).
+ * Níveis de detalhe: o modelo nasce do pacote leve e troca só a geometria quando o nível escolhido chega
+ * (`upgrade`); vagas, caixas e linhas centrais ficam as do primeiro pacote (comprimento e cor não saltam).
  */
 import { BufferAttribute, BufferGeometry } from 'three';
 import type { MuscleDef } from '@/data/schema/muscle';
 import type { Vec3 } from '@/engine/math/vec';
-import type { AnatomyKind, AnatomyPack, AnatomyPart } from '../anatomy/pack';
+import type { AnatomyKind, AnatomyLod, AnatomyPack, AnatomyPart } from '../anatomy/pack';
+import { buildBodyGeometryData, LAYERS, layerOf, slotSignature, type BodyGeometryData, type BodyLayer } from './geometryData';
 
-export type BodyLayer = 'bone' | 'deep' | 'superficial' | 'skin';
-export const LAYERS: readonly BodyLayer[] = ['bone', 'deep', 'superficial', 'skin'];
+export { LAYERS, layerOf, type BodyGeometryData, type BodyLayer } from './geometryData';
 
 export interface Box {
   readonly center: Vec3;
@@ -35,54 +37,23 @@ export interface BodySlot {
 }
 
 export interface BodyModel {
+  /** Primeiro pacote (metadados das partes, juntas, marcos). */
   readonly pack: AnatomyPack;
   readonly jointIds: readonly string[];
   readonly slots: readonly BodySlot[];
+  /** Geometria do nível atual (troca em `upgrade`; as instâncias assinam com `subscribe`). */
   readonly geometry: Readonly<Record<BodyLayer, BufferGeometry>>;
+  /** Nível da geometria atual. */
+  readonly lod: AnatomyLod;
+  /** Ordem e tipo das partes: outro nível só entra com a mesma assinatura. */
+  readonly signature: string;
+  /** Troca a malha por outro nível; avisa as instâncias e descarta a anterior. */
+  upgrade(lod: AnatomyLod, data: BodyGeometryData): void;
+  subscribe(f: () => void): () => void;
   /** Vagas de cada músculo do Atlas (os dois lados). */
   readonly byMuscle: ReadonlyMap<string, readonly number[]>;
   readonly byPart: ReadonlyMap<string, readonly number[]>;
   dispose(): void;
-}
-
-export function layerOf(p: AnatomyPart): BodyLayer {
-  if (p.kind === 'skin') return 'skin';
-  if (p.kind === 'bone' || p.kind === 'cartilage') return 'bone';
-  return p.layer === 'superficial' ? 'superficial' : 'deep';
-}
-
-/**
- * Normais por área. Parte espelhada: o vértice da linha média (x = 0) só vê as faces do lado direito, e a cópia
- * espelhada inverteria o x da normal, um vinco no meio do corpo. A normal dele é a média com o espelho (x = 0).
- */
-function vertexNormals(pos: Float32Array, idx: Uint32Array, mirror: boolean): Float32Array {
-  const n = new Float32Array(pos.length);
-  for (let t = 0; t < idx.length; t += 3) {
-    const a = (idx[t] ?? 0) * 3, b = (idx[t + 1] ?? 0) * 3, c = (idx[t + 2] ?? 0) * 3;
-    const ux = (pos[b] ?? 0) - (pos[a] ?? 0), uy = (pos[b + 1] ?? 0) - (pos[a + 1] ?? 0), uz = (pos[b + 2] ?? 0) - (pos[a + 2] ?? 0);
-    const vx = (pos[c] ?? 0) - (pos[a] ?? 0), vy = (pos[c + 1] ?? 0) - (pos[a + 1] ?? 0), vz = (pos[c + 2] ?? 0) - (pos[a + 2] ?? 0);
-    const nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
-    for (const v of [a, b, c]) {
-      n[v] = (n[v] ?? 0) + nx;
-      n[v + 1] = (n[v + 1] ?? 0) + ny;
-      n[v + 2] = (n[v + 2] ?? 0) + nz;
-    }
-  }
-  for (let i = 0; i < n.length; i += 3) {
-    if (mirror && pos[i] === 0) n[i] = 0;
-    const l = Math.hypot(n[i] ?? 0, n[i + 1] ?? 0, n[i + 2] ?? 0);
-    // Área nula: normal indefinida viraria NaN no shader. Frente.
-    if (l < 1e-9) {
-      n[i] = 0;
-      n[i + 1] = -0.3;
-      n[i + 2] = 0.954;
-      continue;
-    }
-    n[i] = (n[i] ?? 0) / l;
-    n[i + 1] = (n[i + 1] ?? 0) / l;
-    n[i + 2] = (n[i + 2] ?? 0) / l;
-  }
-  return n;
 }
 
 function boxOf(pos: Float32Array, sx: number): Box {
@@ -148,35 +119,41 @@ function lineSkin(p: AnatomyPart, mirror: Uint8Array | null): BodySlot['line'] {
   return { points, joints, weights, rest };
 }
 
-interface Acc {
-  pos: number[];
-  nor: number[];
-  ji: number[];
-  jw: number[];
-  slot: number[];
-  along: number[];
-  radial: number[];
-  idx: number[];
+/** BufferGeometry das quatro camadas a partir dos arrays (sem cópia). */
+export function bodyGeometry(data: BodyGeometryData): Record<BodyLayer, BufferGeometry> {
+  return Object.fromEntries(
+    LAYERS.map((l) => {
+      const d = data[l];
+      const g = new BufferGeometry();
+      g.setAttribute('position', new BufferAttribute(d.position, 3));
+      g.setAttribute('normal', new BufferAttribute(d.normal, 3));
+      g.setAttribute('skinIndex', new BufferAttribute(d.skinIndex, 4));
+      g.setAttribute('skinWeight', new BufferAttribute(d.skinWeight, 4, true));
+      g.setAttribute('aSlot', new BufferAttribute(d.slot, 1));
+      if (d.muscle && d.fiber && d.radial) {
+        g.setAttribute('aMuscle', new BufferAttribute(d.muscle, 4, true));
+        g.setAttribute('aFiber', new BufferAttribute(d.fiber, 4, true));
+        g.setAttribute('aRadial', new BufferAttribute(d.radial, 3));
+      }
+      g.setIndex(new BufferAttribute(d.index, 1));
+      return [l, g];
+    }),
+  ) as Record<BodyLayer, BufferGeometry>;
 }
-const emptyAcc = (): Acc => ({ pos: [], nor: [], ji: [], jw: [], slot: [], along: [], radial: [], idx: [] });
 
 export function buildBodyModel(pack: AnatomyPack, muscles: readonly MuscleDef[]): BodyModel {
   const owner = new Map<string, { muscleId: string; partId: string }>();
   for (const m of muscles) for (const p of m.parts) for (const id of p.mesh) owner.set(id, { muscleId: m.id, partId: p.id });
 
-  const acc: Record<BodyLayer, Acc> = { bone: emptyAcc(), deep: emptyAcc(), superficial: emptyAcc(), skin: emptyAcc() };
   const slots: BodySlot[] = [];
   const byMuscle = new Map<string, number[]>();
   const byPart = new Map<string, number[]>();
-
   for (const part of pack.parts) {
     const layer = layerOf(part);
-    const normals = vertexNormals(part.positions, part.indices, part.mirror);
     const copies: (Uint8Array | null)[] = part.mirror ? [null, pack.jointMirror] : [null];
     for (const mirror of copies) {
       const index = slots.length;
       const side = !part.mirror ? 'c' : mirror ? 'l' : 'r';
-      const sx = mirror ? -1 : 1;
       const own = owner.get(part.id);
       const line = lineSkin(part, mirror);
       slots.push({
@@ -186,62 +163,43 @@ export function buildBodyModel(pack: AnatomyPack, muscles: readonly MuscleDef[])
         kind: part.kind,
         layer,
         ...(own && { muscleId: own.muscleId, musclePartId: own.partId }),
-        box: boxOf(part.positions, sx),
+        box: boxOf(part.positions, mirror ? -1 : 1),
         ...(line && { line }),
       });
       if (own) {
         byMuscle.set(own.muscleId, [...(byMuscle.get(own.muscleId) ?? []), index]);
         byPart.set(own.partId, [...(byPart.get(own.partId) ?? []), index]);
       }
-      const a = acc[layer];
-      const base = a.pos.length / 3;
-      const n = part.positions.length / 3;
-      for (let v = 0; v < n; v++) {
-        a.pos.push(sx * (part.positions[v * 3] ?? 0), part.positions[v * 3 + 1] ?? 0, part.positions[v * 3 + 2] ?? 0);
-        a.nor.push(sx * (normals[v * 3] ?? 0), normals[v * 3 + 1] ?? 0, normals[v * 3 + 2] ?? 0);
-        for (let k = 0; k < 4; k++) {
-          const j = part.joints[v * 4 + k] ?? 0;
-          a.ji.push(mirror ? (mirror[j] ?? j) : j);
-          a.jw.push(part.weights[v * 4 + k] ?? 0);
-        }
-        a.slot.push(index);
-        a.along.push(part.along?.[v] ?? 0);
-        const r = part.radial;
-        a.radial.push(sx * (r?.[v * 3] ?? 0), r?.[v * 3 + 1] ?? 0, r?.[v * 3 + 2] ?? 0);
-      }
-      const I = part.indices;
-      for (let t = 0; t < I.length; t += 3) {
-        const i0 = base + (I[t] ?? 0), i1 = base + (I[t + 1] ?? 0), i2 = base + (I[t + 2] ?? 0);
-        // Espelho inverte a orientação: troca dois vértices.
-        if (mirror) a.idx.push(i0, i2, i1);
-        else a.idx.push(i0, i1, i2);
-      }
     }
   }
 
-  const geometry = Object.fromEntries(
-    LAYERS.map((l) => {
-      const a = acc[l];
-      const g = new BufferGeometry();
-      g.setAttribute('position', new BufferAttribute(new Float32Array(a.pos), 3));
-      g.setAttribute('normal', new BufferAttribute(new Float32Array(a.nor), 3));
-      g.setAttribute('skinIndex', new BufferAttribute(new Uint8Array(a.ji), 4));
-      g.setAttribute('skinWeight', new BufferAttribute(new Float32Array(a.jw), 4));
-      g.setAttribute('aSlot', new BufferAttribute(new Float32Array(a.slot), 1));
-      if (l === 'deep' || l === 'superficial') {
-        g.setAttribute('aAlong', new BufferAttribute(new Float32Array(a.along), 1));
-        g.setAttribute('aRadial', new BufferAttribute(new Float32Array(a.radial), 3));
-      }
-      g.setIndex(new BufferAttribute(new Uint32Array(a.idx), 1));
-      return [l, g];
-    }),
-  ) as Record<BodyLayer, BufferGeometry>;
-
+  let geometry = bodyGeometry(buildBodyGeometryData(pack));
+  let lod = pack.lod;
+  const listeners = new Set<() => void>();
   return {
     pack,
     jointIds: pack.joints.map((j) => j.id),
     slots,
-    geometry,
+    get geometry() {
+      return geometry;
+    },
+    get lod() {
+      return lod;
+    },
+    signature: slotSignature(pack),
+    upgrade(next, data) {
+      const old = geometry;
+      geometry = bodyGeometry(data);
+      lod = next;
+      listeners.forEach((f) => f());
+      LAYERS.forEach((l) => old[l].dispose());
+    },
+    subscribe(f) {
+      listeners.add(f);
+      return () => {
+        listeners.delete(f);
+      };
+    },
     byMuscle,
     byPart,
     dispose: () => LAYERS.forEach((l) => geometry[l].dispose()),

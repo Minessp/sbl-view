@@ -135,6 +135,15 @@ export class BodyInstance {
     ) as unknown as Record<BodyLayer, Mesh>;
   }
 
+  /** Troca de nível: as malhas (e o pré-passe da pele) passam a usar a geometria atual do modelo. */
+  syncGeometry() {
+    for (const l of LAYERS) {
+      const m = this.meshes[l];
+      m.geometry = this.model.geometry[l];
+      for (const c of m.children) if (c instanceof Mesh) c.geometry = this.model.geometry[l];
+    }
+  }
+
   /** Pose do esqueleto do motor → matrizes do shader e volume de cada músculo. */
   setPose(sk: EngineSkeleton, pose: Pose, opts: Omit<SkinMatrixOptions, 'bind'> = {}) {
     const M = skinMatrices(sk, pose, this.model.jointIds, { ...opts, bind: this.bind });

@@ -576,3 +576,137 @@ export function dropNonManifold({ pos, idx }, minIsland = 30) {
   }
   return { mesh: { pos, idx: new Uint32Array(out) }, removed, islands: sizes.filter((n) => n < minIsland).length };
 }
+
+/** Normais por área (vértice da costura, `onSeam`, fica com x = 0: a cópia espelhada encosta sem vinco). */
+export function vertexNormals({ pos, idx }, onSeam = () => false) {
+  const n = new Float64Array(pos.length);
+  for (let t = 0; t < idx.length; t += 3) {
+    const a = idx[t] * 3, b = idx[t + 1] * 3, c = idx[t + 2] * 3;
+    const ux = pos[b] - pos[a], uy = pos[b + 1] - pos[a + 1], uz = pos[b + 2] - pos[a + 2];
+    const vx = pos[c] - pos[a], vy = pos[c + 1] - pos[a + 1], vz = pos[c + 2] - pos[a + 2];
+    const nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
+    for (const v of [a, b, c]) (n[v] += nx), (n[v + 1] += ny), (n[v + 2] += nz);
+  }
+  for (let v = 0; v < pos.length / 3; v++) {
+    if (onSeam(v, pos)) n[v * 3] = 0;
+    const l = Math.hypot(n[v * 3], n[v * 3 + 1], n[v * 3 + 2]) || 1;
+    for (let k = 0; k < 3; k++) n[v * 3 + k] /= l;
+  }
+  return n;
+}
+
+/**
+ * Refinamento adaptativo: divide toda aresta mais longa que `maxEdge` (m) e repete até nenhuma passar, ou `passes`.
+ * Triângulo com 1, 2 ou 3 arestas divididas vira 2, 3 ou 4 (a aresta é dividida nos dois triângulos que a usam: sem
+ * junção em T, a malha estanque continua estanque). O ponto novo não é o meio da corda: é o meio da curva de Hermite
+ * cujas tangentes nas pontas estão nos planos das normais (como nos triângulos PN, Vlachos 2001). Interpola os
+ * vértices originais (a forma é preservada) e arredonda a silhueta entre eles. Deslocamento limitado a 20% da aresta.
+ * Depois, suavização de Taubin (λ/μ, sem encolher) só nos vértices novos: as normais da malha grossa são ruidosas e o
+ * ponto de Hermite as segue, enrugando a pele; os vértices originais (e a costura) ficam onde estão.
+ * Devolve `parents`: os dois vértices de que cada vértice novo saiu (sempre de índice menor), para interpolar pesos
+ * e atributos na ordem.
+ */
+export function refine(mesh, maxEdge, { onSeam = () => false, passes = 6, smooth = 6 } = {}) {
+  let pos = Array.from(mesh.pos);
+  let idx = mesh.idx;
+  const parents = [];
+  const n0 = mesh.pos.length / 3;
+  const max2 = maxEdge * maxEdge;
+  for (let pass = 0; pass < passes; pass++) {
+    const P = Float64Array.from(pos);
+    const N = vertexNormals({ pos: P, idx }, onSeam);
+    const split = new Map();
+    const midOf = (a, b) => {
+      const k = edgeKey(a, b);
+      let m = split.get(k);
+      if (m !== undefined) return m;
+      const ex = P[b * 3] - P[a * 3], ey = P[b * 3 + 1] - P[a * 3 + 1], ez = P[b * 3 + 2] - P[a * 3 + 2];
+      const e0 = ex * N[a * 3] + ey * N[a * 3 + 1] + ez * N[a * 3 + 2];
+      const e1 = ex * N[b * 3] + ey * N[b * 3 + 1] + ez * N[b * 3 + 2];
+      let d = [0, 1, 2].map((i) => (e1 * N[b * 3 + i] - e0 * N[a * 3 + i]) / 8);
+      const lim = 0.2 * Math.hypot(ex, ey, ez);
+      const dl = Math.hypot(d[0], d[1], d[2]);
+      if (dl > lim) d = d.map((x) => (x * lim) / dl);
+      m = pos.length / 3;
+      for (let i = 0; i < 3; i++) pos.push((P[a * 3 + i] + P[b * 3 + i]) / 2 + d[i]);
+      // Aresta da costura (as duas pontas em x = 0) fica na costura.
+      if (onSeam(a, P) && onSeam(b, P)) pos[m * 3] = 0;
+      parents.push(a, b);
+      split.set(k, m);
+      return m;
+    };
+    const long = (a, b) => (P[a * 3] - P[b * 3]) ** 2 + (P[a * 3 + 1] - P[b * 3 + 1]) ** 2 + (P[a * 3 + 2] - P[b * 3 + 2]) ** 2 > max2;
+    const d2 = (a, b) => (pos[a * 3] - pos[b * 3]) ** 2 + (pos[a * 3 + 1] - pos[b * 3 + 1]) ** 2 + (pos[a * 3 + 2] - pos[b * 3 + 2]) ** 2;
+    const out = [];
+    let any = false;
+    for (let t = 0; t < idx.length; t += 3) {
+      const v = [idx[t], idx[t + 1], idx[t + 2]];
+      const cut = [long(v[0], v[1]), long(v[1], v[2]), long(v[2], v[0])];
+      const k = cut.filter(Boolean).length;
+      if (k === 0) {
+        out.push(...v);
+        continue;
+      }
+      any = true;
+      if (k === 3) {
+        const [a, b, c] = v;
+        const ab = midOf(a, b), bc = midOf(b, c), ca = midOf(c, a);
+        out.push(a, ab, ca, ab, b, bc, ca, bc, c, ab, bc, ca);
+        continue;
+      }
+      // Gira para a primeira aresta dividida ficar em (a, b); com duas, a outra fica em (b, c) ou (c, a).
+      let r = cut.indexOf(true);
+      if (k === 2 && cut[0] && cut[2]) r = 2;
+      const [a, b, c] = [v[r], v[(r + 1) % 3], v[(r + 2) % 3]];
+      const ab = midOf(a, b);
+      if (k === 1) {
+        out.push(a, ab, c, ab, b, c);
+        continue;
+      }
+      const bc = midOf(b, c);
+      // Triângulo (ab, b, bc) + quadrilátero (a, ab, bc, c) cortado pela diagonal mais curta.
+      out.push(ab, b, bc);
+      if (d2(a, bc) < d2(ab, c)) out.push(a, ab, bc, a, bc, c);
+      else out.push(a, ab, c, ab, bc, c);
+    }
+    idx = new Uint32Array(out);
+    if (!any) break;
+  }
+  const out = { pos: new Float32Array(pos), idx };
+  taubinNew(out, n0, smooth, onSeam);
+  return { mesh: out, parents: new Uint32Array(parents), base: n0 };
+}
+
+/** Taubin (λ = 0,5, μ = −0,53) nos vértices de índice ≥ base, fora da costura. */
+function taubinNew({ pos, idx }, base, iterations, onSeam) {
+  const n = pos.length / 3;
+  if (iterations <= 0 || base >= n) return;
+  const nbs = Array.from({ length: n - base }, () => new Set());
+  for (let t = 0; t < idx.length; t += 3)
+    for (let e = 0; e < 3; e++) {
+      const a = idx[t + e], b = idx[t + ((e + 1) % 3)];
+      if (a >= base) nbs[a - base].add(b);
+      if (b >= base) nbs[b - base].add(a);
+    }
+  const free = [];
+  for (let v = base; v < n; v++) if (!onSeam(v, pos)) free.push(v);
+  const lists = free.map((v) => [...nbs[v - base]]);
+  const tmp = new Float64Array(free.length * 3);
+  const step = (k) => {
+    free.forEach((v, i) => {
+      const l = lists[i];
+      for (let c = 0; c < 3; c++) {
+        let m = 0;
+        for (const u of l) m += pos[u * 3 + c];
+        tmp[i * 3 + c] = pos[v * 3 + c] + k * (m / l.length - pos[v * 3 + c]);
+      }
+    });
+    free.forEach((v, i) => {
+      for (let c = 0; c < 3; c++) pos[v * 3 + c] = tmp[i * 3 + c];
+    });
+  };
+  for (let it = 0; it < iterations; it++) {
+    step(0.5);
+    step(-0.53);
+  }
+}
