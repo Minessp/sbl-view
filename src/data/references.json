@@ -194,6 +194,12 @@
     "note": "Bibliografia e resumo conferidos (PubMed 27102172). Com volume igualado, treinar o grupo 2 vezes por semana deu mais hipertrofia que 1 vez; dados insuficientes para 3 vezes."
   },
   {
+    "id": "schoenfeld2016rest",
+    "citation": "Schoenfeld BJ, Pope ZK, Benik FM, et al. Longer interset rest periods enhance muscle strength and hypertrophy in resistance-trained men. Journal of Strength and Conditioning Research. 2016;30(7):1805-1812.",
+    "verified": false,
+    "note": "Descanso de 3 min contra 1 min. Conferir dados e números na fonte primária."
+  },
+  {
     "id": "bickel2011",
     "citation": "Bickel CS, Cross JM, Bamman MM. Exercise dosing to retain resistance training adaptations in young and older adults. Medicine & Science in Sports & Exercise. 2011;43(7):1177-1187.",
     "doi": "10.1249/MSS.0b013e318207c15d",

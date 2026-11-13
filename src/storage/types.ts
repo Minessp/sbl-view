@@ -1,3 +1,6 @@
+import type { DayFocus, Technique } from '@/engine/planning/types';
+import type { SplitId } from '@/engine/planning/splits';
+
 /**
  * Entidades do tracker. `updatedAt` e `deletedAt` (lápide) existem desde já para que um
  * adaptador de sincronização possa ser escrito no futuro sem migração destrutiva.
@@ -36,16 +39,25 @@ export interface SetEntry extends Entity {
   note?: string;
 }
 
-/** Item de um dia do plano. */
+/** Item de um dia do plano: a prescrição do exercício. */
 export interface PlanItemEntry {
   exerciseId: string;
   sets: number;
   reps: [number, number];
+  /** Descanso entre séries (s). */
+  restSec?: number;
+  /** RIR fixo; ausente = segue o mesociclo. */
+  rir?: number;
+  technique?: Technique;
+  /** Em superssérie com o item seguinte. */
+  superset?: boolean;
 }
 
 export interface PlanDayEntry {
   id: string;
-  focus: 'full' | 'upper' | 'lower';
+  focus: DayFocus;
+  /** Dia personalizado: os grupos escolhidos. */
+  groups?: string[];
   items: PlanItemEntry[];
 }
 
@@ -57,6 +69,8 @@ export type PlanPriority = 'priorizar' | 'manter' | 'fora';
  */
 export interface Plan extends Entity {
   name: string;
+  /** Divisão. Planos da Fase 5 não tinham: `migratePlan` deduz pelo número de dias. */
+  split: SplitId;
   weeks: number;
   deload: boolean;
   equipment: string[];
@@ -102,17 +116,46 @@ export interface SessionWithSets {
   sets: SetEntry[];
 }
 
-/** Arquivo de backup. Versão sobe quando o formato muda de modo incompatível. */
+export type Unit = 'kg' | 'lb';
+
+export interface EquipmentProfile {
+  id: string;
+  name: string;
+  equipment: string[];
+}
+
+/** Preferência salva. Um registro por chave (`id`), mescla como as outras entidades. */
+export type Setting = Entity & ({ id: 'unit'; value: Unit } | { id: 'profiles'; value: EquipmentProfile[] });
+export type SettingId = Setting['id'];
+export type SettingValue<K extends SettingId> = Extract<Setting, { id: K }>['value'];
+
+export type MeasureKind = 'weight' | 'waist' | 'hips' | 'chest' | 'arm' | 'thigh' | 'calf';
+export const MEASURE_KINDS: readonly MeasureKind[] = ['weight', 'waist', 'hips', 'chest', 'arm', 'thigh', 'calf'];
+
+/** Medida corporal: peso em kg, circunferências em cm. */
+export interface Measure extends Entity {
+  at: number;
+  kind: MeasureKind;
+  value: number;
+}
+
+/**
+ * Arquivo de backup. Versão sobe quando o formato muda; a leitura aceita as anteriores.
+ * v1 (Fases 4–13): sessões, séries, planos. v2 (Fase 14): + preferências e medidas; plano com divisão.
+ */
 export const BACKUP_APP = 'sbl-view';
-export const BACKUP_VERSION = 1;
+export const BACKUP_VERSION = 2;
 export interface Backup {
   app: typeof BACKUP_APP;
-  version: typeof BACKUP_VERSION;
+  version: number;
   exportedAt: number;
   sessions: Session[];
   sets: SetEntry[];
   /** Ausente em backups anteriores à Fase 5. */
   plans?: Plan[];
+  /** Ausentes em backups v1. */
+  settings?: Setting[];
+  measures?: Measure[];
 }
 
 export interface ImportReport {
@@ -156,4 +199,10 @@ export interface TrainingRepository {
   activePlan(): Promise<Plan | undefined>;
   /** Sessões vivas do mesociclo, mais antigas primeiro, com as séries. */
   planSessions(planId: string): Promise<SessionWithSets[]>;
+  getSetting<K extends SettingId>(id: K): Promise<SettingValue<K> | undefined>;
+  putSetting<K extends SettingId>(id: K, value: SettingValue<K>, now?: number): Promise<void>;
+  /** Medidas vivas, mais antigas primeiro. */
+  listMeasures(): Promise<Measure[]>;
+  addMeasure(m: { kind: MeasureKind; value: number; at?: number }, now?: number): Promise<Measure>;
+  deleteMeasure(id: string, now?: number): Promise<void>;
 }

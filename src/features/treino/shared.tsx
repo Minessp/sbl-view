@@ -9,7 +9,8 @@ import { exerciseById } from '@/features/library/catalog';
 import squatJson from '@/data/exercises/squat.json';
 import type { Exercise } from '@/data/schema/exercise';
 import { repository } from '@/storage/db';
-import { SET_KINDS, type SetEntry, type SetKind } from '@/storage/types';
+import { SET_KINDS, type SetEntry, type SetKind, type Unit } from '@/storage/types';
+import { fmtLoad, fromKg, toKg, useUnit } from './units';
 import './treino.css';
 
 export const dayFmt = new Intl.DateTimeFormat(locale, { weekday: 'long', day: '2-digit', month: 'long' });
@@ -88,11 +89,12 @@ export function RirSelect({ value, onChange }: { value: string; onChange: (v: st
   );
 }
 
-const setLabel = (s: SetEntry) => `${fmt.n1(s.loadKg)} kg × ${s.reps}`;
+const setLabel = (s: SetEntry, unit: Unit) => `${fmtLoad(s.loadKg, unit)} × ${s.reps}`;
 
 /** Uma série: hora, exercício, carga × reps; editar e apagar no lugar. */
 export function SetRow({ set, showExercise = true, onChanged }: { set: SetEntry; showExercise?: boolean; onChanged: () => void }) {
   const L = t.training;
+  const unit = useUnit();
   const [editing, setEditing] = useState(false);
   const [load, setLoad] = useState('');
   const [reps, setReps] = useState('');
@@ -102,7 +104,7 @@ export function SetRow({ set, showExercise = true, onChanged }: { set: SetEntry;
   const [error, setError] = useState(false);
 
   function open() {
-    setLoad(fmt.n1(set.loadKg));
+    setLoad(fmt.n1(fromKg(set.loadKg, unit)));
     setReps(String(set.reps));
     setRir(set.rir === undefined ? '' : String(set.rir));
     setKind(set.kind);
@@ -113,13 +115,13 @@ export function SetRow({ set, showExercise = true, onChanged }: { set: SetEntry;
 
   const loadN = parseLoad(load);
   const repsN = Number(reps);
-  const ok = loadValid(loadN) && repsValid(repsN);
+  const ok = loadValid(toKg(loadN, unit)) && repsValid(repsN);
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
     if (!ok) return;
     try {
-      await repository().updateSet(set.id, { loadKg: loadN, reps: repsN, kind, rir: rir === '' ? null : Number(rir), note: note.trim() || null });
+      await repository().updateSet(set.id, { loadKg: toKg(loadN, unit), reps: repsN, kind, rir: rir === '' ? null : Number(rir), note: note.trim() || null });
       setEditing(false);
       onChanged();
     } catch {
@@ -139,9 +141,9 @@ export function SetRow({ set, showExercise = true, onChanged }: { set: SetEntry;
   if (editing) {
     return (
       <li className="set-row set-row--edit">
-        <form className="set-edit" onSubmit={save} aria-label={`${L.editLabel}: ${setLabel(set)}`}>
+        <form className="set-edit" onSubmit={save} aria-label={`${L.editLabel}: ${setLabel(set, unit)}`}>
           <label className="field">
-            <span>{L.load}</span>
+            <span>{L.loadIn(unit)}</span>
             <input inputMode="decimal" value={load} onChange={(e) => setLoad(e.target.value)} aria-invalid={!loadValid(loadN)} />
           </label>
           <label className="field">
@@ -183,15 +185,15 @@ export function SetRow({ set, showExercise = true, onChanged }: { set: SetEntry;
       <span className="logger__when">{timeFmt.format(set.createdAt)}</span>
       <span className="logger__what">
         {showExercise && <span className="logger__ex">{exerciseName(set.exerciseId)} </span>}
-        <strong>{setLabel(set)}</strong>
+        <strong>{setLabel(set, unit)}</strong>
         {set.rir !== undefined && <span className="logger__rir"> RIR {set.rir}</span>}
         {set.kind !== 'trabalho' && <span className="set-row__kind"> {L.kinds[set.kind]}</span>}
         {set.variantId && <span className="logger__variant"> {variantShort(set.exerciseId, set.variantId)}</span>}
       </span>
-      <button type="button" className="link-btn" aria-label={`${L.editLabel}: ${setLabel(set)}`} onClick={open}>
+      <button type="button" className="link-btn" aria-label={`${L.editLabel}: ${setLabel(set, unit)}`} onClick={open}>
         {L.edit}
       </button>
-      <button type="button" className="link-btn" aria-label={`${L.removeLabel}: ${setLabel(set)}`} onClick={() => void remove()}>
+      <button type="button" className="link-btn" aria-label={`${L.removeLabel}: ${setLabel(set, unit)}`} onClick={() => void remove()}>
         {L.remove}
       </button>
       {set.note && <span className="logger__note">{set.note}</span>}

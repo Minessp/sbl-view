@@ -1,58 +1,186 @@
 {
   "volume": {
     "priorizar": {
-      "value": [10, 20],
-      "source": [{ "refId": "schoenfeld2017volume" }],
+      "value": [
+        10,
+        20
+      ],
+      "source": [
+        {
+          "refId": "schoenfeld2017volume"
+        }
+      ],
       "confidence": "provavel",
       "note": "A meta-análise achou mais ganho com mais séries semanais, com tendência a favor de 10 ou mais por músculo. O teto de 20 é escolha do SBL View: acima disso há pouca evidência e a recuperação pesa."
     },
     "manter": {
-      "value": [3, 6],
-      "source": [{ "refId": "bickel2011" }],
+      "value": [
+        3,
+        6
+      ],
+      "source": [
+        {
+          "refId": "bickel2011"
+        }
+      ],
       "confidence": "provavel",
       "note": "Em jovens, 1/3 e até 1/9 do volume anterior mantiveram a hipertrofia por 32 semanas; em idosos, não. A faixa exata é escolha do SBL View."
     }
   },
   "defaultSets": {
-    "value": { "priorizar": 12, "manter": 4 },
-    "source": [{ "refId": "sbl_authored" }],
+    "value": {
+      "priorizar": 12,
+      "manter": 4
+    },
+    "source": [
+      {
+        "refId": "sbl_authored"
+      }
+    ],
     "confidence": "especulativo",
     "note": "Ponto de partida dentro de cada faixa. Ajuste grupo a grupo."
   },
   "frequency": {
     "value": 2,
-    "source": [{ "refId": "schoenfeld2016frequency" }],
+    "source": [
+      {
+        "refId": "schoenfeld2016frequency"
+      }
+    ],
     "confidence": "provavel",
     "note": "Com volume igual, 2 vezes por semana deu mais hipertrofia que 1. O plano reparte o grupo priorizado em pelo menos 2 dias quando a divisão permite."
   },
   "maxSetsPerSession": {
     "value": 8,
-    "source": [{ "refId": "sbl_authored" }],
+    "source": [
+      {
+        "refId": "sbl_authored"
+      }
+    ],
     "confidence": "especulativo",
     "note": "Teto de séries diretas por grupo em um dia. Acima disto o plano espalha o grupo por mais dias."
   },
   "maxSetsPerSlot": {
     "value": 4,
-    "source": [{ "refId": "sbl_authored" }],
+    "source": [
+      {
+        "refId": "sbl_authored"
+      }
+    ],
     "confidence": "especulativo",
     "note": "Teto de séries por exercício no dia. Acima disto o plano põe um segundo exercício."
   },
   "reps": {
-    "value": { "composto": [6, 10], "isolado": [8, 15] },
-    "source": [{ "refId": "schoenfeld2017load" }],
+    "value": {
+      "composto": [
+        6,
+        10
+      ],
+      "isolado": [
+        8,
+        15
+      ]
+    },
+    "source": [
+      {
+        "refId": "schoenfeld2017load"
+      }
+    ],
     "confidence": "provavel",
     "note": "Com séries perto da falha, cargas leves e pesadas deram hipertrofia parecida. As faixas são escolha prática do SBL View: compostos pesados cansam menos com poucas repetições."
   },
   "mesocycle": {
-    "value": { "rirStart": 3, "rirEnd": 1, "deloadSetsFactor": 0.5, "deloadRir": 4 },
-    "source": [{ "refId": "sbl_authored" }],
+    "value": {
+      "rirStart": 3,
+      "rirEnd": 1,
+      "deloadSetsFactor": 0.5,
+      "deloadRir": 4
+    },
+    "source": [
+      {
+        "refId": "sbl_authored"
+      }
+    ],
     "confidence": "especulativo",
     "note": "Repetições na reserva caem semana a semana; a semana de descarga corta as séries pela metade. É uma convenção de prescrição, não um resultado de estudo."
   },
   "preferLong": {
     "value": true,
-    "source": [{ "refId": "sbl_reasoning" }],
+    "source": [
+      {
+        "refId": "sbl_reasoning"
+      }
+    ],
     "confidence": "especulativo",
     "note": "No empate, o plano escolhe o exercício que carrega o alvo alongado. Hipótese em teste, não regra."
+  },
+  "rest": {
+    "value": {
+      "composto": 150,
+      "isolado": 90
+    },
+    "source": [
+      {
+        "refId": "schoenfeld2016rest"
+      }
+    ],
+    "confidence": "provavel",
+    "note": "Em homens treinados, 3 min entre séries deram mais hipertrofia que 1 min com as mesmas séries. Os valores exatos são escolha do SBL View: compostos pesados pedem mais tempo para repetir o desempenho."
+  },
+  "techniques": {
+    "lengthened_partials": {
+      "source": [
+        {
+          "refId": "pedrosa2022"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Parciais na metade alongada da cadeira extensora deram hipertrofia igual ou maior que a amplitude completa. Estender o achado a outros exercícios e usar as parciais depois da falha é hipótese."
+    },
+    "myo_reps": {
+      "source": [
+        {
+          "refId": "sbl_reasoning"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Série de ativação perto da falha e minisséries com pausas curtas: muitas repetições difíceis em pouco tempo. Convenção de prática, sem estudo direto citado aqui."
+    },
+    "drop": {
+      "source": [
+        {
+          "refId": "sbl_reasoning"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Ao chegar perto da falha, tirar 20 a 30% da carga e seguir. Economiza tempo; não há motivo para esperar mais hipertrofia que séries comuns com o mesmo esforço."
+    }
+  },
+  "progression": {
+    "value": {
+      "increment": {
+        "kg": {
+          "barra": 2.5,
+          "halteres": 2,
+          "maquina": 5,
+          "polia": 2.5,
+          "peso_corporal": 0
+        },
+        "lb": {
+          "barra": 5,
+          "halteres": 5,
+          "maquina": 10,
+          "polia": 5,
+          "peso_corporal": 0
+        }
+      }
+    },
+    "source": [
+      {
+        "refId": "sbl_authored"
+      }
+    ],
+    "confidence": "especulativo",
+    "note": "Progressão dupla: sobe repetições dentro da faixa; com todas as séries no topo, sobe a carga pelo menor salto comum do equipamento. Peso do corpo progride só em repetições."
   }
 }

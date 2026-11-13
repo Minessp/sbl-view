@@ -4,8 +4,10 @@ import { t } from '@/i18n/app';
 import { exerciseById, library } from '@/features/library/catalog';
 import { repository, requestPersistence } from '@/storage/db';
 import type { PlanContext, SessionWithSets, SetKind } from '@/storage/types';
-import { Today } from '@/features/plano/Today';
+import { LiveSession } from './live/LiveSession';
+import { RestTimer } from './live/RestTimer';
 import { KindSelect, loadValid, parseLoad, repsValid, RirSelect, SetRow, timeFmt, TreinoHeader, variantsOf } from './shared';
+import { setUnit, toKg, useUnit } from './units';
 
 export default function Treino() {
   const L = t.training;
@@ -31,6 +33,7 @@ export default function Treino() {
   const [notes, setNotes] = useState('');
   const [notesSaved, setNotesSaved] = useState(false);
   const [planCtx, setPlanCtx] = useState<PlanContext | undefined>();
+  const unit = useUnit();
 
   const refresh = useCallback(async () => {
     try {
@@ -47,7 +50,7 @@ export default function Treino() {
 
   const loadN = parseLoad(load);
   const repsN = Number(reps);
-  const loadOk = loadValid(loadN);
+  const loadOk = loadValid(toKg(loadN, unit));
   const repsOk = repsValid(repsN);
 
   async function onSubmit(e: React.FormEvent) {
@@ -59,7 +62,7 @@ export default function Treino() {
         exerciseId,
         ...(variantId && { variantId }),
         kind,
-        loadKg: loadN,
+        loadKg: toKg(loadN, unit),
         reps: repsN,
         ...(rir !== '' && { rir: Number(rir) }),
         ...(note.trim() && { note: note.trim() }),
@@ -94,25 +97,29 @@ export default function Treino() {
     }
   }
 
-  function pick(id: string) {
-    setExerciseId(id);
-    setStatus('idle');
-    document.getElementById(`${uid}-form`)?.scrollIntoView({ block: 'start' });
-  }
-
   const ex = exerciseById(exerciseId);
   const message = { idle: '', saved: L.saved, error: L.error, ended: L.session.ended }[status];
 
   return (
     <main id="conteudo" className="sheet">
       <TreinoHeader title={L.title} lead={L.lead} />
-      <Today open={open} exerciseId={exerciseId} onPick={pick} onContext={setPlanCtx} />
+      <LiveSession open={open} onLogged={refresh} onContext={setPlanCtx} />
 
       <section className="section" aria-labelledby={`${uid}-form`}>
         <header className="section__head">
-          <h2 id={`${uid}-form`}>{t.lab.log.title}</h2>
-          <p>{L.privacy}</p>
+          <h2 id={`${uid}-form`}>{planCtx ? L.live.otherTitle : t.lab.log.title}</h2>
+          <p>
+            {planCtx ? `${L.live.otherLead} ` : ''}
+            {L.privacy}
+          </p>
         </header>
+        <div className="segmented unit-toggle" role="group" aria-label={L.unit}>
+          {(['kg', 'lb'] as const).map((u) => (
+            <button key={u} type="button" className="chip chip--small" aria-pressed={unit === u} onClick={() => void setUnit(u)}>
+              {u}
+            </button>
+          ))}
+        </div>
         <form className="logger__form" onSubmit={onSubmit}>
           <label className="field field--wide">
             <span>{L.exercise}</span>
@@ -137,7 +144,7 @@ export default function Treino() {
             </label>
           )}
           <label className="field">
-            <span>{L.load}</span>
+            <span>{L.loadIn(unit)}</span>
             <input inputMode="decimal" value={load} onChange={(e) => setLoad(e.target.value)} aria-invalid={load !== '' && !loadOk} />
           </label>
           <label className="field">
@@ -214,6 +221,7 @@ export default function Treino() {
           </>
         )}
       </section>
+      <RestTimer />
     </main>
   );
 }

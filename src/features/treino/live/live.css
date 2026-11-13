@@ -1,0 +1,13 @@
+/* Sessão ao vivo e cronômetro (Fase 15). Estilo completo pendente. */
+.live__list { display: grid; gap: var(--s-4); }
+.live-card { display: grid; gap: var(--s-2); padding: var(--s-4); border-radius: var(--r-2); background: var(--c-bg-2); }
+.live-sets { display: grid; gap: var(--s-2); margin: 0; padding: 0; list-style: none; }
+.live-set { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; }
+.live-set__field input { width: 6ch; }
+.rest { position: fixed; inset: auto 16px 16px; z-index: var(--z-toast); display: flex; gap: var(--s-3); align-items: center; max-width: 520px; margin: 0 auto; padding: var(--s-3); border-radius: var(--r-2); background: var(--c-bg-3); box-shadow: var(--shadow-pop); }
+.rest__ring { width: 56px; height: 56px; transform: rotate(-90deg); }
+.rest__track, .rest__arc { fill: none; stroke-width: 4; }
+.rest__track { stroke: var(--c-edge); }
+.rest__arc { stroke: var(--c-accent); }
+.rest__text { display: grid; flex: 1; }
+.rest__time { font-size: var(--fs-5); font-variant-numeric: tabular-nums; }

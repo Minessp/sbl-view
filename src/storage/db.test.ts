@@ -1,4 +1,5 @@
 import 'fake-indexeddb/auto';
+import Dexie from 'dexie';
 import { describe, expect, it } from 'vitest';
 import { parseBackup } from './backup';
 import { createDexieRepository, newId, SblDb } from './db';
@@ -131,6 +132,7 @@ describe('repositório de treino (IndexedDB)', () => {
     const t0 = Date.UTC(2026, 10, 12, 10);
     const base = {
       name: 'Plano',
+      split: 'full_body' as const,
       weeks: 5,
       deload: true,
       equipment: [],
@@ -169,6 +171,50 @@ describe('repositório de treino (IndexedDB)', () => {
     expect(r.ok).toBe(true);
   });
 
+  it('backup v1 com plano sem divisão: entra com a divisão deduzida', () => {
+    const plan = { id: 'p', createdAt: 1, updatedAt: 1, name: 'x', weeks: 4, deload: true, equipment: [], priorities: {}, targets: {} };
+    const day = (id: string, focus: string) => ({ id, focus, items: [{ exerciseId: 'squat', sets: 3, reps: [6, 10] }] });
+    const r = parseBackup(JSON.stringify({ app: 'sbl-view', version: 1, exportedAt: 1, sessions: [], sets: [], plans: [{ ...plan, days: ['A', 'B', 'C', 'D'].map((d, i) => day(d, i % 2 ? 'lower' : 'upper')) }] }));
+    expect(r.ok && r.backup.plans?.[0]?.split).toBe('upper_lower');
+  });
+
+  it('atualização do banco (v2 → v3) dá divisão aos planos antigos sem mexer em updatedAt', async () => {
+    const name = `test-up-${n++}`;
+    const old = new Dexie(name);
+    old.version(1).stores({ sessions: 'id, startedAt, mesocycleId, updatedAt', sets: 'id, sessionId, exerciseId, [exerciseId+createdAt], createdAt, updatedAt' });
+    old.version(2).stores({ plans: 'id, updatedAt, startedAt' });
+    const days = [{ id: 'A', focus: 'full', items: [] }];
+    await old.table('plans').add({ id: 'p', createdAt: 1, updatedAt: 7, name: 'x', weeks: 4, deload: true, equipment: [], priorities: {}, targets: {}, days });
+    old.close();
+    const repo = createDexieRepository(new SblDb(name));
+    const p = await repo.getPlan('p');
+    expect(p?.split).toBe('full_body');
+    expect(p?.updatedAt).toBe(7);
+  });
+
+  it('preferências e medidas: gravam, apagam e viajam no backup', async () => {
+    const repo = fresh();
+    expect(await repo.getSetting('unit')).toBeUndefined();
+    await repo.putSetting('unit', 'lb', 10);
+    await repo.putSetting('profiles', [{ id: 'casa', name: 'Casa', equipment: ['halteres'] }], 11);
+    expect(await repo.getSetting('unit')).toBe('lb');
+    const a = await repo.addMeasure({ kind: 'weight', value: 80, at: 100 }, 100);
+    await repo.addMeasure({ kind: 'waist', value: 82, at: 50 }, 101);
+    expect((await repo.listMeasures()).map((m) => m.kind)).toEqual(['waist', 'weight']);
+    await repo.deleteMeasure(a.id, 200);
+    expect(await repo.listMeasures()).toHaveLength(1);
+    const parsed = parseBackup(JSON.stringify(await repo.exportAll(300)));
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) return;
+    const dst = fresh();
+    await dst.importBackup(parsed.backup);
+    expect(await dst.getSetting('unit')).toBe('lb');
+    expect((await dst.getSetting('profiles'))?.[0]?.name).toBe('Casa');
+    expect(await dst.listMeasures()).toHaveLength(1);
+    await dst.wipe();
+    expect(await dst.getSetting('unit')).toBeUndefined();
+  });
+
   it('apagar tudo esvazia o banco', async () => {
     const repo = fresh();
     await repo.logSet({ exerciseId: 'squat', reps: 5, loadKg: 100 });
@@ -182,7 +228,7 @@ describe('arquivo de backup', () => {
   it('recusa o que não é JSON, não é backup, é de versão mais nova ou está quebrado', () => {
     expect(parseBackup('{oi')).toMatchObject({ ok: false, error: 'not-json' });
     expect(parseBackup('{"app":"outro"}')).toMatchObject({ ok: false, error: 'not-backup' });
-    expect(parseBackup(JSON.stringify({ ...base, version: 2 }))).toMatchObject({ ok: false, error: 'newer-version' });
+    expect(parseBackup(JSON.stringify({ ...base, version: 3 }))).toMatchObject({ ok: false, error: 'newer-version' });
     const bad = { ...base, sessions: [{ id: 's', createdAt: 1, updatedAt: 1, startedAt: 1 }], sets: [{ id: 'x', createdAt: 1, updatedAt: 1, sessionId: 's', exerciseId: 'squat', order: 0, kind: 'trabalho', reps: -1, loadKg: 10 }] };
     expect(parseBackup(JSON.stringify(bad))).toMatchObject({ ok: false, error: 'invalid' });
     const extra = { ...base, sessions: [{ id: 's', createdAt: 1, updatedAt: 1, startedAt: 1, evil: '<script>' }] };

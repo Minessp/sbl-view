@@ -24,7 +24,7 @@ import { compileClip, evaluateClip } from '@/engine/motion/evaluate';
 import { DEG } from '@/engine/math/vec';
 import { pointToWorld } from '@/engine/kinematics/fk';
 import { expandEntry, motionMasses } from '@/features/library/motion';
-import { PlanningFile } from './schema/planning';
+import { PlanningFile, TrainingFile } from './schema/planning';
 import { E1RM_MAX_REPS } from '@/engine/training/progress';
 import { Reference, type Evidence } from './schema/evidence';
 import { Exercise as ExerciseSchema, LibraryFile } from './schema/exercise';
@@ -92,6 +92,7 @@ describe('banco de dados', () => {
 
   it('tracker: corte do 1RM estimado no motor é o mesmo do banco', () => {
     expect(trainingJson.e1rm.maxReps.value).toBe(E1RM_MAX_REPS);
+    expect(() => TrainingFile.parse(trainingJson)).not.toThrow();
   });
 
   it('raciocínio próprio nunca passa de "especulativo"', () => {

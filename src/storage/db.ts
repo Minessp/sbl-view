@@ -4,12 +4,26 @@
  */
 import Dexie, { type EntityTable } from 'dexie';
 import { mergeById } from './merge';
-import { BACKUP_APP, BACKUP_VERSION, type NewSet, type Plan, type Session, type SessionWithSets, type SetEntry, type TrainingRepository } from './types';
+import { migratePlan } from './migrate';
+import {
+  BACKUP_APP,
+  BACKUP_VERSION,
+  type Measure,
+  type NewSet,
+  type Plan,
+  type Session,
+  type SessionWithSets,
+  type SetEntry,
+  type Setting,
+  type TrainingRepository,
+} from './types';
 
 export class SblDb extends Dexie {
   sessions!: EntityTable<Session, 'id'>;
   sets!: EntityTable<SetEntry, 'id'>;
   plans!: EntityTable<Plan, 'id'>;
+  settings!: EntityTable<Setting, 'id'>;
+  measures!: EntityTable<Measure, 'id'>;
 
   constructor(name = 'sbl-view') {
     super(name);
@@ -19,6 +33,17 @@ export class SblDb extends Dexie {
     });
     // Fase 5: tabela nova, nada a migrar.
     this.version(2).stores({ plans: 'id, updatedAt, startedAt' });
+    // Fase 14: preferências e medidas; plano ganha a divisão (deduzida pelo número de dias).
+    this.version(3)
+      .stores({ settings: 'id, updatedAt', measures: 'id, at, updatedAt' })
+      .upgrade((tx) =>
+        tx
+          .table<Plan>('plans')
+          .toCollection()
+          .modify((p) => {
+            p.split = migratePlan(p).split;
+          }),
+      );
   }
 }
 
@@ -165,31 +190,45 @@ export function createDexieRepository(db: SblDb): TrainingRepository {
       return { sessions, sets };
     },
     async exportAll(now = Date.now()) {
-      const [sessions, sets, plans] = await Promise.all([db.sessions.toArray(), db.sets.toArray(), db.plans.toArray()]);
-      return { app: BACKUP_APP, version: BACKUP_VERSION, exportedAt: now, sessions, sets, plans };
+      const [sessions, sets, plans, settings, measures] = await Promise.all([
+        db.sessions.toArray(),
+        db.sets.toArray(),
+        db.plans.toArray(),
+        db.settings.toArray(),
+        db.measures.toArray(),
+      ]);
+      return { app: BACKUP_APP, version: BACKUP_VERSION, exportedAt: now, sessions, sets, plans, settings, measures };
     },
     async importBackup(backup) {
-      return db.transaction('rw', [db.sessions, db.sets, db.plans], async () => {
-        const incomingPlans = backup.plans ?? [];
-        const [ls, lx, lp] = await Promise.all([
+      return db.transaction('rw', [db.sessions, db.sets, db.plans, db.settings, db.measures], async () => {
+        const incomingPlans = (backup.plans ?? []).map(migratePlan);
+        const settings = backup.settings ?? [];
+        const measures = backup.measures ?? [];
+        const [ls, lx, lp, lc, lm] = await Promise.all([
           db.sessions.where('id').anyOf(backup.sessions.map((s) => s.id)).toArray(),
           db.sets.where('id').anyOf(backup.sets.map((s) => s.id)).toArray(),
           db.plans.where('id').anyOf(incomingPlans.map((p) => p.id)).toArray(),
+          db.settings.where('id').anyOf(settings.map((p) => p.id)).toArray(),
+          db.measures.where('id').anyOf(measures.map((p) => p.id)).toArray(),
         ]);
         const s = mergeById(ls, backup.sessions);
         const x = mergeById(lx, backup.sets);
         await db.sessions.bulkPut(s.put);
         await db.sets.bulkPut(x.put);
         await db.plans.bulkPut(mergeById(lp, incomingPlans).put);
+        await db.settings.bulkPut(mergeById(lc, settings).put);
+        await db.measures.bulkPut(mergeById(lm, measures).put);
         // O relatório fala em séries: é o que a pessoa reconhece.
         return x.report;
       });
     },
     async wipe() {
-      await db.transaction('rw', [db.sessions, db.sets, db.plans], async () => {
+      await db.transaction('rw', [db.sessions, db.sets, db.plans, db.settings, db.measures], async () => {
         await db.sessions.clear();
         await db.sets.clear();
         await db.plans.clear();
+        await db.settings.clear();
+        await db.measures.clear();
       });
     },
     async listPlans() {
@@ -224,6 +263,25 @@ export function createDexieRepository(db: SblDb): TrainingRepository {
         }
         return out;
       });
+    },
+    async getSetting(id) {
+      const s = await db.settings.get(id);
+      return s && !s.deletedAt ? (s.value as never) : undefined;
+    },
+    async putSetting(id, value, now = Date.now()) {
+      const cur = await db.settings.get(id);
+      await db.settings.put({ id, value, createdAt: cur?.createdAt ?? now, updatedAt: now } as Setting);
+    },
+    async listMeasures() {
+      return db.measures.orderBy('at').filter(alive).toArray();
+    },
+    async addMeasure(m, now = Date.now()) {
+      const entry: Measure = { id: newId(now), createdAt: now, updatedAt: now, at: m.at ?? now, kind: m.kind, value: m.value };
+      await db.measures.add(entry);
+      return entry;
+    },
+    async deleteMeasure(id, now = Date.now()) {
+      await db.measures.update(id, { deletedAt: now, updatedAt: now });
     },
   };
 }

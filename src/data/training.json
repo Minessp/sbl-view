@@ -3,9 +3,96 @@
     "formula": "epley",
     "maxReps": {
       "value": 10,
-      "source": [{ "refId": "epley1985" }, { "refId": "lesuer1997" }],
+      "source": [
+        {
+          "refId": "epley1985"
+        },
+        {
+          "refId": "lesuer1997"
+        }
+      ],
       "confidence": "provavel",
       "note": "Equações de repetições até a falha erram menos com poucas repetições e mais com muitas. O corte em 10 é escolha do SBL View, não da fonte."
     }
+  },
+  "warmup": {
+    "value": {
+      "composto": [
+        {
+          "pct": 0.4,
+          "reps": 8
+        },
+        {
+          "pct": 0.6,
+          "reps": 5
+        },
+        {
+          "pct": 0.8,
+          "reps": 3
+        }
+      ],
+      "isolado": [
+        {
+          "pct": 0.5,
+          "reps": 10
+        }
+      ]
+    },
+    "source": [
+      {
+        "refId": "sbl_authored"
+      }
+    ],
+    "confidence": "especulativo",
+    "note": "Rampa de cargas até a de trabalho, com poucas repetições perto do fim para não cansar. Convenção de prática."
+  },
+  "plates": {
+    "value": {
+      "kg": {
+        "bar": 20,
+        "plates": [
+          25,
+          20,
+          15,
+          10,
+          5,
+          2.5,
+          1.25
+        ]
+      },
+      "lb": {
+        "bar": 45,
+        "plates": [
+          45,
+          35,
+          25,
+          10,
+          5,
+          2.5
+        ]
+      }
+    },
+    "source": [
+      {
+        "refId": "sbl_authored"
+      }
+    ],
+    "confidence": "especulativo",
+    "note": "Barra olímpica e jogo comum de anilhas. Ajuste ao que sua academia tem."
+  },
+  "stagnation": {
+    "value": {
+      "window": 3,
+      "activeWeeks": 3,
+      "minExercises": 3,
+      "fraction": 0.5
+    },
+    "source": [
+      {
+        "refId": "sbl_authored"
+      }
+    ],
+    "confidence": "especulativo",
+    "note": "Exercício estagnado: 3 sessões seguidas sem passar do melhor anterior. Descarga sugerida quando metade ou mais dos exercícios das últimas 3 semanas (e ao menos 3) estagnam. Regra prática, não resultado de estudo."
   }
 }

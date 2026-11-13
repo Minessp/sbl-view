@@ -1,14 +1,16 @@
 /**
  * Gerador de plano semanal. Determinístico: mesma entrada, mesmo plano.
  *
- * 1. Divisão pelo número de dias: até 3 = corpo inteiro; 4 e 6 = superior/inferior; 5 = S/I/corpo/S/I.
+ * 1. Divisão: a dada em `split` (dias com os grupos que aceitam) ou, sem ela, a legada pelo número de
+ *    dias: até 3 = corpo inteiro; 4 e 6 = superior/inferior; 5 = S/I/corpo/S/I.
  * 2. Cada grupo com meta recebe uma frequência (mínimo `frequency` se priorizado; mais dias se a
  *    meta passa do teto por sessão) e os dias que espalham melhor e equilibram a carga.
  * 3. Em cada dia, exercícios escolhidos por pontuação: cobre o grupo, aproveita outros grupos do dia,
- *    composto antes de isolado, variedade na semana e (no empate) alvo alongado.
+ *    composto antes de isolado, variedade na semana e (no empate) alvo alongado. Exercício com alvo
+ *    que o dia não aceita perde pontos (no dia de peito, nada de agachamento).
  * Uma série conta 1 para cada grupo-alvo do exercício (mesma regra do Progresso).
  */
-import type { CatalogEntry, DayFocus, GenerateInput, PlanDay, PlanItem } from './types';
+import type { CatalogEntry, DayFocus, GenerateInput, PlanDay, PlanItem, Region, SplitDay } from './types';
 
 const LETTERS = 'ABCDEF';
 
@@ -57,11 +59,19 @@ export function spread(n: number, k: number): number[] {
   return Array.from({ length: k }, (_, i) => base + (i < n % k ? 1 : 0));
 }
 
-const allows = (focus: DayFocus, region: string) => focus === 'full' || region === 'trunk' || region === focus;
+const allowsRegion = (focus: DayFocus, region: Region) => focus === 'full' || region === 'trunk' || region === focus;
+
+/** Dias da divisão legada, com o filtro por região. */
+function legacyDays(days: number, regionOf: (g: string) => Region): (SplitDay & { test: (g: string) => boolean })[] {
+  return splitFor(days).map((focus) => ({ focus, groups: null, test: (g) => allowsRegion(focus, regionOf(g)) }));
+}
+
+const withTest = (d: SplitDay) => ({ ...d, test: (g: string) => d.groups === null || d.groups.includes(g) });
 
 export function generatePlan(input: GenerateInput): PlanDay[] {
-  const { days, targets, priorities, regionOf, config } = input;
-  const split = splitFor(days);
+  const { targets, priorities, config } = input;
+  const days = input.split ? input.split.length : input.days;
+  const split = input.split ? input.split.map(withTest) : legacyDays(days, input.regionOf);
   const have = new Set(input.equipment);
   const usable = input.catalog.filter((e) => have.size === 0 || e.equipment.every((q) => have.has(q)));
   const usableById = new Map(usable.map((e) => [e.id, e]));
@@ -79,7 +89,7 @@ export function generatePlan(input: GenerateInput): PlanDay[] {
   const load = split.map(() => 0);
   const need = split.map(() => new Map<string, number>());
   for (const [g, total] of groups) {
-    const allowed = split.flatMap((f, i) => (allows(f, regionOf(g)) ? [i] : []));
+    const allowed = split.flatMap((d, i) => (d.test(g) ? [i] : []));
     if (allowed.length === 0) continue;
     const wanted = Math.max(priorities[g] === 'priorizar' ? config.frequency : 1, Math.ceil(total / config.maxSetsPerSession));
     const f = Math.min(allowed.length, wanted, total);
@@ -103,7 +113,7 @@ export function generatePlan(input: GenerateInput): PlanDay[] {
 
   // Passo 3: exercícios de cada dia.
   const usedInWeek = new Map<string, number>();
-  return split.map((focus, d) => {
+  return split.map((day, d) => {
     const remaining = need[d] ?? new Map<string, number>();
     const items: PlanItem[] = [];
     const usedToday = new Set<string>();
@@ -126,6 +136,10 @@ export function generatePlan(input: GenerateInput): PlanDay[] {
         let score = 10 + (e.isolated ? 0 : 2) - (usedInWeek.get(e.id) ?? 0);
         for (const h of tg) {
           if (h === g) continue;
+          if (!day.test(h)) {
+            score -= 3;
+            continue;
+          }
           // Aproveita grupo que ainda precisa de séries; penaliza passar da meta de outro.
           score += (remaining.get(h) ?? 0) > 0 ? 2 : -1;
         }
@@ -151,11 +165,12 @@ export function generatePlan(input: GenerateInput): PlanDay[] {
       take(targetGroups(pick), n);
       usedToday.add(pick.id);
       usedInWeek.set(pick.id, (usedInWeek.get(pick.id) ?? 0) + 1);
-      items.push({ exerciseId: pick.id, sets: n, reps: pick.isolated ? config.reps.isolado : config.reps.composto });
+      const rest = config.rest && (pick.isolated ? config.rest.isolado : config.rest.composto);
+      items.push({ exerciseId: pick.id, sets: n, reps: pick.isolated ? config.reps.isolado : config.reps.composto, ...(rest && { restSec: rest }) });
     }
     // Composto primeiro, mantendo a ordem de escolha.
     const iso = (id: string) => Number(usableById.get(id)?.isolated ?? false);
     items.sort((a, b) => iso(a.exerciseId) - iso(b.exerciseId));
-    return { id: LETTERS[d] ?? String(d + 1), focus, items };
+    return { id: LETTERS[d] ?? String(d + 1), focus: day.focus, ...(day.focus === 'custom' && day.groups && { groups: [...day.groups] }), items };
   });
 }
