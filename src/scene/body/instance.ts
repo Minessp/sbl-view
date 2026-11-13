@@ -50,6 +50,8 @@ export interface LayerControl {
 export class BodyInstance {
   readonly group = new Group();
   readonly meshes: Readonly<Record<BodyLayer, Mesh>>;
+  /** Material do pré-passe de profundidade da pele (descartado junto no `dispose`). */
+  private skinDepth: ShaderMaterial | undefined;
   readonly layers: Readonly<Record<BodyLayer, BodyUniforms>>;
   private readonly state: Float32Array;
   private readonly texture: DataTexture;
@@ -113,8 +115,21 @@ export class BodyInstance {
         const m = new Mesh(model.geometry[l], this.display[l]);
         // O skinning move os vértices no shader: a caixa da ligação não vale para o recorte.
         m.frustumCulled = false;
-        m.renderOrder = l === 'skin' ? 3 : l === 'superficial' ? 2 : l === 'deep' ? 1 : 0;
+        m.renderOrder = l === 'skin' ? 4 : l === 'superficial' ? 2 : l === 'deep' ? 1 : 0;
         this.group.add(m);
+        if (l === 'skin') {
+          // Pele translúcida sem escrever profundidade desenhava pele contra pele na ordem dos triângulos (tronco por cima
+          // do braço, de perfil). Pré-passe só de profundidade, com o mesmo shader (mesmos descartes de lente e corte):
+          // a cor depois só passa na superfície mais próxima. Filho da pele: some junto com ela (camada, seleção).
+          const depth = mat(l, false);
+          depth.colorWrite = false;
+          depth.depthWrite = true;
+          const pre = new Mesh(model.geometry[l], depth);
+          pre.frustumCulled = false;
+          pre.renderOrder = 3;
+          m.add(pre);
+          this.skinDepth = depth;
+        }
         return [l, m];
       }),
     ) as unknown as Record<BodyLayer, Mesh>;
@@ -291,6 +306,7 @@ export class BodyInstance {
       this.display[l].dispose();
       this.picking[l].dispose();
     }
+    this.skinDepth?.dispose();
     this.texture.dispose();
     this.target?.dispose();
     this.group.removeFromParent();
