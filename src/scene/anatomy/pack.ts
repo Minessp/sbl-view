@@ -3,6 +3,7 @@
  * Sem three.js: devolve arrays prontos para virar geometria (runtime) ou para teste.
  */
 import type { Vec3 } from '@/engine/math/vec';
+import { smoothUrogenital } from './modesty';
 
 export type AnatomyKind = 'bone' | 'cartilage' | 'muscle' | 'tendon' | 'skin';
 export type AnatomyLod = 'hi' | 'lo';
@@ -168,6 +169,10 @@ export async function parseAnatomyPack(buf: ArrayBuffer): Promise<AnatomyPack> {
       ...(radial && { radial }),
     };
   });
+
+  // Sem genitália: a região urogenital da pele vira membrana lisa (a mão, que passa perto, fica de fora).
+  const skin = parts.find((p) => p.kind === 'skin');
+  if (skin) smoothUrogenital(skin, new Set(header.joints.flatMap((j, i) => (/^(hand|forearm)_/.test(j.id) ? [i] : []))));
 
   const index = new Map(header.joints.map((j, i) => [j.id, i]));
   const jointMirror = Uint8Array.from(header.joints, (j, i) => index.get(mirrorJointId(j.id)) ?? i);

@@ -34,7 +34,8 @@ function edgeStretch(pack: AnatomyPack, part: AnatomyPart, deg: Record<string, n
         const a = (I[t + e] ?? 0) * 3, b = (I[t + ((e + 1) % 3)] ?? 0) * 3;
         const rest = Math.hypot((P[a] ?? 0) - (P[b] ?? 0), (P[a + 1] ?? 0) - (P[b + 1] ?? 0), (P[a + 2] ?? 0) - (P[b + 2] ?? 0));
         const now = Math.hypot((Q[a] ?? 0) - (Q[b] ?? 0), (Q[a + 1] ?? 0) - (Q[b + 1] ?? 0), (Q[a + 2] ?? 0) - (Q[b + 2] ?? 0));
-        out[o++] = rest > 1e-7 ? now / rest : 1;
+        // Aresta abaixo de 1 mm (a membrana que fecha a virilha, modesty.ts) não aparece: razão não se aplica.
+        out[o++] = rest > 1e-3 ? now / rest : 1;
       }
     }
   }
@@ -180,5 +181,19 @@ describe('deformação do corpo inteiro nas poses de referência (critério da F
     }
     expect(seam).toBeGreaterThan(100);
     expect(worst).toBeLessThan(0.001);
+  });
+});
+
+describe('sem genitália (modesty.ts)', () => {
+  it.each(['hi', 'lo'] as const)('%s: a região urogenital da pele não se projeta à frente do púbis', (lod) => {
+    const skin = packs[lod].pack.parts.find((p) => p.kind === 'skin');
+    const P = skin?.positions ?? new Float32Array();
+    let zMax = -Infinity;
+    for (let i = 0; i < P.length; i += 3) {
+      const x = P[i] ?? 0, y = P[i + 1] ?? 0, z = P[i + 2] ?? 0;
+      if (x > -0.04 && y > 0.72 && y < 0.84) zMax = Math.max(zMax, z);
+    }
+    // Antes do alisamento a ponta chegava a 11,8 cm à frente; o púbis fica em ~8 cm.
+    expect(zMax).toBeLessThan(0.09);
   });
 });

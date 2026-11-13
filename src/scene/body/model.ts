@@ -66,7 +66,14 @@ function vertexNormals(pos: Float32Array, idx: Uint32Array): Float32Array {
     }
   }
   for (let i = 0; i < n.length; i += 3) {
-    const l = Math.hypot(n[i] ?? 0, n[i + 1] ?? 0, n[i + 2] ?? 0) || 1;
+    const l = Math.hypot(n[i] ?? 0, n[i + 1] ?? 0, n[i + 2] ?? 0);
+    // Área quase nula (membrana da virilha, anatomy/modesty.ts): normal indefinida viraria NaN no shader. Frente.
+    if (l < 1e-9) {
+      n[i] = 0;
+      n[i + 1] = -0.3;
+      n[i + 2] = 0.954;
+      continue;
+    }
     n[i] = (n[i] ?? 0) / l;
     n[i + 1] = (n[i + 1] ?? 0) / l;
     n[i + 2] = (n[i + 2] ?? 0) / l;

@@ -154,7 +154,7 @@ const fragment = /* glsl */ `
       #ifndef TRANSLUCENT
       if (a < 0.999 && ign(gl_FragCoord.xy) > a) discard;
       #endif
-      vec3 n = normalize(vN);
+      vec3 n = dot(vN, vN) > 1e-12 ? normalize(vN) : vec3(0.0, 0.0, 1.0);
       if (!gl_FrontFacing) n = -n;
       vec3 v = normalize(-vView);
       vec3 L = normalize(uKeyDir);
