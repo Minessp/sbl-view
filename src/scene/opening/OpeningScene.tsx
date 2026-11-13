@@ -11,13 +11,16 @@ import { CALLOUTS } from '@/features/abertura/callouts';
 import { CUT_OFF, INTRO_SECONDS, introCut, introDolly, LAYER_WINDOWS, openingFrame, windowWeight } from '@/features/abertura/timeline';
 import { anchors, setAnchorWorld, type Anchor } from '../annotations';
 import type { BodyModel } from '../body/model';
-import { STANDING } from '../body/poses';
+import { ContactShadow } from '../body/ContactShadow';
+import { footContacts, STANDING } from '../body/poses';
 import { useBodyInstance, useBodyModel } from '../body/useBody';
 import { useStage } from '../stageStore';
 
 const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const sk = buildSkeleton(skeletonDef);
 const pose = forwardKinematics(sk, STANDING);
+const feet = footContacts(sk, pose);
+const getFeet = () => feet;
 /** Opacidade de cada camada acima do corte (fantasma). */
 const GHOST = { skin: 0.1, superficial: 0.16, deep: 0.12, bone: 0 } as const;
 const BASE_HIGHLIGHT = 0;
@@ -171,5 +174,10 @@ export function OpeningScene() {
     }
   });
 
-  return body ? <primitive object={body.group} /> : null;
+  return body ? (
+    <>
+      <ContactShadow feet={getFeet} />
+      <primitive object={body.group} />
+    </>
+  ) : null;
 }

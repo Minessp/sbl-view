@@ -1,100 +1,105 @@
 /*
  * SBL View — tokens. Fonte única de cor, tipo, espaço e movimento.
  * Cores são lidas também pelo WebGL (src/scene/palette.ts) e pelo teste de contraste.
- * Formato das cores: hex de 6 dígitos (o teste depende disso).
+ * Formato das cores dos temas: hex de 6 dígitos (o teste depende disso). Valores saem de OKLCH.
+ *
+ * Direção "estúdio de luz": o corpo é o sujeito iluminado num volume escuro. Duas luzes com papel:
+ * tungstênio (âmbar: foco, esforço, encurtar) e aço (frio: contraluz, alongar).
  */
 
+/* Estúdio escuro (padrão) */
 :root {
-  /* Papel vegetal (claro) */
-  --c-bg: #e7eae3;
-  --c-bg-2: #dde1d8;
-  --c-ink: #15191d;
-  --c-ink-2: #545b61;
-  --c-rule: #b9bfb6;
-  --c-accent: #a81c4b;
-  --c-on-accent: #f4f5f1;
-  --c-bone: #f1f2ec;
-  /* Corpo anatômico (WebGL): músculo em repouso, tendão, osso, pele. O destaque usa --c-accent. */
-  --c-body-muscle: #b98a7f;
-  --c-body-tendon: #e4dccb;
-  --c-body-bone: #ece5d2;
-  --c-body-skin: #d9b8a2;
-
-  color-scheme: light;
-}
-
-/* Ardósia de estúdio (escuro): segue o sistema, a menos que o usuário fixe claro. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --c-bg: #1e2428;
-    --c-bg-2: #252c31;
-    --c-ink: #e6e4da;
-    --c-ink-2: #9aa2a2;
-    --c-rule: #3a4247;
-    --c-accent: #f06a92;
-    --c-on-accent: #1e2428;
-    --c-bone: #2c3439;
-    --c-body-muscle: #8f5f57;
-    --c-body-tendon: #b9b19e;
-    --c-body-bone: #cfc7b2;
-    --c-body-skin: #a98c79;
-
-    color-scheme: dark;
-  }
-}
-
-:root[data-theme='dark'] {
-  --c-bg: #1e2428;
-  --c-bg-2: #252c31;
-  --c-ink: #e6e4da;
-  --c-ink-2: #9aa2a2;
-  --c-rule: #3a4247;
-  --c-accent: #f06a92;
-  --c-on-accent: #1e2428;
-  --c-bone: #2c3439;
-  --c-body-muscle: #8f5f57;
-  --c-body-tendon: #b9b19e;
-  --c-body-bone: #cfc7b2;
-  --c-body-skin: #a98c79;
+  --c-bg: #0a0f15;
+  --c-bg-2: #12181f;
+  --c-bg-3: #1b222b;
+  --c-ink: #f1eee9;
+  --c-ink-2: #a3acb5;
+  --c-rule: #313942;
+  --c-accent: #f8b65d;
+  --c-on-accent: #180f09;
+  --c-cool: #7ec1e5;
+  /* Luz do 3D: brilho do destaque, luz principal, contraluz, poça de luz no chão. */
+  --c-glow: #f8b65d;
+  --c-light-key: #fff1dc;
+  --c-light-rim: #9fd0f0;
+  --c-floor: #1e2731;
+  /* Corpo anatômico (WebGL): músculo em repouso, tendão, osso, pele. */
+  --c-body-muscle: #7a2c2a;
+  --c-body-tendon: #e6ddcc;
+  --c-body-bone: #e4dac1;
+  --c-body-skin: #caa188;
 
   color-scheme: dark;
 }
 
+/* Ciclorama claro (opcional, escolhido pelo usuário) */
+:root[data-theme='light'] {
+  --c-bg: #ebedef;
+  --c-bg-2: #dde0e4;
+  --c-bg-3: #cfd3d8;
+  --c-ink: #11161d;
+  --c-ink-2: #4d535b;
+  --c-rule: #babec3;
+  --c-accent: #92500b;
+  --c-on-accent: #faf8f5;
+  --c-cool: #1d5e85;
+  --c-glow: #f2a03c;
+  --c-light-key: #fff6ea;
+  --c-light-rim: #c4dcef;
+  --c-floor: #c9ced4;
+  --c-body-muscle: #93403d;
+  --c-body-tendon: #e6ddcc;
+  --c-body-bone: #e8ddc4;
+  --c-body-skin: #d1a78e;
+
+  color-scheme: light;
+}
+
 :root {
-  /* Rampa de coloração (eosina): volume, ativação, intensidade. Um matiz só. */
-  --c-stain-1: color-mix(in oklch, var(--c-accent) 14%, var(--c-bg));
-  --c-stain-2: color-mix(in oklch, var(--c-accent) 32%, var(--c-bg));
-  --c-stain-3: color-mix(in oklch, var(--c-accent) 52%, var(--c-bg));
-  --c-stain-4: color-mix(in oklch, var(--c-accent) 74%, var(--c-bg));
-  --c-stain-5: var(--c-accent);
-  /* Milimetrado: grade de fundo dos gráficos. */
-  --c-grid: color-mix(in oklch, var(--c-rule) 55%, transparent);
+  /* Rampa de brilho (incandescência): volume semanal, ativação, intensidade. Um matiz só, do apagado ao aceso. */
+  --c-heat-1: color-mix(in oklch, var(--c-glow) 16%, var(--c-bg-3));
+  --c-heat-2: color-mix(in oklch, var(--c-glow) 34%, var(--c-bg-3));
+  --c-heat-3: color-mix(in oklch, var(--c-glow) 54%, var(--c-bg-3));
+  --c-heat-4: color-mix(in oklch, var(--c-glow) 76%, var(--c-bg-3));
+  --c-heat-5: var(--c-glow);
+  /* Grade de fundo dos gráficos. */
+  --c-grid: color-mix(in oklch, var(--c-rule) 60%, transparent);
+  /* Superfícies derivadas */
+  --c-accent-soft: color-mix(in oklch, var(--c-accent) 14%, transparent);
+  --c-hover: color-mix(in oklch, var(--c-ink) 6%, transparent);
+  --c-scrim: color-mix(in oklch, var(--c-bg) 82%, transparent);
+  --c-edge: color-mix(in oklch, var(--c-ink) 9%, transparent);
+  --c-shadow: #000000;
+  --shadow-pop: 0 6px 8px -4px color-mix(in oklch, var(--c-shadow) 45%, transparent);
 
-  /* Tipo */
+  /* Tipo: uma família. Largura (eixo wdth) codifica papel: largo e fino = título; condensado = dado. */
   --font-sans: 'Archivo Variable', 'Archivo', 'Helvetica Neue', Arial, sans-serif;
-  --font-serif: 'Newsreader Variable', 'Newsreader', Georgia, 'Times New Roman', serif;
 
-  /* Escala modular ~1,25, com saltos no topo reservados a números. */
+  /* Escala ~1,25 fixa para a interface; só os três degraus de título são fluidos (teto 5,5rem). */
   --fs-1: 0.75rem;   /* 12 */
   --fs-2: 0.875rem;  /* 14 */
   --fs-3: 1rem;      /* 16 */
-  --fs-4: 1.25rem;   /* 20 */
-  --fs-5: 1.5625rem; /* 25 */
-  --fs-6: 1.9375rem; /* 31 */
-  --fs-7: clamp(2.25rem, 1.6rem + 2.6vw, 3.0625rem);   /* até 49 */
-  --fs-8: clamp(3rem, 1.9rem + 4.6vw, 4.75rem);        /* até 76 */
-  --fs-9: clamp(4rem, 2.2rem + 7.6vw, 7.4375rem);      /* até 119 */
+  --fs-4: 1.1875rem; /* 19 */
+  --fs-5: 1.5rem;    /* 24 */
+  --fs-6: 1.875rem;  /* 30 */
+  --fs-7: clamp(2rem, 1.5rem + 2vw, 2.75rem);      /* até 44 */
+  --fs-8: clamp(2.5rem, 1.6rem + 3.6vw, 4rem);     /* até 64 */
+  --fs-9: clamp(3rem, 1.8rem + 5vw, 5.5rem);       /* até 88 */
 
-  /* Largura (eixo wdth do Archivo) codifica densidade. */
   --wd-tight: 68%;
   --wd-cond: 82%;
   --wd-normal: 100%;
   --wd-wide: 118%;
   --wd-max: 125%;
 
-  --lh-tight: 1.02;
-  --lh-ui: 1.3;
-  --lh-text: 1.55;
+  /* Títulos: largos e finos, como cartela. */
+  --display-weight: 330;
+  --display-stretch: 125%;
+  --display-track: -0.015em;
+
+  --lh-tight: 1.04;
+  --lh-ui: 1.35;
+  --lh-text: 1.62;
 
   /* Espaço: base 4 */
   --s-1: 4px;
@@ -107,10 +112,12 @@
   --s-8: 72px;
   --s-9: 112px;
   --touch: 48px;
-  --measure: 34rem;
+  --measure: 38rem;
 
-  /* Raio: papel é reto. Só o que o polegar arrasta é redondo. */
-  --r-0: 0;
+  /* Raio: controle pequeno, painel, pílula (o que se aperta ou arrasta). */
+  --r-1: 6px;
+  --r-2: 12px;
+  --r-pill: 999px;
   --r-thumb: 999px;
 
   /* Traço */
@@ -118,14 +125,23 @@
   --lw-curve: 2px;
   --lw-active: 3px;
 
-  /* Movimento */
-  --t-fast: 90ms;
+  /* Movimento: saída exponencial; a luz do palco tem tempo próprio. */
+  --t-fast: 120ms;
   --t-mid: 220ms;
-  --t-slow: 480ms;
-  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --t-slow: 520ms;
+  --t-light: 1600ms;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --ease-in: cubic-bezier(0.4, 0, 1, 1);
 
-  --header-h: 52px;
+  /* Camadas */
+  --z-content: 1;
+  --z-stage-front: 15;
+  --z-header: 20;
+  --z-toast: 30;
+  --z-skip: 100;
+
+  --header-h: 56px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -133,5 +149,6 @@
     --t-fast: 0ms;
     --t-mid: 0ms;
     --t-slow: 0ms;
+    --t-light: 0ms;
   }
 }

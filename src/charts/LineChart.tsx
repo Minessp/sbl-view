@@ -1,6 +1,6 @@
 /**
- * Gráfico de linha de prancha: milimetrado, variações por padrão de traço, curva "desenhada"
- * até o cursor (o resto fica em grafite fino), faixa opcional de esforço em eosina.
+ * Gráfico de linha: grade discreta, variações por padrão de traço, curva "desenhada"
+ * até o cursor (o resto fica em traço fino), faixa opcional de esforço na rampa de brilho.
  * SVG puro; d3 só para escala e caminho.
  */
 import { scaleLinear } from 'd3-scale';

@@ -8,7 +8,9 @@ import { buildSkeleton } from '@/engine/kinematics/skeleton';
 import type { Vec3 } from '@/engine/math/vec';
 import { useAtlas, type AtlasView } from '@/features/atlas/store';
 import { boxOfSlots, type Box } from '../body/model';
-import { STANDING } from '../body/poses';
+import { ContactShadow } from '../body/ContactShadow';
+import { footContacts, STANDING } from '../body/poses';
+import { pulse } from '../body/rig';
 import { useBodyInstance, useBodyModel } from '../body/useBody';
 import { useStage } from '../stageStore';
 
@@ -17,6 +19,8 @@ const DEFAULT_BOX: Box = { center: [0, 0.93, 0], size: [0.5, 1.8, 0.3] };
 const DIR: Record<AtlasView, Vec3> = { front: [0, 0, 1], back: [0, 0, -1], side: [-1, 0, 0] };
 const sk = buildSkeleton(skeletonDef);
 const pose = forwardKinematics(sk, STANDING);
+const feet = footContacts(sk, pose);
+const getFeet = () => feet;
 const HOVER = 0.4;
 const GHOST = 0.14;
 
@@ -38,7 +42,12 @@ function AtlasBody({ slot }: { slot: HTMLElement }) {
     invalidate();
   }, [body, invalidate]);
 
-  // Destaque: o alvo em eosina; se for profundo, a camada superficial vira fantasma para ele aparecer.
+  // Músculo novo: o brilho percorre a fibra da origem à inserção.
+  useEffect(() => {
+    if (muscleId) pulse();
+  }, [muscleId]);
+
+  // Destaque: o alvo aceso; se for profundo, a camada superficial vira fantasma para ele aparecer.
   useEffect(() => {
     if (!body || !model) return;
     const target = (muscleId && model.byMuscle.get(muscleId)) || [];
@@ -91,6 +100,7 @@ function AtlasBody({ slot }: { slot: HTMLElement }) {
   return (
     <>
       <OrthographicCamera ref={camRef} makeDefault near={0.1} far={20} position={[0, 1, 4]} />
+      {body && <ContactShadow feet={getFeet} />}
       {body && <primitive object={body.group} />}
     </>
   );

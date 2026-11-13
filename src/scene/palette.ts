@@ -1,10 +1,27 @@
-/** Lê os tokens de cor do CSS (fonte única) para uso no WebGL. Valores sRGB 0..1, sem conversão. */
+/** Lê os tokens de cor do CSS (fonte única) para uso no WebGL. Valores sRGB 0..1; o shader converte para linear. */
 import { Vector3 } from 'three';
 
-export type PaletteKey = 'bg' | 'bg-2' | 'ink' | 'ink-2' | 'rule' | 'accent' | 'bone' | 'body-muscle' | 'body-tendon' | 'body-bone' | 'body-skin';
-export type Palette = Record<PaletteKey, Vector3>;
+const KEYS = [
+  'bg',
+  'bg-2',
+  'bg-3',
+  'ink',
+  'ink-2',
+  'rule',
+  'accent',
+  'cool',
+  'glow',
+  'light-key',
+  'light-rim',
+  'floor',
+  'body-muscle',
+  'body-tendon',
+  'body-bone',
+  'body-skin',
+] as const;
 
-const KEYS: PaletteKey[] = ['bg', 'bg-2', 'ink', 'ink-2', 'rule', 'accent', 'bone', 'body-muscle', 'body-tendon', 'body-bone', 'body-skin'];
+export type PaletteKey = (typeof KEYS)[number];
+export type Palette = Record<PaletteKey, Vector3>;
 
 function hexToVec(hex: string, out: Vector3): Vector3 {
   const h = hex.trim().replace('#', '');

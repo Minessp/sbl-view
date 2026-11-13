@@ -1,9 +1,11 @@
 /**
  * Palco WebGL (chunk lazy: é aqui que three.js entra).
  * frameloop="demand": só desenha quando algo muda. DPR limitado no celular.
+ * `flat`: o tom (ACES) e a conversão para sRGB ficam nos materiais (body/material.ts).
  */
 import { Canvas } from '@react-three/fiber';
 import { AtlasScene } from './atlas/AtlasScene';
+import { LightRig } from './body/LightRig';
 import { HeatScene } from './heat/HeatScene';
 import { LabScene } from './lab/LabScene';
 import { OpeningScene } from './opening/OpeningScene';
@@ -24,6 +26,7 @@ export default function Stage() {
       camera={{ fov: 28, near: 0.1, far: 30, position: [0, 1.02, 4] }}
       onCreated={({ gl }) => gl.setClearColor(0x000000, 0)}
     >
+      <LightRig />
       {scene === 'opening' && <OpeningScene />}
       {scene === 'lab' && <LabScene />}
       {scene === 'atlas' && <AtlasScene />}

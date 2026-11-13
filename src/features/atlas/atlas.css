@@ -1,66 +1,79 @@
 /* ---------- Índice ---------- */
 .atlas-index {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
-  gap: var(--s-2) var(--s-6);
-  padding-top: var(--s-4);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: var(--s-4) var(--s-7);
 }
 
 .atlas-region {
   display: grid;
-  gap: var(--s-4);
+  gap: var(--s-5);
   align-content: start;
   padding: var(--s-4) 0;
 }
 
 .atlas-region__title {
-  font-size: var(--fs-5);
-  font-weight: 700;
-  font-stretch: 108%;
-  padding-bottom: var(--s-2);
-  border-bottom: var(--lw-curve) solid var(--c-ink);
+  font-size: var(--fs-6);
+  font-weight: var(--display-weight);
+  font-stretch: var(--display-stretch);
+  letter-spacing: var(--display-track);
+  line-height: 1.1;
 }
 
 .atlas-group__title {
-  margin-bottom: var(--s-1);
-  font-size: var(--fs-1);
-  font-weight: 600;
+  margin-bottom: var(--s-2);
+  font-size: var(--fs-2);
+  font-weight: 560;
   font-stretch: var(--wd-cond);
-  color: var(--c-ink-2);
+  color: var(--c-accent);
 }
 
+/* Linha do músculo: ao passar, uma luz rasante acende a linha. */
 .atlas-entry {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
   gap: 0 var(--s-3);
   min-height: var(--touch);
-  padding: var(--s-2) 0;
-  border-bottom: var(--lw-hair) solid var(--c-rule);
+  padding: var(--s-3) var(--s-2);
+  margin: 0 calc(-1 * var(--s-2));
+  border-radius: var(--r-1);
   text-decoration: none;
+  transition: background-color var(--t-fast) var(--ease);
+}
+
+.atlas-entry::after {
+  content: '';
+  position: absolute;
+  left: var(--s-2);
+  right: var(--s-2);
+  bottom: 0;
+  height: var(--lw-hair);
+  background: var(--c-edge);
+}
+
+.atlas-entry:hover {
+  background: linear-gradient(90deg, var(--c-accent-soft), transparent 80%);
 }
 
 .atlas-entry__name {
   font-size: var(--fs-4);
-  font-weight: 600;
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-decoration-thickness: var(--lw-curve);
-  text-underline-offset: 0.18em;
-  transition: text-decoration-color var(--t-fast) var(--ease);
+  font-weight: 500;
+  transition: color var(--t-fast) var(--ease);
 }
 
 .atlas-entry:hover .atlas-entry__name {
-  text-decoration-color: var(--c-accent);
+  color: var(--c-accent);
 }
 
 .atlas-entry__latin {
-  font-size: var(--fs-3);
+  font-size: var(--fs-2);
   color: var(--c-ink-2);
 }
 
-/* ---------- Prancha do músculo ---------- */
+/* ---------- Página do músculo ---------- */
 .atlas-page__latin {
   font-size: var(--fs-5);
   color: var(--c-ink-2);
@@ -68,27 +81,20 @@
 
 .atlas-page__group {
   font-size: var(--fs-2);
+  font-weight: 560;
   font-stretch: var(--wd-cond);
-  color: var(--c-ink-2);
+  color: var(--c-accent);
 }
 
 .atlas-stage {
   display: grid;
-  gap: var(--s-2);
-  padding: var(--s-3) 0;
-  border-bottom: var(--lw-hair) solid var(--c-rule);
+  gap: var(--s-3);
+  padding: var(--s-3) 0 var(--s-5);
 }
 
 .atlas-stage__slot {
-  height: min(62svh, 560px);
-  min-height: 300px;
-  /* Milimetrado discreto atrás do corpo. */
-  background-image:
-    linear-gradient(var(--c-grid) var(--lw-hair), transparent var(--lw-hair)),
-    linear-gradient(90deg, var(--c-grid) var(--lw-hair), transparent var(--lw-hair));
-  background-size: 24px 24px;
-  background-position: center;
-  border: var(--lw-hair) solid var(--c-rule);
+  height: min(66svh, 600px);
+  min-height: 320px;
 }
 
 .atlas-stage__cap {
@@ -110,7 +116,8 @@
 .atlas-stage__hint {
   margin: 0;
   min-height: 1.5em;
-  font-size: var(--fs-1);
+  font-size: var(--fs-2);
+  color: var(--c-ink);
 }
 
 .atlas-stage__credit {
@@ -127,8 +134,8 @@
 @media (min-width: 1000px) {
   .atlas-page {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(340px, 0.85fr);
-    column-gap: var(--s-7);
+    grid-template-columns: minmax(0, 1fr) minmax(400px, 1fr);
+    column-gap: var(--s-8);
     align-items: start;
   }
   .atlas-page__head {
@@ -139,15 +146,18 @@
     grid-row: 2;
     position: sticky;
     top: calc(var(--header-h) + var(--s-4));
-    border-bottom: 0;
+    padding-top: 0;
   }
   .atlas-stage__slot {
-    height: calc(100svh - var(--header-h) - 120px);
-    max-height: 760px;
+    height: calc(100svh - var(--header-h) - 132px);
+    max-height: 820px;
   }
   .atlas-page__body {
     grid-column: 1;
     grid-row: 2;
+  }
+  .atlas-page__body > .section:first-child {
+    padding-top: 0;
   }
 }
 
@@ -157,17 +167,18 @@
   grid-template-columns: 1fr auto auto;
   gap: 2px var(--s-3);
   align-items: baseline;
-  padding: var(--s-2) 0;
-  border-bottom: var(--lw-hair) solid var(--c-rule);
+  padding: var(--s-3) 0;
+  border-bottom: var(--lw-hair) solid var(--c-edge);
 }
 
 .action-list__name {
   font-size: var(--fs-4);
-  font-weight: 620;
+  font-weight: 560;
 }
 
 .action-list li[data-role='secundaria'] .action-list__name {
-  font-weight: 420;
+  font-weight: 400;
+  color: color-mix(in oklch, var(--c-ink) 85%, var(--c-ink-2));
 }
 
 .action-list__role {
@@ -184,7 +195,6 @@
 }
 
 .action-list__note {
-  font-family: var(--font-serif);
   font-style: italic;
 }
 
@@ -196,16 +206,17 @@
 
 .curve {
   display: grid;
-  gap: var(--s-2);
-  padding-top: var(--s-2);
-  border-top: var(--lw-hair) solid var(--c-ink);
+  gap: var(--s-3);
+  padding: var(--s-4);
+  border-radius: var(--r-2);
+  background: var(--c-bg-2);
 }
 
 .curve__title {
   display: grid;
   gap: 2px;
   font-size: var(--fs-3);
-  font-weight: 650;
+  font-weight: 600;
 }
 
 .curve__axis {

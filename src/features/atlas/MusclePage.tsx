@@ -58,7 +58,7 @@ function Stage({ m }: { m: MuscleDef }) {
       </figcaption>
       <div
         ref={ref}
-        className="atlas-stage__slot"
+        className="atlas-stage__slot viewport"
         role="img"
         aria-label={`${t.atlas.figure} ${m.name}.`}
         data-ready={ready}

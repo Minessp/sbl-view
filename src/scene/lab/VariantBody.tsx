@@ -1,17 +1,19 @@
 import { OrthographicCamera } from '@react-three/drei';
-import { useFrame, useThree } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
-import { CylinderGeometry, type Group, MeshBasicMaterial, type OrthographicCamera as OrthoCam, SRGBColorSpace, TorusGeometry, Vector3 } from 'three';
+import { CylinderGeometry, type Group, type OrthographicCamera as OrthoCam, TorusGeometry, Vector3 } from 'three';
 import { muscleDefs } from '@/data';
 import { depthAt } from '@/engine/exercises/squat';
 import type { Vec3 } from '@/engine/math/vec';
 import { relativeCapacity } from '@/engine/muscle/capacity';
 import { capacityCurves, getLabBody, makeSolver, variantById } from '@/features/lab/model';
 import { useLab } from '@/features/lab/store';
-import { useTheme } from '@/ui/theme';
 import type { BodyModel } from '../body/model';
+import { ContactShadow } from '../body/ContactShadow';
+import { footContacts } from '../body/poses';
+import { createPropMaterial } from '../body/prop';
+import { palette } from '../body/rig';
 import { useBodyInstance } from '../body/useBody';
-import { createPalette, readPalette } from '../palette';
 import { writeOverlay } from './overlay';
 
 const VISIBLE_HEIGHT = 2.15;
@@ -29,7 +31,6 @@ const GROUP_OF = new Map(muscleDefs.map((m) => [m.id, m.group]));
 
 export function VariantBody({ variantId, slot, overlay, model }: { variantId: string; slot: HTMLElement; overlay: HTMLElement | null; model: BodyModel }) {
   const settings = useLab((s) => s.settings);
-  const invalidate = useThree((s) => s.invalidate);
   const camRef = useRef<OrthoCam>(null);
   const body = useBodyInstance(model);
 
@@ -58,7 +59,6 @@ export function VariantBody({ variantId, slot, overlay, model }: { variantId: st
   }, [body]);
 
   // ---- Barra (ferro): cilindro e aros; de perfil, um disco cheio taparia o corpo ----
-  const palette = useMemo(() => readPalette(createPalette()), []);
   const bar = useMemo(() => {
     const barGeo = new CylinderGeometry(0.0145, 0.0145, 2.0, 10);
     barGeo.rotateZ(Math.PI / 2);
@@ -66,18 +66,14 @@ export function VariantBody({ variantId, slot, overlay, model }: { variantId: st
     plateGeo.rotateY(Math.PI / 2);
     const hubGeo = new TorusGeometry(0.03, 0.006, 6, 24);
     hubGeo.rotateY(Math.PI / 2);
-    const iron = new MeshBasicMaterial();
+    const iron = createPropMaterial();
     return { barGeo, plateGeo, hubGeo, iron };
   }, []);
-  const resolved = useTheme((s) => s.resolved);
+  // Ferro na cor da legenda (segue o tema: o vetor da paleta é atualizado no lugar).
   useEffect(() => {
-    const id = requestAnimationFrame(() => {
-      const c = readPalette(palette)['ink-2'];
-      bar.iron.color.setRGB(c.x, c.y, c.z, SRGBColorSpace);
-      invalidate();
-    });
-    return () => cancelAnimationFrame(id);
-  }, [resolved, palette, bar, invalidate]);
+    const u = bar.iron.uniforms.uColor;
+    if (u) u.value = palette['ink-2'];
+  }, [bar]);
   useEffect(
     () => () => {
       bar.barGeo.dispose();
@@ -89,6 +85,8 @@ export function VariantBody({ variantId, slot, overlay, model }: { variantId: st
   );
 
   const barRef = useRef<Group>(null);
+  const feet = useRef<readonly Vec3[]>([]);
+  const getFeet = useMemo(() => () => feet.current, []);
   const tmp = useMemo(() => new Vector3(), []);
 
   useFrame(() => {
@@ -110,6 +108,7 @@ export function VariantBody({ variantId, slot, overlay, model }: { variantId: st
     };
     for (const g of tinted) body.fill('activation', 0.1 + 0.85 * Math.min(1, effort[g.joint]), g.slots);
     body.setPose(lab.sk, f.pose, { scale });
+    feet.current = footContacts(lab.sk, f.pose);
 
     if (barRef.current) barRef.current.position.set(0, f.load[1], f.load[2]);
 
@@ -129,6 +128,7 @@ export function VariantBody({ variantId, slot, overlay, model }: { variantId: st
   return (
     <>
       <OrthographicCamera ref={camRef} makeDefault position={[-4, TARGET.y, TARGET.z]} near={0.1} far={20} onUpdate={(c) => c.lookAt(TARGET)} />
+      {body && <ContactShadow feet={getFeet} />}
       {body && <primitive object={body.group} />}
       <group ref={barRef}>
         <mesh geometry={bar.barGeo} material={bar.iron} />

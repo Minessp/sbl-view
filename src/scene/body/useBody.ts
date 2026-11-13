@@ -1,11 +1,11 @@
 import { useThree } from '@react-three/fiber';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { muscleDefs } from '@/data';
 import { useTheme } from '@/ui/theme';
 import { loadAnatomyPack, type AnatomyLod } from '../anatomy/pack';
-import { createPalette, readPalette } from '../palette';
 import { BodyInstance } from './instance';
 import { buildBodyModel, type BodyModel } from './model';
+import { palette, refreshPalette } from './rig';
 
 /** Celular ou tela pequena: nível baixo (≤ 1,2 MB). */
 export function preferredLod(): AnatomyLod {
@@ -45,7 +45,6 @@ export function useBodyModel(): { model: BodyModel | null; error: boolean } {
 /** Instância própria (pose e estado) para uma vista; relê as cores quando o tema muda. */
 export function useBodyInstance(m: BodyModel | null): BodyInstance | null {
   const invalidate = useThree((s) => s.invalidate);
-  const palette = useMemo(() => readPalette(createPalette()), []);
   // Criada no efeito: no StrictMode a limpeza roda entre as duas montagens e precisa de uma instância nova.
   const [inst, setInst] = useState<BodyInstance | null>(null);
   useEffect(() => {
@@ -56,14 +55,14 @@ export function useBodyInstance(m: BodyModel | null): BodyInstance | null {
       b.dispose();
       setInst((cur) => (cur === b ? null : cur));
     };
-  }, [m, palette]);
+  }, [m]);
   const resolved = useTheme((s) => s.resolved);
   useEffect(() => {
     const id = requestAnimationFrame(() => {
-      readPalette(palette);
+      refreshPalette();
       invalidate();
     });
     return () => cancelAnimationFrame(id);
-  }, [resolved, palette, invalidate]);
+  }, [resolved, invalidate]);
   return inst;
 }

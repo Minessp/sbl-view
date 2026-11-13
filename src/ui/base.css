@@ -1,8 +1,8 @@
 @import '@fontsource-variable/archivo/wdth.css';
-@import '@fontsource-variable/newsreader/wght.css';
-@import '@fontsource-variable/newsreader/wght-italic.css';
+@import '@fontsource-variable/archivo/wdth-italic.css';
 @import './tokens.css';
 @import './primitives.css';
+@import './motion.css';
 
 *,
 *::before,
@@ -15,6 +15,7 @@ html {
   text-size-adjust: 100%;
   background: var(--c-bg);
   color: var(--c-ink);
+  scrollbar-color: var(--c-rule) transparent;
 }
 
 body {
@@ -25,7 +26,6 @@ body {
   line-height: var(--lh-ui);
   font-stretch: var(--wd-normal);
   font-variant-numeric: tabular-nums lining-nums;
-  font-optical-sizing: auto;
   background: var(--c-bg);
   color: var(--c-ink);
   -webkit-font-smoothing: antialiased;
@@ -46,6 +46,12 @@ ul {
   margin: 0;
 }
 
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
 ol,
 ul {
   padding: 0;
@@ -55,7 +61,13 @@ ul {
 a {
   color: inherit;
   text-decoration-thickness: var(--lw-hair);
-  text-underline-offset: 0.2em;
+  text-decoration-color: color-mix(in oklch, currentColor 45%, transparent);
+  text-underline-offset: 0.22em;
+  transition: text-decoration-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+
+a:hover {
+  text-decoration-color: var(--c-accent);
 }
 
 button,
@@ -68,6 +80,7 @@ textarea {
 
 button {
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 img,
@@ -80,6 +93,7 @@ canvas {
 :focus-visible {
   outline: var(--lw-curve) solid var(--c-accent);
   outline-offset: 3px;
+  border-radius: var(--r-1);
 }
 
 ::selection {
@@ -87,19 +101,30 @@ canvas {
   color: var(--c-on-accent);
 }
 
-/* Prosa: Newsreader. Nomenclatura anatômica: itálico. */
+/* Título de página: largo e fino, como cartela. */
+.display {
+  font-size: var(--fs-8);
+  font-weight: var(--display-weight);
+  font-stretch: var(--display-stretch);
+  letter-spacing: var(--display-track);
+  line-height: var(--lh-tight);
+}
+
+/* Prosa: mesma família, mais ar (texto claro no escuro pede entrelinha maior). */
 .prose {
-  font-family: var(--font-serif);
   font-size: var(--fs-4);
   line-height: var(--lh-text);
   max-width: var(--measure);
   text-wrap: pretty;
+  color: color-mix(in oklch, var(--c-ink) 88%, var(--c-ink-2));
 }
 
+/* Nomenclatura anatômica: itálico. */
 .latin {
-  font-family: var(--font-serif);
   font-style: italic;
-  font-weight: 400;
+  font-weight: 380;
+  font-stretch: var(--wd-normal);
+  letter-spacing: 0.005em;
 }
 
 .visually-hidden {
@@ -118,12 +143,19 @@ canvas {
   position: absolute;
   left: var(--s-4);
   top: -100px;
-  z-index: 100;
-  padding: var(--s-2) var(--s-3);
-  background: var(--c-ink);
-  color: var(--c-bg);
+  z-index: var(--z-skip);
+  padding: var(--s-2) var(--s-4);
+  border-radius: var(--r-pill);
+  background: var(--c-accent);
+  color: var(--c-on-accent);
+  font-weight: 600;
 }
 
 .skip-link:focus {
   top: var(--s-2);
+}
+
+/* Foco levado por código ao h1 na troca de rota: o leitor de tela anuncia; o anel não precisa aparecer. */
+h1[tabindex='-1']:focus {
+  outline: none;
 }

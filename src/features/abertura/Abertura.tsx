@@ -128,7 +128,6 @@ export default function Abertura() {
   return (
     <main id="conteudo" ref={root} className="opening">
       <section className="opening__intro" aria-labelledby="opening-title">
-        <p className="opening__plate">{t.opening.plate}</p>
         <h1 id="opening-title" className="opening__title">
           {t.opening.title}
         </h1>

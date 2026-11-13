@@ -1,6 +1,6 @@
 /**
- * Mapa de calor: corpo anatômico de frente e de costas, cada músculo tingido de eosina pelo degrau de séries
- * semanais. O músculo em repouso usa a cor do papel, para o degrau 0 ser o mesmo da legenda.
+ * Mapa de calor: corpo anatômico de frente e de costas, cada músculo aceso pelo degrau de séries
+ * semanais. O músculo em repouso usa --c-bg-3, a mesma base da rampa: degrau 0 igual ao da legenda.
  */
 import { OrthographicCamera, View } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
@@ -9,10 +9,11 @@ import { type OrthographicCamera as OrthoCam } from 'three';
 import { skeletonDef } from '@/data';
 import { forwardKinematics } from '@/engine/kinematics/fk';
 import { buildSkeleton } from '@/engine/kinematics/skeleton';
-import { heatLevel, HEAT_STAIN } from '@/features/heat/levels';
+import { heatLevel, HEAT_GLOW } from '@/features/heat/levels';
 import { useHeat, type HeatView } from '@/features/heat/store';
 import type { BodyModel } from '../body/model';
-import { STANDING } from '../body/poses';
+import { ContactShadow } from '../body/ContactShadow';
+import { footContacts, STANDING } from '../body/poses';
 import { useBodyInstance, useBodyModel } from '../body/useBody';
 import { useStage } from '../stageStore';
 
@@ -20,6 +21,8 @@ const H = 1.92;
 const CY = 0.9;
 const sk = buildSkeleton(skeletonDef);
 const pose = forwardKinematics(sk, STANDING);
+const feet = footContacts(sk, pose);
+const getFeet = () => feet;
 
 function HeatBody({ view, slot, model }: { view: HeatView; slot: HTMLElement; model: BodyModel }) {
   const camRef = useRef<OrthoCam>(null);
@@ -31,14 +34,14 @@ function HeatBody({ view, slot, model }: { view: HeatView; slot: HTMLElement; mo
     if (!body) return;
     body.setPose(sk, pose);
     body.layer('skin', { visible: false });
-    body.layers.superficial.uColor.value = body.layers.superficial.uBg.value;
-    body.layers.deep.uColor.value = body.layers.deep.uBg.value;
+    body.color('superficial', 'bg-3');
+    body.color('deep', 'bg-3');
   }, [body]);
 
   useEffect(() => {
     if (!body) return;
     body.fill('heat', 0);
-    for (const [id, slots] of model.byMuscle) body.fill('heat', HEAT_STAIN[heatLevel(values[id] ?? 0)], slots);
+    for (const [id, slots] of model.byMuscle) body.fill('heat', HEAT_GLOW[heatLevel(values[id] ?? 0)], slots);
     body.commit();
     invalidate();
   }, [body, model, values, invalidate]);
@@ -55,6 +58,7 @@ function HeatBody({ view, slot, model }: { view: HeatView; slot: HTMLElement; mo
   return (
     <>
       <OrthographicCamera ref={camRef} makeDefault near={0.1} far={20} position={[0, CY, 4]} />
+      {body && <ContactShadow feet={getFeet} />}
       {body && <primitive object={body.group} />}
     </>
   );

@@ -47,7 +47,7 @@ export function BodyHeatmap({ values, caption }: { values: Readonly<Record<strin
       <div className="heat__bodies" role="img" aria-label={describe(values)}>
         {VIEWS.map((v) => (
           <div key={v} className="heat__body">
-            <div ref={v === 'front' ? front : back} className="heat__slot" data-ready={ready} />
+            <div ref={v === 'front' ? front : back} className="heat__slot viewport" data-ready={ready} />
             <span className="heat__view">{H.view[v]}</span>
           </div>
         ))}

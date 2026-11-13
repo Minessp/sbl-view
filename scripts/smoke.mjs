@@ -43,7 +43,7 @@ await step('sistema carrega', async () => {
 
 await step('rota inexistente mostra 404 e navegação leva o foco ao h1', async () => {
   await page.goto(`${base}/nao-existe`, { waitUntil: 'networkidle' });
-  await page.getByRole('heading', { name: 'Prancha não encontrada' }).waitFor();
+  await page.getByRole('heading', { name: 'Página não encontrada' }).waitFor();
   await page.getByRole('main').getByRole('link', { name: 'Atlas' }).click();
   await page.waitForFunction(() => document.activeElement?.tagName === 'H1', null, { timeout: 8000 });
 });
@@ -68,7 +68,7 @@ await step('alternar variação troca a vista', async () => {
   await page.waitForFunction(() => document.querySelectorAll('.view-slot').length === 3);
 });
 
-await step('atlas: índice lista músculos e a prancha desenha corpo e curvas', async () => {
+await step('atlas: índice lista músculos e a página desenha corpo e curvas', async () => {
   await page.goto(`${base}/atlas`, { waitUntil: 'networkidle' });
   await page.getByRole('link', { name: /Semimembranáceo/ }).click();
   await page.getByRole('heading', { level: 1, name: 'Semimembranáceo' }).waitFor();
@@ -133,7 +133,7 @@ await step('plano: gerar, ver o mapa de calor, começar e ver o dia no registro'
   await page.locator('.today__item').first().waitFor();
 });
 
-await step('atlas: corpo anatômico desenha; tocar em outro músculo abre a prancha dele', async () => {
+await step('atlas: corpo anatômico desenha; tocar em outro músculo abre a página dele', async () => {
   await page.goto(`${base}/atlas/vastus_lateralis`, { waitUntil: 'networkidle' });
   await page.waitForSelector('.stage[data-ready="true"]', { timeout: 20000 });
   await page.getByText('Z-Anatomy', { exact: false }).first().waitFor({ timeout: 15000 });

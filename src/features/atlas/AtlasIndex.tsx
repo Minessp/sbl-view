@@ -9,7 +9,6 @@ export default function AtlasIndex() {
   return (
     <main id="conteudo" className="sheet">
       <header className="sheet__head">
-        <p className="sheet__plate">{A.plate}</p>
         <h1 className="sheet__title">{A.title}</h1>
         <p className="sheet__lead prose">{A.lead}</p>
         <p className="sheet__count">

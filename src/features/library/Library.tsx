@@ -51,7 +51,6 @@ export default function Library() {
   return (
     <main id="conteudo" className="sheet">
       <header className="sheet__head">
-        <p className="sheet__plate">{L.plate}</p>
         <h1 className="sheet__title">{L.title}</h1>
         <p className="sheet__lead prose">{L.lead}</p>
       </header>

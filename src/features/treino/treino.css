@@ -1,32 +1,38 @@
-/* Abas do Treino: fio sob a ativa, como marcador de prancha. */
+/* Abas do Treino: trilho de pílulas; a ativa fica acesa. */
 .tabs {
-  display: flex;
+  display: inline-flex;
   flex-wrap: wrap;
-  gap: 0 var(--s-4);
-  margin-top: var(--s-3);
-  border-bottom: var(--lw-hair) solid var(--c-rule);
+  gap: 2px;
+  margin-top: var(--s-4);
+  padding: 4px;
+  border-radius: var(--r-pill);
+  background: var(--c-bg-2);
+  box-shadow: inset 0 0 0 var(--lw-hair) var(--c-edge);
 }
 
 .tabs__link {
   display: inline-flex;
   align-items: center;
-  min-height: var(--touch);
-  font-size: var(--fs-3);
-  font-weight: 560;
+  min-height: 40px;
+  padding: 0 var(--s-4);
+  border-radius: var(--r-pill);
+  font-size: var(--fs-2);
+  font-weight: 540;
   font-stretch: var(--wd-cond);
   color: var(--c-ink-2);
   text-decoration: none;
-  border-bottom: var(--lw-curve) solid transparent;
-  margin-bottom: calc(-1 * var(--lw-hair));
+  transition: background-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
 }
 
 .tabs__link:hover {
   color: var(--c-ink);
+  background: var(--c-hover);
 }
 
 .tabs__link[aria-current='page'] {
   color: var(--c-ink);
-  border-bottom-color: var(--c-accent);
+  background: var(--c-bg-3);
+  box-shadow: inset 0 -2px 0 var(--c-accent);
 }
 
 .log-day + .log-day {
@@ -36,10 +42,10 @@
 .log-day__title {
   padding-bottom: var(--s-1);
   font-size: var(--fs-2);
-  font-weight: 650;
+  font-weight: 600;
   font-stretch: var(--wd-cond);
-  color: var(--c-ink-2);
-  border-bottom: var(--lw-hair) solid var(--c-ink);
+  color: var(--c-accent);
+  border-bottom: var(--lw-hair) solid var(--c-edge);
 }
 
 .log-day__title::first-letter {
@@ -57,14 +63,10 @@
 
 .field textarea {
   min-height: calc(var(--touch) * 1.5);
-  padding: var(--s-2);
-  border: 0;
-  border-bottom: var(--lw-hair) solid var(--c-ink);
-  border-radius: 0;
-  background: var(--c-bg-2);
+  padding: var(--s-3);
   font: inherit;
   font-size: var(--fs-3);
-  color: var(--c-ink);
+  line-height: 1.5;
   resize: vertical;
 }
 
@@ -79,15 +81,16 @@
 }
 
 .set-row__kind {
-  font-family: var(--font-serif);
   font-style: italic;
   color: var(--c-ink-2);
 }
 
 .logger__list .set-row--edit {
   display: block;
+  margin: var(--s-2) 0;
+  padding: var(--s-4);
+  border-radius: var(--r-2);
   background: var(--c-bg-2);
-  padding: var(--s-3);
 }
 
 .set-edit {
@@ -126,7 +129,7 @@
   display: grid;
   gap: var(--s-3);
   padding: var(--s-5) 0;
-  border-bottom: var(--lw-hair) solid var(--c-rule);
+  border-bottom: var(--lw-hair) solid var(--c-edge);
 }
 
 .session__head {
@@ -137,6 +140,7 @@
 .session__head .log-day__title {
   font-size: var(--fs-4);
   color: var(--c-ink);
+  border-bottom: 0;
 }
 
 .session__meta {
@@ -147,12 +151,11 @@
 
 .session__ex-name {
   font-size: var(--fs-3);
-  font-weight: 650;
+  font-weight: 600;
   font-stretch: var(--wd-cond);
 }
 
 .session__notes {
-  font-family: var(--font-serif);
   font-style: italic;
   color: var(--c-ink-2);
 }
@@ -184,7 +187,8 @@
 }
 
 .progress__best strong {
-  font-weight: 700;
+  font-weight: 650;
+  color: var(--c-accent);
   font-variant-numeric: tabular-nums;
 }
 
@@ -213,7 +217,7 @@
 .data-table td {
   padding: var(--s-2) var(--s-2);
   text-align: right;
-  border-bottom: var(--lw-hair) solid var(--c-rule);
+  border-bottom: var(--lw-hair) solid var(--c-edge);
   white-space: nowrap;
 }
 
@@ -226,7 +230,7 @@
   font-weight: 560;
   font-stretch: var(--wd-cond);
   color: var(--c-ink-2);
-  border-bottom-color: var(--c-ink);
+  border-bottom-color: var(--c-rule);
 }
 
 .data-table tbody th {
@@ -235,36 +239,37 @@
 
 .data-table__muted {
   color: var(--c-ink-2);
-  font-family: var(--font-serif);
   font-style: italic;
 }
 
 .data-table--weeks td {
   min-width: 3.2em;
   text-align: center;
-  font-weight: 650;
+  font-weight: 600;
+  border-radius: 4px;
 }
 
-/* Mesma rampa da prancha de sistema: intensidade de coloração, relativa ao maior valor. */
+/* Mesma rampa de brilho do sistema e do mapa de calor, relativa ao maior valor. */
 .stain-cell[data-level='0'] {
   color: var(--c-ink-2);
   font-weight: 400;
 }
 .stain-cell[data-level='1'] {
-  background: var(--c-stain-1);
+  background: var(--c-heat-1);
 }
 .stain-cell[data-level='2'] {
-  background: var(--c-stain-2);
+  background: var(--c-heat-2);
 }
 .stain-cell[data-level='3'] {
-  background: var(--c-stain-3);
+  background: var(--c-heat-3);
+  color: var(--c-on-accent);
 }
 .stain-cell[data-level='4'] {
-  background: var(--c-stain-4);
+  background: var(--c-heat-4);
   color: var(--c-on-accent);
 }
 .stain-cell[data-level='5'] {
-  background: var(--c-stain-5);
+  background: var(--c-heat-5);
   color: var(--c-on-accent);
 }
 
@@ -275,13 +280,16 @@
 }
 
 .data__count {
-  font-size: var(--fs-4);
-  font-weight: 650;
-  font-stretch: var(--wd-cond);
+  font-size: var(--fs-5);
+  font-weight: var(--display-weight);
+  font-stretch: var(--display-stretch);
 }
 
 .btn-danger {
-  border-color: var(--c-accent);
+  justify-self: start;
+  border: var(--lw-hair) solid var(--c-accent);
+  background: transparent;
+  color: var(--c-ink);
 }
 
 .btn-danger:hover {

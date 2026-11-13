@@ -17,8 +17,9 @@ import {
 } from 'three';
 import { skinMatrices, skinPoint, type SkinMatrixOptions } from '@/engine/kinematics/skinning';
 import type { EngineSkeleton, Pose } from '@/engine/kinematics/types';
-import type { Palette } from '../palette';
+import type { Palette, PaletteKey } from '../palette';
 import { createBodyMaterial, STATE_ROWS, type BodyUniforms } from './material';
+import { rig } from './rig';
 import { LAYERS, type BodyLayer, type BodyModel } from './model';
 
 /** Canais do estado por vaga. */
@@ -54,7 +55,7 @@ export class BodyInstance {
 
   constructor(
     readonly model: BodyModel,
-    palette: Palette,
+    readonly palette: Palette,
   ) {
     const n = model.slots.length;
     this.width = n;
@@ -66,14 +67,13 @@ export class BodyInstance {
     this.commit();
     this.joints = model.jointIds.map(() => new Matrix4());
     this.bind = new Map(model.pack.joints.map((j) => [j.id, j.origin]));
+    // Luz (rig) compartilhada: as mesmas referências de uniform em todas as instâncias.
     const mk = (l: BodyLayer): BodyUniforms => ({
+      ...rig,
       uJoints: { value: this.joints },
       uState: { value: this.texture },
       uStateW: { value: n },
       uColor: { value: palette[COLOR[l]] },
-      uAccent: { value: palette.accent },
-      uInk: { value: palette.ink },
-      uBg: { value: palette.bg },
       uAlpha: { value: l === 'skin' ? 0.22 : 1 },
       uCut: { value: 99 },
       uGhost: { value: 0 },
@@ -150,6 +150,11 @@ export class BodyInstance {
   /** Aplica a uma camada inteira (pelas vagas dela). */
   fillLayer(layer: BodyLayer, ch: Channel, v: number) {
     for (const s of this.model.slots) if (s.layer === layer) this.set(s.index, ch, v);
+  }
+
+  /** Cor de repouso de uma camada (o mapa de calor apaga o músculo para o brilho contar a história). */
+  color(l: BodyLayer, key: PaletteKey) {
+    this.layers[l].uColor.value = this.palette[key];
   }
 
   commit() {

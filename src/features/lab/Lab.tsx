@@ -77,7 +77,7 @@ function ViewSlot({ id, index }: { id: string; index: number }) {
         <span className="view-slot__name">{v.label}</span>
         {index === 0 && <span className="view-slot__ref">{t.lab.primary}</span>}
       </figcaption>
-      <div ref={ref} className="view-slot__stage" role="img" aria-label={t.lab.viewFigure(v.label)} />
+      <div ref={ref} className="view-slot__stage viewport" role="img" aria-label={t.lab.viewFigure(v.label)} />
       {host &&
         createPortal(
           <div
@@ -386,7 +386,6 @@ export default function Lab() {
   return (
     <main id="conteudo" className="lab">
       <header className="lab__head">
-        <p className="lab__plate">{t.lab.plate}</p>
         <h1 className="lab__title">{t.lab.title}</h1>
         <p className="lab__lead prose">{t.lab.lead}</p>
       </header>

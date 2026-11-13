@@ -1,28 +1,23 @@
 import { t } from '@/i18n';
-import { useTheme, type ThemeMode } from './theme';
+import { useTheme } from './theme';
 
-const MODES: ThemeMode[] = ['system', 'light', 'dark'];
-
-/** Três estados lado a lado; em telas estreitas vira um botão que alterna (CSS decide qual aparece). */
+/** Um botão: liga e desliga a luz da sala (tema claro). O ícone troca a lua pelo sol. */
 export function ThemeSwitch() {
   const mode = useTheme((s) => s.mode);
   const setMode = useTheme((s) => s.setMode);
-  const next = MODES[(MODES.indexOf(mode) + 1) % MODES.length] ?? 'system';
+  const light = mode === 'light';
   return (
-    <>
-      <div className="theme-switch" role="group" aria-label={t.theme.label}>
-        {MODES.map((m) => (
-          <button key={m} type="button" aria-pressed={mode === m} onClick={() => setMode(m)}>
-            {t.theme[m]}
-          </button>
-        ))}
-      </div>
-      <button type="button" className="theme-cycle" onClick={() => setMode(next)} aria-label={`${t.theme.label}: ${t.theme[mode]}. Trocar para ${t.theme[next]}`}>
-        <svg viewBox="0 0 16 16" aria-hidden="true">
-          <circle cx="8" cy="8" r="6.2" />
-          <path d="M8 1.8a6.2 6.2 0 0 1 0 12.4z" data-mode={mode} />
-        </svg>
-      </button>
-    </>
+    <button type="button" className="theme-toggle" aria-pressed={light} onClick={() => setMode(light ? 'dark' : 'light')}>
+      <svg viewBox="0 0 20 20" aria-hidden="true" data-mode={mode}>
+        <circle className="theme-toggle__core" cx="10" cy="10" r="4.2" />
+        <g className="theme-toggle__rays">
+          {[0, 45, 90, 135, 180, 225, 270, 315].map((a) => (
+            <line key={a} x1="10" y1="1.8" x2="10" y2="3.6" transform={`rotate(${a} 10 10)`} />
+          ))}
+        </g>
+        <circle className="theme-toggle__shade" cx="13.4" cy="7.2" r="4.2" />
+      </svg>
+      <span className="visually-hidden">{t.theme.label}</span>
+    </button>
   );
 }

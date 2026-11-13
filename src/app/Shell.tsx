@@ -6,13 +6,18 @@ import { ThemeSwitch } from '@/ui/ThemeSwitch';
 import { UpdateNotice } from '@/pwa/UpdateNotice';
 import './shell.css';
 
-/** Ativo na rota e nas filhas (`/atlas` acende em `/atlas/soleus`). */
+/**
+ * Ativo na rota e nas filhas (`/atlas` acende em `/atlas/soleus`). O filamento aceso mora só no link ativo;
+ * com View Transition ele desliza do link antigo ao novo (motion.css).
+ */
 function NavLink({ href, children, className }: { href: string; children: ReactNode; className?: string }) {
   const [exact] = useRoute(href);
   const [nested] = useRoute(`${href}/*`);
+  const active = exact || nested;
   return (
-    <Link href={href} aria-current={exact || nested ? 'page' : undefined} className={className}>
+    <Link href={href} aria-current={active ? 'page' : undefined} className={className}>
       {children}
+      {active && <span className="site-nav__indicator" aria-hidden="true" />}
     </Link>
   );
 }

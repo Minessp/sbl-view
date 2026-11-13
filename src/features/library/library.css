@@ -1,9 +1,11 @@
-/* ---------- Filtros ---------- */
+/* ---------- Filtros: um painel só, no topo da lista ---------- */
 .filters {
   display: grid;
-  gap: var(--s-4);
-  padding: var(--s-5) 0;
-  border-bottom: var(--lw-hair) solid var(--c-rule);
+  gap: var(--s-5);
+  padding: var(--s-5);
+  border-radius: var(--r-2);
+  background: var(--c-bg-2);
+  box-shadow: inset 0 0 0 var(--lw-hair) var(--c-edge);
 }
 
 .filters__row {
@@ -15,6 +17,7 @@
 
 .filters__row .field select {
   font-size: var(--fs-3);
+  background: var(--c-bg);
 }
 
 .filters__set {
@@ -27,6 +30,7 @@
   padding: 0;
   margin-bottom: var(--s-2);
   font-size: var(--fs-1);
+  font-weight: 500;
   color: var(--c-ink-2);
 }
 
@@ -37,7 +41,7 @@
 }
 
 .filters__hint {
-  margin-top: var(--s-1);
+  margin-top: var(--s-2);
   font-size: var(--fs-1);
   color: var(--c-ink-2);
 }
@@ -46,51 +50,59 @@
   display: flex;
   align-items: baseline;
   gap: var(--s-4);
+  padding-top: var(--s-4);
+  border-top: var(--lw-hair) solid var(--c-edge);
 }
 
 .filters__count {
-  font-size: var(--fs-4);
-  font-weight: 700;
-  font-stretch: var(--wd-cond);
+  font-size: var(--fs-5);
+  font-weight: var(--display-weight);
+  font-stretch: var(--display-stretch);
 }
 
-/* ---------- Cartões ---------- */
+/* ---------- Lista de exercícios ---------- */
 .ex-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-  gap: 0 var(--s-5);
-  padding-top: var(--s-2);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: 0 var(--s-6);
+  padding-top: var(--s-4);
 }
 
 .ex-card {
+  position: relative;
   display: grid;
-  gap: var(--s-2);
+  gap: var(--s-3);
   align-content: start;
   justify-items: start;
-  padding: var(--s-4) 0 var(--s-5);
-  border-bottom: var(--lw-hair) solid var(--c-rule);
+  padding: var(--s-5) 0;
+  border-bottom: var(--lw-hair) solid var(--c-edge);
 }
 
 .ex-card__link {
   display: grid;
-  gap: 2px;
+  gap: var(--s-1);
   text-decoration: none;
+}
+
+/* O cartão inteiro responde ao toque pelo link (pseudo-elemento cobre a linha). */
+.ex-card__link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-1);
 }
 
 .ex-card__name {
   font-size: var(--fs-5);
-  font-weight: 700;
-  font-stretch: 104%;
-  line-height: 1.1;
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-decoration-thickness: var(--lw-curve);
-  text-underline-offset: 0.18em;
-  transition: text-decoration-color var(--t-fast) var(--ease);
+  font-weight: 450;
+  font-stretch: var(--wd-wide);
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  transition: color var(--t-fast) var(--ease);
 }
 
-.ex-card__link:hover .ex-card__name {
-  text-decoration-color: var(--c-accent);
+.ex-card:hover .ex-card__name {
+  color: var(--c-accent);
 }
 
 .ex-card__pattern {
@@ -122,14 +134,12 @@
   align-items: center;
   gap: var(--s-2);
   font-size: var(--fs-2);
-  font-weight: 560;
+  font-weight: 520;
 }
 
 .ex-empty {
-  padding: var(--s-6) 0;
-  font-family: var(--font-serif);
+  padding: var(--s-7) 0;
   font-size: var(--fs-4);
-  font-style: italic;
   color: var(--c-ink-2);
 }
 
@@ -148,8 +158,10 @@
   fill: var(--c-ink);
 }
 
+/* Alongado: a marca acende (a posição na régua continua sendo a informação). */
 .emph[data-emphasis='alongado'] .emph__mark {
   fill: var(--c-accent);
+  filter: drop-shadow(0 0 2px var(--c-glow));
 }
 
 /* ---------- Lista de músculos / exercícios relacionados ---------- */
@@ -158,14 +170,13 @@
   grid-template-columns: 1fr auto;
   gap: 2px var(--s-3);
   align-items: baseline;
-  padding: var(--s-2) 0;
-  border-bottom: var(--lw-hair) solid var(--c-rule);
+  padding: var(--s-3) 0;
+  border-bottom: var(--lw-hair) solid var(--c-edge);
 }
 
 .target-list__name {
   font-size: var(--fs-4);
-  font-weight: 620;
-  text-decoration-color: var(--c-accent);
+  font-weight: 540;
 }
 
 .target-list li[data-role='sinergista'] .target-list__name {

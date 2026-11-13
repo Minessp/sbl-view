@@ -11,8 +11,8 @@ export function heatLevel(sets: number): HeatLevel {
   return l as HeatLevel;
 }
 
-/** Intensidade da eosina no 3D para cada degrau: as mesmas frações da rampa --c-stain-n de tokens.css. */
-export const HEAT_STAIN: Record<HeatLevel, number> = { 0: 0, 1: 0.14, 2: 0.32, 3: 0.52, 4: 0.74, 5: 1 };
+/** Intensidade do brilho no 3D para cada degrau: as mesmas frações da rampa --c-heat-n de tokens.css. */
+export const HEAT_GLOW: Record<HeatLevel, number> = { 0: 0, 1: 0.16, 2: 0.34, 3: 0.54, 4: 0.76, 5: 1 };
 
 /** Rótulo do degrau: "1 a 4", "20 ou mais". */
 export function heatRange(l: HeatLevel): [number, number | null] {

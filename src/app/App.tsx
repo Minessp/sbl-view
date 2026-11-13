@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useRef, type ReactNode } from 'react';
-import { Route, Router, Switch, useLocation } from 'wouter';
+import { flushSync } from 'react-dom';
+import { Route, Router, Switch, useLocation, type AroundNavHandler } from 'wouter';
 import Abertura from '@/features/abertura/Abertura';
 import { t } from '@/i18n';
 import { ErrorBoundary } from './ErrorBoundary';
@@ -57,14 +58,41 @@ function RouteChange() {
   return null;
 }
 
+type VTDocument = Document & { startViewTransition?: (update: () => void) => unknown };
+const canTransition = () => typeof document !== 'undefined' && 'startViewTransition' in document;
+
+/**
+ * Troca de caminho vira View Transition (motion.css). Mudança só de busca/âncora e redução de movimento: direto.
+ * flushSync: a página nova precisa estar no DOM quando o navegador tira a foto do "depois".
+ */
+const aroundNav: AroundNavHandler = (navigate, to, options) => {
+  const doc = document as VTDocument;
+  const samePath = to.split(/[?#]/)[0] === window.location.pathname.slice(base.length);
+  if (!doc.startViewTransition || samePath || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    navigate(to, options);
+    return;
+  }
+  doc.startViewTransition(() => flushSync(() => navigate(to, options)));
+};
+
+/** Primeira carga usa a entrada por CSS; depois dela, as trocas de rota ficam com a View Transition. */
+function useTransitionClass() {
+  useEffect(() => {
+    if (!canTransition()) return;
+    const id = setTimeout(() => document.documentElement.classList.add('vt'), 900);
+    return () => clearTimeout(id);
+  }, []);
+}
+
 function RouteBoundary({ children }: { children: ReactNode }) {
   const [loc] = useLocation();
   return <ErrorBoundary resetKey={loc}>{children}</ErrorBoundary>;
 }
 
 export function App() {
+  useTransitionClass();
   return (
-    <Router base={base}>
+    <Router base={base} aroundNav={aroundNav}>
       <RouteChange />
       <Shell>
         <RouteBoundary>
@@ -86,7 +114,7 @@ export function App() {
               {DevBody && <Route path="/dev/corpo" component={DevBody} />}
               <Route component={NotFound} />
             </Switch>
-        </Suspense>
+          </Suspense>
         </RouteBoundary>
       </Shell>
     </Router>
