@@ -19,6 +19,7 @@ const Plano = lazy(() => import('@/features/plano/Plano'));
 const Historico = lazy(() => import('@/features/treino/Historico'));
 const Progresso = lazy(() => import('@/features/treino/Progresso'));
 const Dados = lazy(() => import('@/features/treino/Dados'));
+const Analise = lazy(() => import('@/features/treino/Analise'));
 /** Só em desenvolvimento: no build de produção a condição é falsa e o chunk nem existe. */
 const DevBody = import.meta.env.DEV ? lazy(() => import('@/features/dev/DevBody')) : null;
 const DevClips = import.meta.env.DEV ? lazy(() => import('@/features/dev/DevClips')) : null;
@@ -110,6 +111,7 @@ export function App() {
               <Route path="/treino/plano" component={Plano} />
               <Route path="/treino/historico" component={Historico} />
               <Route path="/treino/progresso" component={Progresso} />
+              <Route path="/treino/analise" component={Analise} />
               <Route path="/treino/dados" component={Dados} />
               <Route path="/sistema" component={Sistema} />
               {DevBody && <Route path="/dev/corpo" component={DevBody} />}

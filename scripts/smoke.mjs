@@ -2,7 +2,8 @@
  * Teste de fumaça no navegador real (Edge/Chrome do sistema):
  * abre cada rota, falha com erro de console; no Lab, reproduz e troca variação; no Atlas, desenha
  * o músculo e as curvas; na biblioteca, filtra; no Treino, registra uma série, recarrega e confere
- * que ela persistiu no IndexedDB, edita no histórico, vê o progresso, monta um plano e o vê no registro,
+ * que ela persistiu no IndexedDB, edita no histórico, vê recordes e anota medida, monta um plano, faz uma
+ * série na sessão ao vivo, vê a análise,
  * troca o Atlas para a malha anatômica, exporta e reimporta o backup.
  * No build (com sw.js), confere que o site abre sem rede.
  *   node scripts/smoke.mjs [base-url]
@@ -158,11 +159,15 @@ await step('histórico: editar a série muda as repetições', async () => {
   await page.locator('.set-row', { hasText: marker }).getByText('42,5 kg × 12').waitFor();
 });
 
-await step('progresso: tabela da sessão e contagem semanal', async () => {
+await step('progresso: recordes, tabela da sessão e medida corporal', async () => {
   await page.goto(`${base}/treino/progresso`, { waitUntil: 'networkidle' });
   await page.getByLabel('Exercício').selectOption('seated_leg_curl');
   await page.locator('.data-table td', { hasText: '42,5 × 12' }).first().waitFor();
-  await page.locator('.data-table--weeks th', { hasText: 'Isquiotibiais' }).waitFor();
+  await page.getByRole('heading', { name: 'Recorde por repetição' }).waitFor();
+  await page.getByLabel('Valor (kg)').fill('80,5');
+  await page.getByRole('button', { name: 'Anotar medida' }).click();
+  await page.getByRole('status').filter({ hasText: 'Medida anotada.' }).waitFor();
+  await page.locator('.measures__list li', { hasText: '80,5 kg' }).first().waitFor();
 });
 
 await step('plano: gerar, ver o mapa de calor, começar e ver o dia no registro', async () => {
@@ -176,8 +181,30 @@ await step('plano: gerar, ver o mapa de calor, começar e ver o dia no registro'
   const start = page.getByRole('button', { name: 'Começar mesociclo' });
   if (await start.count()) await start.click();
   await page.goto(`${base}/treino`, { waitUntil: 'networkidle' });
-  await page.getByRole('heading', { name: 'Plano de hoje' }).waitFor();
-  await page.locator('.today__item').first().waitFor();
+  await page.getByRole('heading', { name: 'Sessão de hoje' }).waitFor();
+  await page.locator('.live-card').first().waitFor();
+});
+
+await step('sessão ao vivo: marcar série feita começa o descanso', async () => {
+  const card = page.locator('.live-card').first();
+  const active = card.locator('.live-set--active');
+  await active.locator('input').nth(0).fill('20');
+  await active.locator('input').nth(1).fill('10');
+  await active.getByRole('button', { name: /Marcar como feita/ }).click();
+  await card.locator('.live-set--done').first().waitFor();
+  await page.getByRole('region', { name: 'Cronômetro de descanso' }).waitFor();
+  await page.getByRole('button', { name: 'Pular descanso' }).click();
+  await page.getByRole('region', { name: 'Cronômetro de descanso' }).waitFor({ state: 'detached' });
+  // 20 × 10 entra na faixa do 1RM estimado: vira recorde no Progresso.
+  await page.goto(`${base}/treino/progresso`, { waitUntil: 'networkidle' });
+  await page.locator('.records__table tbody tr').first().waitFor();
+});
+
+await step('análise: volume contra a faixa, aderência e contagem semanal', async () => {
+  await page.goto(`${base}/treino/analise`, { waitUntil: 'networkidle' });
+  await page.locator('.analysis__volume th', { hasText: 'Quadríceps' }).waitFor();
+  await page.locator('.analysis__adherence tbody tr').first().waitFor();
+  await page.locator('.data-table--weeks th', { hasText: 'Isquiotibiais' }).waitFor();
 });
 
 await step('atlas: corpo anatômico desenha; tocar em outro músculo abre a página dele', async () => {

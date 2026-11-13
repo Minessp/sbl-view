@@ -3,6 +3,7 @@ import { fmt, t } from '@/i18n/app';
 import { backupFileName, parseBackup, type ParseError } from '@/storage/backup';
 import { repository, requestPersistence, storageStatus, type StorageStatus } from '@/storage/db';
 import { TreinoHeader } from './shared';
+import { reloadPrefs, setUnit, useUnit } from './units';
 
 type Msg = { kind: 'ok' | 'error'; text: string } | null;
 
@@ -16,6 +17,7 @@ function Status({ msg }: { msg: Msg }) {
 
 export default function Dados() {
   const L = t.training.data;
+  const P = t.training.prefs;
   const uid = useId();
   const fileRef = useRef<HTMLInputElement>(null);
   const [counts, setCounts] = useState<{ sessions: number; sets: number } | null>(null);
@@ -24,6 +26,8 @@ export default function Dados() {
   const [importMsg, setImportMsg] = useState<Msg>(null);
   const [wipeMsg, setWipeMsg] = useState<Msg>(null);
   const [confirmWipe, setConfirmWipe] = useState(false);
+  const [prefMsg, setPrefMsg] = useState<Msg>(null);
+  const unit = useUnit();
 
   const refresh = useCallback(async () => {
     try {
@@ -78,7 +82,7 @@ export default function Dados() {
       const rep = await repository().importBackup(r.backup);
       void requestPersistence();
       setImportMsg({ kind: 'ok', text: L.imported(rep.added, rep.updated, rep.kept) });
-      await refresh();
+      await Promise.all([refresh(), reloadPrefs()]);
     } catch {
       setImportMsg({ kind: 'error', text: t.training.error });
     }
@@ -93,7 +97,7 @@ export default function Dados() {
       await repository().wipe();
       setConfirmWipe(false);
       setWipeMsg({ kind: 'ok', text: L.wiped });
-      await refresh();
+      await Promise.all([refresh(), reloadPrefs()]);
     } catch {
       setWipeMsg({ kind: 'error', text: t.training.error });
     }
@@ -123,6 +127,32 @@ export default function Dados() {
             </button>
           </>
         )}
+      </section>
+
+      <section className="section" aria-labelledby={`${uid}-pref`}>
+        <header className="section__head">
+          <h2 id={`${uid}-pref`}>{P.title}</h2>
+          <p>{P.lead}</p>
+        </header>
+        <div className="segmented unit-toggle" role="group" aria-label={t.training.unit}>
+          {(['kg', 'lb'] as const).map((u) => (
+            <button
+              key={u}
+              type="button"
+              className="chip chip--small"
+              aria-pressed={unit === u}
+              onClick={() =>
+                void setUnit(u).then(
+                  () => setPrefMsg({ kind: 'ok', text: P.unitSaved(u) }),
+                  () => setPrefMsg({ kind: 'error', text: t.training.error }),
+                )
+              }
+            >
+              {u}
+            </button>
+          ))}
+        </div>
+        <Status msg={prefMsg} />
       </section>
 
       <section className="section" aria-labelledby={`${uid}-exp`}>

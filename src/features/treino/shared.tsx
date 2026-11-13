@@ -58,6 +58,7 @@ export function TreinoHeader({ title, lead }: { title: string; lead: string }) {
         <Tab href="/treino/plano">{L.tabs.plan}</Tab>
         <Tab href="/treino/historico">{L.tabs.history}</Tab>
         <Tab href="/treino/progresso">{L.tabs.progress}</Tab>
+        <Tab href="/treino/analise">{L.tabs.analysis}</Tab>
         <Tab href="/treino/dados">{L.tabs.data}</Tab>
       </nav>
     </header>
