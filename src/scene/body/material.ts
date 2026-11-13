@@ -77,8 +77,9 @@ export const LIGHT_GLSL = /* glsl */ `
     return c + (ign(gl_FragCoord.xy) - 0.5) / 255.0;
   }
 
-  // Ambiente + key envolvente + contraluz. albedo linear; wrap 0..1; sss = cor que atravessa a borda.
-  vec3 studio(vec3 albedo, vec3 n, vec3 v, float wrap, vec3 sss, out float ndl) {
+  // Ambiente + key envolvente + contraluz. albedo linear; wrap 0..1; sss = cor que atravessa a borda;
+  // rimTint = quanto a contraluz toma a cor do material (0 = luz fria pura, 1 = toda na cor da superfície).
+  vec3 studioRim(vec3 albedo, vec3 n, vec3 v, float wrap, vec3 sss, float rimTint, out float ndl) {
     vec3 L = normalize(uKeyDir);
     ndl = dot(n, L);
     float diff = max((ndl + wrap) / (1.0 + wrap), 0.0);
@@ -90,8 +91,9 @@ export const LIGHT_GLSL = /* glsl */ `
     float fres = pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 3.0);
     float rimL = max(dot(n, normalize(RIM_DIR)), 0.0);
     vec3 rim = toLinear(uRimColor) * rimOn * (rimL * 1.2 + fres * 0.8) * (0.45 + 0.55 * rimL);
-    return albedo * (key * (max(ndl, 0.0) + sss * scatter) + amb) + rim * mix(vec3(1.0), albedo * 2.0, 0.35);
+    return albedo * (key * (max(ndl, 0.0) + sss * scatter) + amb) + rim * mix(vec3(1.0), albedo * 2.0, rimTint);
   }
+  vec3 studio(vec3 albedo, vec3 n, vec3 v, float wrap, vec3 sss, out float ndl) { return studioRim(albedo, n, v, wrap, sss, 0.35, ndl); }
 `;
 
 const vertex = (joints: number) => /* glsl */ `
@@ -287,13 +289,17 @@ const fragment = /* glsl */ `
         vec3 T = vT - ng * dot(ng, vT);
         float tl = length(T);
         T = tl > 1e-6 ? T / tl : normalize(cross(ng, vec3(0.0, 0.0, 1.0)) + vec3(1e-4));
-        col = studio(albedo, n, v, 0.45, vec3(0.9, 0.22, 0.12), ndl);
+        // Contraluz quase toda na cor do músculo: luz fria pura deixava a borda dos músculos branca.
+        col = studioRim(albedo, n, v, 0.45, vec3(0.9, 0.22, 0.12), mix(0.85, 0.35, tendon), ndl);
         float th = dot(T, H);
         float sinTH = sqrt(max(1.0 - th * th, 0.0));
         float facing = smoothstep(-0.1, 0.35, dot(ng, L));
-        float sheen = (pow(sinTH, 110.0) * 0.55 + pow(sinTH, 14.0) * 0.07) * mix(1.0, 0.45, tendon);
+        // Brilho da fibra: fraco e tingido pelo músculo (tecido úmido avermelhado). Branco a 0,9 virava faixas brancas
+        // sobre o ventre; o tendão segue com o brilho claro dele.
+        float sheen = pow(sinTH, 110.0) * 0.16 + pow(sinTH, 14.0) * 0.025;
+        vec3 sheenCol = mix(vec3(1.0), normalize(albedo + vec3(1e-4)) * 1.5, 0.65 * (1.0 - tendon));
         float tendonSpec = pow(max(dot(ng, H), 0.0), 48.0) * 0.3 * tendon;
-        col += toLinear(uKeyColor) * smoothstep(0.25, 1.0, uLight) * 1.6 * (sheen + tendonSpec) * facing;
+        col += toLinear(uKeyColor) * smoothstep(0.25, 1.0, uLight) * 1.6 * (sheen * mix(1.0, 0.45, tendon) * sheenCol + tendonSpec) * facing;
         // Brilho que percorre a fibra da origem à inserção (duas passadas) depois de um destaque novo.
         float ph = (uTime - uPulseStart) / 1.2;
         if (ph >= 0.0 && ph < 2.0) {
