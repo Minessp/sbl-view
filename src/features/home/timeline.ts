@@ -28,6 +28,11 @@ export interface IntroFrame {
   grow: number;
   /** Alfa da pele, 0..1. */
   skin: number;
+  /**
+   * Opacidade das camadas sob a pele, 0..1. Some enquanto a pele fica opaca: partes que furam a pele (ventre do bíceps,
+   * virilha) apareciam por cima dela até a vedação no fim da entrada.
+   */
+  under: number;
   /** Recuo extra da câmera (fator sobre a distância). */
   dolly: number;
   /** Giro extra da câmera (rad), que assenta em zero. */
@@ -37,7 +42,8 @@ export interface IntroFrame {
 
 /** Quadro da entrada para t segundos desde que o corpo ficou pronto. */
 export function introFrame(t: number): IntroFrame {
-  if (t >= INTRO_SECONDS) return { boneCut: CUT_OFF, grow: 9, skin: 1, dolly: 1, orbit: 0, done: true };
+  // Depois da entrada a vedação (lente) esconde o que está sob a pele; under = 1 deixa a abertura no scroll livre.
+  if (t >= INTRO_SECONDS) return { boneCut: CUT_OFF, grow: 9, skin: 1, under: 1, dolly: 1, orbit: 0, done: true };
   const bone = easeOut(span(t, 0, 1.05));
   const g = span(t, 0.45, 2.35);
   const skin = smooth(span(t, 2.15, 3.05));
@@ -46,6 +52,7 @@ export function introFrame(t: number): IntroFrame {
     boneCut: bone >= 1 ? CUT_OFF : FLOOR + (TOP - FLOOR) * bone,
     grow: g >= 1 ? 9 : -0.05 + 1.55 * smooth(g),
     skin,
+    under: 1 - smooth(span(t, 2.6, 3.05)),
     dolly: 1 + 0.08 * (1 - settle),
     orbit: 0.55 * (1 - settle),
     done: false,

@@ -182,6 +182,10 @@ function HeroBody({ slot }: { slot: HTMLElement }) {
 
     // ---- Camadas: pele, lente, vedação ----
     const sealed = intro.skin >= 0.999 && ex < 0.001 && !st.leaving;
+    // Fim da entrada: o que está sob a pele some pontilhado junto com a pele que fica opaca (corte em −99 = tudo fantasma).
+    if (!intro.done && ex < 0.001 && !st.leaving && intro.under < 1) {
+      for (const l of ['superficial', 'deep', 'bone'] as const) body.layer(l, { cut: -99, ghost: intro.under });
+    }
     body.layer('skin', { alpha: st.leaving ? 1 + (0.16 - 1) * lv.k : intro.skin });
     const canvas = gl.domElement.getBoundingClientRect();
     const dpr = gl.getPixelRatio();

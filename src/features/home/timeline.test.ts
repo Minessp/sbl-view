@@ -82,3 +82,14 @@ describe('lente', () => {
     expect(lensRadius(4000)).toBeLessThanOrEqual(150);
   });
 });
+
+describe('camadas sob a pele na entrada', () => {
+  it('somem enquanto a pele fica opaca e terminam em zero antes da vedação', () => {
+    expect(introFrame(2.0).under).toBe(1);
+    const mid = introFrame(2.85);
+    expect(mid.under).toBeGreaterThan(0);
+    expect(mid.under).toBeLessThan(1);
+    expect(introFrame(3.06).under).toBe(0);
+    expect(introFrame(INTRO_SECONDS).under).toBe(1);
+  });
+});

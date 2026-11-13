@@ -312,6 +312,85 @@ for (const o of objects.values()) {
   if (census.border.length || census.nonManifold || flips) throw new Error('pele não ficou estanque');
   parts.push({ id: 'skin', kind: 'skin', mirror: true, names: skinNames, mesh: skin });
 }
+
+// --- Costelas sob o oblíquo externo -----------------------------------------------------------------
+// Na malha do Z-Anatomy as costelas inferiores furam o oblíquo externo (vértices dentro do músculo ou por cima dele), mas
+// o músculo nasce na face externa das costelas 5–12 e as cobre. Vértice de costela com o músculo atravessado no raio
+// que sai do eixo do tronco desce até 1,5 mm sob a face interna; o deslocamento se espalha pela malha do osso.
+{
+  const ribs = parts.find((p) => p.id === 'bones_trunk_side');
+  const ob = parts.find((p) => p.id === 'external_oblique');
+  if (!ribs || !ob) throw new Error('costelas ou oblíquo externo ausentes');
+  const { pos: M, idx: T } = ob.mesh;
+  let ylo = Infinity, yhi = -Infinity;
+  for (let i = 1; i < M.length; i += 3) (ylo = Math.min(ylo, M[i])), (yhi = Math.max(yhi, M[i]));
+  /** Distâncias (ordenadas) em que o raio o + t·d cruza o músculo. */
+  const hits = (o, d) => {
+    const out = [];
+    for (let t = 0; t < T.length; t += 3) {
+      const a = T[t] * 3, b = T[t + 1] * 3, c = T[t + 2] * 3;
+      const e1 = [M[b] - M[a], M[b + 1] - M[a + 1], M[b + 2] - M[a + 2]], e2 = [M[c] - M[a], M[c + 1] - M[a + 1], M[c + 2] - M[a + 2]];
+      const p = [d[1] * e2[2] - d[2] * e2[1], d[2] * e2[0] - d[0] * e2[2], d[0] * e2[1] - d[1] * e2[0]];
+      const det = e1[0] * p[0] + e1[1] * p[1] + e1[2] * p[2];
+      if (Math.abs(det) < 1e-14) continue;
+      const q0 = [o[0] - M[a], o[1] - M[a + 1], o[2] - M[a + 2]];
+      const u = (q0[0] * p[0] + q0[1] * p[1] + q0[2] * p[2]) / det;
+      if (u < 0 || u > 1) continue;
+      const q = [q0[1] * e1[2] - q0[2] * e1[1], q0[2] * e1[0] - q0[0] * e1[2], q0[0] * e1[1] - q0[1] * e1[0]];
+      const v = (d[0] * q[0] + d[1] * q[1] + d[2] * q[2]) / det;
+      if (v < 0 || u + v > 1) continue;
+      out.push((e2[0] * q[0] + e2[1] * q[1] + e2[2] * q[2]) / det);
+    }
+    return out.sort((x, y) => x - y);
+  };
+  const P = ribs.mesh.pos;
+  const n = P.length / 3;
+  const need = new Float64Array(n);
+  const dirs = new Float64Array(n * 3);
+  let moved = 0;
+  for (let v = 0; v < n; v++) {
+    const x = P[v * 3], y = P[v * 3 + 1], z = P[v * 3 + 2];
+    if (x > -0.07 || y < ylo || y > yhi) continue;
+    const l = Math.hypot(x, z + 0.02);
+    const d = [x / l, 0, (z + 0.02) / l];
+    dirs.set(d, v * 3);
+    const all = hits([x, y, z], [-d[0], 0, -d[2]]).map((t) => -t).concat(hits([x, y, z], d)).sort((a, b) => a - b);
+    // Pares de cruzamento = espessuras do músculo ao longo do raio; a parede mais externa que contém ou cobre o ponto manda.
+    for (let k = 0; k + 1 < all.length; k += 2) {
+      const inner = all[k], outer = all[k + 1];
+      if (outer > 0.004) continue; // músculo à frente do ponto, por fora: cobre, está certo
+      if (outer < -0.03) continue; // parede longe, para dentro: não é desta costela
+      need[v] = Math.max(need[v], -inner + 0.0015);
+    }
+    if (need[v] > 0) moved++;
+  }
+  // Espalha pela malha do osso (sem diminuir onde é preciso): a costela afunda inteira, sem degrau.
+  const { start, nb } = adjacency(n, ribs.mesh.idx);
+  let D = Float64Array.from(need);
+  for (let it = 0; it < 40; it++) {
+    const E = new Float64Array(n);
+    for (let v = 0; v < n; v++) {
+      let m = 0, c = 0;
+      for (let k = start[v]; k < start[v + 1]; k++) (m += D[nb[k]]), c++;
+      E[v] = Math.max(need[v], c ? 0.5 * D[v] + 0.5 * (m / c) : D[v]);
+    }
+    D = E;
+  }
+  let maxD = 0;
+  for (let v = 0; v < n; v++) {
+    if (D[v] < 1e-5) continue;
+    let dx = dirs[v * 3], dz = dirs[v * 3 + 2];
+    if (dx === 0 && dz === 0) {
+      const l = Math.hypot(P[v * 3], P[v * 3 + 2] + 0.02) || 1;
+      dx = P[v * 3] / l;
+      dz = (P[v * 3 + 2] + 0.02) / l;
+    }
+    P[v * 3] -= dx * D[v];
+    P[v * 3 + 2] -= dz * D[v];
+    maxD = Math.max(maxD, D[v]);
+  }
+  console.log(`costelas sob o oblíquo externo: ${moved} vértices furavam o músculo; maior recuo ${(maxD * 1000).toFixed(1)} mm`);
+}
 for (const p of parts) {
   if (p.mirror) {
     let maxX = -Infinity;
