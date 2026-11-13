@@ -6,11 +6,19 @@ import { EvidenceSeal } from '@/ui/EvidenceSeal';
 import { Sources } from '@/ui/Sources';
 import { exerciseById, muscleById } from './catalog';
 import { EmphasisMark } from './EmphasisMark';
+import { compiledClip } from './motion';
+import { Player } from './player/Player';
+import '@/features/atlas/explorer/explorer.css';
 import './library.css';
 
 export default function ExercisePage({ id }: { id: string }) {
   const e = exerciseById(id);
   const E = t.exercise;
+  const clip = useMemo(() => (e ? compiledClip(e.id) : null), [e]);
+  const targets = useMemo(
+    () => ({ primary: e?.targets.filter((x) => x.role === 'alvo').map((x) => x.muscle) ?? [], synergist: e?.targets.filter((x) => x.role === 'sinergista').map((x) => x.muscle) ?? [] }),
+    [e],
+  );
   const unverified = useMemo(() => (e ? !e.length.source.some((s) => getReference(s.refId)?.verified === true) : false), [e]);
 
   if (!e) {
@@ -57,6 +65,15 @@ export default function ExercisePage({ id }: { id: string }) {
           )}
         </div>
       </header>
+
+      {clip && (
+        <section className="section" aria-labelledby="ex-play">
+          <header className="section__head">
+            <h2 id="ex-play">{E.execution}</h2>
+          </header>
+          <Player name={e.name} clip={clip} targets={targets} />
+        </section>
+      )}
 
       <section className="section" aria-labelledby="ex-targets">
         <header className="section__head">

@@ -1,0 +1,112 @@
+/* Player de exercício: vista 3D grande, controles e leitura ao lado (desktop) ou embaixo (celular). */
+.player {
+  display: grid;
+  gap: var(--s-3);
+  margin: 0;
+}
+
+.player__view {
+  height: min(64svh, 600px);
+  min-height: 340px;
+  cursor: grab;
+  touch-action: none;
+  outline-offset: 3px;
+}
+
+.player__view:active {
+  cursor: grabbing;
+}
+
+.player__caption {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--s-2) var(--s-4);
+  font-size: var(--fs-1);
+  color: var(--c-ink-2);
+}
+
+.player__controls {
+  animation: none;
+}
+
+.player__step {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--c-bg-2);
+  color: var(--c-ink);
+  box-shadow: inset 0 0 0 var(--lw-hair) var(--c-edge);
+  transition:
+    transform var(--t-fast) var(--ease),
+    background var(--t-fast) var(--ease);
+}
+
+.player__step:hover {
+  background: var(--c-bg-3);
+}
+
+.player__step:active {
+  transform: scale(0.94);
+}
+
+.player__step svg {
+  width: 13px;
+  height: 13px;
+  fill: currentColor;
+}
+
+.player__transport .demo__value {
+  font-size: var(--fs-2);
+}
+
+.player__opts {
+  justify-content: flex-start;
+}
+
+.player__focus {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-1);
+}
+
+.player__focus-label {
+  margin-right: var(--s-1);
+  font-size: var(--fs-1);
+  font-stretch: var(--wd-cond);
+  color: var(--c-ink-2);
+}
+
+.player__focus .chip[data-role='sinergista'] {
+  color: var(--c-ink-2);
+}
+
+.player__lengths {
+  display: grid;
+  gap: var(--s-3);
+}
+
+@media (min-width: 960px) {
+  .player {
+    grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr);
+    align-items: start;
+    column-gap: var(--s-5);
+  }
+  .player__view {
+    grid-column: 1;
+    grid-row: 1 / span 4;
+    height: min(72svh, 680px);
+  }
+  .player__caption {
+    grid-column: 1;
+    grid-row: 5;
+  }
+  .player > :not(.player__view, .player__caption) {
+    grid-column: 2;
+  }
+}

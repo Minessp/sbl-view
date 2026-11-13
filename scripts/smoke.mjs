@@ -116,6 +116,22 @@ await step('biblioteca: filtro de comprimento longo + hipótese deixa um exercí
   await page.getByRole('heading', { level: 1, name: 'Cadeira extensora reclinada' }).waitFor();
 });
 
+await step('exercício: o corpo executa o clipe; pausar, quadro a quadro e trocar câmera', async () => {
+  await page.locator('.player__view[data-ready="true"]').waitFor({ timeout: 30000 });
+  const time = page.locator('.player input[type=range]');
+  const a = await time.inputValue();
+  await page.waitForTimeout(600);
+  await page.getByRole('button', { name: 'Pausar' }).click();
+  const b = await time.inputValue();
+  if (a === b) throw new Error(`relógio parado em ${b}`);
+  await page.getByRole('button', { name: 'Próximo quadro' }).click();
+  if ((await time.inputValue()) === b) throw new Error('quadro a quadro não andou');
+  await page.getByRole('button', { name: 'Frente' }).click();
+  await page.getByRole('button', { name: 'Reto femoral' }).click();
+  const pressed = await page.getByRole('button', { name: 'Reto femoral' }).getAttribute('aria-pressed');
+  if (pressed !== 'true') throw new Error('isolar músculo não marcou');
+});
+
 const marker = `fumaça ${Date.now()}`;
 await step('treino: registrar série persiste após recarregar', async () => {
   await page.goto(`${base}/treino?exercicio=seated_leg_curl`, { waitUntil: 'networkidle' });

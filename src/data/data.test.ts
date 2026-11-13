@@ -18,6 +18,11 @@ import trainingJson from './training.json';
 import planningJson from './planning.json';
 import musclePathsJson from './muscle-paths.json';
 import anatomyJson from './anatomy.json';
+import clipsJson from './exercises/clips.json';
+import { ClipFile, MotionClip } from './schema/motion';
+import { compileClip, evaluateClip } from '@/engine/motion/evaluate';
+import { DEG } from '@/engine/math/vec';
+import { expandEntry, motionMasses } from '@/features/library/motion';
 import { PlanningFile } from './schema/planning';
 import { E1RM_MAX_REPS } from '@/engine/training/progress';
 import { Reference, type Evidence } from './schema/evidence';
@@ -42,7 +47,7 @@ function collectEvidence(node: unknown, out: Evidence[] = []): Evidence[] {
 }
 
 const allEvidence = () =>
-  [skeletonJson, musclesJson, anthropometryJson, capacityJson, squatJson, libraryJson, trainingJson, planningJson].flatMap((j) => collectEvidence(j));
+  [skeletonJson, musclesJson, anthropometryJson, capacityJson, squatJson, libraryJson, trainingJson, planningJson, clipsJson].flatMap((j) => collectEvidence(j));
 
 describe('banco de dados', () => {
   it('referências: ids únicos', () => {
@@ -209,3 +214,38 @@ describe('planejador e malha anatômica', () => {
   });
 });
 
+
+describe('clipes de movimento', () => {
+  const lib = LibraryFile.parse(libraryJson);
+  const entries = ClipFile.parse(clipsJson);
+  const sk = buildSkeleton(SkeletonDef.parse(skeletonJson));
+  const rom = new Map(sk.segments.flatMap((s) => s.dofs.map((d) => [d.id, [d.min / DEG, d.max / DEG] as const])));
+  const SAMPLES = 24;
+
+  it('todo exercício da biblioteca tem clipe, e todo clipe tem exercício', () => {
+    const ids = new Set(entries.map((e) => e.id));
+    expect(ids.size).toBe(entries.length);
+    for (const e of lib) expect(ids, `${e.id} sem clipe`).toContain(e.id);
+    for (const id of ids) expect(lib.map((e) => e.id), `clipe órfão ${id}`).toContain(id);
+  });
+
+  it.each(entries.map((e) => [e.id, e] as const))('%s: molde gera clipe válido; DOFs na amplitude, restrições fechadas, sem NaN', (_, entry) => {
+    const clip = MotionClip.parse(expandEntry(entry));
+    const c = compileClip(clip, sk, motionMasses);
+    for (let i = 0; i <= SAMPLES; i++) {
+      const f = evaluateClip(c, i / SAMPLES);
+      for (const [dof, v] of Object.entries(f.deg)) {
+        expect(Number.isFinite(v), `${dof} em u=${f.u}`).toBe(true);
+        const r = rom.get(dof);
+        expect(r, dof).toBeDefined();
+        if (!r) continue;
+        expect(v, `${dof} em u=${f.u.toFixed(2)}`).toBeGreaterThanOrEqual(r[0] - 0.5);
+        expect(v, `${dof} em u=${f.u.toFixed(2)}`).toBeLessThanOrEqual(r[1] + 0.5);
+      }
+      expect(f.error, `restrição aberta em u=${f.u.toFixed(2)}`).toBeLessThan(0.01);
+      for (const t of f.pose.world.values()) for (const x of [...t.position, ...t.rotation]) expect(Number.isFinite(x)).toBe(true);
+      // Nada atravessa o chão.
+      for (const p of f.contacts) expect(p[1]).toBeGreaterThan(-0.02);
+    }
+  });
+});

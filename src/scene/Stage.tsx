@@ -8,6 +8,7 @@ import { AtlasScene } from './atlas/AtlasScene';
 import { LightRig } from './body/LightRig';
 import { HeatScene } from './heat/HeatScene';
 import { LabScene } from './lab/LabScene';
+import { MotionScene } from './motion/MotionScene';
 import { OpeningScene } from './opening/OpeningScene';
 import { useStage } from './stageStore';
 
@@ -31,6 +32,7 @@ export default function Stage() {
       {scene === 'lab' && <LabScene />}
       {scene === 'atlas' && <AtlasScene />}
       {scene === 'heat' && <HeatScene />}
+      {scene === 'motion' && <MotionScene />}
     </Canvas>
   );
 }
