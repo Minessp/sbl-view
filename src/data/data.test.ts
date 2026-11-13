@@ -22,6 +22,7 @@ import clipsJson from './exercises/clips.json';
 import { ClipFile, MotionClip } from './schema/motion';
 import { compileClip, evaluateClip } from '@/engine/motion/evaluate';
 import { DEG } from '@/engine/math/vec';
+import { pointToWorld } from '@/engine/kinematics/fk';
 import { expandEntry, motionMasses } from '@/features/library/motion';
 import { PlanningFile } from './schema/planning';
 import { E1RM_MAX_REPS } from '@/engine/training/progress';
@@ -108,6 +109,7 @@ describe('biblioteca de exercícios', () => {
     expect(new Set(lib.map((e) => e.id)).size).toBe(lib.length);
     for (const e of lib) {
       expect(e.targets.some((t) => t.role === 'alvo'), `${e.id} sem alvo`).toBe(true);
+      expect(new Set(e.targets.map((t) => t.muscle)).size, `${e.id}: músculo repetido nos alvos`).toBe(e.targets.length);
       for (const t of e.targets) {
         const m = muscles.get(t.muscle);
         expect(m, `${e.id}: ${t.muscle}`).toBeDefined();
@@ -227,6 +229,27 @@ describe('clipes de movimento', () => {
     expect(ids.size).toBe(entries.length);
     for (const e of lib) expect(ids, `${e.id} sem clipe`).toContain(e.id);
     for (const id of ids) expect(lib.map((e) => e.id), `clipe órfão ${id}`).toContain(id);
+  });
+
+  const compiled = (id: string) => {
+    const e = entries.find((x) => x.id === id);
+    if (!e) throw new Error(id);
+    return compileClip(MotionClip.parse(expandEntry(e)), sk, motionMasses);
+  };
+
+  it('carga guiada vai contra a concêntrica; cabo espelhado tem uma roldana por mão; perna de trás no banco', () => {
+    // Supino máquina: empurra para a frente (+Z) na ida, a carga aponta para trás.
+    const press = evaluateClip(compiled('machine_chest_press'), 0.5);
+    expect(press.load?.dir[2]).toBeLessThan(-0.9);
+    const fly = evaluateClip(compiled('cable_fly'), 0.5).equipment.filter((q) => q.kind === 'cable');
+    expect(fly).toHaveLength(2);
+    expect(fly.map((q) => (q.kind === 'cable' ? Math.sign(q.pulley[0]) : 0)).sort()).toEqual([-1, 1]);
+    // Búlgaro: só a perna esquerda tem alvo, e ela fica no banco (atrás, no alto).
+    const bss = evaluateClip(compiled('bulgarian_split_squat'), 1);
+    const foot = sk.byId.get('foot_l');
+    const ball = foot ? pointToWorld(bss.pose, 'foot_l', foot.tip) : [0, 0, 0];
+    expect(ball[1]).toBeGreaterThan(0.38);
+    expect(ball[2]).toBeLessThan(-0.6);
   });
 
   it.each(entries.map((e) => [e.id, e] as const))('%s: molde gera clipe válido; DOFs na amplitude, restrições fechadas, sem NaN', (_, entry) => {

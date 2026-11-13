@@ -1306,5 +1306,5985 @@
       "confidence": "especulativo",
       "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
     }
+  },
+  {
+    "id": "front_squat",
+    "mold": "squat",
+    "params": {
+      "depthDeg": 120,
+      "ankleMaxDeg": 34,
+      "bar": [
+        0,
+        1.43,
+        0.1
+      ],
+      "halfWidth": 0.25,
+      "pole": [
+        -0.3,
+        0.2,
+        1
+      ],
+      "plates": 2,
+      "loadKg": 80,
+      "hold": {
+        "forearm_pro": 30
+      },
+      "tempo": {
+        "out": 2.2,
+        "hold": 0.3,
+        "back": 1.4,
+        "rest": 0.6,
+        "concentric": "back"
+      },
+      "view": "diagonal"
+    },
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Tronco pelo equilíbrio estático do Lab com a barra na frente (80 kg); pegada autoral."
+    }
+  },
+  {
+    "id": "goblet_squat",
+    "mold": "squat",
+    "params": {
+      "depthDeg": 125,
+      "ankleMaxDeg": 36,
+      "bar": [
+        0,
+        1.24,
+        0.17
+      ],
+      "halfWidth": 0.07,
+      "pole": [
+        -1,
+        -0.8,
+        0
+      ],
+      "plates": 0,
+      "loadKg": 24,
+      "implement": "dumbbell",
+      "hold": {
+        "hip_abd": 12,
+        "hip_rot": -10,
+        "forearm_pro": 70
+      },
+      "tempo": {
+        "out": 2.2,
+        "hold": 0.3,
+        "back": 1.4,
+        "rest": 0.6,
+        "concentric": "back"
+      },
+      "view": "diagonal"
+    },
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Tronco pelo equilíbrio estático do Lab com o halter no peito (24 kg)."
+    }
+  },
+  {
+    "id": "hack_squat",
+    "support": "standing",
+    "root": {
+      "mode": "pin",
+      "segment": "pelvis",
+      "point": [
+        0,
+        0.8814,
+        0
+      ],
+      "at": [
+        {
+          "u": 0,
+          "p": [
+            0,
+            0.756,
+            -0.06
+          ]
+        },
+        {
+          "u": 1,
+          "p": [
+            0,
+            0.47,
+            0.105
+          ]
+        }
+      ],
+      "pitch": -30
+    },
+    "hold": {
+      "shoulder_abd": 35,
+      "shoulder_flex": 25,
+      "elbow_flex": 120,
+      "forearm_pro": 80,
+      "hip_abd": 6
+    },
+    "tracks": [],
+    "reach": [
+      {
+        "limb": "leg",
+        "side": "both",
+        "target": {
+          "kind": "ball",
+          "point": [
+            -0.12,
+            0.012,
+            0.46
+          ],
+          "pitch": 0
+        },
+        "pole": [
+          0,
+          0.4,
+          1
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "block",
+        "role": "back",
+        "center": [
+          0,
+          1.2,
+          -0.17
+        ],
+        "size": [
+          0.38,
+          0.75,
+          0.07
+        ],
+        "segment": "trunk"
+      },
+      {
+        "kind": "pad",
+        "segment": "trunk",
+        "point": [
+          -0.13,
+          1.5,
+          -0.03
+        ],
+        "lever": false,
+        "both": true
+      },
+      {
+        "kind": "block",
+        "role": "platform",
+        "center": [
+          0,
+          -0.03,
+          0.36
+        ],
+        "size": [
+          0.62,
+          0.06,
+          0.6
+        ]
+      },
+      {
+        "kind": "block",
+        "role": "frame",
+        "center": [
+          0,
+          0.8,
+          -0.32
+        ],
+        "size": [
+          0.1,
+          1.5,
+          0.06
+        ],
+        "pitch": -30
+      }
+    ],
+    "load": {
+      "kind": "guided",
+      "segment": "trunk",
+      "point": [
+        0,
+        1.5,
+        0
+      ]
+    },
+    "tempo": {
+      "out": 2.2,
+      "hold": 0.3,
+      "back": 1.4,
+      "rest": 0.6,
+      "concentric": "back"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "pendulum_squat",
+    "support": "standing",
+    "root": {
+      "mode": "pin",
+      "segment": "pelvis",
+      "point": [
+        0,
+        0.8814,
+        0
+      ],
+      "at": [
+        {
+          "u": 0,
+          "p": [
+            0,
+            0.88,
+            -0.1
+          ]
+        },
+        {
+          "u": 0.5,
+          "p": [
+            0,
+            0.69,
+            0
+          ]
+        },
+        {
+          "u": 1,
+          "p": [
+            0,
+            0.52,
+            0.08
+          ]
+        }
+      ],
+      "pitch": [
+        {
+          "u": 0,
+          "deg": -22
+        },
+        {
+          "u": 1,
+          "deg": -6
+        }
+      ]
+    },
+    "hold": {
+      "shoulder_abd": 35,
+      "shoulder_flex": 25,
+      "elbow_flex": 120,
+      "forearm_pro": 80,
+      "hip_abd": 6
+    },
+    "tracks": [],
+    "reach": [
+      {
+        "limb": "leg",
+        "side": "both",
+        "target": {
+          "kind": "ball",
+          "point": [
+            -0.12,
+            0.17,
+            0.5
+          ],
+          "pitch": -12
+        },
+        "pole": [
+          0,
+          0.4,
+          1
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "block",
+        "role": "back",
+        "center": [
+          0,
+          1.2,
+          -0.17
+        ],
+        "size": [
+          0.38,
+          0.75,
+          0.07
+        ],
+        "segment": "trunk"
+      },
+      {
+        "kind": "pad",
+        "segment": "trunk",
+        "point": [
+          -0.13,
+          1.5,
+          -0.03
+        ],
+        "lever": false,
+        "both": true
+      },
+      {
+        "kind": "block",
+        "role": "platform",
+        "center": [
+          0,
+          0.12,
+          0.42
+        ],
+        "size": [
+          0.62,
+          0.06,
+          0.5
+        ],
+        "pitch": -12
+      },
+      {
+        "kind": "block",
+        "role": "frame",
+        "center": [
+          0,
+          0.07,
+          0.3
+        ],
+        "size": [
+          0.1,
+          0.14,
+          0.2
+        ]
+      }
+    ],
+    "load": {
+      "kind": "guided",
+      "segment": "trunk",
+      "point": [
+        0,
+        1.5,
+        0
+      ]
+    },
+    "tempo": {
+      "out": 2.2,
+      "hold": 0.3,
+      "back": 1.4,
+      "rest": 0.6,
+      "concentric": "back"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "leg_press",
+    "support": "incline",
+    "root": {
+      "mode": "pin",
+      "segment": "pelvis",
+      "point": [
+        0,
+        0.775,
+        -0.035
+      ],
+      "at": [
+        0,
+        0.45,
+        0
+      ],
+      "pitch": -55
+    },
+    "hold": {
+      "shoulder_abd": 20,
+      "elbow_flex": 30,
+      "forearm_pro": 80,
+      "neck_flex": 25
+    },
+    "tracks": [],
+    "reach": [
+      {
+        "limb": "leg",
+        "side": "both",
+        "target": {
+          "kind": "ball",
+          "point": [
+            {
+              "u": 0,
+              "p": [
+                -0.1105,
+                1.1153,
+                0.6784
+              ]
+            },
+            {
+              "u": 1,
+              "p": [
+                -0.1105,
+                0.8607,
+                0.4238
+              ]
+            }
+          ],
+          "pitch": -92
+        },
+        "pole": [
+          -0.25,
+          1,
+          0.3
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "block",
+        "role": "seat",
+        "center": [
+          0,
+          0.41,
+          0.05
+        ],
+        "size": [
+          0.42,
+          0.08,
+          0.4
+        ]
+      },
+      {
+        "kind": "block",
+        "role": "back",
+        "center": [
+          0,
+          0.75,
+          -0.42
+        ],
+        "size": [
+          0.42,
+          0.8,
+          0.08
+        ],
+        "pitch": -55
+      },
+      {
+        "kind": "block",
+        "role": "platform",
+        "center": [
+          0,
+          -0.01,
+          0.07
+        ],
+        "size": [
+          0.7,
+          0.04,
+          0.42
+        ],
+        "segment": "foot_r"
+      },
+      {
+        "kind": "block",
+        "role": "frame",
+        "center": [
+          0,
+          0.03,
+          0.45
+        ],
+        "size": [
+          0.08,
+          0.06,
+          0.9
+        ]
+      }
+    ],
+    "load": {
+      "kind": "guided",
+      "segment": "foot_r",
+      "point": [
+        -0.1,
+        0.02,
+        0.06
+      ]
+    },
+    "tempo": {
+      "out": 2.2,
+      "hold": 0.3,
+      "back": 1.4,
+      "rest": 0.6,
+      "concentric": "back"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "bulgarian_split_squat",
+    "support": "standing",
+    "root": {
+      "mode": "plant"
+    },
+    "hold": {
+      "forearm_pro": 60,
+      "hip_abd_r": 3
+    },
+    "tracks": [
+      {
+        "dof": "hip_flex_r",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 8
+          },
+          {
+            "u": 1,
+            "deg": 88
+          }
+        ]
+      },
+      {
+        "dof": "knee_flex_r",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 6
+          },
+          {
+            "u": 1,
+            "deg": 100
+          }
+        ]
+      },
+      {
+        "dof": "ankle_dorsi_r",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 2
+          },
+          {
+            "u": 1,
+            "deg": 24
+          }
+        ]
+      },
+      {
+        "dof": "lumbar_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 6
+          }
+        ]
+      }
+    ],
+    "reach": [
+      {
+        "limb": "leg",
+        "side": "l",
+        "target": {
+          "kind": "ball",
+          "point": [
+            -0.1,
+            0.43,
+            -0.72
+          ],
+          "pitch": 137
+        },
+        "pole": [
+          0,
+          -0.3,
+          1
+        ]
+      },
+      {
+        "limb": "arm",
+        "side": "both",
+        "target": {
+          "kind": "hang"
+        },
+        "pole": [
+          -0.3,
+          0,
+          -1
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "dumbbell"
+      },
+      {
+        "kind": "block",
+        "role": "bench",
+        "center": [
+          0.1,
+          0.22,
+          -0.78
+        ],
+        "size": [
+          0.3,
+          0.44,
+          0.36
+        ]
+      }
+    ],
+    "load": {
+      "kind": "gravity"
+    },
+    "tempo": {
+      "out": 2.2,
+      "hold": 0.3,
+      "back": 1.4,
+      "rest": 0.6,
+      "concentric": "back"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Perna da frente (direita) autoral; a de trás fecha no banco por IK."
+    }
+  },
+  {
+    "id": "reverse_lunge",
+    "support": "standing",
+    "root": {
+      "mode": "plant"
+    },
+    "hold": {
+      "forearm_pro": 60,
+      "hip_abd_r": 3
+    },
+    "tracks": [
+      {
+        "dof": "hip_flex_r",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 2
+          },
+          {
+            "u": 1,
+            "deg": 78
+          }
+        ]
+      },
+      {
+        "dof": "knee_flex_r",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 3
+          },
+          {
+            "u": 1,
+            "deg": 92
+          }
+        ]
+      },
+      {
+        "dof": "ankle_dorsi_r",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 18
+          }
+        ]
+      }
+    ],
+    "reach": [
+      {
+        "limb": "leg",
+        "side": "l",
+        "target": {
+          "kind": "ball",
+          "point": [
+            {
+              "u": 0,
+              "p": [
+                -0.105,
+                0.012,
+                0.14
+              ]
+            },
+            {
+              "u": 0.45,
+              "p": [
+                -0.105,
+                0.06,
+                -0.3
+              ]
+            },
+            {
+              "u": 1,
+              "p": [
+                -0.105,
+                0.012,
+                -0.68
+              ]
+            }
+          ],
+          "pitch": [
+            {
+              "u": 0,
+              "deg": 0
+            },
+            {
+              "u": 1,
+              "deg": 55
+            }
+          ]
+        },
+        "pole": [
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "limb": "arm",
+        "side": "both",
+        "target": {
+          "kind": "hang"
+        },
+        "pole": [
+          -0.3,
+          0,
+          -1
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "dumbbell"
+      }
+    ],
+    "load": {
+      "kind": "gravity"
+    },
+    "tempo": {
+      "out": 2.2,
+      "hold": 0.3,
+      "back": 1.4,
+      "rest": 0.6,
+      "concentric": "back"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Perna da frente (direita) autoral; a de trás desce por IK até o chão."
+    }
+  },
+  {
+    "id": "sissy_squat",
+    "support": "standing",
+    "root": {
+      "mode": "pin",
+      "segment": "pelvis",
+      "point": [
+        0,
+        0.8814,
+        0
+      ],
+      "at": [
+        {
+          "u": 0,
+          "p": [
+            0,
+            0.876,
+            0.005
+          ]
+        },
+        {
+          "u": 1,
+          "p": [
+            0,
+            0.69,
+            0.19
+          ]
+        }
+      ],
+      "pitch": [
+        {
+          "u": 0,
+          "deg": 0
+        },
+        {
+          "u": 1,
+          "deg": -35
+        }
+      ]
+    },
+    "hold": {
+      "shoulder_flex": 55,
+      "shoulder_abd": 12,
+      "elbow_flex": 25,
+      "forearm_pro": 80
+    },
+    "tracks": [],
+    "reach": [
+      {
+        "limb": "leg",
+        "side": "both",
+        "target": {
+          "kind": "ball",
+          "point": [
+            -0.105,
+            0.012,
+            0.1455
+          ],
+          "pitch": [
+            {
+              "u": 0,
+              "deg": 0
+            },
+            {
+              "u": 1,
+              "deg": 45
+            }
+          ]
+        },
+        "pole": [
+          0,
+          0,
+          1
+        ]
+      }
+    ],
+    "equipment": [],
+    "load": {
+      "kind": "gravity",
+      "segment": "trunk",
+      "point": [
+        0,
+        1.25,
+        0
+      ]
+    },
+    "tempo": {
+      "out": 2.2,
+      "hold": 0.3,
+      "back": 1.4,
+      "rest": 0.6,
+      "concentric": "back"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Quadril estendido; joelhos à frente com o calcanhar subindo. Caminho autoral."
+    }
+  },
+  {
+    "id": "reverse_nordic",
+    "support": "kneeling",
+    "root": {
+      "mode": "pin",
+      "segment": "shank_r",
+      "point": [
+        -0.0758,
+        0.43,
+        0.02
+      ],
+      "at": [
+        -0.0758,
+        0.15,
+        0
+      ],
+      "pitch": [
+        {
+          "u": 0,
+          "deg": 0
+        },
+        {
+          "u": 1,
+          "deg": -50
+        }
+      ]
+    },
+    "hold": {
+      "shoulder_flex": 30,
+      "shoulder_abd": 10,
+      "elbow_flex": 130,
+      "forearm_pro": 80,
+      "ankle_dorsi": -45
+    },
+    "tracks": [
+      {
+        "dof": "knee_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 90
+          },
+          {
+            "u": 1,
+            "deg": 140
+          }
+        ]
+      }
+    ],
+    "reach": [],
+    "equipment": [
+      {
+        "kind": "block",
+        "role": "platform",
+        "center": [
+          0,
+          0.05,
+          -0.15
+        ],
+        "size": [
+          0.6,
+          0.1,
+          0.62
+        ]
+      }
+    ],
+    "load": {
+      "kind": "gravity",
+      "segment": "trunk",
+      "point": [
+        0,
+        1.25,
+        0
+      ]
+    },
+    "tempo": {
+      "out": 2.2,
+      "hold": 0.3,
+      "back": 1.4,
+      "rest": 0.6,
+      "concentric": "back"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "stiff_leg_deadlift",
+    "support": "standing",
+    "root": {
+      "mode": "plant"
+    },
+    "hold": {
+      "hip_abd": 3,
+      "forearm_pro": 110,
+      "neck_flex": 10
+    },
+    "tracks": [
+      {
+        "dof": "hip_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 90
+          }
+        ]
+      },
+      {
+        "dof": "knee_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 2
+          },
+          {
+            "u": 1,
+            "deg": 6
+          }
+        ]
+      },
+      {
+        "dof": "lumbar_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 2
+          },
+          {
+            "u": 1,
+            "deg": 12
+          }
+        ]
+      }
+    ],
+    "reach": [
+      {
+        "limb": "arm",
+        "side": "both",
+        "target": {
+          "kind": "hang"
+        },
+        "pole": [
+          -0.3,
+          0,
+          -1
+        ]
+      }
+    ],
+    "balance": {
+      "massKg": 70,
+      "rangeDeg": [
+        -20,
+        15
+      ]
+    },
+    "equipment": [
+      {
+        "kind": "barbell",
+        "plates": 2
+      }
+    ],
+    "load": {
+      "kind": "gravity"
+    },
+    "tempo": {
+      "out": 2.2,
+      "hold": 0.3,
+      "back": 1.4,
+      "rest": 0.6,
+      "concentric": "back"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "deadlift",
+    "support": "standing",
+    "root": {
+      "mode": "plant"
+    },
+    "hold": {
+      "hip_abd": 5,
+      "forearm_pro": 110,
+      "neck_flex": 5
+    },
+    "tracks": [
+      {
+        "dof": "hip_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 78
+          },
+          {
+            "u": 0.5,
+            "deg": 45
+          },
+          {
+            "u": 1,
+            "deg": 0
+          }
+        ]
+      },
+      {
+        "dof": "knee_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 72
+          },
+          {
+            "u": 0.5,
+            "deg": 22
+          },
+          {
+            "u": 1,
+            "deg": 2
+          }
+        ]
+      },
+      {
+        "dof": "lumbar_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 8
+          },
+          {
+            "u": 1,
+            "deg": 0
+          }
+        ]
+      }
+    ],
+    "reach": [
+      {
+        "limb": "arm",
+        "side": "both",
+        "target": {
+          "kind": "hang"
+        },
+        "pole": [
+          -0.3,
+          0,
+          -1
+        ]
+      }
+    ],
+    "balance": {
+      "massKg": 120,
+      "rangeDeg": [
+        -20,
+        30
+      ]
+    },
+    "equipment": [
+      {
+        "kind": "barbell",
+        "plates": 3
+      }
+    ],
+    "load": {
+      "kind": "gravity"
+    },
+    "tempo": {
+      "out": 1.4,
+      "hold": 0.4,
+      "back": 1.6,
+      "rest": 0.8,
+      "concentric": "out"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "good_morning",
+    "support": "standing",
+    "root": {
+      "mode": "plant"
+    },
+    "hold": {
+      "hip_abd": 5,
+      "forearm_pro": 80,
+      "neck_flex": -5
+    },
+    "tracks": [
+      {
+        "dof": "hip_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 80
+          }
+        ]
+      },
+      {
+        "dof": "knee_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 4
+          },
+          {
+            "u": 1,
+            "deg": 16
+          }
+        ]
+      },
+      {
+        "dof": "lumbar_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 6
+          }
+        ]
+      }
+    ],
+    "reach": [
+      {
+        "limb": "arm",
+        "side": "both",
+        "target": {
+          "kind": "attach",
+          "segment": "trunk",
+          "point": [
+            -0.3,
+            1.455,
+            -0.078
+          ]
+        },
+        "pole": [
+          -0.6,
+          -1,
+          -0.2
+        ]
+      }
+    ],
+    "balance": {
+      "massKg": 0,
+      "rangeDeg": [
+        -20,
+        20
+      ]
+    },
+    "equipment": [
+      {
+        "kind": "barbell",
+        "plates": 1
+      }
+    ],
+    "load": {
+      "kind": "gravity"
+    },
+    "tempo": {
+      "out": 2.2,
+      "hold": 0.3,
+      "back": 1.4,
+      "rest": 0.6,
+      "concentric": "back"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "back_extension",
+    "support": "prone",
+    "root": {
+      "mode": "pin",
+      "segment": "pelvis",
+      "point": [
+        0,
+        0.86,
+        0.1
+      ],
+      "at": [
+        0,
+        0.98,
+        0
+      ],
+      "pitch": [
+        {
+          "u": 0,
+          "deg": 45
+        },
+        {
+          "u": 1,
+          "deg": 125
+        }
+      ]
+    },
+    "hold": {
+      "shoulder_flex": 20,
+      "shoulder_abd": 10,
+      "elbow_flex": 125,
+      "forearm_pro": 80,
+      "neck_flex": 0
+    },
+    "tracks": [
+      {
+        "dof": "lumbar_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 14
+          }
+        ]
+      }
+    ],
+    "reach": [
+      {
+        "limb": "leg",
+        "side": "both",
+        "target": {
+          "kind": "ball",
+          "point": [
+            -0.11,
+            0.33,
+            -0.36
+          ],
+          "pitch": 45
+        },
+        "pole": [
+          0,
+          1,
+          0
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "block",
+        "role": "bench",
+        "center": [
+          0,
+          0.88,
+          0
+        ],
+        "size": [
+          0.42,
+          0.08,
+          0.32
+        ],
+        "pitch": -45
+      },
+      {
+        "kind": "block",
+        "role": "platform",
+        "center": [
+          0,
+          0.3,
+          -0.38
+        ],
+        "size": [
+          0.42,
+          0.04,
+          0.3
+        ],
+        "pitch": 45
+      },
+      {
+        "kind": "block",
+        "role": "frame",
+        "center": [
+          0,
+          0.4,
+          -0.15
+        ],
+        "size": [
+          0.08,
+          0.8,
+          0.5
+        ]
+      }
+    ],
+    "load": {
+      "kind": "gravity",
+      "segment": "trunk",
+      "point": [
+        0,
+        1.3,
+        0
+      ]
+    },
+    "tempo": {
+      "out": 2.2,
+      "hold": 0.3,
+      "back": 1.4,
+      "rest": 0.6,
+      "concentric": "back"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pernas fechadas no apoio por IK; tronco por inclinação autoral."
+    }
+  },
+  {
+    "id": "nordic_curl",
+    "support": "kneeling",
+    "root": {
+      "mode": "pin",
+      "segment": "shank_r",
+      "point": [
+        -0.0758,
+        0.43,
+        0.02
+      ],
+      "at": [
+        -0.0758,
+        0.15,
+        0
+      ],
+      "pitch": [
+        {
+          "u": 0,
+          "deg": 0
+        },
+        {
+          "u": 1,
+          "deg": 65
+        }
+      ]
+    },
+    "hold": {
+      "shoulder_flex": 70,
+      "shoulder_abd": 15,
+      "elbow_flex": 35,
+      "forearm_pro": 80,
+      "ankle_dorsi": -45,
+      "hip_flex": 5
+    },
+    "tracks": [
+      {
+        "dof": "knee_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 95
+          },
+          {
+            "u": 1,
+            "deg": 30
+          }
+        ]
+      }
+    ],
+    "reach": [],
+    "equipment": [
+      {
+        "kind": "block",
+        "role": "platform",
+        "center": [
+          0,
+          0.05,
+          -0.15
+        ],
+        "size": [
+          0.6,
+          0.1,
+          0.62
+        ]
+      },
+      {
+        "kind": "pad",
+        "segment": "shank_r",
+        "point": [
+          -0.08,
+          0.1,
+          -0.09
+        ],
+        "lever": false,
+        "both": false
+      }
+    ],
+    "load": {
+      "kind": "gravity",
+      "segment": "trunk",
+      "point": [
+        0,
+        1.25,
+        0
+      ]
+    },
+    "tempo": {
+      "out": 3.2,
+      "hold": 0.3,
+      "back": 1.4,
+      "rest": 0.8,
+      "concentric": "back"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "cable_pull_through",
+    "support": "standing",
+    "root": {
+      "mode": "plant"
+    },
+    "hold": {
+      "hip_abd": 12,
+      "hip_rot": -8,
+      "forearm_pro": 90,
+      "neck_flex": 10
+    },
+    "tracks": [
+      {
+        "dof": "hip_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 85
+          }
+        ]
+      },
+      {
+        "dof": "knee_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 6
+          },
+          {
+            "u": 1,
+            "deg": 22
+          }
+        ]
+      },
+      {
+        "dof": "lumbar_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 6
+          }
+        ]
+      }
+    ],
+    "reach": [
+      {
+        "limb": "arm",
+        "side": "both",
+        "target": {
+          "kind": "hang"
+        },
+        "pole": [
+          -0.3,
+          0,
+          -1
+        ]
+      }
+    ],
+    "balance": {
+      "massKg": 0,
+      "rangeDeg": [
+        -20,
+        15
+      ]
+    },
+    "equipment": [
+      {
+        "kind": "cable",
+        "pulley": [
+          0,
+          0.25,
+          -1
+        ],
+        "handle": "rope"
+      }
+    ],
+    "load": {
+      "kind": "cable"
+    },
+    "tempo": {
+      "out": 2.2,
+      "hold": 0.3,
+      "back": 1.4,
+      "rest": 0.6,
+      "concentric": "back"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "seated_hip_abduction",
+    "support": "seated",
+    "root": {
+      "mode": "pin",
+      "segment": "pelvis",
+      "point": [
+        0,
+        0.775,
+        -0.035
+      ],
+      "at": [
+        0,
+        0.5,
+        0
+      ],
+      "pitch": -5
+    },
+    "hold": {
+      "hip_flex": 85,
+      "knee_flex": 85,
+      "shoulder_abd": 20,
+      "elbow_flex": 30,
+      "forearm_pro": 80
+    },
+    "tracks": [
+      {
+        "dof": "hip_abd",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 4
+          },
+          {
+            "u": 1,
+            "deg": 40
+          }
+        ]
+      }
+    ],
+    "reach": [],
+    "equipment": [
+      {
+        "kind": "block",
+        "role": "seat",
+        "center": [
+          0,
+          0.46,
+          0.1
+        ],
+        "size": [
+          0.42,
+          0.08,
+          0.44
+        ]
+      },
+      {
+        "kind": "block",
+        "role": "back",
+        "center": [
+          0,
+          0.86,
+          -0.18
+        ],
+        "size": [
+          0.4,
+          0.62,
+          0.08
+        ],
+        "pitch": -5
+      },
+      {
+        "kind": "pad",
+        "segment": "thigh_r",
+        "point": [
+          -0.15,
+          0.5,
+          0.02
+        ],
+        "lever": false,
+        "both": true
+      }
+    ],
+    "load": {
+      "kind": "guided",
+      "segment": "thigh_r",
+      "point": [
+        -0.15,
+        0.5,
+        0.02
+      ]
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "front",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "leaned_hip_abduction",
+    "support": "seated",
+    "root": {
+      "mode": "pin",
+      "segment": "pelvis",
+      "point": [
+        0,
+        0.775,
+        -0.035
+      ],
+      "at": [
+        0,
+        0.5,
+        0
+      ],
+      "pitch": 30
+    },
+    "hold": {
+      "hip_flex": 112,
+      "knee_flex": 85,
+      "shoulder_flex": 60,
+      "shoulder_abd": 10,
+      "elbow_flex": 40,
+      "forearm_pro": 80,
+      "lumbar_flex": 5
+    },
+    "tracks": [
+      {
+        "dof": "hip_abd",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 4
+          },
+          {
+            "u": 1,
+            "deg": 38
+          }
+        ]
+      }
+    ],
+    "reach": [],
+    "equipment": [
+      {
+        "kind": "block",
+        "role": "seat",
+        "center": [
+          0,
+          0.46,
+          0.1
+        ],
+        "size": [
+          0.42,
+          0.08,
+          0.44
+        ]
+      },
+      {
+        "kind": "pad",
+        "segment": "thigh_r",
+        "point": [
+          -0.15,
+          0.5,
+          0.02
+        ],
+        "lever": false,
+        "both": true
+      }
+    ],
+    "load": {
+      "kind": "guided",
+      "segment": "thigh_r",
+      "point": [
+        -0.15,
+        0.5,
+        0.02
+      ]
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "diagonal",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Tronco inclinado à frente sobre o quadril fletido. Pose autoral."
+    }
+  },
+  {
+    "id": "seated_hip_adduction",
+    "support": "seated",
+    "root": {
+      "mode": "pin",
+      "segment": "pelvis",
+      "point": [
+        0,
+        0.775,
+        -0.035
+      ],
+      "at": [
+        0,
+        0.5,
+        0
+      ],
+      "pitch": -5
+    },
+    "hold": {
+      "hip_flex": 85,
+      "knee_flex": 85,
+      "shoulder_abd": 20,
+      "elbow_flex": 30,
+      "forearm_pro": 80
+    },
+    "tracks": [
+      {
+        "dof": "hip_abd",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 42
+          },
+          {
+            "u": 1,
+            "deg": 4
+          }
+        ]
+      }
+    ],
+    "reach": [],
+    "equipment": [
+      {
+        "kind": "block",
+        "role": "seat",
+        "center": [
+          0,
+          0.46,
+          0.1
+        ],
+        "size": [
+          0.42,
+          0.08,
+          0.44
+        ]
+      },
+      {
+        "kind": "block",
+        "role": "back",
+        "center": [
+          0,
+          0.86,
+          -0.18
+        ],
+        "size": [
+          0.4,
+          0.62,
+          0.08
+        ],
+        "pitch": -5
+      },
+      {
+        "kind": "pad",
+        "segment": "thigh_r",
+        "point": [
+          -0.03,
+          0.5,
+          0.02
+        ],
+        "lever": false,
+        "both": true
+      }
+    ],
+    "load": {
+      "kind": "guided",
+      "segment": "thigh_r",
+      "point": [
+        -0.03,
+        0.5,
+        0.02
+      ]
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "front",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "leg_press_calf_raise",
+    "support": "incline",
+    "root": {
+      "mode": "pin",
+      "segment": "pelvis",
+      "point": [
+        0,
+        0.775,
+        -0.035
+      ],
+      "at": [
+        0,
+        0.45,
+        0
+      ],
+      "pitch": -55
+    },
+    "hold": {
+      "shoulder_abd": 20,
+      "elbow_flex": 30,
+      "forearm_pro": 80,
+      "neck_flex": 25
+    },
+    "tracks": [],
+    "reach": [
+      {
+        "limb": "leg",
+        "side": "both",
+        "target": {
+          "kind": "ball",
+          "point": [
+            {
+              "u": 0,
+              "p": [
+                -0.1105,
+                1.1199,
+                0.6054
+              ]
+            },
+            {
+              "u": 1,
+              "p": [
+                -0.1105,
+                1.0663,
+                0.7645
+              ]
+            }
+          ],
+          "pitch": [
+            {
+              "u": 0,
+              "deg": -114
+            },
+            {
+              "u": 1,
+              "deg": -62
+            }
+          ]
+        },
+        "pole": [
+          -0.25,
+          1,
+          0.3
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "block",
+        "role": "seat",
+        "center": [
+          0,
+          0.41,
+          0.05
+        ],
+        "size": [
+          0.42,
+          0.08,
+          0.4
+        ]
+      },
+      {
+        "kind": "block",
+        "role": "back",
+        "center": [
+          0,
+          0.75,
+          -0.42
+        ],
+        "size": [
+          0.42,
+          0.8,
+          0.08
+        ],
+        "pitch": -55
+      },
+      {
+        "kind": "block",
+        "role": "platform",
+        "center": [
+          0,
+          0,
+          0.2
+        ],
+        "size": [
+          0.7,
+          0.04,
+          0.2
+        ],
+        "pitch": 0,
+        "segment": "foot_r"
+      }
+    ],
+    "load": {
+      "kind": "guided",
+      "segment": "foot_r",
+      "point": [
+        -0.105,
+        0.012,
+        0.1455
+      ]
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Tornozelo fixo no espaço; a plataforma acompanha a ponta do pé."
+    }
+  },
+  {
+    "id": "tibialis_raise",
+    "support": "standing",
+    "root": {
+      "mode": "pin",
+      "segment": "pelvis",
+      "point": [
+        0,
+        0.86,
+        -0.12
+      ],
+      "at": [
+        0,
+        0.81,
+        -0.27
+      ],
+      "pitch": -6
+    },
+    "hold": {
+      "shoulder_abd": 10,
+      "elbow_flex": 10,
+      "forearm_pro": 60
+    },
+    "tracks": [],
+    "reach": [
+      {
+        "limb": "leg",
+        "side": "both",
+        "target": {
+          "kind": "ball",
+          "point": [
+            {
+              "u": 0,
+              "p": [
+                -0.105,
+                0.012,
+                0.265
+              ]
+            },
+            {
+              "u": 0.25,
+              "p": [
+                -0.105,
+                0.0368,
+                0.2634
+              ]
+            },
+            {
+              "u": 0.5,
+              "p": [
+                -0.105,
+                0.0612,
+                0.2585
+              ]
+            },
+            {
+              "u": 0.75,
+              "p": [
+                -0.105,
+                0.0847,
+                0.2505
+              ]
+            },
+            {
+              "u": 1,
+              "p": [
+                -0.105,
+                0.107,
+                0.2395
+              ]
+            }
+          ],
+          "pitch": [
+            {
+              "u": 0,
+              "deg": 0
+            },
+            {
+              "u": 1,
+              "deg": -30
+            }
+          ]
+        },
+        "pole": [
+          0,
+          0,
+          1
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "block",
+        "role": "frame",
+        "center": [
+          0,
+          1,
+          -0.42
+        ],
+        "size": [
+          0.9,
+          2,
+          0.06
+        ]
+      }
+    ],
+    "load": {
+      "kind": "gravity",
+      "segment": "foot_r",
+      "point": [
+        -0.105,
+        0.03,
+        0.15
+      ]
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "crunch",
+    "support": "supine",
+    "root": {
+      "mode": "pin",
+      "segment": "pelvis",
+      "point": [
+        0,
+        0.92,
+        -0.11
+      ],
+      "at": [
+        0,
+        0.02,
+        0
+      ],
+      "pitch": -90
+    },
+    "hold": {
+      "shoulder_flex": 40,
+      "shoulder_abd": 10,
+      "elbow_flex": 130,
+      "forearm_pro": 80
+    },
+    "tracks": [
+      {
+        "dof": "lumbar_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 28
+          }
+        ]
+      },
+      {
+        "dof": "thorax_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 24
+          }
+        ]
+      },
+      {
+        "dof": "neck_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 8
+          },
+          {
+            "u": 1,
+            "deg": 25
+          }
+        ]
+      }
+    ],
+    "reach": [
+      {
+        "limb": "leg",
+        "side": "both",
+        "target": {
+          "kind": "ball",
+          "point": [
+            -0.12,
+            0.012,
+            0.62
+          ]
+        },
+        "pole": [
+          0,
+          1,
+          0.2
+        ]
+      }
+    ],
+    "equipment": [],
+    "load": {
+      "kind": "gravity",
+      "segment": "trunk",
+      "point": [
+        0,
+        1.35,
+        0
+      ]
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "cable_crunch",
+    "support": "kneeling",
+    "root": {
+      "mode": "pin",
+      "segment": "shank_r",
+      "point": [
+        -0.0758,
+        0.43,
+        0.02
+      ],
+      "at": [
+        -0.0758,
+        0.15,
+        0
+      ],
+      "pitch": 15
+    },
+    "hold": {
+      "hip_flex": 40,
+      "knee_flex": 115,
+      "ankle_dorsi": -45
+    },
+    "tracks": [
+      {
+        "dof": "lumbar_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 42
+          }
+        ]
+      },
+      {
+        "dof": "thorax_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 26
+          }
+        ]
+      },
+      {
+        "dof": "neck_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 15
+          }
+        ]
+      }
+    ],
+    "reach": [
+      {
+        "limb": "arm",
+        "side": "both",
+        "target": {
+          "kind": "attach",
+          "segment": "head",
+          "point": [
+            -0.075,
+            1.63,
+            0.06
+          ]
+        },
+        "pole": [
+          -0.3,
+          -1,
+          0.5
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "cable",
+        "pulley": [
+          0,
+          2.15,
+          0.45
+        ],
+        "handle": "rope"
+      },
+      {
+        "kind": "block",
+        "role": "platform",
+        "center": [
+          0,
+          0.05,
+          -0.15
+        ],
+        "size": [
+          0.6,
+          0.1,
+          0.62
+        ]
+      }
+    ],
+    "load": {
+      "kind": "cable"
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "hanging_leg_raise",
+    "support": "hanging",
+    "root": {
+      "mode": "pin",
+      "segment": "trunk",
+      "point": [
+        0,
+        1.42,
+        0
+      ],
+      "at": [
+        0,
+        1.62,
+        0
+      ],
+      "pitch": 0
+    },
+    "hold": {
+      "forearm_pro": 90
+    },
+    "tracks": [
+      {
+        "dof": "hip_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 95
+          }
+        ]
+      },
+      {
+        "dof": "knee_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 10
+          },
+          {
+            "u": 1,
+            "deg": 85
+          }
+        ]
+      },
+      {
+        "dof": "lumbar_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 22
+          }
+        ]
+      }
+    ],
+    "reach": [
+      {
+        "limb": "arm",
+        "side": "both",
+        "target": {
+          "kind": "path",
+          "keys": [
+            {
+              "u": 0,
+              "p": [
+                -0.26,
+                2.17,
+                0
+              ]
+            }
+          ]
+        },
+        "pole": [
+          -1,
+          0,
+          -0.3
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "barbell",
+        "plates": 0
+      }
+    ],
+    "load": {
+      "kind": "gravity",
+      "segment": "shank_r",
+      "point": [
+        -0.078,
+        0.27,
+        -0.03
+      ]
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "pallof_press",
+    "support": "standing",
+    "root": {
+      "mode": "plant"
+    },
+    "hold": {
+      "hip_abd": 8,
+      "hip_flex": 8,
+      "knee_flex": 10,
+      "forearm_pro": 90
+    },
+    "tracks": [],
+    "reach": [
+      {
+        "limb": "arm",
+        "side": "both",
+        "target": {
+          "kind": "path",
+          "keys": [
+            {
+              "u": 0,
+              "p": [
+                -0.05,
+                1.2,
+                0.17
+              ]
+            },
+            {
+              "u": 1,
+              "p": [
+                -0.04,
+                1.22,
+                0.42
+              ]
+            }
+          ]
+        },
+        "pole": [
+          -1,
+          -1,
+          -0.3
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "cable",
+        "pulley": [
+          -1,
+          1.2,
+          0.3
+        ],
+        "handle": "single"
+      }
+    ],
+    "load": {
+      "kind": "cable"
+    },
+    "tempo": {
+      "out": 1,
+      "hold": 1.2,
+      "back": 1.2,
+      "rest": 0.4,
+      "concentric": "out"
+    },
+    "view": "front",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "cable_woodchop",
+    "support": "standing",
+    "root": {
+      "mode": "plant"
+    },
+    "hold": {
+      "hip_abd": 10,
+      "forearm_pro": 90
+    },
+    "tracks": [
+      {
+        "dof": "thorax_rot",
+        "keys": [
+          {
+            "u": 0,
+            "deg": -30
+          },
+          {
+            "u": 1,
+            "deg": 28
+          }
+        ]
+      },
+      {
+        "dof": "lumbar_rot",
+        "keys": [
+          {
+            "u": 0,
+            "deg": -12
+          },
+          {
+            "u": 1,
+            "deg": 12
+          }
+        ]
+      },
+      {
+        "dof": "knee_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 4
+          },
+          {
+            "u": 1,
+            "deg": 18
+          }
+        ]
+      },
+      {
+        "dof": "hip_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 2
+          },
+          {
+            "u": 1,
+            "deg": 22
+          }
+        ]
+      }
+    ],
+    "reach": [
+      {
+        "limb": "arm",
+        "side": "r",
+        "target": {
+          "kind": "path",
+          "keys": [
+            {
+              "u": 0,
+              "p": [
+                -0.27,
+                1.56,
+                0.12
+              ]
+            },
+            {
+              "u": 1,
+              "p": [
+                0.13,
+                1.08,
+                0.25
+              ]
+            }
+          ]
+        },
+        "pole": [
+          -1,
+          -0.5,
+          0
+        ]
+      },
+      {
+        "limb": "arm",
+        "side": "l",
+        "target": {
+          "kind": "path",
+          "keys": [
+            {
+              "u": 0,
+              "p": [
+                0.2,
+                1.56,
+                0.12
+              ]
+            },
+            {
+              "u": 1,
+              "p": [
+                -0.2,
+                1.08,
+                0.25
+              ]
+            }
+          ]
+        },
+        "pole": [
+          -1,
+          -0.5,
+          0
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "cable",
+        "pulley": [
+          -0.95,
+          2.1,
+          0.3
+        ],
+        "handle": "single"
+      }
+    ],
+    "load": {
+      "kind": "cable"
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "front",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "dumbbell_side_bend",
+    "support": "standing",
+    "root": {
+      "mode": "plant"
+    },
+    "hold": {
+      "hip_abd": 6,
+      "forearm_pro": 80,
+      "shoulder_abd_l": 40,
+      "elbow_flex_l": 100,
+      "shoulder_rot_l": -20
+    },
+    "tracks": [
+      {
+        "dof": "lumbar_bend",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 20
+          },
+          {
+            "u": 1,
+            "deg": -14
+          }
+        ]
+      },
+      {
+        "dof": "thorax_bend",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 10
+          },
+          {
+            "u": 1,
+            "deg": -8
+          }
+        ]
+      }
+    ],
+    "reach": [
+      {
+        "limb": "arm",
+        "side": "r",
+        "target": {
+          "kind": "hang"
+        },
+        "pole": [
+          -0.3,
+          0,
+          -1
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "dumbbell",
+        "hands": "r"
+      }
+    ],
+    "load": {
+      "kind": "gravity"
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "front",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "incline_bench_press",
+    "mold": "press",
+    "params": {
+      "support": "incline",
+      "recline": 50,
+      "halfWidth": 0.3,
+      "path": [
+        {
+          "u": 0,
+          "y": 1.5,
+          "z": -0.34
+        },
+        {
+          "u": 1,
+          "y": 1.06,
+          "z": -0.3
+        }
+      ],
+      "pole": [
+        -1,
+        -0.6,
+        0.2
+      ],
+      "plates": 1,
+      "tempo": {
+        "out": 2,
+        "hold": 0.3,
+        "back": 1.2,
+        "rest": 0.6,
+        "concentric": "back"
+      },
+      "view": "side"
+    },
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "dumbbell_bench_press",
+    "mold": "press",
+    "params": {
+      "support": "supine",
+      "implement": "dumbbell",
+      "halfWidth": 0.25,
+      "path": [
+        {
+          "u": 0,
+          "y": 1.1,
+          "z": -0.06
+        },
+        {
+          "u": 1,
+          "y": 0.73,
+          "z": 0.06
+        }
+      ],
+      "pole": [
+        -1,
+        -0.6,
+        0.6
+      ],
+      "plates": 0,
+      "hold": {
+        "forearm_pro": 75
+      },
+      "tempo": {
+        "out": 2,
+        "hold": 0.3,
+        "back": 1.2,
+        "rest": 0.6,
+        "concentric": "back"
+      },
+      "view": "diagonal"
+    },
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "incline_dumbbell_press",
+    "mold": "press",
+    "params": {
+      "support": "incline",
+      "recline": 50,
+      "implement": "dumbbell",
+      "halfWidth": 0.27,
+      "path": [
+        {
+          "u": 0,
+          "y": 1.5,
+          "z": -0.34
+        },
+        {
+          "u": 1,
+          "y": 1.02,
+          "z": -0.3
+        }
+      ],
+      "pole": [
+        -1,
+        -0.6,
+        0.2
+      ],
+      "plates": 0,
+      "hold": {
+        "forearm_pro": 75
+      },
+      "tempo": {
+        "out": 2,
+        "hold": 0.3,
+        "back": 1.2,
+        "rest": 0.6,
+        "concentric": "back"
+      },
+      "view": "side"
+    },
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "close_grip_bench_press",
+    "mold": "press",
+    "params": {
+      "support": "supine",
+      "halfWidth": 0.18,
+      "path": [
+        {
+          "u": 0,
+          "y": 1.1,
+          "z": -0.05
+        },
+        {
+          "u": 1,
+          "y": 0.78,
+          "z": 0.1
+        }
+      ],
+      "pole": [
+        -0.4,
+        -0.5,
+        1
+      ],
+      "plates": 2,
+      "tempo": {
+        "out": 2,
+        "hold": 0.3,
+        "back": 1.2,
+        "rest": 0.6,
+        "concentric": "back"
+      },
+      "view": "diagonal"
+    },
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "machine_chest_press",
+    "mold": "press",
+    "params": {
+      "support": "seated",
+      "recline": 15,
+      "implement": "machine",
+      "halfWidth": 0.24,
+      "path": [
+        {
+          "u": 0,
+          "y": 1.08,
+          "z": 0.04
+        },
+        {
+          "u": 1,
+          "y": 1.08,
+          "z": 0.44
+        }
+      ],
+      "pole": [
+        -1,
+        -0.5,
+        -0.3
+      ],
+      "plates": 0,
+      "hold": {
+        "forearm_pro": 90
+      },
+      "tempo": {
+        "out": 1.2,
+        "hold": 0.5,
+        "back": 2,
+        "rest": 0.5,
+        "concentric": "out"
+      },
+      "view": "side"
+    },
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "cable_fly",
+    "support": "standing",
+    "root": {
+      "mode": "plant"
+    },
+    "hold": {
+      "hip_abd": 5,
+      "hip_flex": 8,
+      "knee_flex": 8,
+      "forearm_pro": 60
+    },
+    "tracks": [],
+    "reach": [
+      {
+        "limb": "arm",
+        "side": "both",
+        "target": {
+          "kind": "path",
+          "keys": [
+            {
+              "u": 0,
+              "p": [
+                -0.66,
+                1.3,
+                0.04
+              ]
+            },
+            {
+              "u": 0.5,
+              "p": [
+                -0.5,
+                1.28,
+                0.34
+              ]
+            },
+            {
+              "u": 1,
+              "p": [
+                -0.07,
+                1.22,
+                0.48
+              ]
+            }
+          ]
+        },
+        "pole": [
+          -0.3,
+          -1,
+          -0.6
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "cable",
+        "pulley": [
+          -0.95,
+          1.55,
+          -0.05
+        ],
+        "handle": "single",
+        "mirror": true
+      }
+    ],
+    "load": {
+      "kind": "cable"
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "diagonal",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "low_to_high_cable_fly",
+    "support": "standing",
+    "root": {
+      "mode": "plant"
+    },
+    "hold": {
+      "hip_abd": 5,
+      "knee_flex": 6,
+      "forearm_pro": 30
+    },
+    "tracks": [],
+    "reach": [
+      {
+        "limb": "arm",
+        "side": "both",
+        "target": {
+          "kind": "path",
+          "keys": [
+            {
+              "u": 0,
+              "p": [
+                -0.52,
+                0.98,
+                0
+              ]
+            },
+            {
+              "u": 0.5,
+              "p": [
+                -0.45,
+                1.12,
+                0.3
+              ]
+            },
+            {
+              "u": 1,
+              "p": [
+                -0.09,
+                1.38,
+                0.5
+              ]
+            }
+          ]
+        },
+        "pole": [
+          -0.3,
+          -1,
+          -0.6
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "cable",
+        "pulley": [
+          -0.95,
+          0.25,
+          -0.05
+        ],
+        "handle": "single",
+        "mirror": true
+      }
+    ],
+    "load": {
+      "kind": "cable"
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "diagonal",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "pec_deck",
+    "support": "seated",
+    "root": {
+      "mode": "pin",
+      "segment": "pelvis",
+      "point": [
+        0,
+        0.775,
+        -0.035
+      ],
+      "at": [
+        0,
+        0.5,
+        0
+      ],
+      "pitch": -5
+    },
+    "hold": {
+      "hip_flex": 85,
+      "forearm_pro": 90
+    },
+    "tracks": [],
+    "reach": [
+      {
+        "limb": "leg",
+        "side": "both",
+        "target": {
+          "kind": "ball",
+          "point": [
+            -0.16,
+            0.012,
+            0.5
+          ]
+        },
+        "pole": [
+          0,
+          0.4,
+          1
+        ]
+      },
+      {
+        "limb": "arm",
+        "side": "both",
+        "target": {
+          "kind": "path",
+          "keys": [
+            {
+              "u": 0,
+              "p": [
+                -0.62,
+                1.12,
+                0.02
+              ]
+            },
+            {
+              "u": 0.5,
+              "p": [
+                -0.48,
+                1.12,
+                0.34
+              ]
+            },
+            {
+              "u": 1,
+              "p": [
+                -0.1,
+                1.12,
+                0.48
+              ]
+            }
+          ]
+        },
+        "pole": [
+          -0.3,
+          -1,
+          -0.4
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "block",
+        "role": "seat",
+        "center": [
+          0,
+          0.46,
+          0.06
+        ],
+        "size": [
+          0.4,
+          0.08,
+          0.4
+        ]
+      },
+      {
+        "kind": "block",
+        "role": "back",
+        "center": [
+          0,
+          0.9,
+          -0.2
+        ],
+        "size": [
+          0.4,
+          0.66,
+          0.08
+        ],
+        "pitch": -5
+      },
+      {
+        "kind": "block",
+        "role": "frame",
+        "center": [
+          0,
+          0.21,
+          0.04
+        ],
+        "size": [
+          0.07,
+          0.42,
+          0.3
+        ]
+      },
+      {
+        "kind": "pad",
+        "segment": "hand_r",
+        "point": [
+          -0.27,
+          0.8,
+          0.03
+        ],
+        "lever": false,
+        "both": true
+      }
+    ],
+    "load": {
+      "kind": "guided"
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "diagonal",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "chest_dip",
+    "support": "hanging",
+    "root": {
+      "mode": "pin",
+      "segment": "trunk",
+      "point": [
+        0,
+        1.42,
+        0
+      ],
+      "at": [
+        {
+          "u": 0,
+          "p": [
+            0,
+            1.86,
+            -0.02
+          ]
+        },
+        {
+          "u": 1,
+          "p": [
+            0,
+            1.56,
+            0.03
+          ]
+        }
+      ],
+      "pitch": [
+        {
+          "u": 0,
+          "deg": 18
+        },
+        {
+          "u": 1,
+          "deg": 28
+        }
+      ]
+    },
+    "hold": {
+      "hip_flex": 20,
+      "knee_flex": 70,
+      "forearm_pro": 80
+    },
+    "tracks": [],
+    "reach": [
+      {
+        "limb": "arm",
+        "side": "both",
+        "target": {
+          "kind": "path",
+          "keys": [
+            {
+              "u": 0,
+              "p": [
+                -0.27,
+                1.3,
+                0.06
+              ]
+            }
+          ]
+        },
+        "pole": [
+          -0.4,
+          0.2,
+          -1
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "block",
+        "role": "frame",
+        "center": [
+          0,
+          0.64,
+          0.06
+        ],
+        "size": [
+          0.7,
+          1.28,
+          0.05
+        ]
+      }
+    ],
+    "load": {
+      "kind": "gravity",
+      "segment": "trunk",
+      "point": [
+        0,
+        1.3,
+        0
+      ]
+    },
+    "tempo": {
+      "out": 2.2,
+      "hold": 0.3,
+      "back": 1.4,
+      "rest": 0.6,
+      "concentric": "back"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "push_up",
+    "support": "prone",
+    "root": {
+      "mode": "pin",
+      "segment": "foot_r",
+      "point": [
+        -0.1052,
+        0.0123,
+        0.1455
+      ],
+      "at": [
+        -0.1052,
+        0.0123,
+        -1.28
+      ],
+      "pitch": [
+        {
+          "u": 0,
+          "deg": 72
+        },
+        {
+          "u": 1,
+          "deg": 82
+        }
+      ]
+    },
+    "hold": {
+      "ankle_dorsi": -25,
+      "forearm_pro": 80,
+      "neck_flex": -10
+    },
+    "tracks": [],
+    "reach": [
+      {
+        "limb": "arm",
+        "side": "both",
+        "target": {
+          "kind": "path",
+          "keys": [
+            {
+              "u": 0,
+              "p": [
+                -0.27,
+                0.03,
+                0.1
+              ]
+            }
+          ]
+        },
+        "pole": [
+          -0.6,
+          0.6,
+          -1
+        ]
+      }
+    ],
+    "equipment": [],
+    "load": {
+      "kind": "gravity",
+      "segment": "trunk",
+      "point": [
+        0,
+        1.3,
+        0
+      ]
+    },
+    "tempo": {
+      "out": 2.2,
+      "hold": 0.3,
+      "back": 1.4,
+      "rest": 0.6,
+      "concentric": "back"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "chest_supported_row",
+    "support": "prone",
+    "root": {
+      "mode": "pin",
+      "segment": "trunk",
+      "point": [
+        0,
+        1.25,
+        0.11
+      ],
+      "at": [
+        0,
+        0.89,
+        0.12
+      ],
+      "pitch": 50
+    },
+    "hold": {
+      "hip_flex": 40,
+      "forearm_pro": 80,
+      "neck_flex": -10
+    },
+    "tracks": [],
+    "reach": [
+      {
+        "limb": "leg",
+        "side": "both",
+        "target": {
+          "kind": "ball",
+          "point": [
+            -0.13,
+            0.012,
+            -0.44
+          ],
+          "pitch": 25
+        },
+        "pole": [
+          0,
+          0.3,
+          1
+        ]
+      },
+      {
+        "limb": "arm",
+        "side": "both",
+        "target": {
+          "kind": "path",
+          "keys": [
+            {
+              "u": 0,
+              "p": [
+                -0.22,
+                0.52,
+                0.28
+              ]
+            },
+            {
+              "u": 1,
+              "p": [
+                -0.24,
+                0.82,
+                0.02
+              ]
+            }
+          ]
+        },
+        "pole": [
+          -0.4,
+          0.3,
+          -1
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "dumbbell"
+      },
+      {
+        "kind": "block",
+        "role": "bench",
+        "center": [
+          0,
+          0.79,
+          0.2
+        ],
+        "size": [
+          0.3,
+          0.8,
+          0.07
+        ],
+        "pitch": 50
+      },
+      {
+        "kind": "block",
+        "role": "frame",
+        "center": [
+          0,
+          0.32,
+          0
+        ],
+        "size": [
+          0.07,
+          0.64,
+          0.5
+        ]
+      }
+    ],
+    "load": {
+      "kind": "gravity"
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "single_arm_pulldown",
+    "mold": "row",
+    "params": {
+      "side": "r",
+      "seatY": 0.48,
+      "pitch": [
+        {
+          "u": 0,
+          "deg": -4
+        },
+        {
+          "u": 1,
+          "deg": -10
+        }
+      ],
+      "hipFlex": 82,
+      "halfWidth": 0.2,
+      "path": [
+        {
+          "u": 0,
+          "y": 1.8,
+          "z": 0.02
+        },
+        {
+          "u": 1,
+          "y": 1.22,
+          "z": -0.02
+        }
+      ],
+      "pole": [
+        -1,
+        -0.6,
+        -0.3
+      ],
+      "pulley": [
+        -0.2,
+        2.45,
+        0.1
+      ],
+      "handle": "single",
+      "feet": {
+        "point": [
+          -0.13,
+          0.012,
+          0.58
+        ]
+      },
+      "hold": {
+        "forearm_pro_r": 60,
+        "thorax_bend": -6
+      },
+      "blocks": [
+        {
+          "kind": "block",
+          "role": "frame",
+          "center": [
+            0,
+            0.72,
+            0.3
+          ],
+          "size": [
+            0.42,
+            0.07,
+            0.09
+          ]
+        }
+      ],
+      "tempo": {
+        "out": 1.2,
+        "hold": 0.5,
+        "back": 2,
+        "rest": 0.5,
+        "concentric": "out"
+      },
+      "view": "front"
+    },
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "pull_up",
+    "support": "hanging",
+    "root": {
+      "mode": "pin",
+      "segment": "trunk",
+      "point": [
+        0,
+        1.42,
+        0
+      ],
+      "at": [
+        {
+          "u": 0,
+          "p": [
+            0,
+            1.72,
+            -0.02
+          ]
+        },
+        {
+          "u": 1,
+          "p": [
+            0,
+            2.15,
+            -0.06
+          ]
+        }
+      ],
+      "pitch": [
+        {
+          "u": 0,
+          "deg": 0
+        },
+        {
+          "u": 1,
+          "deg": -12
+        }
+      ]
+    },
+    "hold": {
+      "hip_flex": 15,
+      "knee_flex": 35,
+      "forearm_pro": 100
+    },
+    "tracks": [],
+    "reach": [
+      {
+        "limb": "arm",
+        "side": "both",
+        "target": {
+          "kind": "path",
+          "keys": [
+            {
+              "u": 0,
+              "p": [
+                -0.33,
+                2.3,
+                0
+              ]
+            }
+          ]
+        },
+        "pole": [
+          -1,
+          -0.3,
+          -0.2
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "barbell",
+        "plates": 0
+      }
+    ],
+    "load": {
+      "kind": "gravity",
+      "segment": "trunk",
+      "point": [
+        0,
+        1.3,
+        0
+      ]
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "diagonal",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "chin_up",
+    "support": "hanging",
+    "root": {
+      "mode": "pin",
+      "segment": "trunk",
+      "point": [
+        0,
+        1.42,
+        0
+      ],
+      "at": [
+        {
+          "u": 0,
+          "p": [
+            0,
+            1.72,
+            -0.02
+          ]
+        },
+        {
+          "u": 1,
+          "p": [
+            0,
+            2.13,
+            -0.06
+          ]
+        }
+      ],
+      "pitch": [
+        {
+          "u": 0,
+          "deg": 0
+        },
+        {
+          "u": 1,
+          "deg": -6
+        }
+      ]
+    },
+    "hold": {
+      "hip_flex": 15,
+      "knee_flex": 35,
+      "forearm_pro": 5
+    },
+    "tracks": [],
+    "reach": [
+      {
+        "limb": "arm",
+        "side": "both",
+        "target": {
+          "kind": "path",
+          "keys": [
+            {
+              "u": 0,
+              "p": [
+                -0.17,
+                2.3,
+                0.02
+              ]
+            }
+          ]
+        },
+        "pole": [
+          -0.3,
+          -0.3,
+          1
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "barbell",
+        "plates": 0
+      }
+    ],
+    "load": {
+      "kind": "gravity",
+      "segment": "trunk",
+      "point": [
+        0,
+        1.3,
+        0
+      ]
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "diagonal",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "barbell_row",
+    "support": "standing",
+    "root": {
+      "mode": "plant"
+    },
+    "hold": {
+      "hip_flex": 70,
+      "knee_flex": 22,
+      "lumbar_flex": 4,
+      "hip_abd": 4,
+      "forearm_pro": 110,
+      "neck_flex": -10
+    },
+    "tracks": [],
+    "reach": [
+      {
+        "limb": "arm",
+        "side": "both",
+        "target": {
+          "kind": "path",
+          "keys": [
+            {
+              "u": 0,
+              "p": [
+                -0.25,
+                0.68,
+                -0.04
+              ]
+            },
+            {
+              "u": 1,
+              "p": [
+                -0.25,
+                0.95,
+                -0.18
+              ]
+            }
+          ]
+        },
+        "pole": [
+          -0.4,
+          0.3,
+          -1
+        ]
+      }
+    ],
+    "balance": {
+      "massKg": 60,
+      "rangeDeg": [
+        -20,
+        25
+      ]
+    },
+    "equipment": [
+      {
+        "kind": "barbell",
+        "plates": 2
+      }
+    ],
+    "load": {
+      "kind": "gravity"
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "one_arm_dumbbell_row",
+    "support": "standing",
+    "root": {
+      "mode": "plant"
+    },
+    "hold": {
+      "hip_flex": 75,
+      "knee_flex": 20,
+      "lumbar_flex": 2,
+      "hip_abd": 8,
+      "forearm_pro": 80,
+      "neck_flex": -10
+    },
+    "tracks": [],
+    "reach": [
+      {
+        "limb": "arm",
+        "side": "r",
+        "target": {
+          "kind": "path",
+          "keys": [
+            {
+              "u": 0,
+              "p": [
+                -0.22,
+                0.6,
+                0.36
+              ]
+            },
+            {
+              "u": 1,
+              "p": [
+                -0.24,
+                0.9,
+                0.12
+              ]
+            }
+          ]
+        },
+        "pole": [
+          -0.2,
+          0.3,
+          -1
+        ]
+      },
+      {
+        "limb": "arm",
+        "side": "l",
+        "target": {
+          "kind": "path",
+          "keys": [
+            {
+              "u": 0,
+              "p": [
+                -0.22,
+                0.64,
+                0.56
+              ]
+            }
+          ]
+        },
+        "pole": [
+          -0.3,
+          0,
+          -1
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "dumbbell",
+        "hands": "r"
+      },
+      {
+        "kind": "block",
+        "role": "bench",
+        "center": [
+          0.22,
+          0.29,
+          0.56
+        ],
+        "size": [
+          0.3,
+          0.58,
+          0.5
+        ]
+      }
+    ],
+    "load": {
+      "kind": "gravity"
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "diagonal",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Apoio da mão esquerda no banco fechado por IK; pés no chão (simplificação do joelho no banco)."
+    }
+  },
+  {
+    "id": "cable_pullover",
+    "support": "standing",
+    "root": {
+      "mode": "plant"
+    },
+    "hold": {
+      "hip_flex": 28,
+      "knee_flex": 12,
+      "hip_abd": 4,
+      "elbow_flex": 15,
+      "shoulder_abd": 8,
+      "forearm_pro": 110
+    },
+    "tracks": [
+      {
+        "dof": "shoulder_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 150
+          },
+          {
+            "u": 1,
+            "deg": 18
+          }
+        ]
+      },
+      {
+        "dof": "clav_elev",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 14
+          },
+          {
+            "u": 1,
+            "deg": 0
+          }
+        ]
+      },
+      {
+        "dof": "scap_uprot",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 20
+          },
+          {
+            "u": 1,
+            "deg": 0
+          }
+        ]
+      }
+    ],
+    "reach": [],
+    "equipment": [
+      {
+        "kind": "cable",
+        "pulley": [
+          0,
+          2.3,
+          0.85
+        ],
+        "handle": "bar"
+      }
+    ],
+    "load": {
+      "kind": "cable"
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "dumbbell_pullover",
+    "support": "supine",
+    "root": {
+      "mode": "pin",
+      "segment": "trunk",
+      "point": [
+        0,
+        1.3,
+        -0.118
+      ],
+      "at": [
+        0,
+        0.44,
+        0
+      ],
+      "pitch": -90
+    },
+    "hold": {
+      "elbow_flex": 22,
+      "shoulder_abd": -6,
+      "forearm_pro": 80,
+      "neck_flex": 0
+    },
+    "tracks": [
+      {
+        "dof": "shoulder_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 85
+          },
+          {
+            "u": 1,
+            "deg": 160
+          }
+        ]
+      },
+      {
+        "dof": "clav_elev",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 12
+          }
+        ]
+      },
+      {
+        "dof": "scap_uprot",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 20
+          }
+        ]
+      }
+    ],
+    "reach": [
+      {
+        "limb": "leg",
+        "side": "both",
+        "target": {
+          "kind": "ball",
+          "point": [
+            -0.24,
+            0.012,
+            0.98
+          ]
+        },
+        "pole": [
+          -0.3,
+          1,
+          0.4
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "dumbbell",
+        "hands": "r"
+      },
+      {
+        "kind": "block",
+        "role": "bench",
+        "center": [
+          0,
+          0.4,
+          0.22
+        ],
+        "size": [
+          0.29,
+          0.08,
+          1.22
+        ]
+      },
+      {
+        "kind": "block",
+        "role": "frame",
+        "center": [
+          0,
+          0.18,
+          0.22
+        ],
+        "size": [
+          0.07,
+          0.36,
+          1
+        ]
+      }
+    ],
+    "load": {
+      "kind": "gravity"
+    },
+    "tempo": {
+      "out": 2.2,
+      "hold": 0.3,
+      "back": 1.4,
+      "rest": 0.6,
+      "concentric": "back"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "shrug",
+    "support": "standing",
+    "root": {
+      "mode": "plant"
+    },
+    "hold": {
+      "hip_abd": 4,
+      "forearm_pro": 80
+    },
+    "tracks": [
+      {
+        "dof": "clav_elev",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 32
+          }
+        ]
+      }
+    ],
+    "reach": [
+      {
+        "limb": "arm",
+        "side": "both",
+        "target": {
+          "kind": "hang"
+        },
+        "pole": [
+          -0.3,
+          0,
+          -1
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "dumbbell"
+      }
+    ],
+    "load": {
+      "kind": "gravity"
+    },
+    "tempo": {
+      "out": 1,
+      "hold": 1,
+      "back": 1.6,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "front",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "seated_dumbbell_press",
+    "mold": "press",
+    "params": {
+      "support": "seated",
+      "recline": 10,
+      "implement": "dumbbell",
+      "halfWidth": 0.27,
+      "path": [
+        {
+          "u": 0,
+          "y": 1.2,
+          "z": -0.04
+        },
+        {
+          "u": 1,
+          "y": 1.66,
+          "z": -0.07
+        }
+      ],
+      "pole": [
+        -1,
+        -0.4,
+        0.1
+      ],
+      "plates": 0,
+      "hold": {
+        "forearm_pro": 95
+      },
+      "tempo": {
+        "out": 1.2,
+        "hold": 0.5,
+        "back": 2,
+        "rest": 0.5,
+        "concentric": "out"
+      },
+      "view": "front"
+    },
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "machine_shoulder_press",
+    "mold": "press",
+    "params": {
+      "support": "seated",
+      "recline": 12,
+      "implement": "machine",
+      "halfWidth": 0.27,
+      "path": [
+        {
+          "u": 0,
+          "y": 1.2,
+          "z": -0.02
+        },
+        {
+          "u": 1,
+          "y": 1.64,
+          "z": -0.04
+        }
+      ],
+      "pole": [
+        -1,
+        -0.4,
+        0.2
+      ],
+      "plates": 0,
+      "hold": {
+        "forearm_pro": 100
+      },
+      "tempo": {
+        "out": 1.2,
+        "hold": 0.5,
+        "back": 2,
+        "rest": 0.5,
+        "concentric": "out"
+      },
+      "view": "side"
+    },
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "lateral_raise",
+    "support": "standing",
+    "root": {
+      "mode": "plant"
+    },
+    "hold": {
+      "hip_abd": 4,
+      "hip_flex": 6,
+      "knee_flex": 6,
+      "shoulder_flex": 15,
+      "elbow_flex": 15,
+      "forearm_pro": 90
+    },
+    "tracks": [
+      {
+        "dof": "shoulder_abd",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 8
+          },
+          {
+            "u": 1,
+            "deg": 88
+          }
+        ]
+      },
+      {
+        "dof": "clav_elev",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 10
+          }
+        ]
+      },
+      {
+        "dof": "scap_uprot",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 18
+          }
+        ]
+      }
+    ],
+    "reach": [],
+    "equipment": [
+      {
+        "kind": "dumbbell"
+      }
+    ],
+    "load": {
+      "kind": "gravity"
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "front",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "behind_back_cable_lateral_raise",
+    "support": "standing",
+    "root": {
+      "mode": "plant"
+    },
+    "hold": {
+      "hip_abd": 4,
+      "elbow_flex_r": 12,
+      "forearm_pro_r": 90,
+      "elbow_flex_l": 10,
+      "shoulder_abd_l": 8,
+      "forearm_pro_l": 60
+    },
+    "tracks": [
+      {
+        "dof": "shoulder_abd_r",
+        "keys": [
+          {
+            "u": 0,
+            "deg": -12
+          },
+          {
+            "u": 1,
+            "deg": 85
+          }
+        ]
+      },
+      {
+        "dof": "shoulder_flex_r",
+        "keys": [
+          {
+            "u": 0,
+            "deg": -22
+          },
+          {
+            "u": 1,
+            "deg": 5
+          }
+        ]
+      },
+      {
+        "dof": "clav_elev_r",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 10
+          }
+        ]
+      },
+      {
+        "dof": "scap_uprot_r",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 18
+          }
+        ]
+      }
+    ],
+    "reach": [],
+    "equipment": [
+      {
+        "kind": "cable",
+        "pulley": [
+          0.35,
+          0.15,
+          -0.38
+        ],
+        "handle": "single"
+      }
+    ],
+    "load": {
+      "kind": "cable"
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "back",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "reverse_pec_deck",
+    "support": "seated",
+    "root": {
+      "mode": "pin",
+      "segment": "pelvis",
+      "point": [
+        0,
+        0.775,
+        -0.035
+      ],
+      "at": [
+        0,
+        0.5,
+        0
+      ],
+      "pitch": 8
+    },
+    "hold": {
+      "hip_flex": 95,
+      "forearm_pro": 160
+    },
+    "tracks": [],
+    "reach": [
+      {
+        "limb": "leg",
+        "side": "both",
+        "target": {
+          "kind": "ball",
+          "point": [
+            -0.16,
+            0.012,
+            0.5
+          ]
+        },
+        "pole": [
+          0,
+          0.4,
+          1
+        ]
+      },
+      {
+        "limb": "arm",
+        "side": "both",
+        "target": {
+          "kind": "path",
+          "keys": [
+            {
+              "u": 0,
+              "p": [
+                -0.1,
+                1.12,
+                0.5
+              ]
+            },
+            {
+              "u": 0.5,
+              "p": [
+                -0.5,
+                1.12,
+                0.34
+              ]
+            },
+            {
+              "u": 1,
+              "p": [
+                -0.64,
+                1.12,
+                0
+              ]
+            }
+          ]
+        },
+        "pole": [
+          -0.3,
+          -1,
+          -0.2
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "block",
+        "role": "seat",
+        "center": [
+          0,
+          0.46,
+          0.06
+        ],
+        "size": [
+          0.4,
+          0.08,
+          0.4
+        ]
+      },
+      {
+        "kind": "block",
+        "role": "back",
+        "center": [
+          0,
+          1.05,
+          0.2
+        ],
+        "size": [
+          0.34,
+          0.5,
+          0.08
+        ],
+        "pitch": 8
+      },
+      {
+        "kind": "pad",
+        "segment": "hand_r",
+        "point": [
+          -0.27,
+          0.8,
+          0.03
+        ],
+        "lever": false,
+        "both": true
+      }
+    ],
+    "load": {
+      "kind": "guided"
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "diagonal",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "face_pull",
+    "support": "standing",
+    "root": {
+      "mode": "plant"
+    },
+    "hold": {
+      "hip_abd": 5,
+      "hip_flex": 5,
+      "knee_flex": 8,
+      "forearm_pro": 80
+    },
+    "tracks": [],
+    "reach": [
+      {
+        "limb": "arm",
+        "side": "both",
+        "target": {
+          "kind": "path",
+          "keys": [
+            {
+              "u": 0,
+              "p": [
+                -0.1,
+                1.52,
+                0.48
+              ]
+            },
+            {
+              "u": 1,
+              "p": [
+                -0.25,
+                1.6,
+                0.04
+              ]
+            }
+          ]
+        },
+        "pole": [
+          -1,
+          0.3,
+          -0.3
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "cable",
+        "pulley": [
+          0,
+          1.6,
+          1.1
+        ],
+        "handle": "rope"
+      }
+    ],
+    "load": {
+      "kind": "cable"
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "diagonal",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "cable_external_rotation",
+    "support": "standing",
+    "root": {
+      "mode": "plant"
+    },
+    "hold": {
+      "hip_abd": 5,
+      "elbow_flex_r": 90,
+      "shoulder_abd_r": 8,
+      "forearm_pro_r": 80,
+      "elbow_flex_l": 10,
+      "shoulder_abd_l": 8,
+      "forearm_pro_l": 60
+    },
+    "tracks": [
+      {
+        "dof": "shoulder_rot_r",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 55
+          },
+          {
+            "u": 1,
+            "deg": -55
+          }
+        ]
+      }
+    ],
+    "reach": [],
+    "equipment": [
+      {
+        "kind": "cable",
+        "pulley": [
+          0.65,
+          1.05,
+          0.3
+        ],
+        "handle": "single"
+      }
+    ],
+    "load": {
+      "kind": "cable"
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "front",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "incline_y_raise",
+    "support": "prone",
+    "root": {
+      "mode": "pin",
+      "segment": "trunk",
+      "point": [
+        0,
+        1.25,
+        0.11
+      ],
+      "at": [
+        0,
+        0.89,
+        0.12
+      ],
+      "pitch": 50
+    },
+    "hold": {
+      "hip_flex": 40,
+      "elbow_flex": 6,
+      "forearm_pro": 60,
+      "neck_flex": -10
+    },
+    "tracks": [
+      {
+        "dof": "shoulder_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 50
+          },
+          {
+            "u": 1,
+            "deg": 150
+          }
+        ]
+      },
+      {
+        "dof": "shoulder_abd",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 10
+          },
+          {
+            "u": 1,
+            "deg": 35
+          }
+        ]
+      },
+      {
+        "dof": "clav_elev",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 14
+          }
+        ]
+      },
+      {
+        "dof": "scap_uprot",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 0
+          },
+          {
+            "u": 1,
+            "deg": 26
+          }
+        ]
+      }
+    ],
+    "reach": [
+      {
+        "limb": "leg",
+        "side": "both",
+        "target": {
+          "kind": "ball",
+          "point": [
+            -0.13,
+            0.012,
+            -0.44
+          ],
+          "pitch": 25
+        },
+        "pole": [
+          0,
+          0.3,
+          1
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "dumbbell"
+      },
+      {
+        "kind": "block",
+        "role": "bench",
+        "center": [
+          0,
+          0.79,
+          0.2
+        ],
+        "size": [
+          0.3,
+          0.8,
+          0.07
+        ],
+        "pitch": 50
+      },
+      {
+        "kind": "block",
+        "role": "frame",
+        "center": [
+          0,
+          0.32,
+          0
+        ],
+        "size": [
+          0.07,
+          0.64,
+          0.5
+        ]
+      }
+    ],
+    "load": {
+      "kind": "gravity"
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "bayesian_curl",
+    "mold": "curl",
+    "params": {
+      "support": "standing",
+      "side": "r",
+      "lean": 8,
+      "elbow": [
+        4,
+        130
+      ],
+      "arm": {
+        "flex": -32,
+        "abd": 6
+      },
+      "pronation": 0,
+      "implement": {
+        "kind": "cable",
+        "pulley": [
+          -0.2,
+          0.95,
+          -0.95
+        ],
+        "handle": "single"
+      },
+      "tempo": {
+        "out": 1.2,
+        "hold": 0.5,
+        "back": 2,
+        "rest": 0.5,
+        "concentric": "out"
+      },
+      "view": "side"
+    },
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "preacher_curl",
+    "mold": "curl",
+    "params": {
+      "support": "seated",
+      "seatY": 0.56,
+      "lean": 15,
+      "elbow": [
+        12,
+        130
+      ],
+      "arm": {
+        "flex": 45,
+        "abd": 10
+      },
+      "pronation": 10,
+      "implement": {
+        "kind": "barbell"
+      },
+      "blocks": [
+        {
+          "kind": "block",
+          "role": "bench",
+          "center": [
+            0,
+            1.05,
+            0.22
+          ],
+          "size": [
+            0.5,
+            0.05,
+            0.3
+          ],
+          "pitch": 45
+        }
+      ],
+      "tempo": {
+        "out": 1.2,
+        "hold": 0.5,
+        "back": 2,
+        "rest": 0.5,
+        "concentric": "out"
+      },
+      "view": "side"
+    },
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "barbell_curl",
+    "mold": "curl",
+    "params": {
+      "support": "standing",
+      "elbow": [
+        5,
+        135
+      ],
+      "arm": {
+        "flex": 0,
+        "abd": 6
+      },
+      "pronation": 5,
+      "implement": {
+        "kind": "barbell"
+      },
+      "tempo": {
+        "out": 1.2,
+        "hold": 0.5,
+        "back": 2,
+        "rest": 0.5,
+        "concentric": "out"
+      },
+      "view": "side"
+    },
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "hammer_curl",
+    "mold": "curl",
+    "params": {
+      "support": "standing",
+      "elbow": [
+        5,
+        130
+      ],
+      "arm": {
+        "flex": 0,
+        "abd": 6
+      },
+      "pronation": 90,
+      "implement": {
+        "kind": "dumbbell"
+      },
+      "tempo": {
+        "out": 1.2,
+        "hold": 0.5,
+        "back": 2,
+        "rest": 0.5,
+        "concentric": "out"
+      },
+      "view": "side"
+    },
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "spider_curl",
+    "mold": "curl",
+    "params": {
+      "support": "standing",
+      "lean": 45,
+      "elbow": [
+        8,
+        135
+      ],
+      "arm": {
+        "flex": 0,
+        "abd": 8
+      },
+      "pronation": 5,
+      "implement": {
+        "kind": "barbell"
+      },
+      "blocks": [
+        {
+          "kind": "block",
+          "role": "bench",
+          "center": [
+            0,
+            1.06,
+            0.34
+          ],
+          "size": [
+            0.32,
+            0.8,
+            0.06
+          ],
+          "pitch": 45
+        }
+      ],
+      "tempo": {
+        "out": 1.2,
+        "hold": 0.5,
+        "back": 2,
+        "rest": 0.5,
+        "concentric": "out"
+      },
+      "view": "side"
+    },
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "reverse_curl",
+    "mold": "curl",
+    "params": {
+      "support": "standing",
+      "elbow": [
+        5,
+        125
+      ],
+      "arm": {
+        "flex": 0,
+        "abd": 6
+      },
+      "pronation": 155,
+      "implement": {
+        "kind": "barbell"
+      },
+      "tempo": {
+        "out": 1.2,
+        "hold": 0.5,
+        "back": 2,
+        "rest": 0.5,
+        "concentric": "out"
+      },
+      "view": "side"
+    },
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "skull_crusher",
+    "support": "supine",
+    "root": {
+      "mode": "pin",
+      "segment": "trunk",
+      "point": [
+        0,
+        1.3,
+        -0.118
+      ],
+      "at": [
+        0,
+        0.44,
+        0
+      ],
+      "pitch": -90
+    },
+    "hold": {
+      "shoulder_flex": 108,
+      "shoulder_abd": 6,
+      "forearm_pro": 100,
+      "neck_flex": 0
+    },
+    "tracks": [
+      {
+        "dof": "elbow_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 8
+          },
+          {
+            "u": 1,
+            "deg": 125
+          }
+        ]
+      }
+    ],
+    "reach": [
+      {
+        "limb": "leg",
+        "side": "both",
+        "target": {
+          "kind": "ball",
+          "point": [
+            -0.24,
+            0.012,
+            0.98
+          ]
+        },
+        "pole": [
+          -0.3,
+          1,
+          0.4
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "barbell",
+        "plates": 1
+      },
+      {
+        "kind": "block",
+        "role": "bench",
+        "center": [
+          0,
+          0.4,
+          0.22
+        ],
+        "size": [
+          0.29,
+          0.08,
+          1.22
+        ]
+      },
+      {
+        "kind": "block",
+        "role": "frame",
+        "center": [
+          0,
+          0.18,
+          0.22
+        ],
+        "size": [
+          0.07,
+          0.36,
+          1
+        ]
+      }
+    ],
+    "load": {
+      "kind": "gravity"
+    },
+    "tempo": {
+      "out": 2.2,
+      "hold": 0.3,
+      "back": 1.4,
+      "rest": 0.6,
+      "concentric": "back"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "overhead_dumbbell_extension",
+    "mold": "curl",
+    "params": {
+      "support": "seated",
+      "side": "r",
+      "seatY": 0.5,
+      "elbow": [
+        145,
+        15
+      ],
+      "arm": {
+        "flex": 168,
+        "abd": 8,
+        "rot": -10
+      },
+      "girdle": 20,
+      "pronation": 80,
+      "implement": {
+        "kind": "dumbbell"
+      },
+      "tempo": {
+        "out": 1.2,
+        "hold": 0.5,
+        "back": 2,
+        "rest": 0.5,
+        "concentric": "out"
+      },
+      "view": "side"
+    },
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "cable_kickback",
+    "mold": "curl",
+    "params": {
+      "support": "standing",
+      "side": "r",
+      "lean": 60,
+      "elbow": [
+        95,
+        5
+      ],
+      "arm": {
+        "flex": -78,
+        "abd": 6
+      },
+      "pronation": 80,
+      "implement": {
+        "kind": "cable",
+        "pulley": [
+          -0.2,
+          0.3,
+          0.85
+        ],
+        "handle": "single"
+      },
+      "hold": {
+        "knee_flex": 20
+      },
+      "tempo": {
+        "out": 1.2,
+        "hold": 0.5,
+        "back": 2,
+        "rest": 0.5,
+        "concentric": "out"
+      },
+      "view": "side"
+    },
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "wrist_curl",
+    "support": "seated",
+    "root": {
+      "mode": "pin",
+      "segment": "pelvis",
+      "point": [
+        0,
+        0.775,
+        -0.035
+      ],
+      "at": [
+        0,
+        0.5,
+        0
+      ],
+      "pitch": 25
+    },
+    "hold": {
+      "hip_flex": 105,
+      "shoulder_flex": 30,
+      "shoulder_abd": 6,
+      "elbow_flex": 95,
+      "forearm_pro": 0,
+      "lumbar_flex": 6
+    },
+    "tracks": [
+      {
+        "dof": "wrist_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": -55
+          },
+          {
+            "u": 1,
+            "deg": 70
+          }
+        ]
+      }
+    ],
+    "reach": [
+      {
+        "limb": "leg",
+        "side": "both",
+        "target": {
+          "kind": "ball",
+          "point": [
+            -0.16,
+            0.012,
+            0.48
+          ]
+        },
+        "pole": [
+          0,
+          0.4,
+          1
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "barbell",
+        "plates": 0
+      },
+      {
+        "kind": "block",
+        "role": "bench",
+        "center": [
+          0,
+          0.44,
+          0
+        ],
+        "size": [
+          0.3,
+          0.08,
+          1
+        ]
+      }
+    ],
+    "load": {
+      "kind": "gravity"
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
+  },
+  {
+    "id": "reverse_wrist_curl",
+    "support": "seated",
+    "root": {
+      "mode": "pin",
+      "segment": "pelvis",
+      "point": [
+        0,
+        0.775,
+        -0.035
+      ],
+      "at": [
+        0,
+        0.5,
+        0
+      ],
+      "pitch": 25
+    },
+    "hold": {
+      "hip_flex": 105,
+      "shoulder_flex": 30,
+      "shoulder_abd": 6,
+      "elbow_flex": 95,
+      "forearm_pro": 160,
+      "lumbar_flex": 6
+    },
+    "tracks": [
+      {
+        "dof": "wrist_flex",
+        "keys": [
+          {
+            "u": 0,
+            "deg": 60
+          },
+          {
+            "u": 1,
+            "deg": -50
+          }
+        ]
+      }
+    ],
+    "reach": [
+      {
+        "limb": "leg",
+        "side": "both",
+        "target": {
+          "kind": "ball",
+          "point": [
+            -0.16,
+            0.012,
+            0.48
+          ]
+        },
+        "pole": [
+          0,
+          0.4,
+          1
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "kind": "barbell",
+        "plates": 0
+      },
+      {
+        "kind": "block",
+        "role": "bench",
+        "center": [
+          0,
+          0.44,
+          0
+        ],
+        "size": [
+          0.3,
+          0.08,
+          1
+        ]
+      }
+    ],
+    "load": {
+      "kind": "gravity"
+    },
+    "tempo": {
+      "out": 1.2,
+      "hold": 0.5,
+      "back": 2,
+      "rest": 0.5,
+      "concentric": "out"
+    },
+    "view": "side",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_authored"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
+    }
   }
 ]

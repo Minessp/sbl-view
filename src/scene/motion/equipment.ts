@@ -152,12 +152,12 @@ export class EquipmentView {
         const handle = this.mesh(unit, this.iron);
         const wheel = this.mesh(this.geo(new TorusGeometry(0.05, 0.012, 8, 28)), this.iron);
         const housing = this.mesh(this.geo(new BoxGeometry(0.03, 0.14, 0.14)), this.pad);
-        this.updaters.push((r) => {
-          if (r.kind !== 'cable') return;
+        this.updaters.push((r, i) => {
+          if (r.kind !== 'cable' || i !== index) return;
           const [g0, g1] = [r.grips[0] ?? r.pulley, r.grips[1] ?? r.grips[0] ?? r.pulley];
           const mid: Vec3 = [(g0[0] + g1[0]) / 2, (g0[1] + g1[1]) / 2, (g0[2] + g1[2]) / 2];
           tmpA.set(r.pulley[0] - mid[0], r.pulley[1] - mid[1], r.pulley[2] - mid[2]).normalize();
-          const reach = r.handle === 'rope' ? 0.16 : r.handle === 'v' ? 0.08 : 0;
+          const reach = r.handle === 'rope' ? 0.16 : r.handle === 'v' ? 0.08 : r.handle === 'single' ? 0.06 : 0;
           const knot: Vec3 = [mid[0] + tmpA.x * reach, mid[1] + tmpA.y * reach, mid[2] + tmpA.z * reach];
           span(cable, knot, r.pulley, 0.0035);
           if (r.handle === 'bar') {
@@ -169,6 +169,10 @@ export class EquipmentView {
               0.012,
             );
             for (const l of legs) l.visible = false;
+          } else if (r.handle === 'single') {
+            handle.visible = false;
+            span(legs[0] as Mesh, g0, knot, 0.011);
+            (legs[1] as Mesh).visible = false;
           } else {
             handle.visible = false;
             span(legs[0] as Mesh, g0, knot, r.handle === 'rope' ? 0.009 : 0.011);
@@ -188,7 +192,13 @@ export class EquipmentView {
         const box = this.mesh(this.geo(new BoxGeometry(e.size[0], e.size[1], e.size[2])), this.pad);
         box.position.set(e.center[0], e.center[1], e.center[2]);
         box.rotation.x = (e.pitch * Math.PI) / 180;
-        if (e.center[1] - e.size[1] / 2 < 0.25) this.floor.push([e.center[0], 0, e.center[2]]);
+        if (e.moving) {
+          this.updaters.push((r, i) => {
+            if (r.kind !== 'block' || i !== index) return;
+            box.position.set(r.center[0], r.center[1], r.center[2]);
+            box.rotation.x = (r.pitch * Math.PI) / 180;
+          });
+        } else if (e.center[1] - e.size[1] / 2 < 0.25) this.floor.push([e.center[0], 0, e.center[2]]);
         break;
       }
       case 'pad': {

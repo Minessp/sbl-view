@@ -312,5 +312,1269 @@
       "source": [{ "refId": "maeo2023_triceps" }],
       "confidence": "provavel"
     }
+  },
+  {
+    "id": "front_squat",
+    "name": "Agachamento frontal",
+    "pattern": "agachamento",
+    "equipment": ["barra", "rack"],
+    "status": "consolidado",
+    "summary": "Barra apoiada na frente dos ombros, cotovelos altos. A carga na frente deixa o tronco mais em pé que no agachamento com a barra nas costas.",
+    "targets": [
+      { "muscle": "vastus_lateralis", "role": "alvo" },
+      { "muscle": "vastus_medialis", "role": "alvo" },
+      { "muscle": "vastus_intermedius", "role": "alvo" },
+      { "muscle": "gluteus_maximus", "role": "alvo" },
+      { "muscle": "adductor_magnus", "role": "sinergista" },
+      { "muscle": "erector_spinae", "role": "sinergista" },
+      { "muscle": "rectus_abdominis", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Com o tronco mais vertical o joelho anda mais à frente e flexiona mais no fundo: os vastos chegam perto do maior comprimento do movimento sob carga.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "goblet_squat",
+    "name": "Agachamento goblet",
+    "pattern": "agachamento",
+    "equipment": ["halteres"],
+    "status": "consolidado",
+    "summary": "Um halter seguro junto ao peito, pés um pouco abertos, descer entre os joelhos. Bom para aprender a profundidade.",
+    "targets": [
+      { "muscle": "vastus_lateralis", "role": "alvo" },
+      { "muscle": "vastus_medialis", "role": "alvo" },
+      { "muscle": "vastus_intermedius", "role": "alvo" },
+      { "muscle": "gluteus_maximus", "role": "alvo" },
+      { "muscle": "adductor_magnus", "role": "sinergista" },
+      { "muscle": "adductor_longus", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "O peso na frente equilibra o corpo e permite descer fundo; no fundo vastos e glúteo máximo estão longos e o torque pedido no joelho e no quadril é alto.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "hack_squat",
+    "name": "Agachamento hack",
+    "pattern": "agachamento",
+    "equipment": ["maquina"],
+    "status": "consolidado",
+    "summary": "Costas no encosto do trenó, pés na plataforma, descer ao longo do trilho. A máquina dá o equilíbrio e o esforço fica nas pernas.",
+    "targets": [
+      { "muscle": "vastus_lateralis", "role": "alvo" },
+      { "muscle": "vastus_medialis", "role": "alvo" },
+      { "muscle": "vastus_intermedius", "role": "alvo" },
+      { "muscle": "gluteus_maximus", "role": "sinergista" },
+      { "muscle": "adductor_magnus", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Estável e guiado, permite flexão funda do joelho com o tronco apoiado: a carga pega os vastos alongados sem o equilíbrio limitar a série.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "pendulum_squat",
+    "name": "Agachamento pêndulo",
+    "pattern": "agachamento",
+    "equipment": ["maquina"],
+    "status": "hipotese",
+    "summary": "Máquina de braço em arco: o corpo desce num pêndulo, com o joelho indo bem à frente e o tronco quase parado.",
+    "targets": [
+      { "muscle": "vastus_lateralis", "role": "alvo" },
+      { "muscle": "vastus_medialis", "role": "alvo" },
+      { "muscle": "vastus_intermedius", "role": "alvo" },
+      { "muscle": "gluteus_maximus", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "O arco mantém o braço de momento no joelho alto perto do fundo, quando os vastos estão mais longos.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo",
+      "note": "Hipótese mecânica (comprimento e braço de momento); sem estudo de hipertrofia comparando este exercício."
+    }
+  },
+  {
+    "id": "leg_press",
+    "name": "Leg press 45°",
+    "pattern": "agachamento",
+    "equipment": ["maquina"],
+    "status": "consolidado",
+    "summary": "Sentado e reclinado, empurrar a plataforma no trilho de 45° até quase estender os joelhos e descer até o quadril fechar.",
+    "targets": [
+      { "muscle": "vastus_lateralis", "role": "alvo" },
+      { "muscle": "vastus_medialis", "role": "alvo" },
+      { "muscle": "vastus_intermedius", "role": "alvo" },
+      { "muscle": "gluteus_maximus", "role": "alvo" },
+      { "muscle": "adductor_magnus", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "No fundo joelho e quadril estão bem fletidos: vastos e glúteo máximo longos. A profundidade útil é a que o quadril aguenta sem a pelve rolar.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "bulgarian_split_squat",
+    "name": "Agachamento búlgaro",
+    "pattern": "agachamento",
+    "equipment": ["halteres", "banco"],
+    "status": "consolidado",
+    "summary": "Pé de trás apoiado no banco, descer na perna da frente até a coxa ficar perto da horizontal.",
+    "targets": [
+      { "muscle": "vastus_lateralis", "role": "alvo" },
+      { "muscle": "vastus_medialis", "role": "alvo" },
+      { "muscle": "vastus_intermedius", "role": "alvo" },
+      { "muscle": "gluteus_maximus", "role": "alvo" },
+      { "muscle": "adductor_magnus", "role": "sinergista" },
+      { "muscle": "gluteus_medius", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Na perna da frente o quadril e o joelho chegam bem fletidos no fundo: glúteo máximo e vastos alongados, com o peso todo numa perna.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "reverse_lunge",
+    "name": "Avanço para trás",
+    "pattern": "agachamento",
+    "equipment": ["halteres"],
+    "status": "consolidado",
+    "summary": "Dar um passo para trás e descer até o joelho de trás quase tocar o chão; voltar empurrando com a perna da frente.",
+    "targets": [
+      { "muscle": "vastus_lateralis", "role": "alvo" },
+      { "muscle": "vastus_medialis", "role": "alvo" },
+      { "muscle": "vastus_intermedius", "role": "alvo" },
+      { "muscle": "gluteus_maximus", "role": "alvo" },
+      { "muscle": "adductor_magnus", "role": "sinergista" },
+      { "muscle": "gluteus_medius", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Como no búlgaro, a perna da frente leva a carga no fundo, com glúteo máximo e vastos longos.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "sissy_squat",
+    "name": "Agachamento sissy",
+    "pattern": "agachamento",
+    "equipment": ["peso_corporal"],
+    "status": "hipotese",
+    "summary": "Quadril estendido e calcanhares subindo; os joelhos vão à frente e o corpo inclina para trás numa linha só.",
+    "targets": [
+      { "muscle": "rectus_femoris", "role": "alvo" },
+      { "muscle": "vastus_lateralis", "role": "alvo" },
+      { "muscle": "vastus_medialis", "role": "alvo" },
+      { "muscle": "vastus_intermedius", "role": "alvo" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Joelho bem fletido com o quadril estendido é a posição mais longa do reto femoral (biarticular), que no agachamento comum muda pouco de comprimento.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo",
+      "note": "Hipótese mecânica (comprimento e braço de momento); sem estudo de hipertrofia comparando este exercício."
+    }
+  },
+  {
+    "id": "reverse_nordic",
+    "name": "Nórdica reversa",
+    "pattern": "isolado",
+    "equipment": ["peso_corporal"],
+    "status": "hipotese",
+    "summary": "Ajoelhado, quadril estendido, inclinar o corpo inteiro para trás dobrando só os joelhos e voltar.",
+    "targets": [
+      { "muscle": "rectus_femoris", "role": "alvo" },
+      { "muscle": "vastus_lateralis", "role": "alvo" },
+      { "muscle": "vastus_medialis", "role": "alvo" },
+      { "muscle": "vastus_intermedius", "role": "alvo" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Joelho fletido e quadril estendido de novo: reto femoral no maior comprimento, com o torque do peso do corpo crescendo conforme inclina.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo",
+      "note": "Hipótese mecânica (comprimento e braço de momento); sem estudo de hipertrofia comparando este exercício."
+    }
+  },
+  {
+    "id": "stiff_leg_deadlift",
+    "name": "Stiff",
+    "pattern": "dobradica",
+    "equipment": ["barra"],
+    "status": "consolidado",
+    "summary": "Joelhos quase travados, descer a barra rente às pernas inclinando o tronco pelo quadril.",
+    "targets": [
+      { "muscle": "semimembranosus", "role": "alvo" },
+      { "muscle": "semitendinosus", "role": "alvo" },
+      { "muscle": "biceps_femoris", "role": "alvo", "parts": ["biceps_femoris_long"] },
+      { "muscle": "gluteus_maximus", "role": "alvo" },
+      { "muscle": "adductor_magnus", "role": "sinergista" },
+      { "muscle": "erector_spinae", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Com o joelho estendido, os isquiotibiais (biarticulares) ficam mais longos que no terra romeno para o mesmo quadril; o pico de torque no quadril vem no fundo.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "deadlift",
+    "name": "Levantamento terra",
+    "pattern": "dobradica",
+    "equipment": ["barra"],
+    "status": "consolidado",
+    "summary": "Barra no chão junto às canelas, subir estendendo joelho e quadril ao mesmo tempo até ficar em pé.",
+    "targets": [
+      { "muscle": "gluteus_maximus", "role": "alvo" },
+      { "muscle": "adductor_magnus", "role": "alvo" },
+      { "muscle": "erector_spinae", "role": "alvo" },
+      { "muscle": "semimembranosus", "role": "sinergista" },
+      { "muscle": "biceps_femoris", "role": "sinergista" },
+      { "muscle": "vastus_lateralis", "role": "sinergista" },
+      { "muscle": "trapezius", "role": "sinergista", "parts": ["trapezius_sup"] }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "A saída do chão pede quadril fletido e joelho fletido: os extensores de quadril estão longos, mas os isquiotibiais não, porque o joelho também dobra.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "good_morning",
+    "name": "Bom-dia",
+    "pattern": "dobradica",
+    "equipment": ["barra"],
+    "status": "consolidado",
+    "summary": "Barra nas costas, joelhos levemente dobrados, inclinar o tronco à frente pelo quadril e voltar.",
+    "targets": [
+      { "muscle": "semimembranosus", "role": "alvo" },
+      { "muscle": "semitendinosus", "role": "alvo" },
+      { "muscle": "biceps_femoris", "role": "alvo", "parts": ["biceps_femoris_long"] },
+      { "muscle": "gluteus_maximus", "role": "alvo" },
+      { "muscle": "erector_spinae", "role": "sinergista" },
+      { "muscle": "adductor_magnus", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "A barra fica longe do quadril (no alto das costas): o braço de momento é máximo com o tronco perto da horizontal, quando os isquiotibiais estão longos.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "back_extension",
+    "name": "Extensão lombar 45°",
+    "pattern": "dobradica",
+    "equipment": ["banco"],
+    "status": "consolidado",
+    "summary": "Quadril no apoio do banco de 45°, descer o tronco dobrando no quadril e subir até alinhar com as pernas.",
+    "targets": [
+      { "muscle": "gluteus_maximus", "role": "alvo" },
+      { "muscle": "semimembranosus", "role": "alvo" },
+      { "muscle": "semitendinosus", "role": "alvo" },
+      { "muscle": "biceps_femoris", "role": "alvo", "parts": ["biceps_femoris_long"] },
+      { "muscle": "erector_spinae", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "No fundo o quadril está bem fletido com o joelho estendido e o tronco perto da horizontal: torque alto com glúteo e isquiotibiais longos.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "nordic_curl",
+    "name": "Flexão nórdica",
+    "pattern": "isolado",
+    "equipment": ["peso_corporal"],
+    "status": "consolidado",
+    "summary": "Ajoelhado com os tornozelos presos, descer o corpo à frente o mais devagar possível, freando com a parte de trás da coxa.",
+    "targets": [
+      { "muscle": "semimembranosus", "role": "alvo" },
+      { "muscle": "semitendinosus", "role": "alvo" },
+      { "muscle": "biceps_femoris", "role": "alvo" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "A fase excêntrica termina com o joelho quase estendido, que é onde o torque do peso do corpo é maior: isquiotibiais carregados longos.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "cable_pull_through",
+    "name": "Pull-through na polia",
+    "pattern": "dobradica",
+    "equipment": ["polia"],
+    "status": "consolidado",
+    "summary": "De costas para a polia baixa, corda entre as pernas, inclinar à frente pelo quadril e voltar empurrando o quadril.",
+    "targets": [
+      { "muscle": "gluteus_maximus", "role": "alvo" },
+      { "muscle": "semimembranosus", "role": "sinergista" },
+      { "muscle": "biceps_femoris", "role": "sinergista" },
+      { "muscle": "adductor_magnus", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "O cabo puxa para trás e para baixo: a resistência é mais horizontal que a da barra e fica alta também perto da extensão do quadril.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "seated_hip_abduction",
+    "name": "Abdutora sentada",
+    "pattern": "isolado",
+    "equipment": ["maquina"],
+    "status": "consolidado",
+    "summary": "Sentado, joelhos contra as almofadas, abrir as coxas para os lados e voltar devagar.",
+    "targets": [
+      { "muscle": "gluteus_medius", "role": "alvo" },
+      { "muscle": "gluteus_minimus", "role": "alvo" },
+      { "muscle": "tensor_fasciae_latae", "role": "alvo" },
+      { "muscle": "gluteus_maximus", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "Com o quadril fletido a 90° parte do glúteo médio vira rotador; a máquina carrega a abdução no meio da amplitude.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "leaned_hip_abduction",
+    "name": "Abdutora inclinada",
+    "pattern": "isolado",
+    "equipment": ["maquina"],
+    "status": "hipotese",
+    "summary": "Na abdutora, inclinar o tronco à frente sobre as coxas e abrir. A inclinação flexiona mais o quadril.",
+    "targets": [
+      { "muscle": "gluteus_medius", "role": "alvo" },
+      { "muscle": "gluteus_maximus", "role": "alvo" },
+      { "muscle": "gluteus_minimus", "role": "alvo" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Mais flexão de quadril alonga as fibras superiores do glúteo máximo e o glúteo médio posterior; a ideia é carregá-los mais longos que sentado ereto.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo",
+      "note": "Hipótese mecânica (comprimento e braço de momento); sem estudo de hipertrofia comparando este exercício."
+    }
+  },
+  {
+    "id": "seated_hip_adduction",
+    "name": "Adutora sentada",
+    "pattern": "isolado",
+    "equipment": ["maquina"],
+    "status": "consolidado",
+    "summary": "Sentado, joelhos por dentro das almofadas abertas, fechar as coxas e voltar abrindo devagar.",
+    "targets": [
+      { "muscle": "adductor_longus", "role": "alvo" },
+      { "muscle": "adductor_brevis", "role": "alvo" },
+      { "muscle": "adductor_magnus", "role": "alvo" },
+      { "muscle": "pectineus", "role": "alvo" },
+      { "muscle": "gracilis", "role": "alvo" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "A máquina começa com as coxas abertas, onde os adutores estão mais longos e a alavanca da almofada é grande.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "leg_press_calf_raise",
+    "name": "Panturrilha no leg press",
+    "pattern": "isolado",
+    "equipment": ["maquina"],
+    "status": "consolidado",
+    "summary": "No leg press com as pernas estendidas, empurrar a plataforma só com a ponta dos pés e descer o calcanhar o máximo.",
+    "targets": [
+      { "muscle": "gastrocnemius", "role": "alvo" },
+      { "muscle": "soleus", "role": "alvo" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Joelho estendido mantém o gastrocnêmio longo; a dorsiflexão no fim da descida é a parte mais longa do movimento.",
+      "source": [{ "refId": "kassiano2023" }],
+      "confidence": "provavel",
+      "note": "O estudo é na panturrilha em pé; a mesma lógica de joelho estendido vale aqui por analogia."
+    }
+  },
+  {
+    "id": "tibialis_raise",
+    "name": "Elevação de tibial",
+    "pattern": "isolado",
+    "equipment": ["peso_corporal"],
+    "status": "consolidado",
+    "summary": "Costas na parede, pés à frente, levantar a ponta dos pés o máximo e descer devagar.",
+    "targets": [{ "muscle": "tibialis_anterior", "role": "alvo" }],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "O peso do pé e da perna é pequeno: serve como volume para o tibial anterior, que poucos exercícios carregam.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "crunch",
+    "name": "Abdominal no chão",
+    "pattern": "core",
+    "equipment": ["peso_corporal"],
+    "status": "consolidado",
+    "summary": "Deitado, joelhos dobrados, enrolar a coluna tirando as escápulas do chão e voltar.",
+    "targets": [
+      { "muscle": "rectus_abdominis", "role": "alvo" },
+      { "muscle": "external_oblique", "role": "sinergista" },
+      { "muscle": "internal_oblique", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "encurtado",
+      "text": "O tronco sai do chão em flexão: o reto do abdome trabalha da posição neutra para a mais curta.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "cable_crunch",
+    "name": "Abdominal na polia",
+    "pattern": "core",
+    "equipment": ["polia"],
+    "status": "consolidado",
+    "summary": "Ajoelhado de frente para a polia alta, corda junto à cabeça, enrolar a coluna para baixo sem mexer o quadril.",
+    "targets": [
+      { "muscle": "rectus_abdominis", "role": "alvo" },
+      { "muscle": "external_oblique", "role": "sinergista" },
+      { "muscle": "internal_oblique", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "O cabo carrega desde a coluna estendida; com carga externa dá para progredir como um exercício de força.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "hanging_leg_raise",
+    "name": "Elevação de pernas na barra",
+    "pattern": "core",
+    "equipment": ["peso_corporal"],
+    "status": "consolidado",
+    "summary": "Pendurado na barra, levantar os joelhos até o quadril passar de 90° enrolando a pelve.",
+    "targets": [
+      { "muscle": "iliopsoas", "role": "alvo" },
+      { "muscle": "rectus_abdominis", "role": "alvo" },
+      { "muscle": "rectus_femoris", "role": "sinergista" },
+      { "muscle": "external_oblique", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "Os flexores de quadril levantam a perna; o reto do abdome só entra de verdade quando a pelve enrola no fim.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "pallof_press",
+    "name": "Pallof press",
+    "pattern": "core",
+    "equipment": ["polia"],
+    "status": "consolidado",
+    "summary": "De lado para a polia, pegador no peito, estender os braços à frente sem deixar o tronco girar.",
+    "targets": [
+      { "muscle": "external_oblique", "role": "alvo" },
+      { "muscle": "internal_oblique", "role": "alvo" },
+      { "muscle": "rectus_abdominis", "role": "sinergista" },
+      { "muscle": "quadratus_lumborum", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "Antirrotação: os oblíquos seguram o tronco parado; o torque cresce quando os braços se afastam do corpo.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "cable_woodchop",
+    "name": "Lenhador na polia",
+    "pattern": "core",
+    "equipment": ["polia"],
+    "status": "consolidado",
+    "summary": "Puxar o cabo da polia alta, de um lado, em diagonal até o quadril do outro lado, girando o tronco.",
+    "targets": [
+      { "muscle": "external_oblique", "role": "alvo" },
+      { "muscle": "internal_oblique", "role": "alvo" },
+      { "muscle": "rectus_abdominis", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "Rotação com flexão: os oblíquos de um lado e do outro trocam de comprimento ao longo do giro.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "dumbbell_side_bend",
+    "name": "Inclinação lateral com halter",
+    "pattern": "core",
+    "equipment": ["halteres"],
+    "status": "consolidado",
+    "summary": "Halter numa mão, inclinar o tronco para o lado do peso e voltar passando um pouco do centro.",
+    "targets": [
+      { "muscle": "quadratus_lumborum", "role": "alvo" },
+      { "muscle": "external_oblique", "role": "alvo" },
+      { "muscle": "internal_oblique", "role": "alvo" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Os músculos do lado oposto ao halter alongam na descida e é ali que o braço de momento do peso é maior.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "incline_bench_press",
+    "name": "Supino inclinado",
+    "pattern": "empurrar_horizontal",
+    "equipment": ["barra", "banco", "rack"],
+    "status": "consolidado",
+    "summary": "Banco a uns 40°, descer a barra até a parte alta do peito e empurrar para cima.",
+    "targets": [
+      { "muscle": "pectoralis_major", "role": "alvo", "parts": ["pectoralis_major_clav", "pectoralis_major_stern"] },
+      { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_ant"] },
+      { "muscle": "triceps_brachii", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "A inclinação puxa o trabalho para a porção clavicular; o braço de momento é maior com a barra perto do peito.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "dumbbell_bench_press",
+    "name": "Supino com halteres",
+    "pattern": "empurrar_horizontal",
+    "equipment": ["halteres", "banco"],
+    "status": "consolidado",
+    "summary": "Deitado no banco, descer os halteres ao lado do peito, mais fundo que a barra permitiria, e empurrar.",
+    "targets": [
+      { "muscle": "pectoralis_major", "role": "alvo" },
+      { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_ant"] },
+      { "muscle": "triceps_brachii", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Sem barra para bater no peito o cotovelo desce abaixo do banco: o peitoral fica mais longo no fundo.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "incline_dumbbell_press",
+    "name": "Supino inclinado com halteres",
+    "pattern": "empurrar_horizontal",
+    "equipment": ["halteres", "banco"],
+    "status": "consolidado",
+    "summary": "Banco a uns 40°, descer os halteres ao lado da parte alta do peito e empurrar.",
+    "targets": [
+      { "muscle": "pectoralis_major", "role": "alvo", "parts": ["pectoralis_major_clav", "pectoralis_major_stern"] },
+      { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_ant"] },
+      { "muscle": "triceps_brachii", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Junta a inclinação (porção clavicular) com a descida mais funda dos halteres.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "close_grip_bench_press",
+    "name": "Supino fechado",
+    "pattern": "empurrar_horizontal",
+    "equipment": ["barra", "banco", "rack"],
+    "status": "consolidado",
+    "summary": "Pegada na largura dos ombros, cotovelos perto do corpo, descer a barra na parte baixa do peito.",
+    "targets": [
+      { "muscle": "triceps_brachii", "role": "alvo" },
+      { "muscle": "pectoralis_major", "role": "alvo" },
+      { "muscle": "deltoid", "role": "sinergista", "parts": ["deltoid_ant"] }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "A pegada fechada pede mais extensão de cotovelo: o tríceps passa a dividir a carga com o peitoral.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "machine_chest_press",
+    "name": "Supino máquina",
+    "pattern": "empurrar_horizontal",
+    "equipment": ["maquina"],
+    "status": "consolidado",
+    "summary": "Sentado, empurrar os pegadores à frente e voltar até as mãos ficarem ao lado do peito.",
+    "targets": [
+      { "muscle": "pectoralis_major", "role": "alvo" },
+      { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_ant"] },
+      { "muscle": "triceps_brachii", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "Caminho guiado e estável: dá para chegar perto da falha sem o equilíbrio ser o limite.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "cable_fly",
+    "name": "Crucifixo na polia",
+    "pattern": "isolado",
+    "equipment": ["polia"],
+    "status": "consolidado",
+    "summary": "Entre duas polias na altura do ombro, braços abertos e cotovelos levemente dobrados, fechar à frente do peito.",
+    "targets": [
+      { "muscle": "pectoralis_major", "role": "alvo", "parts": ["pectoralis_major_stern", "pectoralis_major_clav"] },
+      { "muscle": "deltoid", "role": "sinergista", "parts": ["deltoid_ant"] }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Com o cabo vindo de lado, a resistência continua alta com os braços abertos, quando o peitoral está mais longo, ao contrário do halter na posição de cima.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "low_to_high_cable_fly",
+    "name": "Crucifixo de baixo para cima",
+    "pattern": "isolado",
+    "equipment": ["polia"],
+    "status": "hipotese",
+    "summary": "Polias baixas, braços abertos embaixo, fechar subindo até as mãos se encontrarem na altura do queixo.",
+    "targets": [
+      { "muscle": "pectoralis_major", "role": "alvo", "parts": ["pectoralis_major_clav"] },
+      { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_ant"] }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "O caminho de baixo para cima segue as fibras claviculares; o cabo carrega a abertura embaixo.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo",
+      "note": "Hipótese mecânica (comprimento e braço de momento); sem estudo de hipertrofia comparando este exercício."
+    }
+  },
+  {
+    "id": "pec_deck",
+    "name": "Voador (peck deck)",
+    "pattern": "isolado",
+    "equipment": ["maquina"],
+    "status": "consolidado",
+    "summary": "Sentado, braços abertos nos pegadores, fechar à frente do peito e abrir devagar.",
+    "targets": [
+      { "muscle": "pectoralis_major", "role": "alvo", "parts": ["pectoralis_major_stern", "pectoralis_major_clav"] },
+      { "muscle": "deltoid", "role": "sinergista", "parts": ["deltoid_ant"] }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "O braço da máquina mantém a resistência com os braços abertos, onde o peitoral está longo.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "chest_dip",
+    "name": "Paralelas (peito)",
+    "pattern": "empurrar_vertical",
+    "equipment": ["peso_corporal"],
+    "status": "consolidado",
+    "summary": "Nas barras paralelas, tronco inclinado à frente, descer até os ombros ficarem abaixo dos cotovelos e subir.",
+    "targets": [
+      { "muscle": "pectoralis_major", "role": "alvo", "parts": ["pectoralis_major_stern", "pectoralis_major_abd"] },
+      { "muscle": "triceps_brachii", "role": "alvo" },
+      { "muscle": "deltoid", "role": "sinergista", "parts": ["deltoid_ant"] }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "No fundo o ombro está estendido e o peitoral inferior fica longo, carregado pelo peso do corpo.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "push_up",
+    "name": "Flexão de braço",
+    "pattern": "empurrar_horizontal",
+    "equipment": ["peso_corporal"],
+    "status": "consolidado",
+    "summary": "Corpo reto apoiado nas mãos e nas pontas dos pés, descer o peito até perto do chão e subir.",
+    "targets": [
+      { "muscle": "pectoralis_major", "role": "alvo" },
+      { "muscle": "triceps_brachii", "role": "alvo" },
+      { "muscle": "deltoid", "role": "sinergista", "parts": ["deltoid_ant"] },
+      { "muscle": "serratus_anterior", "role": "sinergista" },
+      { "muscle": "rectus_abdominis", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "Como um supino com uns dois terços do peso do corpo; o serrátil trabalha mais porque a escápula anda livre.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "chest_supported_row",
+    "name": "Remada com peito apoiado",
+    "pattern": "puxar_horizontal",
+    "equipment": ["halteres", "banco"],
+    "status": "consolidado",
+    "summary": "Peito no banco inclinado, halteres pendurados, puxar até os cotovelos passarem do tronco.",
+    "targets": [
+      { "muscle": "latissimus_dorsi", "role": "alvo" },
+      { "muscle": "trapezius", "role": "alvo", "parts": ["trapezius_mid"] },
+      { "muscle": "rhomboids", "role": "alvo" },
+      { "muscle": "deltoid", "role": "sinergista", "parts": ["deltoid_post"] },
+      { "muscle": "teres_major", "role": "sinergista" },
+      { "muscle": "biceps_brachii", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "O apoio tira a lombar da equação: a série acaba nas costas, não no equilíbrio nem na coluna.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "single_arm_pulldown",
+    "name": "Puxada unilateral",
+    "pattern": "puxar_vertical",
+    "equipment": ["polia"],
+    "status": "hipotese",
+    "summary": "Sentado, um braço de cada vez, puxar o pegador do alto até o lado do peito, deixando o ombro subir no começo.",
+    "targets": [
+      { "muscle": "latissimus_dorsi", "role": "alvo" },
+      { "muscle": "teres_major", "role": "alvo" },
+      { "muscle": "biceps_brachii", "role": "sinergista" },
+      { "muscle": "trapezius", "role": "sinergista", "parts": ["trapezius_inf"] }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Com uma mão o braço sobe mais acima da cabeça no começo: o grande dorsal fica mais longo que na puxada com barra.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo",
+      "note": "Hipótese mecânica (comprimento e braço de momento); sem estudo de hipertrofia comparando este exercício."
+    }
+  },
+  {
+    "id": "pull_up",
+    "name": "Barra fixa pronada",
+    "pattern": "puxar_vertical",
+    "equipment": ["peso_corporal"],
+    "status": "consolidado",
+    "summary": "Pendurado com pegada aberta, puxar até o queixo passar a barra e descer até os braços estenderem.",
+    "targets": [
+      { "muscle": "latissimus_dorsi", "role": "alvo" },
+      { "muscle": "teres_major", "role": "alvo" },
+      { "muscle": "biceps_brachii", "role": "sinergista" },
+      { "muscle": "brachialis", "role": "sinergista" },
+      { "muscle": "trapezius", "role": "sinergista", "parts": ["trapezius_inf"] },
+      { "muscle": "rhomboids", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Partir do braço estendido acima da cabeça carrega o grande dorsal no maior comprimento.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "chin_up",
+    "name": "Barra fixa supinada",
+    "pattern": "puxar_vertical",
+    "equipment": ["peso_corporal"],
+    "status": "consolidado",
+    "summary": "Pegada supinada na largura dos ombros, puxar até o queixo passar a barra.",
+    "targets": [
+      { "muscle": "latissimus_dorsi", "role": "alvo" },
+      { "muscle": "biceps_brachii", "role": "alvo" },
+      { "muscle": "brachialis", "role": "sinergista" },
+      { "muscle": "teres_major", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "A pegada supinada põe o bíceps em posição forte; o dorsal começa longo como na pronada.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "barbell_row",
+    "name": "Remada curvada",
+    "pattern": "puxar_horizontal",
+    "equipment": ["barra"],
+    "status": "consolidado",
+    "summary": "Tronco inclinado perto da horizontal, puxar a barra até a barriga e descer.",
+    "targets": [
+      { "muscle": "latissimus_dorsi", "role": "alvo" },
+      { "muscle": "trapezius", "role": "alvo", "parts": ["trapezius_mid"] },
+      { "muscle": "rhomboids", "role": "alvo" },
+      { "muscle": "deltoid", "role": "sinergista", "parts": ["deltoid_post"] },
+      { "muscle": "erector_spinae", "role": "sinergista" },
+      { "muscle": "biceps_brachii", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "A lombar sustenta o tronco o tempo todo; a carga nas costas é alta no meio da puxada.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "one_arm_dumbbell_row",
+    "name": "Remada unilateral com halter",
+    "pattern": "puxar_horizontal",
+    "equipment": ["halteres", "banco"],
+    "status": "consolidado",
+    "summary": "Uma mão no banco, puxar o halter com a outra até o quadril, cotovelo junto ao corpo.",
+    "targets": [
+      { "muscle": "latissimus_dorsi", "role": "alvo" },
+      { "muscle": "teres_major", "role": "sinergista" },
+      { "muscle": "trapezius", "role": "sinergista", "parts": ["trapezius_mid"] },
+      { "muscle": "rhomboids", "role": "sinergista" },
+      { "muscle": "biceps_brachii", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "Puxar em direção ao quadril alinha o braço com as fibras de baixo do grande dorsal.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "cable_pullover",
+    "name": "Pullover na polia",
+    "pattern": "isolado",
+    "equipment": ["polia"],
+    "status": "consolidado",
+    "summary": "De frente para a polia alta, braços quase estendidos, levar a barra do alto até as coxas.",
+    "targets": [
+      { "muscle": "latissimus_dorsi", "role": "alvo" },
+      { "muscle": "teres_major", "role": "alvo" },
+      { "muscle": "triceps_brachii", "role": "sinergista", "parts": ["triceps_brachii_long"] },
+      { "muscle": "pectoralis_major", "role": "sinergista", "parts": ["pectoralis_major_stern"] }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Sem dobrar o cotovelo o bíceps sai da jogada; o cabo carrega o braço lá em cima, onde o dorsal está longo.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "dumbbell_pullover",
+    "name": "Pullover com halter",
+    "pattern": "isolado",
+    "equipment": ["halteres", "banco"],
+    "status": "hipotese",
+    "summary": "Deitado no banco, halter acima do peito, levar os braços para trás da cabeça e voltar.",
+    "targets": [
+      { "muscle": "latissimus_dorsi", "role": "alvo" },
+      { "muscle": "pectoralis_major", "role": "alvo", "parts": ["pectoralis_major_stern"] },
+      { "muscle": "triceps_brachii", "role": "sinergista", "parts": ["triceps_brachii_long"] },
+      { "muscle": "teres_major", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "O torque do halter é máximo com os braços atrás da cabeça, quando dorsal e peitoral esternal estão mais longos.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo",
+      "note": "Hipótese mecânica (comprimento e braço de momento); sem estudo de hipertrofia comparando este exercício."
+    }
+  },
+  {
+    "id": "shrug",
+    "name": "Encolhimento",
+    "pattern": "isolado",
+    "equipment": ["halteres"],
+    "status": "consolidado",
+    "summary": "Halteres ao lado do corpo, subir os ombros em direção às orelhas e descer devagar.",
+    "targets": [
+      { "muscle": "trapezius", "role": "alvo", "parts": ["trapezius_sup"] },
+      { "muscle": "levator_scapulae", "role": "alvo" }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "A amplitude é curta; a carga fica no meio dela.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "seated_dumbbell_press",
+    "name": "Desenvolvimento com halteres",
+    "pattern": "empurrar_vertical",
+    "equipment": ["halteres", "banco"],
+    "status": "consolidado",
+    "summary": "Sentado com encosto, empurrar os halteres da altura das orelhas até acima da cabeça.",
+    "targets": [
+      { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_ant", "deltoid_lat"] },
+      { "muscle": "triceps_brachii", "role": "sinergista" },
+      { "muscle": "trapezius", "role": "sinergista", "parts": ["trapezius_sup"] },
+      { "muscle": "serratus_anterior", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "O encosto estabiliza; os halteres descem um pouco mais que a barra.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "machine_shoulder_press",
+    "name": "Desenvolvimento máquina",
+    "pattern": "empurrar_vertical",
+    "equipment": ["maquina"],
+    "status": "consolidado",
+    "summary": "Sentado, empurrar os pegadores para cima e voltar até a altura dos ombros.",
+    "targets": [
+      { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_ant", "deltoid_lat"] },
+      { "muscle": "triceps_brachii", "role": "sinergista" },
+      { "muscle": "trapezius", "role": "sinergista", "parts": ["trapezius_sup"] }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "Caminho guiado e estável; bom para séries perto da falha.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "lateral_raise",
+    "name": "Elevação lateral",
+    "pattern": "isolado",
+    "equipment": ["halteres"],
+    "status": "consolidado",
+    "summary": "Halteres ao lado do corpo, levantar os braços para os lados até a altura dos ombros.",
+    "targets": [
+      { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_lat"] },
+      { "muscle": "trapezius", "role": "sinergista", "parts": ["trapezius_sup"] },
+      { "muscle": "supraspinatus", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "encurtado",
+      "text": "O peso cai na vertical: o torque é máximo com o braço na horizontal, quando o deltoide lateral já está curto, e quase zero embaixo.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "behind_back_cable_lateral_raise",
+    "name": "Elevação lateral na polia por trás",
+    "pattern": "isolado",
+    "equipment": ["polia"],
+    "status": "hipotese",
+    "summary": "De lado para a polia baixa, cabo passando por trás do corpo, levantar o braço para o lado.",
+    "targets": [
+      { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_lat"] },
+      { "muscle": "supraspinatus", "role": "sinergista" },
+      { "muscle": "trapezius", "role": "sinergista", "parts": ["trapezius_sup"] }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "O cabo vindo de baixo e de trás já pega o braço cruzado atrás do corpo, onde o deltoide lateral está longo; o halter não carrega essa parte.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo",
+      "note": "Hipótese mecânica (comprimento e braço de momento); sem estudo de hipertrofia comparando este exercício."
+    }
+  },
+  {
+    "id": "reverse_pec_deck",
+    "name": "Crucifixo inverso na máquina",
+    "pattern": "isolado",
+    "equipment": ["maquina"],
+    "status": "consolidado",
+    "summary": "Peito contra o encosto, braços à frente, abrir para trás até a linha dos ombros.",
+    "targets": [
+      { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_post"] },
+      { "muscle": "trapezius", "role": "sinergista", "parts": ["trapezius_mid"] },
+      { "muscle": "rhomboids", "role": "sinergista" },
+      { "muscle": "infraspinatus", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "A máquina carrega a abdução horizontal em toda a amplitude; o deltoide posterior é longo com os braços à frente.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "face_pull",
+    "name": "Face pull",
+    "pattern": "puxar_horizontal",
+    "equipment": ["polia"],
+    "status": "consolidado",
+    "summary": "Corda na polia alta, puxar em direção ao rosto abrindo os cotovelos e girando os ombros para fora.",
+    "targets": [
+      { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_post"] },
+      { "muscle": "infraspinatus", "role": "alvo" },
+      { "muscle": "teres_minor", "role": "alvo" },
+      { "muscle": "trapezius", "role": "sinergista", "parts": ["trapezius_mid"] },
+      { "muscle": "rhomboids", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "Junta abdução horizontal com rotação externa; carga moderada no meio da amplitude.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "cable_external_rotation",
+    "name": "Rotação externa na polia",
+    "pattern": "isolado",
+    "equipment": ["polia"],
+    "status": "consolidado",
+    "summary": "Cotovelo junto ao corpo a 90°, girar o antebraço para fora contra o cabo que vem do outro lado.",
+    "targets": [
+      { "muscle": "infraspinatus", "role": "alvo" },
+      { "muscle": "teres_minor", "role": "alvo" },
+      { "muscle": "deltoid", "role": "sinergista", "parts": ["deltoid_post"] }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "O cabo horizontal mantém a resistência em toda a rotação, ao contrário do halter em pé.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "incline_y_raise",
+    "name": "Elevação em Y no banco inclinado",
+    "pattern": "isolado",
+    "equipment": ["halteres", "banco"],
+    "status": "hipotese",
+    "summary": "Peito no banco inclinado, levantar os braços estendidos em Y até a linha do tronco.",
+    "targets": [
+      { "muscle": "trapezius", "role": "alvo", "parts": ["trapezius_inf"] },
+      { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_lat", "deltoid_post"] },
+      { "muscle": "serratus_anterior", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "encurtado",
+      "text": "O braço sobe acima da cabeça com rotação superior da escápula; o torque do halter é maior no fim, com o trapézio inferior curto.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo",
+      "note": "Hipótese mecânica (comprimento e braço de momento); sem estudo de hipertrofia comparando este exercício."
+    }
+  },
+  {
+    "id": "bayesian_curl",
+    "name": "Rosca bayesiana",
+    "pattern": "isolado",
+    "equipment": ["polia"],
+    "status": "hipotese",
+    "summary": "De costas para a polia, braço estendido para trás, dobrar o cotovelo sem trazer o braço à frente.",
+    "targets": [
+      { "muscle": "biceps_brachii", "role": "alvo" },
+      { "muscle": "brachialis", "role": "sinergista" },
+      { "muscle": "brachioradialis", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Com o ombro estendido a cabeça longa do bíceps fica longa, e o cabo de trás carrega o cotovelo já no começo da flexão.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo",
+      "note": "Hipótese mecânica (comprimento e braço de momento); sem estudo de hipertrofia comparando este exercício."
+    }
+  },
+  {
+    "id": "preacher_curl",
+    "name": "Rosca Scott",
+    "pattern": "isolado",
+    "equipment": ["barra", "banco"],
+    "status": "consolidado",
+    "summary": "Braços apoiados no banco inclinado, descer até quase estender o cotovelo e subir.",
+    "targets": [
+      { "muscle": "biceps_brachii", "role": "alvo" },
+      { "muscle": "brachialis", "role": "alvo" },
+      { "muscle": "brachioradialis", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Com o braço à frente, o torque da barra é máximo com o cotovelo quase estendido, quando os flexores estão longos.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "barbell_curl",
+    "name": "Rosca direta",
+    "pattern": "isolado",
+    "equipment": ["barra"],
+    "status": "consolidado",
+    "summary": "Em pé, braços ao lado do corpo, subir a barra dobrando os cotovelos.",
+    "targets": [
+      { "muscle": "biceps_brachii", "role": "alvo" },
+      { "muscle": "brachialis", "role": "alvo" },
+      { "muscle": "brachioradialis", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "O torque é máximo com o antebraço na horizontal, no meio da amplitude.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "hammer_curl",
+    "name": "Rosca martelo",
+    "pattern": "isolado",
+    "equipment": ["halteres"],
+    "status": "consolidado",
+    "summary": "Pegada neutra (polegar para cima), subir os halteres dobrando os cotovelos.",
+    "targets": [
+      { "muscle": "brachialis", "role": "alvo" },
+      { "muscle": "brachioradialis", "role": "alvo" },
+      { "muscle": "biceps_brachii", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "A pegada neutra tira a vantagem do bíceps na supinação e põe braquiorradial e braquial na frente.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "spider_curl",
+    "name": "Rosca spider",
+    "pattern": "isolado",
+    "equipment": ["barra", "banco"],
+    "status": "consolidado",
+    "summary": "Peito apoiado no banco inclinado, braços pendurados na vertical, subir a barra.",
+    "targets": [
+      { "muscle": "biceps_brachii", "role": "alvo" },
+      { "muscle": "brachialis", "role": "alvo" }
+    ],
+    "length": {
+      "emphasis": "encurtado",
+      "text": "Com o braço na vertical e o tronco inclinado, o torque é maior no topo, quando o bíceps está curto.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "reverse_curl",
+    "name": "Rosca inversa",
+    "pattern": "isolado",
+    "equipment": ["barra"],
+    "status": "consolidado",
+    "summary": "Pegada pronada (palmas para baixo), subir a barra dobrando os cotovelos.",
+    "targets": [
+      { "muscle": "brachioradialis", "role": "alvo" },
+      { "muscle": "brachialis", "role": "alvo" },
+      { "muscle": "forearm_extensors", "role": "alvo" },
+      { "muscle": "biceps_brachii", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "intermediario",
+      "text": "Com o antebraço pronado o bíceps perde alavanca; braquiorradial e braquial fazem a maior parte.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "skull_crusher",
+    "name": "Tríceps testa",
+    "pattern": "isolado",
+    "equipment": ["barra", "banco"],
+    "status": "consolidado",
+    "summary": "Deitado, braços apontando um pouco para trás, descer a barra até a testa dobrando só os cotovelos.",
+    "targets": [{ "muscle": "triceps_brachii", "role": "alvo" }],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Com o ombro fletido a cabeça longa já está longa, e o torque é alto com o cotovelo dobrado no fundo.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "overhead_dumbbell_extension",
+    "name": "Tríceps francês unilateral",
+    "pattern": "isolado",
+    "equipment": ["halteres", "banco"],
+    "status": "consolidado",
+    "summary": "Sentado, braço acima da cabeça, descer o halter atrás da cabeça e estender o cotovelo.",
+    "targets": [{ "muscle": "triceps_brachii", "role": "alvo", "parts": ["triceps_brachii_long", "triceps_brachii_lat", "triceps_brachii_med"] }],
+    "length": {
+      "emphasis": "alongado",
+      "text": "Braço acima da cabeça alonga a cabeça longa; no estudo citado, extensão de cotovelo acima da cabeça deu mais hipertrofia do tríceps que com o braço ao lado do corpo.",
+      "source": [{ "refId": "maeo2023_triceps" }],
+      "confidence": "provavel",
+      "note": "O estudo usou cabo; aqui é halter, com o torque maior no fundo."
+    }
+  },
+  {
+    "id": "cable_kickback",
+    "name": "Tríceps coice na polia",
+    "pattern": "isolado",
+    "equipment": ["polia"],
+    "status": "consolidado",
+    "summary": "Tronco inclinado, braço junto ao corpo, estender o cotovelo para trás contra o cabo da polia baixa.",
+    "targets": [
+      { "muscle": "triceps_brachii", "role": "alvo" },
+      { "muscle": "deltoid", "role": "sinergista", "parts": ["deltoid_post"] }
+    ],
+    "length": {
+      "emphasis": "encurtado",
+      "text": "Com o ombro estendido a cabeça longa fica curta; o exercício carrega o tríceps perto da extensão completa.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "wrist_curl",
+    "name": "Flexão de punho",
+    "pattern": "isolado",
+    "equipment": ["barra", "banco"],
+    "status": "consolidado",
+    "summary": "Antebraços nas coxas, palmas para cima, dobrar o punho subindo a barra e descer até estender.",
+    "targets": [{ "muscle": "forearm_flexors", "role": "alvo" }],
+    "length": {
+      "emphasis": "alongado",
+      "text": "A barra desce até o punho estendido, onde os flexores estão longos e o braço de momento ainda é grande.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
+  },
+  {
+    "id": "reverse_wrist_curl",
+    "name": "Extensão de punho",
+    "pattern": "isolado",
+    "equipment": ["barra", "banco"],
+    "status": "consolidado",
+    "summary": "Antebraços nas coxas, palmas para baixo, levantar o dorso da mão e descer até o punho fletir.",
+    "targets": [
+      { "muscle": "forearm_extensors", "role": "alvo" },
+      { "muscle": "brachioradialis", "role": "sinergista" }
+    ],
+    "length": {
+      "emphasis": "alongado",
+      "text": "A descida termina com o punho fletido, extensores no maior comprimento.",
+      "source": [{ "refId": "sbl_reasoning" }],
+      "confidence": "especulativo"
+    }
   }
 ]

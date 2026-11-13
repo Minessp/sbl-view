@@ -37,6 +37,7 @@ export const ptBRApp = {
     puxar_horizontal: 'Puxar na horizontal',
     puxar_vertical: 'Puxar na vertical',
     isolado: 'Isolado',
+    core: 'Tronco (core)',
   },
   equipment: {
     barra: 'Barra',
@@ -184,8 +185,13 @@ export const ptBRApp = {
   },
   library: {
     title: 'Exercícios',
-    lead: 'Biblioteca curta, com o motivo de cada escolha à mostra. O filtro de comprimento longo separa os exercícios em que a carga pega o músculo-alvo alongado.',
+    lead: 'Oitenta exercícios, cada um animado no corpo e com o motivo da escolha à mostra. O filtro de comprimento longo separa os exercícios em que a carga pega o músculo-alvo alongado.',
     filters: 'Filtros',
+    search: 'Buscar',
+    searchHint: 'Nome ou músculo',
+    region: 'Parte do corpo',
+    anyRegion: 'Todas',
+    regions: { lower: 'Inferiores', upper: 'Superiores', trunk: 'Tronco' },
     group: 'Grupo-alvo',
     anyGroup: 'Qualquer grupo',
     pattern: 'Padrão',

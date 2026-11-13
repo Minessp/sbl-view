@@ -15,9 +15,14 @@
   max-width: 640px;
 }
 
-.filters__row .field select {
+.filters__row .field select,
+.filters__search input {
   font-size: var(--fs-3);
   background: var(--c-bg);
+}
+
+.filters__search {
+  grid-column: 1 / -1;
 }
 
 .filters__set {

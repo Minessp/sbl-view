@@ -53,7 +53,7 @@ export const Exercise = z.object({
 });
 export type Exercise = z.infer<typeof Exercise>;
 
-export const MovementPattern = z.enum(['agachamento', 'dobradica', 'empurrar_horizontal', 'empurrar_vertical', 'puxar_horizontal', 'puxar_vertical', 'isolado']);
+export const MovementPattern = z.enum(['agachamento', 'dobradica', 'empurrar_horizontal', 'empurrar_vertical', 'puxar_horizontal', 'puxar_vertical', 'isolado', 'core']);
 export type MovementPattern = z.infer<typeof MovementPattern>;
 
 export const Equipment = z.enum(['barra', 'halteres', 'maquina', 'polia', 'banco', 'rack', 'peso_corporal']);

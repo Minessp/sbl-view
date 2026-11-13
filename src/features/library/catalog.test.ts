@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { exercisesForMuscle, filterExercises, library, muscleById, NO_FILTERS, REGIONS, targetGroups } from './catalog';
+import { exerciseById, exerciseRegion, exercisesForMuscle, filterExercises, library, muscleById, NO_FILTERS, REGIONS, targetGroups } from './catalog';
 import { muscleDefs } from '@/data';
 
+const byId = (id: string) => {
+  const e = exerciseById(id);
+  if (!e) throw new Error(id);
+  return e;
+};
 const ids = (f: Partial<typeof NO_FILTERS>) => filterExercises(library, { ...NO_FILTERS, ...f }).map((e) => e.id);
 
 describe('catálogo de exercícios', () => {
@@ -23,8 +28,23 @@ describe('catálogo de exercícios', () => {
   });
 
   it('ênfase em comprimento longo + status combinam', () => {
-    expect(ids({ longOnly: true, status: 'hipotese' })).toEqual(['reclined_leg_extension']);
+    const r = ids({ longOnly: true, status: 'hipotese' });
+    expect(r).toEqual(expect.arrayContaining(['reclined_leg_extension', 'bayesian_curl']));
+    for (const id of r) {
+      const e = byId(id);
+      expect(e.status).toBe('hipotese');
+      expect(e.length.emphasis).toBe('alongado');
+    }
     expect(ids({ longOnly: true })).not.toContain('lying_leg_curl');
+  });
+
+  it('região pelo primeiro alvo; busca por nome ou músculo, sem acento', () => {
+    expect(exerciseRegion(byId('squat'))).toBe('lower');
+    expect(exerciseRegion(byId('lat_pulldown'))).toBe('upper');
+    expect(exerciseRegion(byId('cable_crunch'))).toBe('trunk');
+    expect(ids({ query: 'nordica' })).toEqual(expect.arrayContaining(['nordic_curl', 'reverse_nordic']));
+    expect(ids({ query: 'Tríceps braquial' }).length).toBeGreaterThan(3);
+    expect(ids({ region: 'trunk' }).every((id) => exerciseRegion(byId(id)) === 'trunk')).toBe(true);
   });
 
   it('filtro que não casa nada devolve lista vazia', () => {

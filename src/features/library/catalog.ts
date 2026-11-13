@@ -39,7 +39,30 @@ export function targetGroups(list: readonly LibraryExercise[] = library): Muscle
   return REGIONS.flatMap((r) => r.groups).filter((g) => seen.has(g));
 }
 
+/** Parte do corpo do exercício: a região do Atlas do primeiro músculo-alvo (quadril e perna = inferiores). */
+export type ExerciseRegion = 'lower' | 'upper' | 'trunk';
+export const EXERCISE_REGIONS: readonly ExerciseRegion[] = ['lower', 'upper', 'trunk'];
+
+const groupRegion = new Map(REGIONS.flatMap((r) => r.groups.map((g) => [g, r.id] as const)));
+
+export function exerciseRegion(e: LibraryExercise): ExerciseRegion {
+  const first = e.targets.find((t) => t.role === 'alvo');
+  const g = first ? muIndex.get(first.muscle)?.group : undefined;
+  const r = g ? groupRegion.get(g) : undefined;
+  return r === 'upper' ? 'upper' : r === 'trunk' ? 'trunk' : 'lower';
+}
+
+/** Texto para busca: minúsculo e sem acento. */
+export const fold = (s: string): string =>
+  s
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase();
+
 export interface ExerciseFilters {
+  /** Busca por nome ou por músculo-alvo. */
+  query: string;
+  region: ExerciseRegion | null;
   group: MuscleGroup | null;
   equipment: readonly Equipment[];
   pattern: MovementPattern | null;
@@ -48,14 +71,17 @@ export interface ExerciseFilters {
   longOnly: boolean;
 }
 
-export const NO_FILTERS: ExerciseFilters = { group: null, equipment: [], pattern: null, status: null, longOnly: false };
+export const NO_FILTERS: ExerciseFilters = { query: '', region: null, group: null, equipment: [], pattern: null, status: null, longOnly: false };
 
 /**
  * Filtro da biblioteca. Equipamento é "tem tudo isto?": marcar barra e banco mostra
  * só o que usa os dois. Grupo considera só músculos-alvo, não sinergistas.
  */
 export function filterExercises(list: readonly LibraryExercise[], f: ExerciseFilters): LibraryExercise[] {
+  const q = fold(f.query.trim());
   return list.filter((e) => {
+    if (f.region && exerciseRegion(e) !== f.region) return false;
+    if (q && !fold(e.name).includes(q) && !e.targets.some((t) => t.role === 'alvo' && fold(muIndex.get(t.muscle)?.name ?? '').includes(q))) return false;
     if (f.pattern && e.pattern !== f.pattern) return false;
     if (f.status && e.status !== f.status) return false;
     if (f.longOnly && e.length.emphasis !== 'alongado') return false;

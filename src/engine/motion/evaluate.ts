@@ -2,7 +2,7 @@
  * Avalia um clipe de movimento num instante da repetição: graus → apoio (raiz) → IK das pernas → IK dos braços (com ritmo
  * escapuloumeral) → FK final, mais o equipamento e o vetor da carga no mundo. Puro e determinístico.
  */
-import type { Angle, Equipment, MotionClip, Reach } from '@/data/schema/motion';
+import type { Angle, Equipment, MotionClip, Place, Reach } from '@/data/schema/motion';
 import { MIDFOOT_AHEAD_OF_ANKLE } from '../exercises/squat';
 import { forwardKinematics, pointToWorld } from '../kinematics/fk';
 import { mirrorId } from '../kinematics/skeleton';
@@ -47,11 +47,18 @@ export const RHYTHM = { startDeg: 30, ratio: 0.4 } as const;
 
 const curveOf = (a: Angle): Curve => makeCurve(typeof a === 'number' ? [{ u: 0, v: a }] : a.map((k) => ({ u: k.u, v: k.deg })));
 
+/** Ponto fixo ou caminho: o caminho vira curva; o ponto fixo fica como está. */
+type CompiledPlace = { readonly fixed: Vec3 } | { readonly path: PathCurve };
+const placeOf = (p: Place): CompiledPlace => (p.length > 0 && typeof p[0] === 'number' ? { fixed: p as Vec3 } : { path: makePath(p as { u: number; p: Vec3 }[]) });
+const placeAt = (c: CompiledPlace, u: number): Vec3 => ('fixed' in c ? c.fixed : evalPath(c.path, u));
+
 interface CompiledReach {
   readonly spec: Reach;
   readonly sides: readonly ('r' | 'l')[];
   readonly chains: Readonly<Record<'r' | 'l', TwoBoneChain>>;
   readonly path: PathCurve | null;
+  /** Alvo do pé (perna). */
+  readonly ball: CompiledPlace | null;
   readonly pitch: Curve | null;
 }
 
@@ -61,6 +68,8 @@ export interface CompiledClip {
   readonly hold: Readonly<Record<string, number>>;
   readonly tracks: readonly { readonly dof: string; readonly curve: Curve }[];
   readonly pitch: Curve | null;
+  /** Onde a raiz presa fica (modo `pin`). */
+  readonly rootAt: CompiledPlace | null;
   readonly legs: readonly CompiledReach[];
   readonly arms: readonly CompiledReach[];
   /** Pegada no frame da mão (por lado). */
@@ -97,12 +106,13 @@ export function compileClip(clip: MotionClip, sk: EngineSkeleton, masses: readon
     const [top, mid] = r.limb === 'arm' ? ['upperarm', 'forearm'] : ['thigh', 'shank'];
     return {
       spec: r,
-      sides: r.side === 'both' ? ['r', 'l'] : ['r'],
+      sides: r.side === 'both' ? ['r', 'l'] : [r.side],
       chains: {
         r: chainOf(sk, `${top}_r`, `${mid}_r`),
         l: chainOf(sk, `${top}_l`, `${mid}_l`),
       },
       path: r.target.kind === 'path' ? makePath(r.target.keys) : null,
+      ball: r.target.kind === 'ball' ? placeOf(r.target.point) : null,
       pitch: r.target.kind === 'ball' ? curveOf(r.target.pitch ?? 0) : null,
     };
   };
@@ -113,6 +123,7 @@ export function compileClip(clip: MotionClip, sk: EngineSkeleton, masses: readon
     hold,
     tracks,
     pitch: clip.root.mode === 'pin' && clip.root.pitch !== undefined ? curveOf(clip.root.pitch) : null,
+    rootAt: clip.root.mode === 'pin' ? placeOf(clip.root.at) : null,
     legs: clip.reach.filter((r) => r.limb === 'leg').map(reach),
     arms: clip.reach.filter((r) => r.limb === 'arm').map(reach),
     grip: {
@@ -135,8 +146,10 @@ export type ResolvedEquipment =
       readonly kind: 'cable';
       readonly grips: readonly Vec3[];
       readonly pulley: Vec3;
-      readonly handle: 'bar' | 'rope' | 'v';
+      readonly handle: 'bar' | 'rope' | 'v' | 'single';
       readonly axis: Vec3;
+      /** Um de um par espelhado (cada mão na sua roldana). */
+      readonly mirror: boolean;
     }
   | {
       readonly kind: 'block';
@@ -144,6 +157,8 @@ export type ResolvedEquipment =
       readonly center: Vec3;
       readonly size: Vec3;
       readonly pitch: number;
+      /** Anda com um segmento (o renderizador atualiza a cada quadro). */
+      readonly moving: boolean;
     }
   | {
       readonly kind: 'pad';
@@ -202,8 +217,9 @@ function placeRoot(c: CompiledClip, rad: Readonly<Record<string, number>>, u: nu
   const raw = forwardKinematics(sk, rad, { clampToRom: false, root: rotated });
   const { segment, local } = localOf(sk, root.segment, root.point, 'r');
   const p = pointToWorld(raw, segment, local);
+  const at = c.rootAt ? placeAt(c.rootAt, u) : p;
   return {
-    position: add(rotated.position, sub(root.at, p)),
+    position: add(rotated.position, sub(at, p)),
     rotation: rotated.rotation,
   };
 }
@@ -235,7 +251,8 @@ function solveFrame(c: CompiledClip, u: number, ankleOffset: number) {
     const q = quatFromAxisAngle([1, 0, 0], (r.pitch ? evalCurve(r.pitch, u) : 0) * DEG);
     for (const side of r.sides) {
       const foot = must(sk.byId, `foot_${side}`, 'segmento');
-      const ball = side === 'l' ? mirrorX(tg.point) : tg.point;
+      const pt = r.ball ? placeAt(r.ball, u) : [0, 0, 0] as Vec3;
+      const ball = side === 'l' ? mirrorX(pt) : pt;
       feet.push({
         side,
         ball,
@@ -324,22 +341,48 @@ function resolveEquipment(c: CompiledClip, pose: Pose, grips: Readonly<Record<'r
         },
       ];
     case 'dumbbell':
-      return (['r', 'l'] as const).map((s) => ({
+      return (eq.hands === 'r' ? (['r'] as const) : (['r', 'l'] as const)).map((s) => ({
         kind: 'dumbbell',
         center: grips[s],
         axis: handAxis(s),
       }));
-    case 'cable':
+    case 'cable': {
+      const axis = normalize(sub(grips.l, grips.r));
+      if (eq.mirror)
+        return (['r', 'l'] as const).map((s) => ({
+          kind: 'cable',
+          grips: [grips[s]],
+          pulley: s === 'l' ? mirrorX(eq.pulley) : eq.pulley,
+          handle: 'single',
+          axis,
+          mirror: true,
+        }));
       return [
         {
           kind: 'cable',
-          grips: both || eq.handle !== 'bar' ? [grips.r, grips.l] : [grips.r],
+          grips: eq.handle === 'single' ? [grips.r] : both || eq.handle !== 'bar' ? [grips.r, grips.l] : [grips.r],
           pulley: eq.pulley,
           handle: eq.handle,
-          axis: normalize(sub(grips.l, grips.r)),
+          axis,
+          mirror: false,
         },
       ];
-    case 'block':
+    }
+    case 'block': {
+      if (eq.segment) {
+        const a = localOf(sk, eq.segment, eq.center, 'r');
+        const rot = must(pose.world, a.segment, 'segmento').rotation;
+        return [
+          {
+            kind: 'block',
+            role: eq.role,
+            center: pointToWorld(pose, a.segment, a.local),
+            size: eq.size,
+            pitch: xAngle(rot) / DEG + (eq.pitch ?? 0),
+            moving: true,
+          },
+        ];
+      }
       return [
         {
           kind: 'block',
@@ -347,8 +390,10 @@ function resolveEquipment(c: CompiledClip, pose: Pose, grips: Readonly<Record<'r
           center: eq.center,
           size: eq.size,
           pitch: eq.pitch ?? 0,
+          moving: false,
         },
       ];
+    }
     case 'pad': {
       const sides = eq.both ? (['r', 'l'] as const) : (['r'] as const);
       const centers = sides.map((s) => {
@@ -449,7 +494,24 @@ function loadOf(c: CompiledClip, u: number, fr: ReturnType<typeof solveFrame>, e
   if (L.kind === 'cable') {
     const cab = eq.find((e) => e.kind === 'cable');
     if (!cab || cab.kind !== 'cable') return null;
-    return { point: handle, dir: normalize(sub(cab.pulley, handle)) };
+    const at = cab.mirror || cab.handle === 'single' ? fr.grips.r : handle;
+    return { point: at, dir: normalize(sub(cab.pulley, at)) };
+  }
+  if (L.kind === 'guided') {
+    // Contra o caminho do ponto na fase concêntrica (diferença finita em u).
+    const pointOf = (pose: Pose, grips: Readonly<Record<'r' | 'l', Vec3>>): Vec3 => {
+      if (L.segment && L.point) {
+        const a = localOf(c.sk, L.segment, L.point, 'r');
+        return pointToWorld(pose, a.segment, a.local);
+      }
+      return c.arms.some((a) => a.sides.length === 2) ? lerp(grips.r, grips.l, 0.5) : grips.r;
+    };
+    const here = pointOf(fr.pose, fr.grips);
+    const du = u < 0.98 ? 0.02 : -0.02;
+    const next = solveFrame(c, u + du, 0);
+    const vel = scale(sub(pointOf(next.pose, next.grips), here), Math.sign(du));
+    if (length(vel) < 1e-6) return null;
+    return { point: here, dir: normalize(scale(vel, c.clip.tempo.concentric === 'out' ? -1 : 1)) };
   }
   // Alavanca: perpendicular ao braço da máquina (no plano sagital), contra a fase concêntrica.
   const pad = eq.find((e) => e.kind === 'pad' && e.pivot);

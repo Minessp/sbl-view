@@ -4,7 +4,7 @@ import type { Equipment, LibraryExercise, MovementPattern } from '@/data/schema/
 import type { MuscleGroup } from '@/data/schema/muscle';
 import { t } from '@/i18n/app';
 import { EvidenceSeal } from '@/ui/EvidenceSeal';
-import { filterExercises, library, muscleById, NO_FILTERS, targetGroups, type ExerciseFilters } from './catalog';
+import { EXERCISE_REGIONS, filterExercises, library, muscleById, NO_FILTERS, targetGroups, type ExerciseFilters } from './catalog';
 import { EmphasisMark } from './EmphasisMark';
 import './library.css';
 
@@ -59,6 +59,22 @@ export default function Library() {
         <h2 id={`${uid}-f`} className="visually-hidden">
           {L.filters}
         </h2>
+        <div className="filters__row">
+          <label className="field filters__search">
+            <span>{L.search}</span>
+            <input type="search" value={f.query} placeholder={L.searchHint} onChange={(e) => set({ query: e.target.value })} />
+          </label>
+        </div>
+        <fieldset className="filters__set">
+          <legend>{L.region}</legend>
+          <div className="filters__chips">
+            {([null, ...EXERCISE_REGIONS] as const).map((r) => (
+              <button key={r ?? 'all'} type="button" className="chip" aria-pressed={f.region === r} onClick={() => set({ region: r })}>
+                {r ? L.regions[r] : L.anyRegion}
+              </button>
+            ))}
+          </div>
+        </fieldset>
         <div className="filters__row">
           <label className="field">
             <span>{L.group}</span>

@@ -107,10 +107,12 @@ await step('atlas: explorador busca, isola, troca camada, abre e demonstra', asy
   await page.locator('.sel__name', { hasText: 'Glúteo máximo' }).waitFor();
 });
 
-await step('biblioteca: filtro de comprimento longo + hipótese deixa um exercício', async () => {
+await step('biblioteca: busca + comprimento longo + hipótese deixa um exercício', async () => {
   await page.goto(`${base}/exercicios`, { waitUntil: 'networkidle' });
   await page.getByText('Só carga no músculo alongado').click();
   await page.getByRole('button', { name: 'Hipótese' }).click();
+  await page.getByRole('status').filter({ hasText: /^\s*\d{2} exercícios/ }).waitFor();
+  await page.getByLabel('Buscar').fill('extensora');
   await page.getByRole('status').filter({ hasText: '1 exercício' }).waitFor();
   await page.getByRole('link', { name: /Cadeira extensora reclinada/ }).click();
   await page.getByRole('heading', { level: 1, name: 'Cadeira extensora reclinada' }).waitFor();

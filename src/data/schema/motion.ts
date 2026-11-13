@@ -18,18 +18,22 @@ export type DegKeys = z.infer<typeof DegKeys>;
 /** Trilha de um DOF. Mesmo formato de `KeyTrajectory` (exercise.ts), com u no lugar de t. */
 export const MotionTrack = z.object({ dof: Dof, keys: DegKeys });
 
+/** Ponto fixo (mundo) ou caminho por quadros-chave em u. */
+const Place = z.union([Vec3, z.array(z.object({ u: z.number().min(0).max(1), p: Vec3 })).min(1)]);
+export type Place = z.infer<typeof Place>;
+
 /** Graus fixos ou por quadro-chave. */
 const Angle = z.union([z.number(), DegKeys]);
 export type Angle = z.infer<typeof Angle>;
 
-export const Support = z.enum(['standing', 'seated', 'supine', 'prone', 'incline', 'hanging']);
+export const Support = z.enum(['standing', 'seated', 'supine', 'prone', 'incline', 'hanging', 'kneeling']);
 export type Support = z.infer<typeof Support>;
 
 /**
  * Onde o corpo se apoia.
  * - plant: pés no chão (o pé direito fica na transformação neutra; a pose é simétrica, então o esquerdo também).
- * - pin: um ponto do corpo fica preso a um ponto do mundo (assento, banco, degrau); a raiz gira por `pitch` (graus em X:
- *   + = inclina para a frente, −90 = deitado de costas, +90 = de bruços).
+ * - pin: um ponto do corpo fica preso a um ponto do mundo (assento, banco, degrau) ou segue um caminho em u (barra fixa,
+ *   trenó do hack); a raiz gira por `pitch` (graus em X: + = inclina para a frente, −90 = deitado de costas, +90 = de bruços).
  */
 export const RootSpec = z.discriminatedUnion('mode', [
   z.object({ mode: z.literal('plant') }),
@@ -37,7 +41,7 @@ export const RootSpec = z.discriminatedUnion('mode', [
     mode: z.literal('pin'),
     segment: z.string(),
     point: Vec3,
-    at: Vec3,
+    at: Place,
     pitch: Angle.optional(),
   }),
 ]);
@@ -49,7 +53,8 @@ export type RootSpec = z.infer<typeof RootSpec>;
  * - path: caminho no mundo por quadros-chave (lado direito).
  * - attach: ponto de outro segmento (barra nas costas, barra no quadril).
  * - hang: braço solto na vertical, abaixo do ombro.
- * - ball: perna com a cabeça dos metatarsos presa num ponto e o pé com inclinação dada (0 = apoiado, + = calcanhar sobe).
+ * - ball: perna com a cabeça dos metatarsos presa num ponto (ou num caminho: plataforma do leg press) e o pé com inclinação
+ *   dada (0 = apoiado, + = calcanhar sobe).
  */
 export const ReachTarget = z.discriminatedUnion('kind', [
   z.object({
@@ -58,13 +63,17 @@ export const ReachTarget = z.discriminatedUnion('kind', [
   }),
   z.object({ kind: z.literal('attach'), segment: z.string(), point: Vec3 }),
   z.object({ kind: z.literal('hang') }),
-  z.object({ kind: z.literal('ball'), point: Vec3, pitch: Angle.optional() }),
+  z.object({ kind: z.literal('ball'), point: Place, pitch: Angle.optional() }),
 ]);
 export type ReachTarget = z.infer<typeof ReachTarget>;
 
+/**
+ * `side: 'l'` = só o membro esquerdo, com o alvo dado no lado direito (espelhado em X), como todo ponto do clipe: avanço
+ * (perna de trás), apoio da mão no banco.
+ */
 export const Reach = z.object({
   limb: z.enum(['arm', 'leg']),
-  side: z.enum(['both', 'r']),
+  side: z.enum(['both', 'r', 'l']),
   target: ReachTarget,
   /** Para onde aponta o cotovelo/joelho (mundo, lado direito). */
   pole: Vec3,
@@ -83,20 +92,29 @@ export const Equipment = z.discriminatedUnion('kind', [
     kind: z.literal('barbell'),
     plates: z.number().int().min(0).max(4),
   }),
-  z.object({ kind: z.literal('dumbbell') }),
-  /** Cabo da pegada (média das mãos) até a roldana. */
+  /** Halter em cada mão, ou só na direita (`hands: 'r'`). */
+  z.object({ kind: z.literal('dumbbell'), hands: z.enum(['both', 'r']).optional() }),
+  /**
+   * Cabo da pegada (média das mãos) até a roldana. `single` = pegador de uma mão (só a direita). `mirror` = um cabo por
+   * mão, cada um na sua roldana (a esquerda espelhada): crucifixo, cross-over.
+   */
   z.object({
     kind: z.literal('cable'),
     pulley: Vec3,
-    handle: z.enum(['bar', 'rope', 'v']),
+    handle: z.enum(['bar', 'rope', 'v', 'single']),
+    mirror: z.boolean().optional(),
   }),
-  /** Peça fixa: banco, assento, encosto, degrau, plataforma. Caixa com inclinação em X (graus). */
+  /**
+   * Peça: banco, assento, encosto, degrau, plataforma. Caixa com inclinação em X (graus). Com `segment`, a peça anda com o
+   * segmento (centro dado na pose neutra; inclinação somada à do segmento): plataforma do leg press, trenó do hack.
+   */
   z.object({
     kind: z.literal('block'),
     role: z.enum(['bench', 'seat', 'back', 'step', 'platform', 'frame']),
     center: Vec3,
     size: Vec3,
     pitch: z.number().optional(),
+    segment: z.string().optional(),
   }),
   /**
    * Rolo preso a um segmento (ponto na pose neutra). `lever`: o braço da máquina gira na articulação proximal do
@@ -117,6 +135,8 @@ export type Equipment = z.infer<typeof Equipment>;
  * - gravity: peso na pegada (ou num ponto de segmento).
  * - cable: da pegada para a roldana.
  * - lever: no rolo com alavanca, perpendicular ao braço da máquina, contra a fase concêntrica.
+ * - guided: máquina de trilho ou de braço (hack, leg press, supino máquina, abdutora): contra o caminho do ponto (pegada ou
+ *   ponto de segmento) na fase concêntrica.
  */
 export const Load = z.discriminatedUnion('kind', [
   z.object({
@@ -126,6 +146,11 @@ export const Load = z.discriminatedUnion('kind', [
   }),
   z.object({ kind: z.literal('cable') }),
   z.object({ kind: z.literal('lever') }),
+  z.object({
+    kind: z.literal('guided'),
+    segment: z.string().optional(),
+    point: Vec3.optional(),
+  }),
 ]);
 export type Load = z.infer<typeof Load>;
 
