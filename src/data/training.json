@@ -1,0 +1,11 @@
+{
+  "e1rm": {
+    "formula": "epley",
+    "maxReps": {
+      "value": 10,
+      "source": [{ "refId": "epley1985" }, { "refId": "lesuer1997" }],
+      "confidence": "provavel",
+      "note": "Equações de repetições até a falha erram menos com poucas repetições e mais com muitas. O corte em 10 é escolha do SBL View, não da fonte."
+    }
+  }
+}

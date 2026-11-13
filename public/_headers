@@ -2,6 +2,13 @@
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
+# Service worker e manifesto mudam a cada deploy: nunca do cache HTTP.
+/sw.js
+  Cache-Control: no-cache
+/manifest.webmanifest
+  Cache-Control: no-cache
+  Content-Type: application/manifest+json
+
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin

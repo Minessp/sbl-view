@@ -308,3 +308,40 @@
 .stage__canvas * {
   pointer-events: none !important;
 }
+
+/* Aviso de versão nova: faixa de tinta no rodapé, acima de tudo (até do scrubber do Lab). */
+.update-notice {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2) var(--s-4);
+  padding: var(--s-2) var(--s-4) calc(var(--s-2) + env(safe-area-inset-bottom));
+  background: var(--c-ink);
+  color: var(--c-bg);
+  font-size: var(--fs-2);
+}
+
+.update-notice span {
+  flex: 1 1 14em;
+}
+
+.update-notice button {
+  min-height: var(--touch);
+  padding: 0 var(--s-3);
+  border: 0;
+  background: none;
+  color: inherit;
+  font-size: var(--fs-2);
+  font-weight: 650;
+  font-stretch: var(--wd-cond);
+}
+
+.update-notice__go {
+  text-decoration: underline;
+  text-decoration-color: var(--c-accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.25em;
+}

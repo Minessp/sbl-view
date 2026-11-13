@@ -153,5 +153,17 @@
     "citation": "Thelen DG. Adjustment of muscle mechanics model parameters to simulate dynamic contractions in older adults. Journal of Biomechanical Engineering. 2003;125(1):70-77.",
     "verified": true,
     "note": "Bibliografia conferida. Forma ativa gaussiana (γ = 0,45) e passiva exponencial vistas só em fontes secundárias (documentação do OpenSim)."
+  },
+  {
+    "id": "epley1985",
+    "citation": "Epley B. Poundage Chart. In: Boyd Epley Workout. Lincoln (NE): Body Enterprises; 1985.",
+    "verified": false,
+    "note": "Origem da fórmula carga × (1 + reps/30). Material de treinador, citado de segunda mão; não conferido no original."
+  },
+  {
+    "id": "lesuer1997",
+    "citation": "LeSuer DA, McCormick JH, Mayhew JL, Wasserstein RL, Arnold MD. The accuracy of prediction equations for estimating 1-RM performance in the bench press, squat, and deadlift. Journal of Strength and Conditioning Research. 1997;11(4):211-213.",
+    "verified": false,
+    "note": "Compara equações de 1RM estimado em três levantamentos. Página e números ainda não conferidos."
   }
 ]

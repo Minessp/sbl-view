@@ -1,3 +1,34 @@
+/* Abas do Treino: fio sob a ativa, como marcador de prancha. */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--s-4);
+  margin-top: var(--s-3);
+  border-bottom: var(--lw-hair) solid var(--c-rule);
+}
+
+.tabs__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch);
+  font-size: var(--fs-3);
+  font-weight: 560;
+  font-stretch: var(--wd-cond);
+  color: var(--c-ink-2);
+  text-decoration: none;
+  border-bottom: var(--lw-curve) solid transparent;
+  margin-bottom: calc(-1 * var(--lw-hair));
+}
+
+.tabs__link:hover {
+  color: var(--c-ink);
+}
+
+.tabs__link[aria-current='page'] {
+  color: var(--c-ink);
+  border-bottom-color: var(--c-accent);
+}
+
 .log-day + .log-day {
   margin-top: var(--s-4);
 }
@@ -19,8 +50,252 @@
   font-weight: 560;
 }
 
+.logger__status[data-kind='error'] {
+  color: var(--c-ink);
+  font-weight: 560;
+}
+
+.field textarea {
+  min-height: calc(var(--touch) * 1.5);
+  padding: var(--s-2);
+  border: 0;
+  border-bottom: var(--lw-hair) solid var(--c-ink);
+  border-radius: 0;
+  background: var(--c-bg-2);
+  font: inherit;
+  font-size: var(--fs-3);
+  color: var(--c-ink);
+  resize: vertical;
+}
+
+/* Linha de série: hora, o quê, editar, apagar. */
+.logger__list .set-row {
+  grid-template-columns: auto 1fr auto auto;
+}
+
+.set-row[data-kind='aquecimento'] .logger__what strong {
+  font-weight: 450;
+  color: var(--c-ink-2);
+}
+
+.set-row__kind {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--c-ink-2);
+}
+
+.logger__list .set-row--edit {
+  display: block;
+  background: var(--c-bg-2);
+  padding: var(--s-3);
+}
+
+.set-edit {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-3);
+  align-items: end;
+}
+
+.set-edit .field input,
+.set-edit .field select {
+  background: var(--c-bg);
+}
+
+.set-edit__actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: var(--s-4);
+  align-items: center;
+}
+
+.session-notes {
+  display: grid;
+  gap: var(--s-3);
+  margin-top: var(--s-3);
+}
+
+.session-notes__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+}
+
+/* Histórico */
+.session {
+  display: grid;
+  gap: var(--s-3);
+  padding: var(--s-5) 0;
+  border-bottom: var(--lw-hair) solid var(--c-rule);
+}
+
+.session__head {
+  display: grid;
+  gap: var(--s-1);
+}
+
+.session__head .log-day__title {
+  font-size: var(--fs-4);
+  color: var(--c-ink);
+}
+
+.session__meta {
+  font-size: var(--fs-2);
+  color: var(--c-ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.session__ex-name {
+  font-size: var(--fs-3);
+  font-weight: 650;
+  font-stretch: var(--wd-cond);
+}
+
+.session__notes {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--c-ink-2);
+}
+
+.session__remove {
+  color: var(--c-ink-2);
+}
+
+/* Progresso */
+.progress__pick {
+  max-width: 420px;
+}
+
+.progress__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1) var(--s-4);
+  font-size: var(--fs-1);
+}
+
+.progress__legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.progress__best {
+  font-size: var(--fs-3);
+}
+
+.progress__best strong {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.progress__note {
+  display: grid;
+  gap: var(--s-2);
+  justify-items: start;
+  max-width: 64ch;
+  font-size: var(--fs-2);
+  color: var(--c-ink-2);
+}
+
+.table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.data-table th,
+.data-table td {
+  padding: var(--s-2) var(--s-2);
+  text-align: right;
+  border-bottom: var(--lw-hair) solid var(--c-rule);
+  white-space: nowrap;
+}
+
+.data-table th:first-child {
+  text-align: left;
+  padding-left: 0;
+}
+
+.data-table thead th {
+  font-weight: 560;
+  font-stretch: var(--wd-cond);
+  color: var(--c-ink-2);
+  border-bottom-color: var(--c-ink);
+}
+
+.data-table tbody th {
+  font-weight: 560;
+}
+
+.data-table__muted {
+  color: var(--c-ink-2);
+  font-family: var(--font-serif);
+  font-style: italic;
+}
+
+.data-table--weeks td {
+  min-width: 3.2em;
+  text-align: center;
+  font-weight: 650;
+}
+
+/* Mesma rampa da prancha de sistema: intensidade de coloração, relativa ao maior valor. */
+.stain-cell[data-level='0'] {
+  color: var(--c-ink-2);
+  font-weight: 400;
+}
+.stain-cell[data-level='1'] {
+  background: var(--c-stain-1);
+}
+.stain-cell[data-level='2'] {
+  background: var(--c-stain-2);
+}
+.stain-cell[data-level='3'] {
+  background: var(--c-stain-3);
+}
+.stain-cell[data-level='4'] {
+  background: var(--c-stain-4);
+  color: var(--c-on-accent);
+}
+.stain-cell[data-level='5'] {
+  background: var(--c-stain-5);
+  color: var(--c-on-accent);
+}
+
+/* Dados */
+.btn-secondary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.data__count {
+  font-size: var(--fs-4);
+  font-weight: 650;
+  font-stretch: var(--wd-cond);
+}
+
+.btn-danger {
+  border-color: var(--c-accent);
+}
+
+.btn-danger:hover {
+  background: var(--c-accent);
+  color: var(--c-on-accent);
+}
+
 @media (min-width: 900px) {
-  .sheet .logger__form {
+  .sheet .logger__form,
+  .sheet .session-notes {
     max-width: 720px;
+  }
+
+  .set-edit {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }

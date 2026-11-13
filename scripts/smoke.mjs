@@ -2,9 +2,11 @@
  * Teste de fumaça no navegador real (Edge/Chrome do sistema):
  * abre cada rota, falha com erro de console; no Lab, reproduz e troca variação; no Atlas, desenha
  * o músculo e as curvas; na biblioteca, filtra; no Treino, registra uma série, recarrega e confere
- * que ela persistiu no IndexedDB.
+ * que ela persistiu no IndexedDB, edita no histórico, vê o progresso, exporta e reimporta o backup.
+ * No build (com sw.js), confere que o site abre sem rede.
  *   node scripts/smoke.mjs [base-url]
  */
+import { readFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
 
 const base = (process.argv[2] ?? 'http://localhost:5173').replace(/\/$/, '');
@@ -76,8 +78,8 @@ await step('biblioteca: filtro de comprimento longo + hipótese deixa um exercí
   await page.getByRole('heading', { level: 1, name: 'Cadeira extensora reclinada' }).waitFor();
 });
 
+const marker = `fumaça ${Date.now()}`;
 await step('treino: registrar série persiste após recarregar', async () => {
-  const marker = `fumaça ${Date.now()}`;
   await page.goto(`${base}/treino?exercicio=seated_leg_curl`, { waitUntil: 'networkidle' });
   await page.getByLabel('Carga (kg)').fill('42,5');
   await page.getByLabel('Repetições', { exact: true }).fill('11');
@@ -89,6 +91,55 @@ await step('treino: registrar série persiste após recarregar', async () => {
   await page.getByText('42,5 kg × 11').first().waitFor();
   await page.locator('.logger__ex', { hasText: 'Mesa flexora sentada' }).first().waitFor();
 });
+
+await step('histórico: editar a série muda as repetições', async () => {
+  await page.goto(`${base}/treino/historico`, { waitUntil: 'networkidle' });
+  const row = page.locator('.set-row', { hasText: marker }).first();
+  await row.getByRole('button', { name: /Editar série/ }).click();
+  const form = page.getByRole('form', { name: /Editar série/ });
+  await form.getByLabel('Repetições', { exact: true }).fill('12');
+  await form.getByRole('button', { name: 'Salvar' }).click();
+  await page.locator('.set-row', { hasText: marker }).getByText('42,5 kg × 12').waitFor();
+});
+
+await step('progresso: tabela da sessão e contagem semanal', async () => {
+  await page.goto(`${base}/treino/progresso`, { waitUntil: 'networkidle' });
+  await page.getByLabel('Exercício').selectOption('seated_leg_curl');
+  await page.locator('.data-table td', { hasText: '42,5 × 12' }).first().waitFor();
+  await page.locator('.data-table--weeks th', { hasText: 'Isquiotibiais' }).waitFor();
+});
+
+await step('dados: exportar e reimportar o backup não duplica', async () => {
+  await page.goto(`${base}/treino/dados`, { waitUntil: 'networkidle' });
+  const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Baixar backup' }).click()]);
+  const file = await download.path();
+  const json = JSON.parse(await readFile(file, 'utf8'));
+  if (json.app !== 'sbl-view' || !json.sets.some((s) => s.note === marker)) throw new Error('backup sem a série registrada');
+  await page.locator('input[type=file]').setInputFiles(file);
+  await page.getByRole('status').filter({ hasText: /Importado: 0 séries novas, 0 atualizadas, \d+ já estavam aqui/ }).waitFor();
+});
+
+const hasSw = await page.request
+  .get(`${base}/sw.js`)
+  // Em dev, /sw.js cai no fallback SPA (HTML): sem service worker.
+  .then((r) => r.ok() && /javascript/.test(r.headers()['content-type'] ?? ''))
+  .catch(() => false);
+if (hasSw) {
+  await step('pwa: manifesto válido e site abre sem rede', async () => {
+    const m = await (await page.request.get(`${base}/manifest.webmanifest`)).json();
+    if (m.display !== 'standalone' || !m.icons?.some((i) => i.sizes === '512x512')) throw new Error('manifesto incompleto');
+    await page.goto(`${base}/`, { waitUntil: 'networkidle' });
+    await page.waitForFunction(() => navigator.serviceWorker?.controller != null, null, { timeout: 20000 });
+    await page.evaluate(() => navigator.serviceWorker.ready);
+    await page.context().setOffline(true);
+    try {
+      await page.goto(`${base}/treino/historico`, { waitUntil: 'load' });
+      await page.getByText(marker).first().waitFor({ timeout: 8000 });
+    } finally {
+      await page.context().setOffline(false);
+    }
+  });
+} else console.log('—    pwa: sem sw.js (servidor de dev), pulado');
 
 if (errors.length) {
   console.log(errors.join('\n'));

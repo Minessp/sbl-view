@@ -3,6 +3,7 @@ import { Link, useRoute } from 'wouter';
 import { t } from '@/i18n';
 import { StageHost } from '@/scene/StageHost';
 import { ThemeSwitch } from '@/ui/ThemeSwitch';
+import { UpdateNotice } from '@/pwa/UpdateNotice';
 import './shell.css';
 
 /** Ativo na rota e nas filhas (`/atlas` acende em `/atlas/soleus`). */
@@ -40,6 +41,7 @@ export function Shell({ children }: { children: ReactNode }) {
       </header>
       <StageHost />
       {children}
+      <UpdateNotice />
     </>
   );
 }

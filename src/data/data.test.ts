@@ -14,6 +14,8 @@ import movementsJson from './movements.json';
 import musclesJson from './muscles.json';
 import referencesJson from './references.json';
 import skeletonJson from './skeleton.json';
+import trainingJson from './training.json';
+import { E1RM_MAX_REPS } from '@/engine/training/progress';
 import { Reference, type Evidence } from './schema/evidence';
 import { Exercise as ExerciseSchema, LibraryFile } from './schema/exercise';
 import { MovementFile, MuscleFile } from './schema/muscle';
@@ -35,7 +37,7 @@ function collectEvidence(node: unknown, out: Evidence[] = []): Evidence[] {
 }
 
 const allEvidence = () =>
-  [skeletonJson, musclesJson, anthropometryJson, capacityJson, squatJson, libraryJson].flatMap((j) => collectEvidence(j));
+  [skeletonJson, musclesJson, anthropometryJson, capacityJson, squatJson, libraryJson, trainingJson].flatMap((j) => collectEvidence(j));
 
 describe('banco de dados', () => {
   it('referências: ids únicos', () => {
@@ -75,6 +77,10 @@ describe('banco de dados', () => {
       if (ev.confidence !== 'estabelecido') continue;
       expect(ev.source.some((s) => verified.has(s.refId)), JSON.stringify(ev.source)).toBe(true);
     }
+  });
+
+  it('tracker: corte do 1RM estimado no motor é o mesmo do banco', () => {
+    expect(trainingJson.e1rm.maxReps.value).toBe(E1RM_MAX_REPS);
   });
 
   it('raciocínio próprio nunca passa de "especulativo"', () => {

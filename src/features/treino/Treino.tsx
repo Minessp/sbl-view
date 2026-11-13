@@ -1,41 +1,10 @@
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { Link, useSearch } from 'wouter';
-import { fmt, t } from '@/i18n';
+import { t } from '@/i18n';
 import { exerciseById, library } from '@/features/library/catalog';
-import squatJson from '@/data/exercises/squat.json';
-import type { Exercise } from '@/data/schema/exercise';
 import { repository, requestPersistence } from '@/storage/db';
-import type { SetEntry } from '@/storage/types';
-import './treino.css';
-
-const dayFmt = new Intl.DateTimeFormat('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
-const timeFmt = new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' });
-
-const squat = squatJson as unknown as Exercise;
-
-/** Variações conhecidas por exercício (hoje só o agachamento do Lab tem). */
-function variantsOf(exerciseId: string): { id: string; label: string; short: string }[] {
-  const e = exerciseById(exerciseId);
-  return e?.labId === squat.id ? squat.variants : [];
-}
-
-function variantShort(exerciseId: string, variantId: string | undefined): string {
-  if (!variantId) return '';
-  return variantsOf(exerciseId).find((v) => v.id === variantId)?.short ?? '';
-}
-
-/** Agrupa por dia civil local, mantendo a ordem (mais recente primeiro). */
-function byDay(sets: readonly SetEntry[]): { key: string; label: string; sets: SetEntry[] }[] {
-  const out: { key: string; label: string; sets: SetEntry[] }[] = [];
-  for (const s of sets) {
-    const d = new Date(s.createdAt);
-    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-    const last = out[out.length - 1];
-    if (last?.key === key) last.sets.push(s);
-    else out.push({ key, label: dayFmt.format(d), sets: [s] });
-  }
-  return out;
-}
+import type { SessionWithSets, SetKind } from '@/storage/types';
+import { KindSelect, loadValid, parseLoad, repsValid, RirSelect, SetRow, timeFmt, TreinoHeader, variantsOf } from './shared';
 
 export default function Treino() {
   const L = t.training;
@@ -54,13 +23,18 @@ export default function Treino() {
   const [load, setLoad] = useState('');
   const [reps, setReps] = useState('');
   const [rir, setRir] = useState('');
+  const [kind, setKind] = useState<SetKind>('trabalho');
   const [note, setNote] = useState('');
-  const [status, setStatus] = useState<'idle' | 'saved' | 'error'>('idle');
-  const [recent, setRecent] = useState<SetEntry[]>([]);
+  const [status, setStatus] = useState<'idle' | 'saved' | 'error' | 'ended'>('idle');
+  const [open, setOpen] = useState<SessionWithSets | undefined>();
+  const [notes, setNotes] = useState('');
+  const [notesSaved, setNotesSaved] = useState(false);
 
   const refresh = useCallback(async () => {
     try {
-      setRecent(await repository().recentAll(40));
+      const o = await repository().openSession();
+      setOpen(o);
+      setNotes(o?.session.notes ?? '');
     } catch {
       setStatus('error');
     }
@@ -69,10 +43,10 @@ export default function Treino() {
     void refresh();
   }, [refresh]);
 
-  const loadN = Number(load.replace(',', '.'));
+  const loadN = parseLoad(load);
   const repsN = Number(reps);
-  const loadOk = load.trim() !== '' && Number.isFinite(loadN) && loadN >= 0;
-  const repsOk = Number.isInteger(repsN) && repsN > 0;
+  const loadOk = loadValid(loadN);
+  const repsOk = repsValid(repsN);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -81,6 +55,7 @@ export default function Treino() {
       await repository().logSet({
         exerciseId,
         ...(variantId && { variantId }),
+        kind,
         loadKg: loadN,
         reps: repsN,
         ...(rir !== '' && { rir: Number(rir) }),
@@ -95,24 +70,33 @@ export default function Treino() {
     }
   }
 
-  async function remove(id: string) {
+  async function endSession() {
+    if (!open) return;
     try {
-      await repository().deleteSet(id);
+      await repository().endSession(open.session.id);
+      setStatus('ended');
       await refresh();
     } catch {
       setStatus('error');
     }
   }
 
+  async function saveNotes() {
+    if (!open) return;
+    try {
+      await repository().setSessionNotes(open.session.id, notes);
+      setNotesSaved(true);
+    } catch {
+      setStatus('error');
+    }
+  }
+
   const ex = exerciseById(exerciseId);
+  const message = { idle: '', saved: L.saved, error: L.error, ended: L.session.ended }[status];
 
   return (
     <main id="conteudo" className="sheet">
-      <header className="sheet__head">
-        <p className="sheet__plate">{L.plate}</p>
-        <h1 className="sheet__title">{L.title}</h1>
-        <p className="sheet__lead prose">{L.lead}</p>
-      </header>
+      <TreinoHeader title={L.title} lead={L.lead} />
 
       <section className="section" aria-labelledby={`${uid}-form`}>
         <header className="section__head">
@@ -152,14 +136,11 @@ export default function Treino() {
           </label>
           <label className="field">
             <span>{L.rir}</span>
-            <select value={rir} onChange={(e) => setRir(e.target.value)}>
-              <option value="">{L.rirNone}</option>
-              {[0, 1, 2, 3, 4, 5].map((n) => (
-                <option key={n} value={n}>
-                  {n}
-                </option>
-              ))}
-            </select>
+            <RirSelect value={rir} onChange={setRir} />
+          </label>
+          <label className="field field--wide">
+            <span>{L.kind}</span>
+            <KindSelect value={kind} onChange={setKind} />
           </label>
           <label className="field field--wide">
             <span>{L.note}</span>
@@ -169,7 +150,7 @@ export default function Treino() {
             {L.save}
           </button>
           <p className="logger__status" role="status">
-            {status === 'saved' ? L.saved : status === 'error' ? L.error : ''}
+            {message}
           </p>
         </form>
         {ex && (
@@ -179,37 +160,48 @@ export default function Treino() {
         )}
       </section>
 
-      <section className="section" aria-labelledby={`${uid}-recent`}>
+      <section className="section" aria-labelledby={`${uid}-open`}>
         <header className="section__head">
-          <h2 id={`${uid}-recent`}>{L.recent}</h2>
+          <h2 id={`${uid}-open`}>{L.session.open}</h2>
+          {open && (
+            <p>
+              {L.session.started} {timeFmt.format(open.session.startedAt)}, {L.session.sets(open.sets.length)}
+            </p>
+          )}
         </header>
-        {recent.length === 0 ? (
-          <p className="logger__empty">{L.empty}</p>
+        {!open ? (
+          <p className="logger__empty">{L.session.none}</p>
         ) : (
-          byDay(recent).map((day) => (
-            <div key={day.key} className="log-day">
-              <h3 className="log-day__title">{day.label}</h3>
-              <ol className="logger__list">
-                {day.sets.map((s) => (
-                  <li key={s.id}>
-                    <span className="logger__when">{timeFmt.format(s.createdAt)}</span>
-                    <span className="logger__what">
-                      <span className="logger__ex">{exerciseById(s.exerciseId)?.name ?? s.exerciseId}</span>{' '}
-                      <strong>
-                        {fmt.n1(s.loadKg)} kg × {s.reps}
-                      </strong>
-                      {s.rir !== undefined && <span className="logger__rir"> RIR {s.rir}</span>}
-                    </span>
-                    <span className="logger__variant">{variantShort(s.exerciseId, s.variantId)}</span>
-                    <button type="button" className="link-btn" aria-label={`${L.removeLabel}: ${fmt.n1(s.loadKg)} kg × ${s.reps}`} onClick={() => void remove(s.id)}>
-                      {L.remove}
-                    </button>
-                    {s.note && <span className="logger__note">{s.note}</span>}
-                  </li>
-                ))}
-              </ol>
+          <>
+            <ol className="logger__list">
+              {open.sets.map((s) => (
+                <SetRow key={s.id} set={s} onChanged={() => void refresh()} />
+              ))}
+            </ol>
+            <div className="session-notes">
+              <label className="field field--wide">
+                <span>{L.session.notes}</span>
+                <textarea
+                  rows={2}
+                  maxLength={2000}
+                  value={notes}
+                  placeholder={L.session.notesPlaceholder}
+                  onChange={(e) => {
+                    setNotes(e.target.value);
+                    setNotesSaved(false);
+                  }}
+                />
+              </label>
+              <div className="session-notes__actions">
+                <button type="button" className="btn-secondary" onClick={() => void saveNotes()}>
+                  {notesSaved ? L.session.notesSaved : L.session.saveNotes}
+                </button>
+                <button type="button" className="btn-secondary" onClick={() => void endSession()}>
+                  {L.session.end}
+                </button>
+              </div>
             </div>
-          ))
+          </>
         )}
       </section>
     </main>
