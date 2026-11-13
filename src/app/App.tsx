@@ -11,6 +11,7 @@ const MusclePage = lazy(() => import('@/features/atlas/MusclePage'));
 const Library = lazy(() => import('@/features/library/Library'));
 const ExercisePage = lazy(() => import('@/features/library/ExercisePage'));
 const Treino = lazy(() => import('@/features/treino/Treino'));
+const Plano = lazy(() => import('@/features/plano/Plano'));
 const Historico = lazy(() => import('@/features/treino/Historico'));
 const Progresso = lazy(() => import('@/features/treino/Progresso'));
 const Dados = lazy(() => import('@/features/treino/Dados'));
@@ -40,6 +41,7 @@ export function App() {
             <Route path="/exercicios" component={Library} />
             <Route path="/exercicios/:id">{(p) => <ExercisePage id={p.id} />}</Route>
             <Route path="/treino" component={Treino} />
+            <Route path="/treino/plano" component={Plano} />
             <Route path="/treino/historico" component={Historico} />
             <Route path="/treino/progresso" component={Progresso} />
             <Route path="/treino/dados" component={Dados} />

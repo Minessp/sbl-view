@@ -103,6 +103,12 @@
   color: var(--c-ink-2);
 }
 
+.atlas-stage__credit {
+  margin: 0;
+  font-size: var(--fs-1);
+  color: var(--c-ink-2);
+}
+
 .atlas-stage__views {
   display: flex;
   gap: var(--s-1);

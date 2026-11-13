@@ -126,6 +126,49 @@ describe('repositório de treino (IndexedDB)', () => {
     expect(await a.allSets()).toHaveLength(0);
   });
 
+  it('planos: grava, ativo é o começado mais recente, sessão leva o contexto, backup carrega', async () => {
+    const repo = fresh();
+    const t0 = Date.UTC(2026, 10, 12, 10);
+    const base = {
+      name: 'Plano',
+      weeks: 5,
+      deload: true,
+      equipment: [],
+      priorities: { quadriceps: 'priorizar' as const },
+      targets: { quadriceps: 12 },
+      days: [{ id: 'A', focus: 'full' as const, items: [{ exerciseId: 'squat', sets: 4, reps: [6, 10] as [number, number] }] }],
+      createdAt: t0,
+      updatedAt: t0,
+    };
+    await repo.savePlan({ ...base, id: 'p1' }, t0);
+    expect(await repo.activePlan()).toBeUndefined();
+    await repo.savePlan({ ...base, id: 'p2', startedAt: t0 }, t0 + 1);
+    await repo.savePlan({ ...base, id: 'p3', startedAt: t0 + 10 }, t0 + 2);
+    expect((await repo.activePlan())?.id).toBe('p3');
+    await repo.savePlan({ ...base, id: 'p3', startedAt: t0 + 10, endedAt: t0 + 20 }, t0 + 3);
+    expect((await repo.activePlan())?.id).toBe('p2');
+    await repo.deletePlan('p2', t0 + 4);
+    expect(await repo.activePlan()).toBeUndefined();
+    expect((await repo.listPlans()).map((p) => p.id)).toEqual(['p3', 'p1']);
+
+    await repo.logSet({ exerciseId: 'squat', reps: 5, loadKg: 100, plan: { mesocycleId: 'p1', week: 1, dayId: 'A' } }, t0 + 100);
+    const ps = await repo.planSessions('p1');
+    expect(ps).toHaveLength(1);
+    expect(ps[0]?.session).toMatchObject({ mesocycleId: 'p1', week: 1, dayId: 'A' });
+
+    const parsed = parseBackup(JSON.stringify(await repo.exportAll(t0 + 200)));
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) return;
+    const dst = fresh();
+    await dst.importBackup(parsed.backup);
+    expect((await dst.listPlans()).map((p) => p.id)).toEqual(['p3', 'p1']);
+  });
+
+  it('backup sem planos (anterior à Fase 5) continua válido', () => {
+    const r = parseBackup(JSON.stringify({ app: 'sbl-view', version: 1, exportedAt: 1, sessions: [], sets: [] }));
+    expect(r.ok).toBe(true);
+  });
+
   it('apagar tudo esvazia o banco', async () => {
     const repo = fresh();
     await repo.logSet({ exerciseId: 'squat', reps: 5, loadKg: 100 });

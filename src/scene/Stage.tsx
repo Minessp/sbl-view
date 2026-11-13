@@ -4,6 +4,7 @@
  */
 import { Canvas } from '@react-three/fiber';
 import { AtlasScene } from './atlas/AtlasScene';
+import { HeatScene } from './heat/HeatScene';
 import { LabScene } from './lab/LabScene';
 import { OpeningScene } from './opening/OpeningScene';
 import { useStage } from './stageStore';
@@ -26,6 +27,7 @@ export default function Stage() {
       {scene === 'opening' && <OpeningScene />}
       {scene === 'lab' && <LabScene />}
       {scene === 'atlas' && <AtlasScene />}
+      {scene === 'heat' && <HeatScene />}
     </Canvas>
   );
 }

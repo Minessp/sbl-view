@@ -10,6 +10,7 @@ import { EvidenceSeal } from '@/ui/EvidenceSeal';
 import { Sources } from '@/ui/Sources';
 import { getReference } from '@/data';
 import type { Confidence } from '@/data/schema/evidence';
+import { BodyHeatmap } from '@/features/heat/BodyHeatmap';
 import { exerciseName, shortDateFmt, TreinoHeader } from './shared';
 
 const WEEKS = 4;
@@ -23,6 +24,17 @@ function targetGroupsOf(exerciseId: string): string[] {
 }
 
 const GROUP_ORDER = REGIONS.flatMap((r) => r.groups);
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
+/** Séries de trabalho diretas por músculo desde `since` (mesma regra do plano: só alvo). */
+function directByMuscle(sets: readonly SetEntry[], since: number): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const s of sets) {
+    if (s.createdAt < since || s.kind === 'aquecimento' || s.deletedAt) continue;
+    for (const x of exerciseById(s.exerciseId)?.targets ?? []) if (x.role === 'alvo') out[x.muscle] = (out[x.muscle] ?? 0) + 1;
+  }
+  return out;
+}
 
 function ExerciseChart({ sets, exerciseId }: { sets: readonly SetEntry[]; exerciseId: string }) {
   const L = t.training.progress;
@@ -176,6 +188,8 @@ export default function Progresso() {
     return [...seen].sort((a, b) => b[1] - a[1]).map(([id]) => id);
   }, [sets]);
   const exerciseId = options.includes(picked) ? picked : (options[0] ?? '');
+  const [since] = useState(() => Date.now() - WEEK_MS);
+  const heat = useMemo(() => directByMuscle(sets ?? [], since), [sets, since]);
 
   return (
     <main id="conteudo" className="sheet">
@@ -204,6 +218,13 @@ export default function Progresso() {
               </label>
             )}
             {exerciseId ? <ExerciseChart sets={sets} exerciseId={exerciseId} /> : <p className="logger__empty">{L.none}</p>}
+          </section>
+          <section className="section" aria-labelledby={`${uid}-heat`}>
+            <header className="section__head">
+              <h2 id={`${uid}-heat`}>{L.heat}</h2>
+              <p>{L.heatLead}</p>
+            </header>
+            <BodyHeatmap values={heat} caption={L.heatCaption} />
           </section>
           <section className="section" aria-labelledby={`${uid}-wk`}>
             <header className="section__head">

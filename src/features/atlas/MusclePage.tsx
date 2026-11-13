@@ -11,6 +11,9 @@ import { exercisesForMuscle, movementById, muscleById, muscleRefIds } from '@/fe
 import { EmphasisMark } from '@/features/library/EmphasisMark';
 import { actionCurves, type ActionCurve } from './model';
 import { defaultView, useAtlas, type AtlasView } from './store';
+import { ModelSwitch } from '@/features/body/ModelSwitch';
+import { missingInAnatomical, useBody } from '@/features/body/store';
+import '@/features/heat/heat.css';
 import './atlas.css';
 
 const PATTERNS: LinePattern[] = ['solid', 'dashed', 'dotted'];
@@ -27,6 +30,7 @@ function Stage({ m }: { m: MuscleDef }) {
   const setView = useAtlas((s) => s.setView);
   const setScene = useStage((s) => s.setScene);
   const ready = useStage((s) => s.ready);
+  const kind = useBody((s) => s.kind);
 
   useEffect(() => {
     show(m.id, defaultView(m.group));
@@ -53,6 +57,8 @@ function Stage({ m }: { m: MuscleDef }) {
         </span>
       </figcaption>
       <div ref={ref} className="atlas-stage__slot" role="img" aria-label={`${t.atlas.figure} ${m.name}.`} data-ready={ready} />
+      <ModelSwitch missing={missingInAnatomical(m.id)} />
+      {kind === 'anatomico' && !missingInAnatomical(m.id) && <p className="atlas-stage__credit">{t.body.credit}</p>}
     </figure>
   );
 }

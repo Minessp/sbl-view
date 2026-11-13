@@ -84,7 +84,7 @@
     "url": "https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html",
     "license": "CC BY 4.0",
     "verified": true,
-    "note": "Releases antigas sob CC BY-SA 2.1 JP. Conferir a versão baixada."
+    "note": "Usado o release 4.0 (arquivos obj_99, baixados em 2026-11-12). Página de licença atual: CC BY 4.0; cabeçalho dos .obj de 2011: CC BY-SA 2.1 JP. A derivada no SBL View vai em CC BY-SA 4.0."
   },
   {
     "id": "hip_torque_angle_2019",
@@ -165,5 +165,33 @@
     "citation": "LeSuer DA, McCormick JH, Mayhew JL, Wasserstein RL, Arnold MD. The accuracy of prediction equations for estimating 1-RM performance in the bench press, squat, and deadlift. Journal of Strength and Conditioning Research. 1997;11(4):211-213.",
     "verified": false,
     "note": "Compara equações de 1RM estimado em três levantamentos. Página e números ainda não conferidos."
+  },
+  {
+    "id": "schoenfeld2017volume",
+    "citation": "Schoenfeld BJ, Ogborn D, Krieger JW. Dose-response relationship between weekly resistance training volume and increases in muscle mass: a systematic review and meta-analysis. Journal of Sports Sciences. 2017;35(11):1073-1082.",
+    "doi": "10.1080/02640414.2016.1210197",
+    "verified": true,
+    "note": "Bibliografia e resumo conferidos (PubMed 27433992). 15 estudos: cada série semanal a mais se associou a ganho maior; nas faixas <5, 5-9 e 10+ séries por músculo houve só tendência (P = 0,074)."
+  },
+  {
+    "id": "schoenfeld2016frequency",
+    "citation": "Schoenfeld BJ, Ogborn D, Krieger JW. Effects of resistance training frequency on measures of muscle hypertrophy: a systematic review and meta-analysis. Sports Medicine. 2016;46(11):1689-1697.",
+    "doi": "10.1007/s40279-016-0543-8",
+    "verified": true,
+    "note": "Bibliografia e resumo conferidos (PubMed 27102172). Com volume igualado, treinar o grupo 2 vezes por semana deu mais hipertrofia que 1 vez; dados insuficientes para 3 vezes."
+  },
+  {
+    "id": "bickel2011",
+    "citation": "Bickel CS, Cross JM, Bamman MM. Exercise dosing to retain resistance training adaptations in young and older adults. Medicine & Science in Sports & Exercise. 2011;43(7):1177-1187.",
+    "doi": "10.1249/MSS.0b013e318207c15d",
+    "verified": true,
+    "note": "Bibliografia e resumo conferidos (PubMed 21131862). Depois de 16 semanas a 3 vezes por semana, 1/3 e 1/9 da dose mantiveram a hipertrofia por 32 semanas nos jovens (20-35 anos), não nos idosos (60-75)."
+  },
+  {
+    "id": "schoenfeld2017load",
+    "citation": "Schoenfeld BJ, Grgic J, Ogborn D, Krieger JW. Strength and hypertrophy adaptations between low- vs. high-load resistance training: a systematic review and meta-analysis. Journal of Strength and Conditioning Research. 2017;31(12):3508-3523.",
+    "doi": "10.1519/JSC.0000000000002200",
+    "verified": true,
+    "note": "Bibliografia e resumo conferidos (PubMed 28834797). Séries até a falha: cargas baixas (≤60% 1RM) e altas deram hipertrofia parecida; força máxima favoreceu carga alta."
   }
 ]

@@ -5,7 +5,7 @@
  *
  * - Instala: guarda tudo que o build gerou (JS, CSS, fontes, ícones) e a página inicial.
  * - Navegação: rede primeiro (HTML sempre revalida); sem rede, a página guardada.
- * - Resto do mesmo site: cache primeiro (arquivos com hash não mudam).
+ * - Resto do mesmo site: cache primeiro (arquivos com hash não mudam). models/ entra no cache no primeiro uso.
  * - ignoreVary: o servidor pode mandar `Vary: Origin` e o script module manda Origin; o addAll não.
  * - Versão nova espera até a página pedir SKIP_WAITING (aviso "Atualizar").
  */
@@ -56,7 +56,14 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     (async () => {
       const hit = await caches.match(req, { cacheName: CACHE, ignoreSearch: true, ignoreVary: true });
-      return hit ?? fetch(req);
+      if (hit) return hit;
+      const res = await fetch(req);
+      // Malha anatômica: fora do precache; guardada na primeira vez que alguém a usa.
+      if (res.ok && new URL(req.url).pathname.includes('/models/')) {
+        const copy = res.clone();
+        event.waitUntil(caches.open(CACHE).then((c) => c.put(req, copy)));
+      }
+      return res;
     })(),
   );
 });

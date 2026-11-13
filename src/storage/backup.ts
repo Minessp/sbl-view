@@ -38,12 +38,35 @@ const SetSchema = z.strictObject({
   note: z.string().max(2000).optional(),
 });
 
+const PlanItemSchema = z.strictObject({
+  exerciseId: z.string().min(1).max(64),
+  sets: z.number().int().positive().max(40),
+  reps: z.tuple([z.number().int().positive().max(100), z.number().int().positive().max(100)]),
+});
+
+const PlanSchema = z.strictObject({
+  ...entity,
+  name: z.string().max(200),
+  weeks: z.number().int().min(1).max(16),
+  deload: z.boolean(),
+  equipment: z.array(z.string().max(64)).max(32),
+  priorities: z.record(z.string().max(64), z.enum(['priorizar', 'manter', 'fora'])),
+  targets: z.record(z.string().max(64), z.number().int().nonnegative().max(60)),
+  days: z
+    .array(z.strictObject({ id: z.string().min(1).max(16), focus: z.enum(['full', 'upper', 'lower']), items: z.array(PlanItemSchema).max(30) }))
+    .min(1)
+    .max(7),
+  startedAt: ms.optional(),
+  endedAt: ms.optional(),
+});
+
 const BackupSchema = z.object({
   app: z.literal(BACKUP_APP),
   version: z.number().int(),
   exportedAt: ms,
   sessions: z.array(SessionSchema),
   sets: z.array(SetSchema),
+  plans: z.array(PlanSchema).optional(),
 });
 
 export const MAX_BACKUP_BYTES = 20 * 1024 * 1024;

@@ -1,0 +1,58 @@
+{
+  "volume": {
+    "priorizar": {
+      "value": [10, 20],
+      "source": [{ "refId": "schoenfeld2017volume" }],
+      "confidence": "provavel",
+      "note": "A meta-análise achou mais ganho com mais séries semanais, com tendência a favor de 10 ou mais por músculo. O teto de 20 é escolha do SBL View: acima disso há pouca evidência e a recuperação pesa."
+    },
+    "manter": {
+      "value": [3, 6],
+      "source": [{ "refId": "bickel2011" }],
+      "confidence": "provavel",
+      "note": "Em jovens, 1/3 e até 1/9 do volume anterior mantiveram a hipertrofia por 32 semanas; em idosos, não. A faixa exata é escolha do SBL View."
+    }
+  },
+  "defaultSets": {
+    "value": { "priorizar": 12, "manter": 4 },
+    "source": [{ "refId": "sbl_authored" }],
+    "confidence": "especulativo",
+    "note": "Ponto de partida dentro de cada faixa. Ajuste grupo a grupo."
+  },
+  "frequency": {
+    "value": 2,
+    "source": [{ "refId": "schoenfeld2016frequency" }],
+    "confidence": "provavel",
+    "note": "Com volume igual, 2 vezes por semana deu mais hipertrofia que 1. O plano reparte o grupo priorizado em pelo menos 2 dias quando a divisão permite."
+  },
+  "maxSetsPerSession": {
+    "value": 8,
+    "source": [{ "refId": "sbl_authored" }],
+    "confidence": "especulativo",
+    "note": "Teto de séries diretas por grupo em um dia. Acima disto o plano espalha o grupo por mais dias."
+  },
+  "maxSetsPerSlot": {
+    "value": 4,
+    "source": [{ "refId": "sbl_authored" }],
+    "confidence": "especulativo",
+    "note": "Teto de séries por exercício no dia. Acima disto o plano põe um segundo exercício."
+  },
+  "reps": {
+    "value": { "composto": [6, 10], "isolado": [8, 15] },
+    "source": [{ "refId": "schoenfeld2017load" }],
+    "confidence": "provavel",
+    "note": "Com séries perto da falha, cargas leves e pesadas deram hipertrofia parecida. As faixas são escolha prática do SBL View: compostos pesados cansam menos com poucas repetições."
+  },
+  "mesocycle": {
+    "value": { "rirStart": 3, "rirEnd": 1, "deloadSetsFactor": 0.5, "deloadRir": 4 },
+    "source": [{ "refId": "sbl_authored" }],
+    "confidence": "especulativo",
+    "note": "Repetições na reserva caem semana a semana; a semana de descarga corta as séries pela metade. É uma convenção de prescrição, não um resultado de estudo."
+  },
+  "preferLong": {
+    "value": true,
+    "source": [{ "refId": "sbl_reasoning" }],
+    "confidence": "especulativo",
+    "note": "No empate, o plano escolhe o exercício que carrega o alvo alongado. Hipótese em teste, não regra."
+  }
+}

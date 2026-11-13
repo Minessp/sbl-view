@@ -3,7 +3,8 @@ import { Link, useSearch } from 'wouter';
 import { t } from '@/i18n';
 import { exerciseById, library } from '@/features/library/catalog';
 import { repository, requestPersistence } from '@/storage/db';
-import type { SessionWithSets, SetKind } from '@/storage/types';
+import type { PlanContext, SessionWithSets, SetKind } from '@/storage/types';
+import { Today } from '@/features/plano/Today';
 import { KindSelect, loadValid, parseLoad, repsValid, RirSelect, SetRow, timeFmt, TreinoHeader, variantsOf } from './shared';
 
 export default function Treino() {
@@ -29,6 +30,7 @@ export default function Treino() {
   const [open, setOpen] = useState<SessionWithSets | undefined>();
   const [notes, setNotes] = useState('');
   const [notesSaved, setNotesSaved] = useState(false);
+  const [planCtx, setPlanCtx] = useState<PlanContext | undefined>();
 
   const refresh = useCallback(async () => {
     try {
@@ -53,6 +55,7 @@ export default function Treino() {
     if (!loadOk || !repsOk) return;
     try {
       await repository().logSet({
+        ...(planCtx && { plan: planCtx }),
         exerciseId,
         ...(variantId && { variantId }),
         kind,
@@ -91,12 +94,19 @@ export default function Treino() {
     }
   }
 
+  function pick(id: string) {
+    setExerciseId(id);
+    setStatus('idle');
+    document.getElementById(`${uid}-form`)?.scrollIntoView({ block: 'start' });
+  }
+
   const ex = exerciseById(exerciseId);
   const message = { idle: '', saved: L.saved, error: L.error, ended: L.session.ended }[status];
 
   return (
     <main id="conteudo" className="sheet">
       <TreinoHeader title={L.title} lead={L.lead} />
+      <Today open={open} exerciseId={exerciseId} onPick={pick} onContext={setPlanCtx} />
 
       <section className="section" aria-labelledby={`${uid}-form`}>
         <header className="section__head">

@@ -54,6 +54,7 @@ export function TreinoHeader({ title, lead }: { title: string; lead: string }) {
       <p className="sheet__lead prose">{lead}</p>
       <nav className="tabs" aria-label={L.tabs.label}>
         <Tab href="/treino">{L.tabs.log}</Tab>
+        <Tab href="/treino/plano">{L.tabs.plan}</Tab>
         <Tab href="/treino/historico">{L.tabs.history}</Tab>
         <Tab href="/treino/progresso">{L.tabs.progress}</Tab>
         <Tab href="/treino/dados">{L.tabs.data}</Tab>

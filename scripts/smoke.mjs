@@ -2,7 +2,8 @@
  * Teste de fumaça no navegador real (Edge/Chrome do sistema):
  * abre cada rota, falha com erro de console; no Lab, reproduz e troca variação; no Atlas, desenha
  * o músculo e as curvas; na biblioteca, filtra; no Treino, registra uma série, recarrega e confere
- * que ela persistiu no IndexedDB, edita no histórico, vê o progresso, exporta e reimporta o backup.
+ * que ela persistiu no IndexedDB, edita no histórico, vê o progresso, monta um plano e o vê no registro,
+ * troca o Atlas para a malha anatômica, exporta e reimporta o backup.
  * No build (com sw.js), confere que o site abre sem rede.
  *   node scripts/smoke.mjs [base-url]
  */
@@ -107,6 +108,31 @@ await step('progresso: tabela da sessão e contagem semanal', async () => {
   await page.getByLabel('Exercício').selectOption('seated_leg_curl');
   await page.locator('.data-table td', { hasText: '42,5 × 12' }).first().waitFor();
   await page.locator('.data-table--weeks th', { hasText: 'Isquiotibiais' }).waitFor();
+});
+
+await step('plano: gerar, ver o mapa de calor, começar e ver o dia no registro', async () => {
+  await page.goto(`${base}/treino/plano`, { waitUntil: 'networkidle' });
+  const rebuild = page.getByRole('button', { name: 'Refazer o plano' });
+  if (await rebuild.count()) await rebuild.first().click();
+  await page.getByRole('group', { name: 'Prioridade: Quadríceps' }).getByRole('button', { name: 'Priorizar' }).click();
+  await page.getByRole('button', { name: 'Gerar plano' }).click();
+  await page.getByRole('heading', { level: 3, name: /Dia A/ }).waitFor();
+  await page.waitForSelector('.stage[data-ready="true"]', { timeout: 20000 });
+  const start = page.getByRole('button', { name: 'Começar mesociclo' });
+  if (await start.count()) await start.click();
+  await page.goto(`${base}/treino`, { waitUntil: 'networkidle' });
+  await page.getByRole('heading', { name: 'Plano de hoje' }).waitFor();
+  await page.locator('.today__item').first().waitFor();
+});
+
+await step('atlas: malha anatômica (padrão) desenha; troca para o esquemático e volta', async () => {
+  await page.goto(`${base}/atlas/vastus_lateralis`, { waitUntil: 'networkidle' });
+  await page.waitForSelector('.stage[data-ready="true"]', { timeout: 20000 });
+  await page.getByText('BodyParts3D', { exact: false }).first().waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Esquemático' }).click();
+  await page.getByText('BodyParts3D', { exact: false }).first().waitFor({ state: 'detached' });
+  await page.getByRole('button', { name: 'Anatômico' }).click();
+  await page.getByText('BodyParts3D', { exact: false }).first().waitFor();
 });
 
 await step('dados: exportar e reimportar o backup não duplica', async () => {

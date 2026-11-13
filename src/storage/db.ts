@@ -4,11 +4,12 @@
  */
 import Dexie, { type EntityTable } from 'dexie';
 import { mergeById } from './merge';
-import { BACKUP_APP, BACKUP_VERSION, type NewSet, type Session, type SessionWithSets, type SetEntry, type TrainingRepository } from './types';
+import { BACKUP_APP, BACKUP_VERSION, type NewSet, type Plan, type Session, type SessionWithSets, type SetEntry, type TrainingRepository } from './types';
 
 export class SblDb extends Dexie {
   sessions!: EntityTable<Session, 'id'>;
   sets!: EntityTable<SetEntry, 'id'>;
+  plans!: EntityTable<Plan, 'id'>;
 
   constructor(name = 'sbl-view') {
     super(name);
@@ -16,6 +17,8 @@ export class SblDb extends Dexie {
       sessions: 'id, startedAt, mesocycleId, updatedAt',
       sets: 'id, sessionId, exerciseId, [exerciseId+createdAt], createdAt, updatedAt',
     });
+    // Fase 5: tabela nova, nada a migrar.
+    this.version(2).stores({ plans: 'id, updatedAt, startedAt' });
   }
 }
 
@@ -46,8 +49,10 @@ export function createDexieRepository(db: SblDb): TrainingRepository {
       return db.transaction('rw', db.sessions, db.sets, async () => {
         let session = await findOpen(now);
         if (!session) {
-          session = { id: newId(now), createdAt: now, updatedAt: now, startedAt: now };
+          session = { id: newId(now), createdAt: now, updatedAt: now, startedAt: now, ...input.plan };
           await db.sessions.add(session);
+        } else if (input.plan && !session.mesocycleId) {
+          await db.sessions.update(session.id, { ...input.plan });
         }
         // Ordem conta lápides também: nunca reaproveita número.
         const order = await db.sets.where('sessionId').equals(session.id).count();
@@ -160,27 +165,64 @@ export function createDexieRepository(db: SblDb): TrainingRepository {
       return { sessions, sets };
     },
     async exportAll(now = Date.now()) {
-      const [sessions, sets] = await Promise.all([db.sessions.toArray(), db.sets.toArray()]);
-      return { app: BACKUP_APP, version: BACKUP_VERSION, exportedAt: now, sessions, sets };
+      const [sessions, sets, plans] = await Promise.all([db.sessions.toArray(), db.sets.toArray(), db.plans.toArray()]);
+      return { app: BACKUP_APP, version: BACKUP_VERSION, exportedAt: now, sessions, sets, plans };
     },
     async importBackup(backup) {
-      return db.transaction('rw', db.sessions, db.sets, async () => {
-        const [ls, lx] = await Promise.all([
+      return db.transaction('rw', [db.sessions, db.sets, db.plans], async () => {
+        const incomingPlans = backup.plans ?? [];
+        const [ls, lx, lp] = await Promise.all([
           db.sessions.where('id').anyOf(backup.sessions.map((s) => s.id)).toArray(),
           db.sets.where('id').anyOf(backup.sets.map((s) => s.id)).toArray(),
+          db.plans.where('id').anyOf(incomingPlans.map((p) => p.id)).toArray(),
         ]);
         const s = mergeById(ls, backup.sessions);
         const x = mergeById(lx, backup.sets);
         await db.sessions.bulkPut(s.put);
         await db.sets.bulkPut(x.put);
+        await db.plans.bulkPut(mergeById(lp, incomingPlans).put);
         // O relatório fala em séries: é o que a pessoa reconhece.
         return x.report;
       });
     },
     async wipe() {
-      await db.transaction('rw', db.sessions, db.sets, async () => {
+      await db.transaction('rw', [db.sessions, db.sets, db.plans], async () => {
         await db.sessions.clear();
         await db.sets.clear();
+        await db.plans.clear();
+      });
+    },
+    async listPlans() {
+      return db.plans.orderBy('updatedAt').reverse().filter(alive).toArray();
+    },
+    async getPlan(id) {
+      const p = await db.plans.get(id);
+      return p && !p.deletedAt ? p : undefined;
+    },
+    async savePlan(plan, now = Date.now()) {
+      const next = { ...plan, updatedAt: now };
+      await db.plans.put(next);
+      return next;
+    },
+    async deletePlan(id, now = Date.now()) {
+      await db.plans.update(id, { deletedAt: now, updatedAt: now });
+    },
+    async activePlan() {
+      return db.plans
+        .orderBy('startedAt')
+        .reverse()
+        .filter((p) => alive(p) && p.startedAt !== undefined && !p.endedAt)
+        .first();
+    },
+    async planSessions(planId) {
+      return db.transaction('r', db.sessions, db.sets, async () => {
+        const sessions = (await db.sessions.filter((s) => s.mesocycleId === planId && alive(s)).toArray()).sort((a, b) => a.startedAt - b.startedAt);
+        const out: SessionWithSets[] = [];
+        for (const session of sessions) {
+          const sets = await liveSetsOf(session.id);
+          if (sets.length) out.push({ session, sets });
+        }
+        return out;
       });
     },
   };

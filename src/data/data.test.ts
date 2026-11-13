@@ -15,6 +15,9 @@ import musclesJson from './muscles.json';
 import referencesJson from './references.json';
 import skeletonJson from './skeleton.json';
 import trainingJson from './training.json';
+import planningJson from './planning.json';
+import bp3dJson from './bodyparts3d.json';
+import { PlanningFile } from './schema/planning';
 import { E1RM_MAX_REPS } from '@/engine/training/progress';
 import { Reference, type Evidence } from './schema/evidence';
 import { Exercise as ExerciseSchema, LibraryFile } from './schema/exercise';
@@ -37,7 +40,7 @@ function collectEvidence(node: unknown, out: Evidence[] = []): Evidence[] {
 }
 
 const allEvidence = () =>
-  [skeletonJson, musclesJson, anthropometryJson, capacityJson, squatJson, libraryJson, trainingJson].flatMap((j) => collectEvidence(j));
+  [skeletonJson, musclesJson, anthropometryJson, capacityJson, squatJson, libraryJson, trainingJson, planningJson].flatMap((j) => collectEvidence(j));
 
 describe('banco de dados', () => {
   it('referências: ids únicos', () => {
@@ -166,3 +169,27 @@ describe('ações articulares', () => {
     expect(failures).toEqual([]);
   });
 });
+
+describe('planejador e malha anatômica', () => {
+  it('planning.json segue o schema; ponto de partida fica dentro da faixa', () => {
+    const p = PlanningFile.parse(planningJson);
+    for (const k of ['priorizar', 'manter'] as const) {
+      const [lo, hi] = p.volume[k].value;
+      expect(p.defaultSets.value[k]).toBeGreaterThanOrEqual(lo);
+      expect(p.defaultSets.value[k]).toBeLessThanOrEqual(hi);
+    }
+    expect(p.volume.manter.value[1]).toBeLessThanOrEqual(p.volume.priorizar.value[0]);
+  });
+
+  it('bodyparts3d.json: músculos existem; todo músculo do Atlas está mapeado ou listado como ausente', () => {
+    const ids = new Set(z.array(z.object({ id: z.string() }).loose()).parse(musclesJson).map((m) => m.id));
+    const mapped = Object.keys(bp3dJson.muscles);
+    const missing = Object.keys(bp3dJson.missing);
+    for (const id of [...mapped, ...missing, ...bp3dJson.deep]) expect(ids.has(id), id).toBe(true);
+    expect(mapped.filter((m) => missing.includes(m))).toEqual([]);
+    expect([...mapped, ...missing].sort()).toEqual([...ids].sort());
+    for (const list of Object.values(bp3dJson.muscles)) for (const f of list) expect(f).toMatch(/^FMA\d+$/);
+    expect(refIds.has(bp3dJson.source.refId)).toBe(true);
+  });
+});
+

@@ -36,7 +36,48 @@ export interface SetEntry extends Entity {
   note?: string;
 }
 
+/** Item de um dia do plano. */
+export interface PlanItemEntry {
+  exerciseId: string;
+  sets: number;
+  reps: [number, number];
+}
+
+export interface PlanDayEntry {
+  id: string;
+  focus: 'full' | 'upper' | 'lower';
+  items: PlanItemEntry[];
+}
+
+export type PlanPriority = 'priorizar' | 'manter' | 'fora';
+
+/**
+ * Plano (mesociclo). Começado = `startedAt`; o ativo é o começado mais recente sem `endedAt`.
+ * Sessões registradas com o plano levam `mesocycleId` = id do plano.
+ */
+export interface Plan extends Entity {
+  name: string;
+  weeks: number;
+  deload: boolean;
+  equipment: string[];
+  priorities: Record<string, PlanPriority>;
+  /** Séries diretas por semana por grupo. */
+  targets: Record<string, number>;
+  days: PlanDayEntry[];
+  startedAt?: number;
+  endedAt?: number;
+}
+
+/** Contexto do plano no momento do registro. */
+export interface PlanContext {
+  mesocycleId: string;
+  week: number;
+  dayId: string;
+}
+
 export interface NewSet {
+  /** Sessão nova nasce com este contexto; sessão aberta sem plano o recebe. */
+  plan?: PlanContext;
   exerciseId: string;
   variantId?: string;
   kind?: SetKind;
@@ -70,6 +111,8 @@ export interface Backup {
   exportedAt: number;
   sessions: Session[];
   sets: SetEntry[];
+  /** Ausente em backups anteriores à Fase 5. */
+  plans?: Plan[];
 }
 
 export interface ImportReport {
@@ -103,4 +146,14 @@ export interface TrainingRepository {
   importBackup(backup: Backup): Promise<ImportReport>;
   /** Apaga de verdade, sem lápide. */
   wipe(): Promise<void>;
+  /** Planos vivos, mais recentes primeiro. */
+  listPlans(): Promise<Plan[]>;
+  getPlan(id: string): Promise<Plan | undefined>;
+  /** Grava (cria ou substitui) e carimba `updatedAt`. */
+  savePlan(plan: Plan, now?: number): Promise<Plan>;
+  deletePlan(id: string, now?: number): Promise<void>;
+  /** Começado e não encerrado, o mais recente. */
+  activePlan(): Promise<Plan | undefined>;
+  /** Sessões vivas do mesociclo, mais antigas primeiro, com as séries. */
+  planSessions(planId: string): Promise<SessionWithSets[]>;
 }
