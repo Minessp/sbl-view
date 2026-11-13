@@ -5,7 +5,7 @@ import { LineChart, type ChartSeries } from '@/charts/LineChart';
 import { getReference } from '@/data';
 import type { Confidence } from '@/data/schema/evidence';
 import { depthAt } from '@/engine/exercises/squat';
-import { fmt, t } from '@/i18n';
+import { fmt, t } from '@/i18n/app';
 import { useStage } from '@/scene/stageStore';
 import { EvidenceSeal } from '@/ui/EvidenceSeal';
 import { effortRefs, rawEffort, sampleAt } from './derive';
@@ -14,6 +14,7 @@ import { LabSettingsPanel } from './Settings';
 import { PATTERNS, useLab, useLabSlots } from './store';
 import { Scrubber } from './Scrubber';
 import './lab.css';
+import { TableWrap } from '@/ui/TableWrap';
 
 const N = 49;
 const X = Array.from({ length: N }, (_, i) => i / (N - 1));
@@ -76,7 +77,7 @@ function ViewSlot({ id, index }: { id: string; index: number }) {
         <span className="view-slot__name">{v.label}</span>
         {index === 0 && <span className="view-slot__ref">{t.lab.primary}</span>}
       </figcaption>
-      <div ref={ref} className="view-slot__stage" />
+      <div ref={ref} className="view-slot__stage" role="img" aria-label={t.lab.viewFigure(v.label)} />
       {host &&
         createPortal(
           <div
@@ -280,7 +281,7 @@ function NumberTable({ series, u }: { series: VariantSeries[]; u: number }) {
       <header className="section__head">
         <h2 id="sec-table">{t.lab.sections.table}</h2>
       </header>
-      <div className="table-wrap">
+      <TableWrap label={t.lab.sections.table}>
         <table className="num-table">
           <thead>
             <tr>
@@ -314,7 +315,7 @@ function NumberTable({ series, u }: { series: VariantSeries[]; u: number }) {
             })}
           </tbody>
         </table>
-      </div>
+      </TableWrap>
     </section>
   );
 }

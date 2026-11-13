@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import { fmt, t } from '@/i18n';
+import { fmt, t } from '@/i18n/app';
 import { DEFAULT_SETTINGS, variantById, type LabSettings } from './model';
 import { useLab } from './store';
 

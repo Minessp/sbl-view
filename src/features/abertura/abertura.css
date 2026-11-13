@@ -371,3 +371,43 @@
     transform: translateY(50%);
   }
 }
+
+/* ---------- Entrada (acompanha o corpo sendo entintado, ~1,8 s) ---------- */
+@keyframes opening-rule {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes opening-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.35em);
+  }
+}
+
+.opening__plate::after {
+  transform-origin: left center;
+  animation: opening-rule 900ms var(--ease) 200ms backwards;
+}
+
+.opening__plate {
+  animation: opening-rise 600ms var(--ease) backwards;
+}
+
+.opening__title {
+  animation: opening-rise 900ms var(--ease) 120ms backwards;
+}
+
+.opening__lead {
+  animation: opening-rise 900ms var(--ease) 420ms backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .opening__plate,
+  .opening__plate::after,
+  .opening__title,
+  .opening__lead {
+    animation: none;
+  }
+}

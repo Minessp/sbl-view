@@ -4,7 +4,7 @@
  */
 import { useState } from 'react';
 import { Link, useRoute } from 'wouter';
-import { fmt, locale, t } from '@/i18n';
+import { fmt, locale, t } from '@/i18n/app';
 import { exerciseById } from '@/features/library/catalog';
 import squatJson from '@/data/exercises/squat.json';
 import type { Exercise } from '@/data/schema/exercise';

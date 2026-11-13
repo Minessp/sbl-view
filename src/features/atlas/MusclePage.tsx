@@ -3,7 +3,7 @@ import { Link } from 'wouter';
 import { LineChart, type LinePattern } from '@/charts/LineChart';
 import { getReference } from '@/data';
 import type { MuscleDef } from '@/data/schema/muscle';
-import { fmt, t } from '@/i18n';
+import { fmt, t } from '@/i18n/app';
 import { useStage } from '@/scene/stageStore';
 import { EvidenceSeal } from '@/ui/EvidenceSeal';
 import { Sources } from '@/ui/Sources';

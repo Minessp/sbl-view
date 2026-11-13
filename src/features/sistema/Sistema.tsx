@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { t, fmt } from '@/i18n';
+import { t, fmt } from '@/i18n/app';
 import { contrast } from '@/ui/color';
 import { EvidenceSeal } from '@/ui/EvidenceSeal';
 import { useTheme } from '@/ui/theme';

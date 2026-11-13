@@ -2,13 +2,14 @@
 import { fileURLToPath, URL } from 'node:url';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
+import { fontPreload } from './scripts/vite-preload';
 import { pwa } from './scripts/vite-pwa';
 
 export default defineConfig({
   // Cloudflare Pages: raiz. GitHub Pages: BASE_PATH=/sbl-view/ no build.
   // (Caminho relativo './' quebraria assets em rotas aninhadas.)
   base: process.env.BASE_PATH ?? '/',
-  plugins: [react(), pwa()],
+  plugins: [react(), fontPreload(), pwa()],
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },

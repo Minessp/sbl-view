@@ -8,14 +8,13 @@
  * partof_element_parts.txt de https://dbarchive.biosciencedbc.jp/en/bodyparts3d/download.html
  * e extraia tudo numa pasta vazia. O mapeamento músculo → conceito FMA está em src/data/bodyparts3d.json.
  *
- * Formato (little-endian): "SBL3" | u32 versão | u32 tamanho do JSON | JSON (preenchido até 4 bytes)
- * | posições Int16×3 por parte (cada bloco alinhado a 4) | índices Uint16 ou Uint32 por parte.
- * Posição em metros = offset + q / 32767 × scale. Sistema do SBL View: Y para cima, Z anterior,
+ * Formato: SBL4 (scripts/sbl4.mjs). Sistema do SBL View: Y para cima, Z anterior,
  * X para a esquerda do sujeito, estatura 1,75 m, pés em y = 0.
  */
 import { readdirSync, readFileSync, statSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, join, basename } from 'node:path';
 import { MeshoptSimplifier } from 'meshoptimizer';
+import { packSBL4 } from './sbl4.mjs';
 
 const [dir, out = 'public/models/bp3d.bin'] = process.argv.slice(2);
 if (!dir) {
@@ -181,46 +180,16 @@ for (const p of parts)
 const offset = lo.map((l, k) => (l + hi[k]) / 2);
 const scale = lo.map((l, k) => (hi[k] - l) / 2);
 
-// --- Escrita --------------------------------------------------------------------------------
-const pad4 = (n) => (n + 3) & ~3;
-const chunks = [];
-let cursor = 0;
-const header = { version: 1, offset, scale, parts: [] };
-for (const p of parts) {
-  const n = p.mesh.pos.length / 3;
-  const q = new Int16Array(pad4(n * 3 * 2) / 2);
-  for (let i = 0; i < n * 3; i++) q[i] = Math.round(((p.mesh.pos[i] - offset[i % 3]) / scale[i % 3]) * 32767);
-  const index16 = n < 65536;
-  const ind = index16 ? new Uint16Array(pad4(p.mesh.idx.length * 2) / 2) : new Uint32Array(p.mesh.idx.length);
-  ind.set(p.mesh.idx);
-  header.parts.push({
-    key: p.key,
-    kind: p.kind,
-    ...(p.muscleId && { muscleId: p.muscleId }),
-    mirror: p.mirror,
-    vertexCount: n,
-    indexCount: p.mesh.idx.length,
-    index16,
-    positions: cursor,
-    indices: cursor + q.byteLength,
-  });
-  chunks.push(q, ind);
-  cursor += q.byteLength + ind.byteLength;
-}
-const json = new TextEncoder().encode(JSON.stringify(header));
-const jsonLen = pad4(json.length);
-const buf = new Uint8Array(12 + jsonLen + cursor);
-const dv = new DataView(buf.buffer);
-buf.set(new TextEncoder().encode('SBL3'), 0);
-dv.setUint32(4, 1, true);
-dv.setUint32(8, jsonLen, true);
-buf.set(json, 12);
-buf.fill(0x20, 12 + json.length, 12 + jsonLen);
-let at = 12 + jsonLen;
-for (const c of chunks) {
-  buf.set(new Uint8Array(c.buffer, c.byteOffset, c.byteLength), at);
-  at += c.byteLength;
-}
+// --- Escrita (SBL4, ver scripts/sbl4.mjs) ---------------------------------------------------
+const { buf, header } = await packSBL4({
+  offset,
+  scale,
+  parts: parts.map((p) => {
+    const q = new Int16Array(p.mesh.pos.length);
+    for (let i = 0; i < q.length; i++) q[i] = Math.round(((p.mesh.pos[i] - offset[i % 3]) / scale[i % 3]) * 32767);
+    return { key: p.key, kind: p.kind, muscleId: p.muscleId, mirror: p.mirror, q, idx: Uint32Array.from(p.mesh.idx) };
+  }),
+});
 mkdirSync(dirname(out), { recursive: true });
 writeFileSync(out, buf);
 

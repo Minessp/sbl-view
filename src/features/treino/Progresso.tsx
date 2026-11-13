@@ -3,7 +3,7 @@ import { LineChart, type ChartSeries } from '@/charts/LineChart';
 import trainingJson from '@/data/training.json';
 import { E1RM_MAX_REPS, exerciseProgress, lastWeeks, weeklySetsByGroup } from '@/engine/training/progress';
 import { exerciseById, muscleById, REGIONS } from '@/features/library/catalog';
-import { fmt, t } from '@/i18n';
+import { fmt, t } from '@/i18n/app';
 import { repository } from '@/storage/db';
 import type { SetEntry } from '@/storage/types';
 import { EvidenceSeal } from '@/ui/EvidenceSeal';
@@ -12,6 +12,7 @@ import { getReference } from '@/data';
 import type { Confidence } from '@/data/schema/evidence';
 import { BodyHeatmap } from '@/features/heat/BodyHeatmap';
 import { exerciseName, shortDateFmt, TreinoHeader } from './shared';
+import { TableWrap } from '@/ui/TableWrap';
 
 const WEEKS = 4;
 const e1rmEvidence = trainingJson.e1rm.maxReps;
@@ -90,7 +91,7 @@ function ExerciseChart({ sets, exerciseId }: { sets: readonly SetEntry[]; exerci
           {L.best}: <strong>{fmt.n1(best.v)} kg</strong> ({shortDateFmt.format(best.at)})
         </p>
       )}
-      <div className="table-wrap">
+      <TableWrap label={L.chartTitle}>
         <table className="data-table">
           <thead>
             <tr>
@@ -115,7 +116,7 @@ function ExerciseChart({ sets, exerciseId }: { sets: readonly SetEntry[]; exerci
             ))}
           </tbody>
         </table>
-      </div>
+      </TableWrap>
       <div className="progress__note">
         <EvidenceSeal confidence={e1rmEvidence.confidence as Confidence} unverified={!e1rmEvidence.source.some((s) => getReference(s.refId)?.verified)} />
         <p className="prose">{L.e1rmNote(E1RM_MAX_REPS)}</p>
@@ -136,7 +137,7 @@ function WeeklyTable({ sets }: { sets: readonly SetEntry[] }) {
 
   if (rows.length === 0) return <p className="logger__empty">{L.weeklyEmpty}</p>;
   return (
-    <div className="table-wrap">
+    <TableWrap label={L.weekly}>
       <table className="data-table data-table--weeks">
         <thead>
           <tr>
@@ -163,7 +164,7 @@ function WeeklyTable({ sets }: { sets: readonly SetEntry[] }) {
           ))}
         </tbody>
       </table>
-    </div>
+    </TableWrap>
   );
 }
 

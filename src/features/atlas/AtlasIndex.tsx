@@ -1,6 +1,6 @@
 import { Link } from 'wouter';
 import { muscleDefs } from '@/data';
-import { t } from '@/i18n';
+import { t } from '@/i18n/app';
 import { musclesInGroup, REGIONS } from '@/features/library/catalog';
 import './atlas.css';
 

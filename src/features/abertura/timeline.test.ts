@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CUT_OFF, CUT_WINDOWS, cutHeight, openingFrame } from './timeline';
+import { CUT_OFF, CUT_WINDOWS, cutHeight, introCut, introDolly, openingFrame } from './timeline';
 
 describe('coreografia da abertura', () => {
   it('nenhum corte no início; tudo cortado no fim', () => {
@@ -28,5 +28,18 @@ describe('coreografia da abertura', () => {
   it('câmera termina de perfil', () => {
     expect(openingFrame(0).azimuth).toBeCloseTo(0, 6);
     expect(openingFrame(1).azimuth).toBeCloseTo(-Math.PI / 2, 6);
+  });
+});
+
+describe('entrada', () => {
+  it('plano sobe do chão ao topo e depois desliga', () => {
+    expect(introCut(0)).toBeLessThan(0);
+    expect(introCut(0.5)).toBeGreaterThan(introCut(0.25));
+    expect(introCut(0.999)).toBeGreaterThan(1.8);
+    expect(introCut(1)).toBe(CUT_OFF);
+  });
+  it('câmera termina na distância normal', () => {
+    expect(introDolly(0)).toBeGreaterThan(1);
+    expect(introDolly(1)).toBe(1);
   });
 });

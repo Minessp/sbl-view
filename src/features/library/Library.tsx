@@ -2,7 +2,7 @@ import { useId, useMemo, useState } from 'react';
 import { Link } from 'wouter';
 import type { Equipment, LibraryExercise, MovementPattern } from '@/data/schema/exercise';
 import type { MuscleGroup } from '@/data/schema/muscle';
-import { t } from '@/i18n';
+import { t } from '@/i18n/app';
 import { EvidenceSeal } from '@/ui/EvidenceSeal';
 import { filterExercises, library, muscleById, NO_FILTERS, targetGroups, type ExerciseFilters } from './catalog';
 import { EmphasisMark } from './EmphasisMark';

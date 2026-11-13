@@ -4,7 +4,7 @@ import bp3d from '@/data/bodyparts3d.json';
 import { parseAnatomical } from './anatomical';
 
 const file = readFileSync(new URL('../../../public/models/bp3d.bin', import.meta.url));
-const model = parseAnatomical(file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength));
+const model = await parseAnatomical(file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength));
 
 describe('malha anatômica (BodyParts3D)', () => {
   it('tem todo músculo mapeado, ossos, contexto e pele', () => {

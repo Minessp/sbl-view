@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { Link, useSearch } from 'wouter';
-import { t } from '@/i18n';
+import { t } from '@/i18n/app';
 import { exerciseById, library } from '@/features/library/catalog';
 import { repository, requestPersistence } from '@/storage/db';
 import type { PlanContext, SessionWithSets, SetKind } from '@/storage/types';

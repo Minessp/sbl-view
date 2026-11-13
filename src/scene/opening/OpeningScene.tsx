@@ -9,7 +9,7 @@ import { sampleCurve, spindleIndices, spindleUVs, vertexCount, writeSpindle, typ
 import { at, must } from '@/engine/math/arr';
 import { scale, type Vec3 } from '@/engine/math/vec';
 import { CALLOUTS } from '@/features/abertura/callouts';
-import { CUT_OFF, LAYER_WINDOWS, openingFrame, windowWeight } from '@/features/abertura/timeline';
+import { CUT_OFF, INTRO_SECONDS, introCut, introDolly, LAYER_WINDOWS, openingFrame, windowWeight } from '@/features/abertura/timeline';
 import { useTheme } from '@/ui/theme';
 import { anchors, setAnchorWorld, type Anchor } from '../annotations';
 import { buildBones } from '../body/bones';
@@ -123,6 +123,8 @@ export function OpeningScene() {
 
   // ---- Laço: progresso amortecido → cortes, câmera, chamadas ----
   const shown = useRef(useStage.getState().progress);
+  // Entrada só na primeira pintura, no topo da página e sem redução de movimento.
+  const intro = useRef(reduceMotion() || useStage.getState().progress > 0.02 ? 1 : 0);
   const target = new Vector3(0, 0.93, 0);
   const tmp = useRef(new Vector3());
   const skinRef = useRef<Mesh>(null);
@@ -142,9 +144,16 @@ export function OpeningScene() {
     const p = shown.current;
     const f = openingFrame(p);
 
-    layer.skin.cut.value = f.cuts.skin;
-    layer.superficial.cut.value = f.cuts.superficial;
-    layer.deep.cut.value = f.cuts.deep;
+    if (intro.current < 1) {
+      // Primeiro quadro pode vir com dt enorme (aba carregando): limita o passo.
+      intro.current = Math.min(1, intro.current + Math.min(dt, 1 / 30) / INTRO_SECONDS);
+      invalidate();
+    }
+    const ic = introCut(intro.current);
+    layer.skin.cut.value = Math.min(f.cuts.skin, ic);
+    layer.superficial.cut.value = Math.min(f.cuts.superficial, ic);
+    layer.deep.cut.value = Math.min(f.cuts.deep, ic);
+    layer.bone.cut.value = ic;
 
     // Músculos chamados "acendem" enquanto a camada deles está em evidência.
     for (const c of CALLOUTS) {
@@ -162,7 +171,7 @@ export function OpeningScene() {
     const fitW = 0.5 / (Math.tan((camera.fov * Math.PI) / 360) * aspect);
     // Celular (retrato): o corpo ocupa a metade de cima; o cartão de texto fica embaixo.
     const portrait = aspect < 0.8;
-    const dist = Math.max(fitH, fitW) * (portrait ? 1.75 : 1.04);
+    const dist = Math.max(fitH, fitW) * (portrait ? 1.75 : 1.04) * introDolly(intro.current);
     camera.position.set(Math.sin(f.azimuth) * dist, 1.02, Math.cos(f.azimuth) * dist);
     camera.lookAt(target);
     if (portrait) camera.setViewOffset(size.width, size.height, 0, size.height * 0.22, size.width, size.height);

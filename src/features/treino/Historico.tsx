@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { t } from '@/i18n';
+import { t } from '@/i18n/app';
 import { repository } from '@/storage/db';
 import type { SessionWithSets } from '@/storage/types';
 import { dayFmt, exerciseName, SetRow, timeFmt, TreinoHeader } from './shared';

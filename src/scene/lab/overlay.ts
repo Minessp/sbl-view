@@ -5,7 +5,7 @@
  */
 import type { SquatFrame } from '@/engine/exercises/squat';
 import type { Vec3 } from '@/engine/math/vec';
-import { fmt } from '@/i18n';
+import { fmt } from '@/i18n/app';
 
 type Project = (v: Vec3) => readonly [number, number];
 

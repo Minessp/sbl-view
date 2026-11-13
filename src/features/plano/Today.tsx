@@ -5,7 +5,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'wouter';
 import { currentWeek, nextDay, scaleSets } from '@/engine/planning/volume';
-import { t } from '@/i18n';
+import { t } from '@/i18n/app';
 import { repository } from '@/storage/db';
 import type { Plan, PlanContext, SessionWithSets } from '@/storage/types';
 import { exerciseName } from '@/features/treino/shared';

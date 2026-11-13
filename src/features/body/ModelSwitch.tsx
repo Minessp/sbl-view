@@ -1,4 +1,4 @@
-import { t } from '@/i18n';
+import { t } from '@/i18n/app';
 import { useBody, type BodyKind } from './store';
 
 const KINDS: BodyKind[] = ['esquematico', 'anatomico'];

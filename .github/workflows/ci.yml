@@ -26,12 +26,8 @@ jobs:
         run: npm test
       - name: Build
         run: npm run build
-      - name: Orçamento da shell (JS inicial, gzip)
-        run: |
-          f=$(ls dist/assets/index-*.js)
-          size=$(gzip -c "$f" | wc -c)
-          echo "shell: $size bytes gzip"
-          test "$size" -lt 81920
+      - name: Orçamento da shell (JS e CSS iniciais, gzip)
+        run: node scripts/budget.mjs
 
   smoke:
     runs-on: ubuntu-latest
@@ -45,8 +41,9 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run build
-      - name: Teste de fumaça (abertura, sistema, lab, registro de série)
+      - name: Fumaça e acessibilidade (axe, WCAG 2.2 AA)
         run: |
           npx vite preview --port 4173 --strictPort &
           npx --yes wait-on@8 http://localhost:4173
           node scripts/smoke.mjs http://localhost:4173
+          node scripts/a11y.mjs http://localhost:4173

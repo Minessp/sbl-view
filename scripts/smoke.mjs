@@ -38,6 +38,14 @@ await step('abertura carrega e palco fica pronto', async () => {
 await step('sistema carrega', async () => {
   await page.goto(`${base}/sistema`, { waitUntil: 'networkidle' });
   await page.getByRole('heading', { name: 'Sistema visual' }).waitFor();
+  await page.waitForFunction(() => document.title === 'Sistema visual — SBL View', null, { timeout: 5000 });
+});
+
+await step('rota inexistente mostra 404 e navegação leva o foco ao h1', async () => {
+  await page.goto(`${base}/nao-existe`, { waitUntil: 'networkidle' });
+  await page.getByRole('heading', { name: 'Prancha não encontrada' }).waitFor();
+  await page.getByRole('main').getByRole('link', { name: 'Atlas' }).click();
+  await page.waitForFunction(() => document.activeElement?.tagName === 'H1', null, { timeout: 8000 });
 });
 
 await step('lab carrega com duas vistas e anotações preenchidas', async () => {

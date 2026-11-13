@@ -1,5 +1,5 @@
 import { getReference } from '@/data';
-import { t } from '@/i18n';
+import { t } from '@/i18n/app';
 
 /** Lista de referências por id. Não conferida = marca "[a verificar]". */
 export function Sources({ ids }: { ids: readonly string[] }) {

@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { skeletonDef } from '@/data';
 import { forwardKinematics, jointPosition, pointToWorld } from '@/engine/kinematics/fk';
 import { bilateral, buildSkeleton, degToAngles } from '@/engine/kinematics/skeleton';
-import { t } from '@/i18n';
+import { t } from '@/i18n/app';
 
 export function SkeletonFallback() {
   const lines = useMemo(() => {

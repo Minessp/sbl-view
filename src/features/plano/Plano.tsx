@@ -7,7 +7,7 @@ import type { Priority } from '@/engine/planning/types';
 import { classify, currentWeek, scaleSets } from '@/engine/planning/volume';
 import { BodyHeatmap } from '@/features/heat/BodyHeatmap';
 import { exerciseById, library } from '@/features/library/catalog';
-import { fmt, t } from '@/i18n';
+import { fmt, t } from '@/i18n/app';
 import { newId, repository } from '@/storage/db';
 import type { Plan, PlanDayEntry } from '@/storage/types';
 import { EvidenceSeal } from '@/ui/EvidenceSeal';
@@ -15,6 +15,7 @@ import { Sources } from '@/ui/Sources';
 import { exerciseName, TreinoHeader } from '@/features/treino/shared';
 import { buildDays, defaultTarget, initialPriorities, plannableGroups, planning, rangeFor, volumeOf, weeksOf, weekStart } from './model';
 import './plano.css';
+import { TableWrap } from '@/ui/TableWrap';
 
 const EQUIPMENT = ['barra', 'halteres', 'maquina', 'polia', 'banco', 'rack', 'peso_corporal'] as const;
 const DAY_OPTIONS = [2, 3, 4, 5, 6];
@@ -119,7 +120,7 @@ function Builder({ initial, onDone, onCancel }: { initial: Plan | null; onDone: 
       <fieldset className="plan-builder__row">
         <legend>{P.priorities}</legend>
         <p className="section__note">{P.prioritiesLead}</p>
-        <div className="table-wrap">
+        <TableWrap label={P.priorities}>
           <table className="data-table plan-priorities">
             <thead>
               <tr>
@@ -168,7 +169,7 @@ function Builder({ initial, onDone, onCancel }: { initial: Plan | null; onDone: 
               })}
             </tbody>
           </table>
-        </div>
+        </TableWrap>
       </fieldset>
       <div className="sheet__actions">
         <button type="submit" className="btn-primary" disabled={!anyTarget}>
@@ -255,7 +256,7 @@ function VolumeTable({ plan }: { plan: Plan }) {
   // Grupos do plano mais os que só aparecem como indireta; fora e sem séries não entram.
   const groups = useMemo(() => [...new Set<string>([...plannableGroups, ...v.keys()])].filter((g) => v.has(g) || plan.priorities[g] !== 'fora'), [v, plan.priorities]);
   return (
-    <div className="table-wrap">
+    <TableWrap label={P.volume}>
       <table className="data-table">
         <thead>
           <tr>
@@ -294,7 +295,7 @@ function VolumeTable({ plan }: { plan: Plan }) {
           })}
         </tbody>
       </table>
-    </div>
+    </TableWrap>
   );
 }
 
@@ -302,7 +303,7 @@ function MesoTable({ plan, week }: { plan: Plan; week: number | null }) {
   const P = t.plan;
   const weeks = weeksOf(plan);
   return (
-    <div className="table-wrap">
+    <TableWrap label={P.meso}>
       <table className="data-table">
         <thead>
           <tr>
@@ -324,7 +325,7 @@ function MesoTable({ plan, week }: { plan: Plan; week: number | null }) {
           ))}
         </tbody>
       </table>
-    </div>
+    </TableWrap>
   );
 }
 

@@ -3,7 +3,7 @@
  * cheio = estabelecido, metade = provável, vazio = especulativo; tracejado = hipótese.
  */
 import type { Confidence } from '@/data/schema/evidence';
-import { t } from '@/i18n';
+import { t } from '@/i18n/app';
 import './evidence-seal.css';
 
 interface Props {

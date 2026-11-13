@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Link } from 'wouter';
 import { getReference } from '@/data';
-import { t } from '@/i18n';
+import { t } from '@/i18n/app';
 import { EvidenceSeal } from '@/ui/EvidenceSeal';
 import { Sources } from '@/ui/Sources';
 import { exerciseById, muscleById } from './catalog';

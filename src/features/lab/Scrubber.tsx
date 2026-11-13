@@ -4,7 +4,7 @@
  */
 import { useEffect, useId } from 'react';
 import { depthAt } from '@/engine/exercises/squat';
-import { fmt, t } from '@/i18n';
+import { fmt, t } from '@/i18n/app';
 import { sampleAt } from './derive';
 import type { VariantSeries } from './model';
 import { useLab } from './store';

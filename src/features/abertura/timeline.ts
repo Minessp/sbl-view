@@ -76,3 +76,22 @@ export function openingFrame(p: number): OpeningFrame {
   const azimuth = -(Math.PI / 2) * smooth(clamp01((p - 0.04) / 0.9));
   return { cuts, activeCut, azimuth, focus };
 }
+
+/** Duração da entrada (s): o corpo é "entintado" dos pés à cabeça antes do primeiro scroll. */
+export const INTRO_SECONDS = 1.8;
+
+/**
+ * Entrada: altura (m) do plano que sobe do chão ao topo; acima dele tudo é fantasma.
+ * t = 0..1 do tempo da entrada; em t ≥ 1 devolve CUT_OFF (sem efeito).
+ */
+export function introCut(t: number): number {
+  if (t >= 1) return CUT_OFF;
+  const u = 1 - (1 - clamp01(t)) ** 3;
+  return FLOOR + (TOP + 0.12 - FLOOR) * u;
+}
+
+/** Recuo extra da câmera durante a entrada (fator sobre a distância). */
+export function introDolly(t: number): number {
+  const u = 1 - (1 - clamp01(t)) ** 3;
+  return 1 + 0.07 * (1 - u);
+}

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
-import { fmt, t } from '@/i18n';
+import { fmt, t } from '@/i18n/app';
 import { backupFileName, parseBackup, type ParseError } from '@/storage/backup';
 import { repository, requestPersistence, storageStatus, type StorageStatus } from '@/storage/db';
 import { TreinoHeader } from './shared';
@@ -141,7 +141,7 @@ export default function Dados() {
           <h2 id={`${uid}-imp`}>{L.importTitle}</h2>
           <p>{L.importLead}</p>
         </header>
-        <input ref={fileRef} id={`${uid}-file`} type="file" accept="application/json,.json" className="visually-hidden" onChange={(e) => void onImport(e)} />
+        <input ref={fileRef} id={`${uid}-file`} type="file" tabIndex={-1} aria-labelledby={`${uid}-imp`} accept="application/json,.json" className="visually-hidden" onChange={(e) => void onImport(e)} />
         <button type="button" className="btn-secondary" onClick={() => fileRef.current?.click()}>
           {L.importBtn}
         </button>

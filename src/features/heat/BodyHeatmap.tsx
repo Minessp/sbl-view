@@ -4,7 +4,7 @@
  */
 import { useEffect, useRef } from 'react';
 import { muscleDefs } from '@/data';
-import { t } from '@/i18n';
+import { t } from '@/i18n/app';
 import { useStage } from '@/scene/stageStore';
 import { ModelSwitch } from '@/features/body/ModelSwitch';
 import { useBody } from '@/features/body/store';

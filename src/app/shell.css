@@ -347,3 +347,96 @@
   text-decoration-thickness: 2px;
   text-underline-offset: 0.25em;
 }
+
+/* ---------- Mensagem (404, erro de carga) ---------- */
+.page--message {
+  min-height: 70vh;
+  max-width: 720px;
+}
+
+.page--message h1 {
+  font-variation-settings: 'wdth' 75;
+  font-size: clamp(2.25rem, 6vw, 3.5rem);
+  line-height: 1.02;
+  margin: 0 0 var(--s-4);
+}
+
+.page__eyebrow {
+  margin: 0 0 var(--s-3);
+  color: var(--c-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.page__lead {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  max-width: 60ch;
+  margin: 0 0 var(--s-6);
+}
+
+.page__links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-top: var(--lw-hair) solid var(--c-rule);
+}
+
+.page__links a {
+  display: block;
+  padding: var(--s-3) 0;
+  border-bottom: var(--lw-hair) solid var(--c-rule);
+  color: var(--c-ink);
+  text-decoration: none;
+}
+
+.page__links a:hover {
+  color: var(--c-accent);
+}
+
+.page__action {
+  font: inherit;
+  padding: var(--s-3) var(--s-5);
+  min-height: 44px;
+  border: var(--lw-curve) solid var(--c-ink);
+  background: var(--c-ink);
+  color: var(--c-bg);
+  cursor: pointer;
+}
+
+/* ---------- Entrada de página ----------
+ * Só "backwards": depois de terminar, a animação não deixa transform no elemento
+ * (transform ativo viraria bloco de contenção para fixed e mexeria nas vistas 3D).
+ * Redução de movimento zera as durações nos tokens. */
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+main.sheet > *,
+main.page > * {
+  animation: page-in var(--t-slow) var(--ease) backwards;
+}
+
+main.sheet > :nth-child(2),
+main.page > :nth-child(2) {
+  animation-delay: 50ms;
+}
+
+main.sheet > :nth-child(3),
+main.page > :nth-child(3) {
+  animation-delay: 100ms;
+}
+
+main.sheet > :nth-child(n + 4),
+main.page > :nth-child(n + 4) {
+  animation-delay: 150ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main.sheet > *,
+  main.page > * {
+    animation: none;
+  }
+}
