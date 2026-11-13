@@ -20,7 +20,7 @@ interface HeaderPart {
   mirror: boolean;
   objects: string[];
   segment?: string;
-  muscle?: string;
+  layer?: 'superficial' | 'deep';
   skinDepth?: number;
   ends?: [string, string];
   centerline?: Vec3[];
@@ -60,8 +60,8 @@ export interface AnatomyPart {
   readonly objects: readonly string[];
   /** Osso: segmento do esqueleto em que é rígido. */
   readonly segment?: string;
-  /** Músculo do Atlas (`muscles.json`) a que a parte pertence. */
-  readonly muscle?: string;
+  /** Músculo e tendão: superficial se é a primeira camada mole sob a pele em algum trecho. */
+  readonly layer?: 'superficial' | 'deep';
   /** Mediana da distância dos vértices à pele, mm. */
   readonly skinDepth?: number;
   /** Segmento da origem e da inserção (músculo, tendão). */
@@ -155,7 +155,7 @@ export async function parseAnatomyPack(buf: ArrayBuffer): Promise<AnatomyPack> {
       mirror: h.mirror,
       objects: h.objects,
       ...(h.segment !== undefined && { segment: h.segment }),
-      ...(h.muscle !== undefined && { muscle: h.muscle }),
+      ...(h.layer !== undefined && { layer: h.layer }),
       ...(h.skinDepth !== undefined && { skinDepth: h.skinDepth }),
       ...(h.ends && { ends: h.ends }),
       ...(h.centerline && { centerline: h.centerline }),

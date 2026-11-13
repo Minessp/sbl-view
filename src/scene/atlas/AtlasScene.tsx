@@ -2,43 +2,72 @@ import { OrthographicCamera, View } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
 import { type OrthographicCamera as OrthoCam, Vector3 } from 'three';
+import { skeletonDef } from '@/data';
+import { forwardKinematics } from '@/engine/kinematics/fk';
+import { buildSkeleton } from '@/engine/kinematics/skeleton';
 import type { Vec3 } from '@/engine/math/vec';
 import { useAtlas, type AtlasView } from '@/features/atlas/store';
-import { missingInAnatomical } from '@/features/body/store';
-import type { Box } from '../body/figure';
-import { FigureMeshes, STAIN_OFF, STAIN_ON, useFigureMaterials } from '../body/FigureMeshes';
-import { useFigure } from '../body/useFigure';
+import { boxOfSlots, type Box } from '../body/model';
+import { STANDING } from '../body/poses';
+import { useBodyInstance, useBodyModel } from '../body/useBody';
 import { useStage } from '../stageStore';
 
 const DEFAULT_BOX: Box = { center: [0, 0.93, 0], size: [0.5, 1.8, 0.3] };
 /** Câmera: direção de onde olha (o sujeito olha +Z; o lado direito dele fica em −X). */
 const DIR: Record<AtlasView, Vec3> = { front: [0, 0, 1], back: [0, 0, -1], side: [-1, 0, 0] };
+const sk = buildSkeleton(skeletonDef);
+const pose = forwardKinematics(sk, STANDING);
+const HOVER = 0.4;
+const GHOST = 0.14;
 
 function AtlasBody({ slot }: { slot: HTMLElement }) {
   const invalidate = useThree((s) => s.invalidate);
+  const gl = useThree((s) => s.gl);
   const camRef = useRef<OrthoCam>(null);
   const muscleId = useAtlas((s) => s.muscleId);
+  const hover = useAtlas((s) => s.hover);
   const view = useAtlas((s) => s.view);
-  // Músculo que a malha anatômica não tem: esquemático nesta página.
-  const model = useFigure(muscleId && missingInAnatomical(muscleId) ? 'esquematico' : undefined);
-  const mats = useFigureMaterials(model);
+  const { model } = useBodyModel();
+  const body = useBodyInstance(model);
 
-  // Destaque: o alvo em eosina; se for profundo, o resto vira fantasma para ele aparecer.
-  const target = useMemo(() => model.parts.filter((p) => p.muscleId === muscleId), [model, muscleId]);
   useEffect(() => {
-    const deep = target.length > 0 && target.every((p) => p.deep);
-    for (const p of model.parts) {
-      if (p.kind === 'bone' || p.kind === 'skin') continue;
-      const mat = mats.of(p);
-      const on = p.muscleId === muscleId;
-      mat.uniforms.uStain.value = p.kind === 'context' ? 0 : on ? STAIN_ON : STAIN_OFF;
-      mat.uniforms.uCut.value = !on && deep && !p.deep ? -9 : 9;
-    }
+    if (!body) return;
+    body.setPose(sk, pose);
+    body.layer('skin', { visible: false });
+    useStage.getState().setReady(true);
     invalidate();
-  }, [model, mats, muscleId, target, invalidate]);
+  }, [body, invalidate]);
+
+  // Destaque: o alvo em eosina; se for profundo, a camada superficial vira fantasma para ele aparecer.
+  useEffect(() => {
+    if (!body || !model) return;
+    const target = (muscleId && model.byMuscle.get(muscleId)) || [];
+    const deep = target.length > 0 && target.every((i) => model.slots[i]?.layer === 'deep');
+    body.fill('highlight', 0);
+    body.fill('opacity', 1);
+    if (deep) body.fillLayer('superficial', 'opacity', GHOST);
+    if (hover && hover !== muscleId) body.fill('highlight', HOVER, model.byMuscle.get(hover) ?? []);
+    body.fill('highlight', 1, target);
+    body.fill('opacity', 1, target);
+    body.commit();
+    invalidate();
+  }, [body, model, muscleId, hover, invalidate]);
+
+  // Seleção pelo slot da página (o canvas fixo não recebe ponteiro).
+  useEffect(() => {
+    if (!body || !model) return;
+    useAtlas.getState().setPick((x, y) => {
+      const cam = camRef.current;
+      if (!cam) return null;
+      const r = slot.getBoundingClientRect();
+      const i = body.pick(gl, cam, x, y, r.width, r.height);
+      return i === null ? null : (model.slots[i]?.muscleId ?? null);
+    });
+    return () => useAtlas.getState().setPick(null);
+  }, [body, model, gl, slot]);
 
   const frame = useMemo(() => {
-    const box = (muscleId && model.boxOf(muscleId)) || DEFAULT_BOX;
+    const box = (muscleId && model && boxOfSlots(model, model.byMuscle.get(muscleId) ?? [])) || DEFAULT_BOX;
     const h = Math.min(1.95, Math.max(0.75, box.size[1] * 2.2));
     const cy = Math.min(1.82 - h / 2, Math.max(h / 2 - 0.04, box.center[1]));
     const across = view === 'side' ? box.size[2] : box.size[0];
@@ -59,12 +88,10 @@ function AtlasBody({ slot }: { slot: HTMLElement }) {
     cam.updateProjectionMatrix();
   });
 
-  useEffect(() => invalidate(), [model, invalidate]);
-
   return (
     <>
       <OrthographicCamera ref={camRef} makeDefault near={0.1} far={20} position={[0, 1, 4]} />
-      <FigureMeshes model={model} mats={mats} />
+      {body && <primitive object={body.group} />}
     </>
   );
 }
@@ -82,7 +109,6 @@ export function AtlasScene() {
     window.addEventListener('resize', onMove);
     const ro = new ResizeObserver(onMove);
     if (slot) ro.observe(slot);
-    useStage.getState().setReady(true);
     return () => {
       unsub();
       window.removeEventListener('scroll', onMove);

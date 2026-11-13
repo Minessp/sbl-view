@@ -1,5 +1,5 @@
 /**
- * Pacote SBL5 do corpo anatômico: SBL4 (scripts/sbl4.mjs) + pesos de skinning + atributos de músculo.
+ * Pacote SBL5 do corpo anatômico: malhas quantizadas + pesos de skinning + atributos de músculo.
  *
  * Formato (little-endian): "SBL5" | u32 versão (1) | u32 tamanho do JSON | JSON (preenchido até 4 bytes) | blocos.
  * Cada bloco é codificado com o codec do meshoptimizer e alinhado a 4 bytes. Por parte:

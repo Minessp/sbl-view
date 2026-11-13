@@ -1,5 +1,5 @@
 import { must } from '../math/arr';
-import { rotate, type Transform } from '../math/vec';
+import { rotate, type Transform, type Vec3 } from '../math/vec';
 import type { EngineSkeleton, Pose } from './types';
 
 /**
@@ -9,18 +9,39 @@ import type { EngineSkeleton, Pose } from './types';
  * M_j(p) = R_j · (p − o_j) + t_j, onde (t_j, R_j) é a transformação mundo do segmento na pose e o_j a origem neutra.
  */
 
-/** 12 números por junta: matriz 3×3 linha a linha e a translação final (t − R·o). */
-export function skinMatrices(sk: EngineSkeleton, pose: Pose, jointIds: readonly string[]): Float64Array {
+export interface SkinMatrixOptions {
+  /** Origem de ligação de cada junta (a da malha). Padrão: a neutra do próprio esqueleto. */
+  readonly bind?: ReadonlyMap<string, Vec3>;
+  /** Escala no frame local do segmento (diagonal), aplicada antes de girar. Padrão: nenhuma. */
+  readonly scale?: (id: string) => Vec3 | undefined;
+}
+
+/**
+ * 12 números por junta: matriz 3×3 linha a linha e a translação final (t − R·S·o).
+ * Com `scale`, M = R·S·(p − o) + t: a malha da estatura de referência acompanha um esqueleto escalado.
+ */
+export function skinMatrices(sk: EngineSkeleton, pose: Pose, jointIds: readonly string[], opts: SkinMatrixOptions = {}): Float64Array {
   const out = new Float64Array(jointIds.length * 12);
   jointIds.forEach((id, j) => {
     const t: Transform = must(pose.world, id, 'segmento');
-    const o = must(sk.neutralOrigin, id, 'segmento');
-    const ex = rotate(t.rotation, [1, 0, 0]);
-    const ey = rotate(t.rotation, [0, 1, 0]);
-    const ez = rotate(t.rotation, [0, 0, 1]);
-    const ro = rotate(t.rotation, o);
+    const o = opts.bind?.get(id) ?? must(sk.neutralOrigin, id, 'segmento');
+    const [sx, sy, sz] = opts.scale?.(id) ?? [1, 1, 1];
+    const ex = rotate(t.rotation, [sx, 0, 0]);
+    const ey = rotate(t.rotation, [0, sy, 0]);
+    const ez = rotate(t.rotation, [0, 0, sz]);
+    const ro = [ex[0] * o[0] + ey[0] * o[1] + ez[0] * o[2], ex[1] * o[0] + ey[1] * o[1] + ez[1] * o[2], ex[2] * o[0] + ey[2] * o[1] + ez[2] * o[2]] as const;
     out.set([ex[0], ey[0], ez[0], ex[1], ey[1], ez[1], ex[2], ey[2], ez[2], t.position[0] - ro[0], t.position[1] - ro[1], t.position[2] - ro[2]], j * 12);
   });
+  return out;
+}
+
+/** Um ponto pela matriz m (índice da junta em `matrices`). */
+export function skinPoint(matrices: Float64Array, j: number, x: number, y: number, z: number, out: [number, number, number]): [number, number, number] {
+  const m = j * 12;
+  const M = (k: number) => matrices[m + k] ?? 0;
+  out[0] = M(0) * x + M(1) * y + M(2) * z + M(9);
+  out[1] = M(3) * x + M(4) * y + M(5) * z + M(10);
+  out[2] = M(6) * x + M(7) * y + M(8) * z + M(11);
   return out;
 }
 

@@ -29,6 +29,9 @@ if (!dir) {
 const readJson = (rel) => JSON.parse(readFileSync(new URL(rel, import.meta.url), 'utf8'));
 const anatomy = readJson('../src/data/anatomy.json');
 const skeleton = readJson('../src/data/skeleton.json');
+const muscleDefs = readJson('../src/data/muscles.json');
+/** Malhas citadas pelo Atlas (parte ou caminho): só elas viram caminho do motor. */
+const cited = new Set(muscleDefs.flatMap((m) => m.parts.flatMap((p) => [...p.mesh, ...(p.path ?? []).filter((x) => typeof x === 'string')])));
 const STATURE = 1.75;
 const r4 = (v) => Math.round(v * 1e4) / 1e4;
 const vr4 = (v) => v.map(r4);
@@ -329,7 +332,7 @@ parts.push({ id: 'intervertebral_discs', kind: 'cartilage', mirror: false, names
 const mapped = new Set();
 for (const [id, m] of Object.entries(anatomy.muscles)) {
   for (const n of m.objects) mapped.add(n);
-  parts.push({ id, kind: 'muscle', muscle: m.muscle, mirror: m.objects.some(isRightObj), names: m.objects, mesh: merge(m.objects) });
+  parts.push({ id, kind: 'muscle', mirror: m.objects.some(isRightObj), names: m.objects, mesh: merge(m.objects) });
 }
 for (const [id, names] of Object.entries(anatomy.tendons)) {
   for (const n of names) mapped.add(n);
@@ -401,7 +404,7 @@ function kdBuild(pts) {
   build(0, n, 0);
   const sorted = new Float32Array(n * 3);
   for (let i = 0; i < n; i++) sorted.set(pts.subarray(ord[i] * 3, ord[i] * 3 + 3), i * 3);
-  return { pts: sorted, n };
+  return { pts: sorted, n, ord };
 }
 function kdNearest(tree, qx, qy, qz, maxD) {
   let best2 = maxD * maxD;
@@ -424,6 +427,30 @@ function kdNearest(tree, qx, qy, qz, maxD) {
   };
   rec(0, tree.n, 0);
   return Math.sqrt(best2);
+}
+
+/** Índice (na entrada do kdBuild) do ponto mais próximo, ou -1 além de maxD. */
+function kdNearestIndex(tree, qx, qy, qz, maxD) {
+  let best2 = maxD * maxD, bi = -1;
+  const P = tree.pts;
+  const q = [qx, qy, qz];
+  const rec = (lo, hi, d) => {
+    if (lo >= hi) return;
+    const m = (lo + hi) >> 1;
+    const dx = P[m * 3] - qx, dy = P[m * 3 + 1] - qy, dz = P[m * 3 + 2] - qz;
+    const d2 = dx * dx + dy * dy + dz * dz;
+    if (d2 < best2) (best2 = d2), (bi = m);
+    const diff = q[d % 3] - P[m * 3 + (d % 3)];
+    if (diff < 0) {
+      rec(lo, m, d + 1);
+      if (diff * diff < best2) rec(m + 1, hi, d + 1);
+    } else {
+      rec(m + 1, hi, d + 1);
+      if (diff * diff < best2) rec(lo, m, d + 1);
+    }
+  };
+  rec(0, tree.n, 0);
+  return bi < 0 ? -1 : tree.ord[bi];
 }
 
 // Superfície óssea por segmento, com os dois lados.
@@ -678,6 +705,8 @@ function profileWeights(p, W0, t, length) {
 
 // --- Linha central do músculo ---------------------------------------------------------------------
 const SLICES = 16;
+/** Vértices de pele (lado direito) sob os quais a parte é a primeira camada mole: a partir daqui, superficial. */
+const LAYER_HITS = 10;
 function muscleAxis(p, W) {
   const { pos } = p.mesh;
   const n = pos.length / 3;
@@ -819,6 +848,56 @@ for (const p of parts) {
 }
 console.log(`pesos e linhas centrais: ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 
+// --- Pontas: o peso suavizado pode errar o segmento da inserção; anatomy.json corrige (`ends`). -----------
+for (const p of parts) {
+  const fix = anatomy.muscles[p.id]?.ends;
+  if (p.centerline && fix) p.ends = fix;
+}
+
+// --- Camada: superficial = músculo que é o mais próximo da pele em algum trecho ----------------------
+// Distância à pele sozinha erra (glúteo máximo fica fundo sob a gordura); aqui conta a área de pele
+// sob a qual a parte é a primeira camada mole.
+{
+  const soft = parts.filter((p) => p.kind === 'muscle' || p.kind === 'tendon');
+  const owner = [];
+  const pts = [];
+  soft.forEach((p, i) => {
+    const P = p.mesh.pos;
+    for (let v = 0; v < P.length; v += 3) pts.push(P[v], P[v + 1], P[v + 2]), owner.push(i);
+  });
+  const tree = kdBuild(new Float32Array(pts));
+  const hits = new Float64Array(soft.length);
+  const S = skinPart.mesh.pos;
+  for (let v = 0; v < S.length; v += 3) {
+    const i = kdNearestIndex(tree, S[v], S[v + 1], S[v + 2], 0.12);
+    if (i >= 0) hits[owner[i]] += S[v] === 0 ? 0.5 : 1;
+  }
+  const total = S.length / 3;
+  soft.forEach((p, i) => {
+    p.skinShare = r4(hits[i] / total);
+    p.layer = anatomy.muscles[p.id]?.layer ?? (hits[i] >= LAYER_HITS ? 'superficial' : 'deep');
+  });
+  console.log(`camada superficial: ${soft.filter((p) => p.layer === 'superficial').map((p) => `${p.id}=${Math.round(hits[soft.indexOf(p)])}`).join(' ')}`);
+  console.log(`camada profunda (vértices de pele mais próximos): ${soft.filter((p) => p.layer === 'deep').map((p) => `${p.id}=${Math.round(hits[soft.indexOf(p)])}`).join(' ')}`);
+}
+
+// --- Caminhos musculares do motor (src/data/muscle-paths.json) --------------------------------------
+{
+  const out = {};
+  for (const p of parts) {
+    if (!p.centerline || !cited.has(p.id)) continue;
+    out[p.id] = { ends: p.ends, layer: p.layer, line: p.centerline };
+  }
+  const missing = [...cited].filter((id) => !out[id]);
+  if (missing.length) throw new Error(`malhas citadas em muscles.json sem linha central: ${missing.join(', ')}`);
+  const file = new URL('../src/data/muscle-paths.json', import.meta.url);
+  const note = 'Gerado por scripts/anatomy-pack.mjs a partir da linha central de cada malha (Z-Anatomy): 16 pontos na pose neutra (m, lado direito), da origem (ends[0]) à inserção (ends[1]). O motor reparte os pontos entre os segmentos (src/engine/muscle/resolve.ts). Não editar à mão.';
+  const lines = Object.entries(out).map(([id, v]) => `  ${JSON.stringify(id)}: ${JSON.stringify(v)}`);
+  const body = ['{', ` "note": ${JSON.stringify(note)},`, ' "parts": {', lines.join(',\n'), ' }', '}', ''].join('\n');
+  writeFileSync(file, body);
+}
+
+
 // --- Níveis de detalhe e pacote ----------------------------------------------------------------------
 await MeshoptSimplifier.ready;
 const LOD = {
@@ -876,8 +955,8 @@ for (const [lod, spec] of Object.entries(LOD)) {
       mirror: p.mirror,
       objects: p.names,
       ...(p.segment && { segment: p.segment }),
-      ...(p.muscle && { muscle: p.muscle }),
       ...(p.skinDepth !== undefined && { skinDepth: p.skinDepth }),
+      ...(p.layer && { layer: p.layer }),
       ...(p.centerline && { ends: p.ends, centerline: p.centerline, section: p.section, rmax: p.rmax }),
     };
     packed.push({ meta: metaPart, q, idx: out, skin, muscle });

@@ -1,141 +1,88 @@
 import { useFrame, useThree } from '@react-three/fiber';
-import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
-import { BufferAttribute, BufferGeometry, type Mesh, type PerspectiveCamera, Vector3 } from 'three';
-import { muscleDefs, skeletonDef } from '@/data';
+import { useEffect, useMemo, useRef } from 'react';
+import { type PerspectiveCamera, Vector3 } from 'three';
+import { skeletonDef } from '@/data';
 import { forwardKinematics, pointToWorld } from '@/engine/kinematics/fk';
-import { bilateral, buildSkeleton, degToAngles } from '@/engine/kinematics/skeleton';
-import { buildMusclePaths, pathFlat, pathWorldPoints, type MusclePath } from '@/engine/muscle/paths';
-import { sampleCurve, spindleIndices, spindleUVs, vertexCount, writeSpindle, type SpindleFlat } from '@/engine/geometry/spindle';
+import { buildSkeleton } from '@/engine/kinematics/skeleton';
+import { skinMatrices, skinPositions } from '@/engine/kinematics/skinning';
 import { at, must } from '@/engine/math/arr';
 import { scale, type Vec3 } from '@/engine/math/vec';
 import { CALLOUTS } from '@/features/abertura/callouts';
 import { CUT_OFF, INTRO_SECONDS, introCut, introDolly, LAYER_WINDOWS, openingFrame, windowWeight } from '@/features/abertura/timeline';
-import { useTheme } from '@/ui/theme';
 import { anchors, setAnchorWorld, type Anchor } from '../annotations';
-import { buildBones } from '../body/bones';
-import { buildSkinGeometry } from '../body/skin';
-import { createPlateMaterial, createShared, type PlateMaterial } from '../materials/plate';
-import { createPalette, readPalette } from '../palette';
+import type { BodyModel } from '../body/model';
+import { STANDING } from '../body/poses';
+import { useBodyInstance, useBodyModel } from '../body/useBody';
 import { useStage } from '../stageStore';
 
-const LAYOUT = { rings: 30, sides: 12 } as const;
-const OPENING_POSE = degToAngles(bilateral({ shoulder_abd: 13, elbow_flex: 8, hip_abd: 2.5 }));
-const BASE_STAIN = { superficial: 0.26, deep: 0.4 } as const;
 const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sk = buildSkeleton(skeletonDef);
+const pose = forwardKinematics(sk, STANDING);
+/** Opacidade de cada camada acima do corte (fantasma). */
+const GHOST = { skin: 0.1, superficial: 0.16, deep: 0.12, bone: 0 } as const;
+const BASE_HIGHLIGHT = 0;
 
-function spindleGeometry(points: Vec3[], path: MusclePath, flat: SpindleFlat | null): BufferGeometry {
-  const n = vertexCount(LAYOUT);
-  const pos = new Float32Array(n * 3);
-  const nor = new Float32Array(n * 3);
-  writeSpindle(LAYOUT, points, path.radius, path.tendon, pos, nor, flat);
-  const g = new BufferGeometry();
-  g.setAttribute('position', new BufferAttribute(pos, 3));
-  g.setAttribute('normal', new BufferAttribute(nor, 3));
-  g.setAttribute('uv', new BufferAttribute(spindleUVs(LAYOUT), 2));
-  g.setIndex(new BufferAttribute(spindleIndices(LAYOUT), 1));
-  g.computeBoundingSphere();
-  return g;
+/** Centróide posado da malha (lado direito), para ancorar a chamada. */
+function meshAnchor(model: BodyModel, id: string): Vec3 | null {
+  const part = model.pack.parts.find((p) => p.id === id);
+  if (!part) return null;
+  const M = skinMatrices(sk, pose, model.jointIds, { bind: new Map(model.pack.joints.map((j) => [j.id, j.origin])) });
+  const P = skinPositions(part, M);
+  let x = 0, y = 0, z = 0;
+  const n = P.length / 3;
+  for (let i = 0; i < n; i++) {
+    x += P[i * 3] ?? 0;
+    y += P[i * 3 + 1] ?? 0;
+    z += P[i * 3 + 2] ?? 0;
+  }
+  return n ? [x / n, y / n, z / n] : null;
 }
 
 export function OpeningScene() {
   const invalidate = useThree((s) => s.invalidate);
   const camera = useThree((s) => s.camera) as PerspectiveCamera;
   const size = useThree((s) => s.size);
-  const dpr = useThree((s) => s.viewport.dpr);
+  const { model } = useBodyModel();
+  const body = useBodyInstance(model);
 
-  // ---- Modelo: tudo derivado do motor ----
-  const model = useMemo(() => {
-    const sk = buildSkeleton(skeletonDef);
-    const pose = forwardKinematics(sk, OPENING_POSE);
-    const paths = buildMusclePaths(sk, muscleDefs);
-    const muscles = paths.map((p) => {
-      const pts = pathWorldPoints(pose, p);
-      return { path: p, points: pts, geometry: spindleGeometry(pts, p, pathFlat(pose, p)) };
-    });
-    const bones = buildBones(sk);
-    const skin = buildSkinGeometry(sk, pose);
-    return { sk, pose, muscles, bones, skin };
-  }, []);
+  /** Vagas que cada chamada acende (os dois lados da malha). */
+  const lit = useMemo(() => {
+    if (!model) return new Map<string, number[]>();
+    return new Map(
+      CALLOUTS.flatMap((c) => (c.target.kind === 'muscle' ? [[c.id, model.slots.filter((s) => s.anatomyId === (c.target as { mesh: string }).mesh).map((s) => s.index)] as const] : [])),
+    );
+  }, [model]);
 
-  // ---- Materiais e uniforms compartilhados ----
-  const palette = useMemo(() => readPalette(createPalette()), []);
-  const shared = useMemo(() => createShared(palette, dpr), [palette, dpr]);
-  const layer = useMemo(
-    () => ({
-      skin: { cut: { value: CUT_OFF }, ghost: { value: 0.34 } },
-      superficial: { cut: { value: CUT_OFF }, ghost: { value: 0.42 } },
-      deep: { cut: { value: CUT_OFF }, ghost: { value: 0.32 } },
-      bone: { cut: { value: CUT_OFF }, ghost: { value: 0 } },
-    }),
-    [],
-  );
-  const mats = useMemo(() => {
-    const skin = createPlateMaterial(shared, { base: palette.bone, ...layer.skin, contour: 1, hatch: 0.7 });
-    // Sob a pele intacta nada aparece, mesmo onde a geometria estilizada encosta no envelope.
-    const showAbove = layer.skin.cut;
-    const bone = createPlateMaterial(shared, { base: palette.bone, ...layer.bone, showAbove, hatch: 1 });
-    const muscle = new Map<string, PlateMaterial>();
-    for (const m of model.muscles) {
-      const L = m.path.layer === 'deep' ? layer.deep : layer.superficial;
-      muscle.set(
-        m.path.key,
-        createPlateMaterial(shared, { base: palette.bone, ...L, showAbove, fiber: 1, hatch: 0.85, stain: BASE_STAIN[m.path.layer === 'deep' ? 'deep' : 'superficial'] }),
-      );
-    }
-    return { skin, bone, muscle };
-  }, [shared, palette, layer, model]);
-
-  useEffect(
-    () => () => {
-      model.skin.dispose();
-      model.bones.forEach((g) => g.dispose());
-      model.muscles.forEach((m) => m.geometry.dispose());
-      mats.skin.dispose();
-      mats.bone.dispose();
-      mats.muscle.forEach((m) => m.dispose());
-    },
-    [model, mats],
-  );
-
-  // ---- Tema: relê tokens do CSS ----
-  const resolved = useTheme((s) => s.resolved);
   useEffect(() => {
-    const id = requestAnimationFrame(() => {
-      readPalette(palette);
-      invalidate();
-    });
-    return () => cancelAnimationFrame(id);
-  }, [resolved, palette, invalidate]);
-
-  // ---- Âncoras das chamadas ----
-  useLayoutEffect(() => {
+    if (!body || !model) return;
+    body.setPose(sk, pose);
+    for (const l of ['skin', 'superficial', 'deep', 'bone'] as const) body.layer(l, { ghost: GHOST[l], cut: CUT_OFF });
+    body.layer('skin', { alpha: 1 });
     for (const c of CALLOUTS) {
       if (c.target.kind === 'muscle') {
-        const key = c.target.key;
-        const m = model.muscles.find((x) => x.path.key === key);
-        if (m) setAnchorWorld(c.id, at(sampleCurve(m.points, 9), 4));
+        const w = meshAnchor(model, c.target.mesh);
+        if (w) setAnchorWorld(c.id, w);
       } else {
-        const seg = must(model.sk.byId, c.target.segment, 'segmento');
-        setAnchorWorld(c.id, pointToWorld(model.pose, seg.id, scale(seg.tip, c.target.at)));
+        const seg = must(sk.byId, c.target.segment, 'segmento');
+        setAnchorWorld(c.id, pointToWorld(pose, seg.id, scale(seg.tip, c.target.at)));
       }
     }
-  }, [model]);
+    useStage.getState().setReady(true);
+    invalidate();
+    return () => useStage.getState().setReady(false);
+  }, [body, model, invalidate]);
 
   // ---- Laço: progresso amortecido → cortes, câmera, chamadas ----
   const shown = useRef(useStage.getState().progress);
   // Entrada só na primeira pintura, no topo da página e sem redução de movimento.
   const intro = useRef(reduceMotion() || useStage.getState().progress > 0.02 ? 1 : 0);
-  const target = new Vector3(0, 0.93, 0);
+  const target = useMemo(() => new Vector3(0, 0.93, 0), []);
   const tmp = useRef(new Vector3());
-  const skinRef = useRef<Mesh>(null);
 
   useEffect(() => useStage.subscribe(() => invalidate()), [invalidate]);
-  useEffect(() => {
-    useStage.getState().setReady(true);
-    return () => useStage.getState().setReady(false);
-  }, []);
 
   useFrame((_, dt) => {
+    if (!body) return;
     const goal = useStage.getState().progress;
     const k = reduceMotion() ? 1 : 1 - Math.exp(-dt * 7);
     shown.current += (goal - shown.current) * k;
@@ -150,20 +97,21 @@ export function OpeningScene() {
       invalidate();
     }
     const ic = introCut(intro.current);
-    layer.skin.cut.value = Math.min(f.cuts.skin, ic);
-    layer.superficial.cut.value = Math.min(f.cuts.superficial, ic);
-    layer.deep.cut.value = Math.min(f.cuts.deep, ic);
-    layer.bone.cut.value = ic;
+    const skinCut = Math.min(f.cuts.skin, ic);
+    // Sob a pele intacta nada aparece, mesmo onde a malha de dentro encosta na pele.
+    body.layer('skin', { cut: skinCut });
+    body.layer('superficial', { cut: Math.min(f.cuts.superficial, ic), showAbove: skinCut });
+    body.layer('deep', { cut: Math.min(f.cuts.deep, ic), showAbove: skinCut });
+    body.layer('bone', { cut: ic, showAbove: skinCut });
 
     // Músculos chamados "acendem" enquanto a camada deles está em evidência.
     for (const c of CALLOUTS) {
-      if (c.target.kind !== 'muscle') continue;
-      const mat = mats.muscle.get(c.target.key);
-      if (!mat) continue;
+      const slots = lit.get(c.id);
+      if (!slots) continue;
       const w = windowWeight(p, LAYER_WINDOWS[c.layer], 0.04);
-      const base = c.layer === 'deep' ? BASE_STAIN.deep : BASE_STAIN.superficial;
-      mat.uniforms.uStain.value = base + (0.92 - base) * w;
+      body.fill('highlight', BASE_HIGHLIGHT + (0.9 - BASE_HIGHLIGHT) * w, slots);
     }
+    body.commit();
 
     // Câmera: enquadra 1,9 m de altura; recua em telas estreitas.
     const aspect = size.width / Math.max(1, size.height);
@@ -223,24 +171,5 @@ export function OpeningScene() {
     }
   });
 
-  return (
-    <group>
-      <mesh ref={skinRef} geometry={model.skin} material={mats.skin} renderOrder={3} />
-      {model.muscles.map((m) => (
-        <mesh key={m.path.key} geometry={m.geometry} material={must(mats.muscle, m.path.key)} renderOrder={m.path.layer === 'deep' ? 1 : 2} />
-      ))}
-      {[...model.bones.entries()].map(([seg, g]) => {
-        const tr = must(model.pose.world, seg, 'segmento');
-        return (
-          <mesh
-            key={seg}
-            geometry={g}
-            material={mats.bone}
-            position={tr.position as [number, number, number]}
-            quaternion={tr.rotation as [number, number, number, number]}
-          />
-        );
-      })}
-    </group>
-  );
+  return body ? <primitive object={body.group} /> : null;
 }

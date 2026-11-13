@@ -133,14 +133,26 @@ await step('plano: gerar, ver o mapa de calor, começar e ver o dia no registro'
   await page.locator('.today__item').first().waitFor();
 });
 
-await step('atlas: malha anatômica (padrão) desenha; troca para o esquemático e volta', async () => {
+await step('atlas: corpo anatômico desenha; tocar em outro músculo abre a prancha dele', async () => {
   await page.goto(`${base}/atlas/vastus_lateralis`, { waitUntil: 'networkidle' });
   await page.waitForSelector('.stage[data-ready="true"]', { timeout: 20000 });
-  await page.getByText('BodyParts3D', { exact: false }).first().waitFor({ timeout: 15000 });
-  await page.getByRole('button', { name: 'Esquemático' }).click();
-  await page.getByText('BodyParts3D', { exact: false }).first().waitFor({ state: 'detached' });
-  await page.getByRole('button', { name: 'Anatômico' }).click();
-  await page.getByText('BodyParts3D', { exact: false }).first().waitFor();
+  await page.getByText('Z-Anatomy', { exact: false }).first().waitFor({ timeout: 15000 });
+  const slot = page.locator('.atlas-stage__slot');
+  await slot.scrollIntoViewIfNeeded();
+  const box = await slot.boundingBox();
+  if (!box) throw new Error('sem slot');
+  // Varre o slot até o palco devolver outro músculo sob o ponteiro.
+  let hit = null;
+  for (let fy = 0.25; fy < 0.9 && !hit; fy += 0.08) {
+    for (let fx = 0.3; fx < 0.75 && !hit; fx += 0.06) {
+      const x = box.x + box.width * fx, y = box.y + box.height * fy;
+      await page.mouse.move(x, y);
+      if (await slot.getAttribute('data-hover') === 'true') hit = { x, y };
+    }
+  }
+  if (!hit) throw new Error('seleção não achou nenhum músculo');
+  await page.mouse.click(hit.x, hit.y);
+  await page.waitForURL((u) => /\/atlas\/(?!vastus_lateralis)[a-z_]+$/.test(u.pathname), { timeout: 10000 });
 });
 
 await step('dados: exportar e reimportar o backup não duplica', async () => {

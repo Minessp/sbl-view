@@ -6,8 +6,6 @@ import { useEffect, useRef } from 'react';
 import { muscleDefs } from '@/data';
 import { t } from '@/i18n/app';
 import { useStage } from '@/scene/stageStore';
-import { ModelSwitch } from '@/features/body/ModelSwitch';
-import { useBody } from '@/features/body/store';
 import { heatRange, type HeatLevel } from './levels';
 import { useHeat, type HeatView } from './store';
 import './heat.css';
@@ -28,7 +26,6 @@ export function BodyHeatmap({ values, caption }: { values: Readonly<Record<strin
   const setSlot = useHeat((s) => s.setSlot);
   const setScene = useStage((s) => s.setScene);
   const ready = useStage((s) => s.ready);
-  const kind = useBody((s) => s.kind);
 
   useEffect(() => {
     setValues(values);
@@ -66,8 +63,7 @@ export function BodyHeatmap({ values, caption }: { values: Readonly<Record<strin
           );
         })}
       </ol>
-      <ModelSwitch />
-      {kind === 'anatomico' && <p className="heat__cap">{t.body.credit}</p>}
+      <p className="heat__cap">{t.body.credit}</p>
     </figure>
   );
 }

@@ -103,6 +103,16 @@
   color: var(--c-ink-2);
 }
 
+.atlas-stage__slot[data-hover='true'] {
+  cursor: pointer;
+}
+
+.atlas-stage__hint {
+  margin: 0;
+  min-height: 1.5em;
+  font-size: var(--fs-1);
+}
+
 .atlas-stage__credit {
   margin: 0;
   font-size: var(--fs-1);

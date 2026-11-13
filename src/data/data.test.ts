@@ -16,12 +16,14 @@ import referencesJson from './references.json';
 import skeletonJson from './skeleton.json';
 import trainingJson from './training.json';
 import planningJson from './planning.json';
-import bp3dJson from './bodyparts3d.json';
+import musclePathsJson from './muscle-paths.json';
+import anatomyJson from './anatomy.json';
 import { PlanningFile } from './schema/planning';
 import { E1RM_MAX_REPS } from '@/engine/training/progress';
 import { Reference, type Evidence } from './schema/evidence';
 import { Exercise as ExerciseSchema, LibraryFile } from './schema/exercise';
-import { MovementFile, MuscleFile } from './schema/muscle';
+import { MovementFile, MuscleFile, MusclePathsFile } from './schema/muscle';
+import { resolveMuscleParts } from '@/engine/muscle/resolve';
 import { SkeletonDef } from './schema/skeleton';
 import { z } from 'zod';
 
@@ -63,7 +65,7 @@ describe('banco de dados', () => {
 
   it('caminhos musculares apontam para segmentos existentes e ids são únicos', () => {
     const sk = buildSkeleton(SkeletonDef.parse(skeletonJson));
-    const paths = buildMusclePaths(sk, MuscleFile.parse(musclesJson));
+    const paths = buildMusclePaths(sk, resolveMuscleParts(MuscleFile.parse(musclesJson), MusclePathsFile.parse(musclePathsJson).parts, sk));
     const keys = new Set(paths.map((p) => p.key));
     expect(keys.size).toBe(paths.length);
   });
@@ -148,7 +150,7 @@ describe('ações articulares', () => {
   // se a ação é extensão do quadril, o braço de momento do modelo tem de ser de extensor.
   it('braço de momento do modelo tem o sinal da ação, na faixa conferida', () => {
     const sk = buildSkeleton(SkeletonDef.parse(skeletonJson));
-    const paths = buildMusclePaths(sk, muscles).filter((p) => p.side === 'r');
+    const paths = buildMusclePaths(sk, resolveMuscleParts(muscles, MusclePathsFile.parse(musclePathsJson).parts, sk)).filter((p) => p.side === 'r');
     const dofIds = new Set(sk.segments.flatMap((s) => s.dofs.map((d) => d.id)));
     const failures: string[] = [];
     for (const mu of muscles) {
@@ -181,15 +183,29 @@ describe('planejador e malha anatômica', () => {
     expect(p.volume.manter.value[1]).toBeLessThanOrEqual(p.volume.priorizar.value[0]);
   });
 
-  it('bodyparts3d.json: músculos existem; todo músculo do Atlas está mapeado ou listado como ausente', () => {
-    const ids = new Set(z.array(z.object({ id: z.string() }).loose()).parse(musclesJson).map((m) => m.id));
-    const mapped = Object.keys(bp3dJson.muscles);
-    const missing = Object.keys(bp3dJson.missing);
-    for (const id of [...mapped, ...missing, ...bp3dJson.deep]) expect(ids.has(id), id).toBe(true);
-    expect(mapped.filter((m) => missing.includes(m))).toEqual([]);
-    expect([...mapped, ...missing].sort()).toEqual([...ids].sort());
-    for (const list of Object.values(bp3dJson.muscles)) for (const f of list) expect(f).toMatch(/^FMA\d+$/);
-    expect(refIds.has(bp3dJson.source.refId)).toBe(true);
+  it('malhas: toda parte aponta para malhas do pacote; nenhuma malha em duas partes', () => {
+    const lines = MusclePathsFile.parse(musclePathsJson).parts;
+    const known = new Set([...Object.keys(anatomyJson.muscles), ...Object.keys(anatomyJson.tendons)]);
+    const owner = new Map<string, string>();
+    for (const m of MuscleFile.parse(musclesJson)) {
+      for (const p of m.parts) {
+        for (const id of p.mesh) {
+          expect(known, `${p.id}: ${id}`).toContain(id);
+          expect(owner.get(id), `${id} em ${owner.get(id)} e ${p.id}`).toBeUndefined();
+          owner.set(id, p.id);
+          expect(lines[id], `${id} sem linha central`).toBeDefined();
+        }
+        for (const r of p.path ?? []) if (typeof r === 'string') expect(lines[r], `${p.id}: caminho ${r}`).toBeDefined();
+      }
+    }
+  });
+
+  it('músculos e partes com ids únicos; todo grupo tem região', () => {
+    const muscles = MuscleFile.parse(musclesJson);
+    expect(new Set(muscles.map((m) => m.id)).size).toBe(muscles.length);
+    const parts = muscles.flatMap((m) => m.parts.map((p) => p.id));
+    expect(new Set(parts).size).toBe(parts.length);
+    expect(parts.length).toBeGreaterThanOrEqual(75);
   });
 });
 

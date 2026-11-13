@@ -49,11 +49,11 @@ export const ptBR = {
       },
       superficial: {
         name: 'Músculo superficial',
-        body: 'Cada fuso é um músculo desenhado como linha de ação, da origem à inserção. Quando a articulação gira, essa linha encurta ou alonga, e a força que o músculo consegue produzir muda junto.',
+        body: 'Cada músculo tem uma linha de ação, da origem à inserção. Quando a articulação gira, essa linha encurta ou alonga, e a força que o músculo consegue produzir muda junto.',
       },
       deep: {
         name: 'Músculo profundo',
-        body: 'Por baixo ficam músculos que quase não aparecem e trabalham em quase todo agachamento, remada ou rosca: vasto intermédio, sóleo, glúteo médio, braquial.',
+        body: 'Por baixo ficam músculos que quase não aparecem e trabalham em quase todo agachamento, remada ou rosca: peitoral menor, ilíaco, adutor curto, vasto intermédio.',
       },
       bone: {
         name: 'Osso',
@@ -70,7 +70,7 @@ export const ptBR = {
       libraryStatus: 'Prancha IV',
       system: 'Ver o sistema visual',
     },
-    note: 'Geometria ilustrativa: os caminhos musculares desta prancha foram desenhados à mão e não servem como medida. Os números do Lab vêm de modelos publicados, sempre com fonte e grau de confiança ao lado.',
+    note: 'Malha anatômica do Z-Anatomy (CC BY-SA 4.0), simplificada; as linhas de ação saem dela e são estimativa, não medida. Os números do Lab vêm de modelos publicados, sempre com fonte e grau de confiança ao lado.',
     loading: 'Montando o corpo',
   },
 } as const;

@@ -1,12 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { muscleDefs, skeletonDef } from '@/data';
+import { skeletonDef } from '@/data';
+import { musclePathDefs } from '@/data/paths';
 import { buildSkeleton } from '../kinematics/skeleton';
 import { DEG } from '../math/vec';
 import { lengthAt, momentArm, sweepJoint } from './momentArm';
 import { buildMusclePaths } from './paths';
 
 const sk = buildSkeleton(skeletonDef);
-const paths = buildMusclePaths(sk, muscleDefs);
+const paths = buildMusclePaths(sk, musclePathDefs);
 const P = (key: string) => {
   const p = paths.find((x) => x.key === key);
   if (!p) throw new Error(key);
@@ -27,8 +28,8 @@ describe('braço de momento por excursão do tendão', () => {
   });
 
   it('lado esquerdo espelhado tem o mesmo braço', () => {
-    const r = momentArm(sk, P('gluteus_maximus_inf_r'), {}, 'hip_flex_r', 40);
-    const l = momentArm(sk, P('gluteus_maximus_inf_l'), {}, 'hip_flex_l', 40);
+    const r = momentArm(sk, P('gluteus_maximus_r'), {}, 'hip_flex_r', 40);
+    const l = momentArm(sk, P('gluteus_maximus_l'), {}, 'hip_flex_l', 40);
     expect(l).toBeCloseTo(r, 9);
   });
 

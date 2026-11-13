@@ -2,7 +2,8 @@
  * Curvas do Atlas: comprimento e braço de momento por ação sagital, saídos do motor.
  * Sem three.js; memoizado (o esqueleto de referência não muda).
  */
-import { muscleDefs, skeletonDef } from '@/data';
+import { skeletonDef } from '@/data';
+import { musclePathDefs } from '@/data/paths';
 import type { Movement, MuscleDef } from '@/data/schema/muscle';
 import { buildSkeleton } from '@/engine/kinematics/skeleton';
 import type { EngineSkeleton } from '@/engine/kinematics/types';
@@ -14,7 +15,7 @@ let cache: { sk: EngineSkeleton; paths: MusclePath[] } | null = null;
 export function atlasBody() {
   if (!cache) {
     const sk = buildSkeleton(skeletonDef);
-    cache = { sk, paths: buildMusclePaths(sk, muscleDefs) };
+    cache = { sk, paths: buildMusclePaths(sk, musclePathDefs) };
   }
   return cache;
 }

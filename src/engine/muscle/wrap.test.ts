@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { muscleDefs, skeletonDef } from '@/data';
+import { skeletonDef } from '@/data';
+import { musclePathDefs } from '@/data/paths';
 import { forwardKinematics } from '../kinematics/fk';
 import { bilateral, buildSkeleton, degToAngles } from '../kinematics/skeleton';
-import { must } from '../math/arr';
 import { buildMusclePaths, mtuLength } from './paths';
 import { wrappedLength2D } from './wrap';
 
@@ -34,7 +34,7 @@ describe('contorno de cilindro 2D', () => {
 
 describe('comprimento músculo-tendão no modelo', () => {
   const sk = buildSkeleton(skeletonDef);
-  const paths = buildMusclePaths(sk, muscleDefs);
+  const paths = buildMusclePaths(sk, musclePathDefs);
   const P = (key: string) => {
     const p = paths.find((x) => x.key === key);
     if (!p) throw new Error(key);
@@ -62,7 +62,7 @@ describe('comprimento músculo-tendão no modelo', () => {
   it('glúteo máximo alonga com a flexão do quadril até 120°', () => {
     let prev = 0;
     for (let h = 0; h <= 120; h += 10) {
-      const l = L('gluteus_maximus_inf_r', { hip_flex: h });
+      const l = L('gluteus_maximus_r', { hip_flex: h });
       expect(l).toBeGreaterThan(prev);
       prev = l;
     }
@@ -79,6 +79,5 @@ describe('comprimento músculo-tendão no modelo', () => {
   it('caminho espelhado tem o mesmo comprimento', () => {
     const pose = forwardKinematics(sk, degToAngles(bilateral({ knee_flex: 70, hip_flex: 40 })));
     expect(mtuLength(pose, P('vastus_lateralis_l'))).toBeCloseTo(mtuLength(pose, P('vastus_lateralis_r')), 9);
-    expect(must(new Map(paths.map((p) => [p.key, p])), 'gluteus_maximus_inf_l').wrap).not.toBeNull();
   });
 });

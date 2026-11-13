@@ -22,7 +22,7 @@ export const movementById = (id: string): Movement | undefined => mvIndex.get(id
 /** Ordem de leitura do Atlas: de cima para baixo, de dentro para fora. */
 export const REGIONS: { id: string; groups: MuscleGroup[] }[] = [
   { id: 'trunk', groups: ['neck', 'abdominals', 'spinal_erectors'] },
-  { id: 'upper', groups: ['traps', 'lats', 'chest', 'delts', 'elbow_flexors', 'elbow_extensors', 'forearm'] },
+  { id: 'upper', groups: ['traps', 'scapular', 'lats', 'chest', 'delts', 'rotator_cuff', 'elbow_flexors', 'elbow_extensors', 'forearm'] },
   { id: 'hip', groups: ['gluteals', 'hip_flexors', 'adductors', 'quadriceps', 'hamstrings'] },
   { id: 'leg', groups: ['triceps_surae', 'shin'] },
 ];
@@ -86,6 +86,8 @@ export function muscleRefIds(m: MuscleDef): string[] {
   const ids = new Set<string>();
   m.anatomy.source.forEach((s) => ids.add(s.refId));
   m.actions.forEach((a) => a.evidence.source.forEach((s) => ids.add(s.refId)));
-  m.parts.forEach((p) => p.pathEvidence.source.forEach((s) => ids.add(s.refId)));
+  // Geometria: malha do Z-Anatomy; contornos de cilindro são autorais.
+  ids.add('zanatomy');
+  m.parts.forEach((p) => p.wrap?.evidence.source.forEach((s) => ids.add(s.refId)));
   return [...ids];
 }

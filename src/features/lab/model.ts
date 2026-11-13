@@ -4,7 +4,8 @@
 import anthropometry from '@/data/anthropometry.json';
 import capacityJson from '@/data/capacity.json';
 import squatJson from '@/data/exercises/squat.json';
-import { muscleDefs, skeletonDef } from '@/data';
+import { skeletonDef } from '@/data';
+import { musclePathDefs } from '@/data/paths';
 import type { CapacityCurve, Exercise, ExerciseVariant } from '@/data/schema/exercise';
 import { createSquatSolver, sampleSquat, type SquatFrame } from '@/engine/exercises/squat';
 import { scaleSegmentLength, stretchLocal } from '@/engine/kinematics/scale';
@@ -47,7 +48,7 @@ export const DEFAULT_SETTINGS: LabSettings = {
 export const TRACKED_MUSCLES: { key: string; label: string; latin: string; biarticular: boolean }[] = [
   { key: 'vastus_lateralis_r', label: 'Vastos', latin: 'Vasti', biarticular: false },
   { key: 'rectus_femoris_r', label: 'Reto femoral', latin: 'Rectus femoris', biarticular: true },
-  { key: 'gluteus_maximus_inf_r', label: 'Glúteo máximo', latin: 'Gluteus maximus', biarticular: false },
+  { key: 'gluteus_maximus_r', label: 'Glúteo máximo', latin: 'Gluteus maximus', biarticular: false },
   { key: 'adductor_magnus_r', label: 'Adutor magno', latin: 'Adductor magnus', biarticular: false },
   { key: 'semimembranosus_r', label: 'Isquiotibiais', latin: 'Hamstrings', biarticular: true },
   { key: 'soleus_r', label: 'Sóleo', latin: 'Soleus', biarticular: false },
@@ -69,7 +70,7 @@ export function buildLabBody(settings: Pick<LabSettings, 'stature' | 'thighScale
   const base = buildSkeleton(skeletonDef, s.stature);
   const sk = scaleSegmentLength(base, thighs, s.thighScale);
   const stretchOn = (seg: string, v: Vec3) => (thighs.includes(seg) ? stretchLocal(v, s.thighScale) : v);
-  const paths = buildMusclePaths(base, muscleDefs).map((p) => ({
+  const paths = buildMusclePaths(base, musclePathDefs).map((p) => ({
     ...p,
     points: p.points.map((pt) => ({ segment: pt.segment, local: stretchOn(pt.segment, pt.local) })),
     wrap: p.wrap ? { ...p.wrap, center: stretchOn(p.wrap.segment, p.wrap.center) } : null,

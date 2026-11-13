@@ -7,7 +7,7 @@ import { t } from '@/i18n';
 import { hasWebGL, useStage } from './stageStore';
 
 const Stage = lazy(() => import('./Stage'));
-const SkeletonFallback = lazy(() => import('./SkeletonFallback').then((m) => ({ default: m.SkeletonFallback })));
+const StaticFallback = lazy(() => import('./StaticFallback').then((m) => ({ default: m.StaticFallback })));
 
 function whenIdle(cb: () => void): () => void {
   if ('requestIdleCallback' in window) {
@@ -47,7 +47,7 @@ export function StageHost() {
         </>
       ) : (
         <Suspense fallback={null}>
-          <SkeletonFallback />
+          <StaticFallback />
         </Suspense>
       )}
       <div id="stage-overlay" className="stage__overlay" />

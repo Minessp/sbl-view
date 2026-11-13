@@ -70,12 +70,7 @@
           "note": "Barra sobre o trapézio superior, posição estimada."
         }
       },
-      "holdDeg": {
-        "shoulder_abd": 50,
-        "shoulder_flex": 70,
-        "shoulder_rot": -90,
-        "elbow_flex": 150
-      },
+      "holdDeg": { "shoulder_abd": 50, "shoulder_flex": 20, "shoulder_rot": -50, "elbow_flex": 150, "forearm_pro": 80 },
       "rationale": {
         "text": "Barra sobre o trapézio superior. Para o centro de massa ficar sobre o meio do pé, o tronco inclina menos e o joelho avança mais. No modelo, isso desloca demanda do quadril para o joelho.",
         "source": [
@@ -127,12 +122,7 @@
           "note": "Barra sobre a espinha da escápula, alguns centímetros abaixo e atrás da barra alta."
         }
       },
-      "holdDeg": {
-        "shoulder_abd": 55,
-        "shoulder_flex": 110,
-        "shoulder_rot": -90,
-        "elbow_flex": 145
-      },
+      "holdDeg": { "shoulder_abd": 0, "shoulder_flex": -20, "shoulder_rot": -80, "elbow_flex": 140, "forearm_pro": 80 },
       "rationale": {
         "text": "Barra mais baixa e mais atrás nas costas. Para equilibrar, o tronco inclina mais à frente: o braço de momento no quadril cresce e o do joelho encolhe.",
         "source": [
@@ -183,12 +173,7 @@
           "note": "Barra apoiada sobre o deltoide anterior."
         }
       },
-      "holdDeg": {
-        "shoulder_abd": 60,
-        "shoulder_flex": 35,
-        "shoulder_rot": 30,
-        "elbow_flex": 150
-      },
+      "holdDeg": { "shoulder_abd": 40, "shoulder_flex": 20, "shoulder_rot": 50, "elbow_flex": 150, "forearm_pro": 80 },
       "rationale": {
         "text": "Carga à frente do tronco. O equilíbrio pede tronco quase vertical e joelho bem à frente: no modelo, a maior demanda de joelho das quatro variações, e a que mais exige dorsiflexão.",
         "source": [
@@ -238,12 +223,7 @@
           "confidence": "especulativo"
         }
       },
-      "holdDeg": {
-        "shoulder_abd": 50,
-        "shoulder_flex": 70,
-        "shoulder_rot": -90,
-        "elbow_flex": 150
-      },
+      "holdDeg": { "shoulder_abd": 50, "shoulder_flex": 20, "shoulder_rot": -50, "elbow_flex": 150, "forearm_pro": 80 },
       "rationale": {
         "text": "Barra alta com calço sob o calcanhar. A perna inclina mais à frente sem pedir mais do tornozelo, o tronco fica mais vertical e a demanda migra para o joelho.",
         "source": [

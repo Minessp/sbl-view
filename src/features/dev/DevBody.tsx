@@ -4,6 +4,7 @@
  * Texto fica aqui, fora do i18n: é ferramenta, não interface do site.
  *
  * Parâmetros de URL: ?pose=<id de REFERENCE_POSES>&lod=hi|lo&camadas=pele,musculo,osso&vista=frente|lado|costas|cima
+ * &dist=<fator da distância>&fundo=nenhum (transparente, para scripts/fallback-images.mjs)&painel=nao
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -60,15 +61,17 @@ export default function DevBody() {
   useEffect(() => {
     const el = host.current;
     if (!el || !pack) return;
-    const renderer = new WebGLRenderer({ antialias: true });
+    const clear = query.get('fundo') === 'nenhum';
+    const renderer = new WebGLRenderer({ antialias: true, alpha: clear, preserveDrawingBuffer: clear });
     renderer.setPixelRatio(Math.min(2, devicePixelRatio));
     renderer.setSize(el.clientWidth, el.clientHeight);
     el.appendChild(renderer.domElement);
     const scene = new Scene();
-    scene.background = new Color('#15171a');
+    if (!clear) scene.background = new Color('#15171a');
     const camera = new PerspectiveCamera(30, el.clientWidth / el.clientHeight, 0.05, 50);
     const v = VIEWS[(query.get('vista') ?? 'frente') as keyof typeof VIEWS] ?? VIEWS.frente;
-    camera.position.set(v[0], v[1], v[2]);
+    const k = Number(query.get('dist')) || 1;
+    camera.position.set(v[0] * k, v[1], v[2] * k);
     const controls = new OrbitControls(camera, renderer.domElement);
     const alvo = Number(query.get('alvo'));
     controls.target.set(0, alvo || (query.get('pose') === 'deep_squat' || query.get('pose') === 'squat_overhead' ? 0.55 : 0.9), 0);
@@ -170,11 +173,11 @@ export default function DevBody() {
     });
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 320px', height: 'calc(100dvh - 4rem)', gap: 12 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: query.get('painel') === 'nao' ? '1fr' : 'minmax(0, 1fr) 320px', height: 'calc(100dvh - 4rem)', gap: 12 }}>
       <div ref={host} style={{ position: 'relative', minHeight: 0 }} aria-label="Corpo anatômico posado">
         {error && <p role="alert">Falha ao carregar o pacote: {error}</p>}
       </div>
-      <aside style={{ overflow: 'auto', fontSize: 13 }}>
+      <aside style={{ overflow: 'auto', fontSize: 13 }} hidden={query.get('painel') === 'nao'}>
         <h1 style={{ fontSize: 18 }}>Corpo: pose (dev)</h1>
         <p>{pack ? `${pack.parts.length} partes, LOD ${pack.lod}` : 'carregando…'}</p>
         <fieldset>

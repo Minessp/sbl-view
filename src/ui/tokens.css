@@ -14,6 +14,11 @@
   --c-accent: #a81c4b;
   --c-on-accent: #f4f5f1;
   --c-bone: #f1f2ec;
+  /* Corpo anatômico (WebGL): músculo em repouso, tendão, osso, pele. O destaque usa --c-accent. */
+  --c-body-muscle: #b98a7f;
+  --c-body-tendon: #e4dccb;
+  --c-body-bone: #ece5d2;
+  --c-body-skin: #d9b8a2;
 
   color-scheme: light;
 }
@@ -29,6 +34,10 @@
     --c-accent: #f06a92;
     --c-on-accent: #1e2428;
     --c-bone: #2c3439;
+    --c-body-muscle: #8f5f57;
+    --c-body-tendon: #b9b19e;
+    --c-body-bone: #cfc7b2;
+    --c-body-skin: #a98c79;
 
     color-scheme: dark;
   }
@@ -43,6 +52,10 @@
   --c-accent: #f06a92;
   --c-on-accent: #1e2428;
   --c-bone: #2c3439;
+  --c-body-muscle: #8f5f57;
+  --c-body-tendon: #b9b19e;
+  --c-body-bone: #cfc7b2;
+  --c-body-skin: #a98c79;
 
   color-scheme: dark;
 }

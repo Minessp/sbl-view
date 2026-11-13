@@ -80,9 +80,10 @@ export function pwa(): Plugin {
       const outDir = options.dir ?? config.build.outDir;
       // Subconjuntos de fonte que o PT-BR não usa: o navegador só baixa se aparecer o caractere.
       // Malha anatômica (models/) é grande e opcional: entra no cache só quando alguém a pede.
+      // Imagens sem WebGL (fallback/) só servem a quem não tem 3D.
       const skip = (f: string) =>
         f.endsWith('.map') ||
-        f.startsWith('models/') || /-(vietnamese|latin-ext)-/.test(f) || ['sw.js', '_headers', '_redirects', 'index.html'].includes(f);
+        f.startsWith('models/') || f.startsWith('fallback/') || /-(vietnamese|latin-ext)-/.test(f) || ['sw.js', '_headers', '_redirects', 'index.html'].includes(f);
       const fromBundle = Object.keys(bundle);
       const fromPublic = config.publicDir ? listFiles(config.publicDir).map((p) => relative(config.publicDir, p).replace(/\\/g, '/')) : [];
       const files = [...new Set([...fromBundle, ...fromPublic])].filter((f) => !skip(f)).sort();

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { LineChart, type LinePattern } from '@/charts/LineChart';
 import { getReference } from '@/data';
 import type { MuscleDef } from '@/data/schema/muscle';
@@ -11,8 +11,6 @@ import { exercisesForMuscle, movementById, muscleById, muscleRefIds } from '@/fe
 import { EmphasisMark } from '@/features/library/EmphasisMark';
 import { actionCurves, type ActionCurve } from './model';
 import { defaultView, useAtlas, type AtlasView } from './store';
-import { ModelSwitch } from '@/features/body/ModelSwitch';
-import { missingInAnatomical, useBody } from '@/features/body/store';
 import '@/features/heat/heat.css';
 import './atlas.css';
 
@@ -30,7 +28,9 @@ function Stage({ m }: { m: MuscleDef }) {
   const setView = useAtlas((s) => s.setView);
   const setScene = useStage((s) => s.setScene);
   const ready = useStage((s) => s.ready);
-  const kind = useBody((s) => s.kind);
+  const hover = useAtlas((s) => s.hover);
+  const setHover = useAtlas((s) => s.setHover);
+  const [, navigate] = useLocation();
 
   useEffect(() => {
     show(m.id, defaultView(m.group));
@@ -56,9 +56,29 @@ function Stage({ m }: { m: MuscleDef }) {
           ))}
         </span>
       </figcaption>
-      <div ref={ref} className="atlas-stage__slot" role="img" aria-label={`${t.atlas.figure} ${m.name}.`} data-ready={ready} />
-      <ModelSwitch missing={missingInAnatomical(m.id)} />
-      {kind === 'anatomico' && !missingInAnatomical(m.id) && <p className="atlas-stage__credit">{t.body.credit}</p>}
+      <div
+        ref={ref}
+        className="atlas-stage__slot"
+        role="img"
+        aria-label={`${t.atlas.figure} ${m.name}.`}
+        data-ready={ready}
+        data-hover={hover !== null && hover !== m.id}
+        onPointerMove={(e) => {
+          if (e.pointerType !== 'mouse') return;
+          const r = e.currentTarget.getBoundingClientRect();
+          setHover(useAtlas.getState().pick?.(e.clientX - r.left, e.clientY - r.top) ?? null);
+        }}
+        onPointerLeave={() => setHover(null)}
+        onClick={(e) => {
+          const r = e.currentTarget.getBoundingClientRect();
+          const id = useAtlas.getState().pick?.(e.clientX - r.left, e.clientY - r.top);
+          if (id && id !== m.id) navigate(`/atlas/${id}`);
+        }}
+      />
+      <p className="atlas-stage__hint" aria-hidden="true">
+        {hover && hover !== m.id ? t.atlas.hoverOpen(muscleById(hover)?.name ?? hover) : t.atlas.pickHint}
+      </p>
+      <p className="atlas-stage__credit">{t.body.credit}</p>
     </figure>
   );
 }

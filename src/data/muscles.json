@@ -52,9 +52,6 @@
    {
     "movement": "hip_abduction",
     "role": "secundaria",
-    "parts": [
-     "gluteus_maximus_sup"
-    ],
     "evidence": {
      "source": [
       {
@@ -72,138 +69,12 @@
   ],
   "parts": [
    {
-    "id": "gluteus_maximus_sup",
-    "name": "Fibras superiores",
-    "layer": "superficial",
-    "radius": 0.034,
-    "tendon": [
-     0.05,
-     0.15
+    "id": "gluteus_maximus",
+    "name": "Glúteo máximo",
+    "mesh": [
+     "gluteus_maximus"
     ],
-    "path": [
-     {
-      "s": "pelvis",
-      "p": [
-       -0.0537,
-       1.0141,
-       -0.0776
-      ]
-     },
-     {
-      "s": "pelvis",
-      "p": [
-       -0.1466,
-       0.9261,
-       -0.0716
-      ]
-     },
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.1485,
-       0.817,
-       -0.0246
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
-    "shape": {
-     "face": [
-      -0.3,
-      0,
-      -1
-     ],
-     "width": 1.6,
-     "thickness": 0.55
-    },
     "wrap": {
-     "span": 1,
-     "segment": "pelvis",
-     "center": [
-      -0.0855,
-      0.8814,
-      0
-     ],
-     "radius": 0.06,
-     "side": [
-      0,
-      -0.0953,
-      -1.0397
-     ],
-     "evidence": {
-      "source": [
-       {
-        "refId": "sbl_authored"
-       }
-      ],
-      "confidence": "especulativo",
-      "note": "Cilindro de contorno ilustrativo; raio escolhido para manter a linha fora do osso."
-     }
-    }
-   },
-   {
-    "id": "gluteus_maximus_inf",
-    "name": "Fibras inferiores",
-    "layer": "superficial",
-    "radius": 0.04,
-    "tendon": [
-     0.05,
-     0.15
-    ],
-    "path": [
-     {
-      "s": "pelvis",
-      "p": [
-       -0.0244,
-       0.9417,
-       -0.1038
-      ]
-     },
-     {
-      "s": "pelvis",
-      "p": [
-       -0.1173,
-       0.8814,
-       -0.1171
-      ]
-     },
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.1301,
-       0.7613,
-       -0.0437
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
-    "shape": {
-     "face": [
-      -0.3,
-      0,
-      -1
-     ],
-     "width": 1.6,
-     "thickness": 0.55
-    },
-    "wrap": {
-     "span": 1,
      "segment": "pelvis",
      "center": [
       -0.0855,
@@ -223,7 +94,7 @@
        }
       ],
       "confidence": "especulativo",
-      "note": "Cilindro de contorno ilustrativo; raio escolhido para manter a linha fora do osso."
+      "note": "Cilindro em torno do quadril, por trás e por baixo: mantém a linha fora do osso com o quadril muito fletido."
      }
     }
    }
@@ -285,56 +156,9 @@
    {
     "id": "gluteus_medius",
     "name": "Glúteo médio",
-    "layer": "deep",
-    "radius": 0.032,
-    "tendon": [
-     0,
-     0.2
-    ],
-    "path": [
-     {
-      "s": "pelvis",
-      "p": [
-       -0.1417,
-       1.0061,
-       -0.0081
-      ]
-     },
-     {
-      "s": "pelvis",
-      "p": [
-       -0.1563,
-       0.9384,
-       -0.0078
-      ]
-     },
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.138,
-       0.8831,
-       -0.0079
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
-    "shape": {
-     "face": [
-      -1,
-      0.2,
-      -0.2
-     ],
-     "width": 1.5,
-     "thickness": 0.55
-    }
+    "mesh": [
+     "gluteus_medius"
+    ]
    }
   ]
  },
@@ -369,8 +193,13 @@
        "refId": "arnold2010"
       }
      ],
-     "confidence": "estabelecido"
-    }
+     "confidence": "estabelecido",
+     "note": "Fora dela a linha central da malha passa sobre o eixo e o modelo deixa de representar o músculo; o gráfico para aqui."
+    },
+    "rangeDeg": [
+     0,
+     110
+    ]
    },
    {
     "movement": "trunk_flexion",
@@ -384,54 +213,26 @@
      ],
      "confidence": "provavel",
      "note": "Com o fêmur fixo, flete a pelve e a lombar sobre a coxa."
-    }
+    },
+    "parts": [
+     "psoas_major"
+    ]
    }
   ],
   "parts": [
    {
-    "id": "iliopsoas",
-    "name": "Iliopsoas",
-    "layer": "deep",
-    "radius": 0.022,
-    "tendon": [
-     0,
-     0.25
-    ],
-    "path": [
-     {
-      "s": "trunk",
-      "p": [
-       -0.0421,
-       1.0837,
-       -0.0115
-      ]
-     },
-     {
-      "s": "pelvis",
-      "p": [
-       -0.0831,
-       0.8932,
-       0.0535
-      ]
-     },
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.0718,
-       0.8324,
-       -0.0136
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    }
+    "id": "iliacus",
+    "name": "Ilíaco",
+    "mesh": [
+     "iliacus"
+    ]
+   },
+   {
+    "id": "psoas_major",
+    "name": "Psoas maior",
+    "mesh": [
+     "psoas_major"
+    ]
    }
   ]
  },
@@ -466,16 +267,17 @@
        "refId": "arnold2010"
       }
      ],
-     "confidence": "estabelecido"
-    }
+     "confidence": "estabelecido",
+     "note": "Fora dela a linha central da malha passa sobre o eixo e o modelo deixa de representar o músculo; o gráfico para aqui."
+    },
+    "rangeDeg": [
+     0,
+     120
+    ]
    },
    {
     "movement": "hip_flexion",
     "role": "principal",
-    "rangeDeg": [
-     -10,
-     90
-    ],
     "evidence": {
      "source": [
       {
@@ -486,8 +288,7 @@
        "refId": "arnold2010"
       }
      ],
-     "confidence": "estabelecido",
-     "note": "Acima disso o caminho desenhado à mão deixa de representar o músculo; o gráfico para aqui. Faixa estreitada ao trocar para o esqueleto medido na malha (Fase 7): o caminho desenhado à mão perde o sinal na ponta. Volta com a linha central da malha (Fase 8)."
+     "confidence": "estabelecido"
     }
    }
   ],
@@ -495,57 +296,10 @@
    {
     "id": "rectus_femoris",
     "name": "Reto femoral",
-    "layer": "superficial",
-    "radius": 0.03,
-    "tendon": [
-     0.08,
-     0.28
+    "mesh": [
+     "rectus_femoris"
     ],
-    "path": [
-     {
-      "s": "pelvis",
-      "p": [
-       -0.0977,
-       0.9062,
-       0.0615
-      ]
-     },
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.0882,
-       0.6785,
-       0.0556
-      ]
-     },
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.0768,
-       0.5127,
-       0.0316
-      ]
-     },
-     {
-      "s": "shank_r",
-      "p": [
-       -0.0763,
-       0.4166,
-       0.0074
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
     "wrap": {
-     "span": 2,
      "segment": "thigh_r",
      "center": [
       -0.0758,
@@ -565,7 +319,7 @@
        }
       ],
       "confidence": "especulativo",
-      "note": "Cilindro de contorno ilustrativo; raio escolhido para manter a linha fora do osso."
+      "note": "Cilindro nos côndilos e na patela: sem ele a linha central corta por dentro do joelho em flexão funda."
      }
     }
    }
@@ -610,57 +364,10 @@
    {
     "id": "vastus_lateralis",
     "name": "Vasto lateral",
-    "layer": "superficial",
-    "radius": 0.042,
-    "tendon": [
-     0.04,
-     0.22
+    "mesh": [
+     "vastus_lateralis"
     ],
-    "path": [
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.132,
-       0.8398,
-       -0.003
-      ]
-     },
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.1348,
-       0.6617,
-       0.0063
-      ]
-     },
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.0944,
-       0.5176,
-       0.024
-      ]
-     },
-     {
-      "s": "shank_r",
-      "p": [
-       -0.0763,
-       0.4166,
-       0.0074
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
     "wrap": {
-     "span": 2,
      "segment": "thigh_r",
      "center": [
       -0.0758,
@@ -680,7 +387,7 @@
        }
       ],
       "confidence": "especulativo",
-      "note": "Cilindro de contorno ilustrativo; raio escolhido para manter a linha fora do osso."
+      "note": "Cilindro nos côndilos e na patela: sem ele a linha central corta por dentro do joelho em flexão funda."
      }
     }
    }
@@ -717,65 +424,23 @@
        "refId": "arnold2010"
       }
      ],
-     "confidence": "estabelecido"
-    }
+     "confidence": "estabelecido",
+     "note": "Fora dela a linha central da malha passa sobre o eixo e o modelo deixa de representar o músculo; o gráfico para aqui."
+    },
+    "rangeDeg": [
+     0,
+     120
+    ]
    }
   ],
   "parts": [
    {
     "id": "vastus_medialis",
     "name": "Vasto medial",
-    "layer": "superficial",
-    "radius": 0.034,
-    "tendon": [
-     0.05,
-     0.2
+    "mesh": [
+     "vastus_medialis"
     ],
-    "path": [
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.0676,
-       0.7775,
-       0.0176
-      ]
-     },
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.041,
-       0.5864,
-       0.0188
-      ]
-     },
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.0572,
-       0.5088,
-       0.0253
-      ]
-     },
-     {
-      "s": "shank_r",
-      "p": [
-       -0.0763,
-       0.4166,
-       0.0074
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
     "wrap": {
-     "span": 2,
      "segment": "thigh_r",
      "center": [
       -0.0758,
@@ -795,7 +460,7 @@
        }
       ],
       "confidence": "especulativo",
-      "note": "Cilindro de contorno ilustrativo; raio escolhido para manter a linha fora do osso."
+      "note": "Cilindro nos côndilos e na patela: sem ele a linha central corta por dentro do joelho em flexão funda."
      }
     }
    }
@@ -840,57 +505,10 @@
    {
     "id": "vastus_intermedius",
     "name": "Vasto intermédio",
-    "layer": "deep",
-    "radius": 0.03,
-    "tendon": [
-     0.04,
-     0.22
+    "mesh": [
+     "vastus_intermedius"
     ],
-    "path": [
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.0944,
-       0.8148,
-       0.0233
-      ]
-     },
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.0839,
-       0.6234,
-       0.0235
-      ]
-     },
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.0768,
-       0.5134,
-       0.0216
-      ]
-     },
-     {
-      "s": "shank_r",
-      "p": [
-       -0.0763,
-       0.4166,
-       0.0074
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
     "wrap": {
-     "span": 2,
      "segment": "thigh_r",
      "center": [
       -0.0758,
@@ -910,7 +528,7 @@
        }
       ],
       "confidence": "especulativo",
-      "note": "Cilindro de contorno ilustrativo; raio escolhido para manter a linha fora do osso."
+      "note": "Cilindro nos côndilos e na patela: sem ele a linha central corta por dentro do joelho em flexão funda."
      }
     }
    }
@@ -964,64 +582,21 @@
       }
      ],
      "confidence": "estabelecido",
-     "note": "Parte isquiática; o modelo desenha só essa porção."
-    }
+     "note": "Caminho único para o músculo inteiro: a linha só passa atrás do eixo com o quadril fletido. A parte isquiocondilar, extensora em toda a faixa, não é separada na malha."
+    },
+    "rangeDeg": [
+     30,
+     110
+    ]
    }
   ],
   "parts": [
    {
     "id": "adductor_magnus",
     "name": "Adutor magno",
-    "layer": "deep",
-    "radius": 0.036,
-    "tendon": [
-     0.03,
-     0.12
-    ],
-    "path": [
-     {
-      "s": "pelvis",
-      "p": [
-       -0.044,
-       0.8251,
-       -0.0481
-      ]
-     },
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.0609,
-       0.6661,
-       -0.0305
-      ]
-     },
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.049,
-       0.5038,
-       -0.0352
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
-    "shape": {
-     "face": [
-      0.3,
-      0,
-      -1
-     ],
-     "width": 1.35,
-     "thickness": 0.7
-    }
+    "mesh": [
+     "adductor_magnus"
+    ]
    }
   ]
  },
@@ -1077,7 +652,7 @@
       }
      ],
      "confidence": "provavel",
-     "note": "Flexor perto da posição em pé; com o quadril muito fletido, a linha de ação passa para trás do eixo e ele vira extensor. Faixa estreitada ao trocar para o esqueleto medido na malha (Fase 7): o caminho desenhado à mão perde o sinal na ponta. Volta com a linha central da malha (Fase 8)."
+     "note": "Flexor perto da posição em pé; com o quadril muito fletido, a linha de ação passa para trás do eixo e ele vira extensor."
     }
    }
   ],
@@ -1085,47 +660,9 @@
    {
     "id": "adductor_longus",
     "name": "Adutor longo",
-    "layer": "superficial",
-    "radius": 0.024,
-    "tendon": [
-     0.08,
-     0.1
-    ],
-    "path": [
-     {
-      "s": "pelvis",
-      "p": [
-       -0.0215,
-       0.8314,
-       0.048
-      ]
-     },
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.0451,
-       0.7579,
-       0.0312
-      ]
-     },
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.0653,
-       0.6827,
-       0.0037
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    }
+    "mesh": [
+     "adductor_longus"
+    ]
    }
   ]
  },
@@ -1150,10 +687,6 @@
    {
     "movement": "knee_flexion",
     "role": "principal",
-    "rangeDeg": [
-     0,
-     120
-    ],
     "evidence": {
      "source": [
       {
@@ -1164,8 +697,7 @@
        "refId": "arnold2010"
       }
      ],
-     "confidence": "estabelecido",
-     "note": "Acima disso o caminho desenhado à mão deixa de representar o músculo; o gráfico para aqui."
+     "confidence": "estabelecido"
     }
    },
    {
@@ -1183,56 +715,20 @@
      ],
      "confidence": "estabelecido",
      "note": "Só a cabeça longa cruza o quadril; o modelo desenha só ela."
-    }
+    },
+    "parts": [
+     "biceps_femoris_long"
+    ]
    }
   ],
   "parts": [
    {
     "id": "biceps_femoris_long",
     "name": "Cabeça longa",
-    "layer": "superficial",
-    "radius": 0.029,
-    "tendon": [
-     0.08,
-     0.2
+    "mesh": [
+     "biceps_femoris_long"
     ],
-    "path": [
-     {
-      "s": "pelvis",
-      "p": [
-       -0.0606,
-       0.8278,
-       -0.0627
-      ]
-     },
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.1044,
-       0.6489,
-       -0.0719
-      ]
-     },
-     {
-      "s": "shank_r",
-      "p": [
-       -0.1156,
-       0.4466,
-       -0.052
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
     "wrap": {
-     "span": 1,
      "segment": "thigh_r",
      "center": [
       -0.0758,
@@ -1252,7 +748,37 @@
        }
       ],
       "confidence": "especulativo",
-      "note": "Cilindro de contorno ilustrativo; raio escolhido para manter a linha fora do osso."
+      "note": "Cilindro atrás dos côndilos femorais: mantém a linha fora do osso em flexão funda."
+     }
+    }
+   },
+   {
+    "id": "biceps_femoris_short",
+    "name": "Cabeça curta",
+    "mesh": [
+     "biceps_femoris_short"
+    ],
+    "wrap": {
+     "segment": "thigh_r",
+     "center": [
+      -0.0758,
+      0.4728,
+      -0.0294
+     ],
+     "radius": 0.036,
+     "side": [
+      -0.0009,
+      0.0717,
+      -0.9974
+     ],
+     "evidence": {
+      "source": [
+       {
+        "refId": "sbl_authored"
+       }
+      ],
+      "confidence": "especulativo",
+      "note": "Cilindro atrás dos côndilos femorais: mantém a linha fora do osso em flexão funda."
      }
     }
    }
@@ -1313,49 +839,10 @@
    {
     "id": "semitendinosus",
     "name": "Semitendíneo",
-    "layer": "superficial",
-    "radius": 0.024,
-    "tendon": [
-     0.06,
-     0.3
+    "mesh": [
+     "semitendinosus"
     ],
-    "path": [
-     {
-      "s": "pelvis",
-      "p": [
-       -0.0537,
-       0.8289,
-       -0.0686
-      ]
-     },
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.0625,
-       0.6503,
-       -0.0768
-      ]
-     },
-     {
-      "s": "shank_r",
-      "p": [
-       -0.0547,
-       0.4262,
-       -0.0084
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
     "wrap": {
-     "span": 1,
      "segment": "thigh_r",
      "center": [
       -0.0758,
@@ -1375,7 +862,7 @@
        }
       ],
       "confidence": "especulativo",
-      "note": "Cilindro de contorno ilustrativo; raio escolhido para manter a linha fora do osso."
+      "note": "Cilindro atrás dos côndilos femorais: mantém a linha fora do osso em flexão funda."
      }
     }
    }
@@ -1402,10 +889,6 @@
    {
     "movement": "knee_flexion",
     "role": "principal",
-    "rangeDeg": [
-     0,
-     100
-    ],
     "evidence": {
      "source": [
       {
@@ -1416,8 +899,7 @@
        "refId": "arnold2010"
       }
      ],
-     "confidence": "estabelecido",
-     "note": "Acima disso o caminho desenhado à mão deixa de representar o músculo; o gráfico para aqui."
+     "confidence": "estabelecido"
     }
    },
    {
@@ -1433,57 +915,23 @@
        "refId": "arnold2010"
       }
      ],
-     "confidence": "estabelecido"
-    }
+     "confidence": "estabelecido",
+     "note": "Fora dela a linha central da malha passa sobre o eixo e o modelo deixa de representar o músculo; o gráfico para aqui."
+    },
+    "rangeDeg": [
+     0,
+     110
+    ]
    }
   ],
   "parts": [
    {
     "id": "semimembranosus",
     "name": "Semimembranáceo",
-    "layer": "deep",
-    "radius": 0.026,
-    "tendon": [
-     0.15,
-     0.1
+    "mesh": [
+     "semimembranosus"
     ],
-    "path": [
-     {
-      "s": "pelvis",
-      "p": [
-       -0.0645,
-       0.8217,
-       -0.0559
-      ]
-     },
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.058,
-       0.6304,
-       -0.0662
-      ]
-     },
-     {
-      "s": "shank_r",
-      "p": [
-       -0.0545,
-       0.4555,
-       -0.0548
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
     "wrap": {
-     "span": 1,
      "segment": "thigh_r",
      "center": [
       -0.0758,
@@ -1503,7 +951,7 @@
        }
       ],
       "confidence": "especulativo",
-      "note": "Cilindro de contorno ilustrativo; raio escolhido para manter a linha fora do osso."
+      "note": "Cilindro atrás dos côndilos femorais: mantém a linha fora do osso em flexão funda."
      }
     }
    }
@@ -1546,10 +994,6 @@
    {
     "movement": "knee_flexion",
     "role": "secundaria",
-    "rangeDeg": [
-     0,
-     110
-    ],
     "evidence": {
      "source": [
       {
@@ -1561,66 +1005,26 @@
       }
      ],
      "confidence": "provavel",
-     "note": "Acima disso o caminho desenhado à mão deixa de representar o músculo; o gráfico para aqui."
-    }
+     "note": "Fora dela a linha central da malha passa sobre o eixo e o modelo deixa de representar o músculo; o gráfico para aqui."
+    },
+    "rangeDeg": [
+     0,
+     110
+    ]
    }
   ],
   "parts": [
    {
     "id": "gastrocnemius_med",
     "name": "Cabeça medial",
-    "layer": "superficial",
-    "radius": 0.031,
-    "tendon": [
-     0.04,
-     0.45
+    "mesh": [
+     "gastrocnemius_medial"
     ],
     "path": [
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.055,
-       0.5051,
-       -0.0552
-      ]
-     },
-     {
-      "s": "shank_r",
-      "p": [
-       -0.0615,
-       0.3526,
-       -0.094
-      ]
-     },
-     {
-      "s": "foot_r",
-      "p": [
-       -0.0736,
-       0.0287,
-       -0.0969
-      ]
-     }
+     "gastrocnemius_medial",
+     "calcaneal_tendon"
     ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
-    "shape": {
-     "face": [
-      0.3,
-      0,
-      -1
-     ],
-     "width": 1.15,
-     "thickness": 0.75
-    },
     "wrap": {
-     "span": 0,
      "segment": "thigh_r",
      "center": [
       -0.0758,
@@ -1640,65 +1044,21 @@
        }
       ],
       "confidence": "especulativo",
-      "note": "Cilindro de contorno ilustrativo; raio escolhido para manter a linha fora do osso."
+      "note": "Cilindro atrás dos côndilos femorais: mantém a linha fora do osso em flexão funda."
      }
     }
    },
    {
     "id": "gastrocnemius_lat",
     "name": "Cabeça lateral",
-    "layer": "superficial",
-    "radius": 0.026,
-    "tendon": [
-     0.04,
-     0.48
+    "mesh": [
+     "gastrocnemius_lateral"
     ],
     "path": [
-     {
-      "s": "thigh_r",
-      "p": [
-       -0.099,
-       0.5041,
-       -0.0552
-      ]
-     },
-     {
-      "s": "shank_r",
-      "p": [
-       -0.0953,
-       0.3669,
-       -0.0867
-      ]
-     },
-     {
-      "s": "foot_r",
-      "p": [
-       -0.0736,
-       0.0287,
-       -0.0969
-      ]
-     }
+     "gastrocnemius_lateral",
+     "calcaneal_tendon"
     ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
-    "shape": {
-     "face": [
-      -0.3,
-      0,
-      -1
-     ],
-     "width": 1.15,
-     "thickness": 0.75
-    },
     "wrap": {
-     "span": 0,
      "segment": "thigh_r",
      "center": [
       -0.0758,
@@ -1718,7 +1078,7 @@
        }
       ],
       "confidence": "especulativo",
-      "note": "Cilindro de contorno ilustrativo; raio escolhido para manter a linha fora do osso."
+      "note": "Cilindro atrás dos côndilos femorais: mantém a linha fora do osso em flexão funda."
      }
     }
    }
@@ -1763,56 +1123,13 @@
    {
     "id": "soleus",
     "name": "Sóleo",
-    "layer": "deep",
-    "radius": 0.032,
-    "tendon": [
-     0.02,
-     0.3
+    "mesh": [
+     "soleus"
     ],
     "path": [
-     {
-      "s": "shank_r",
-      "p": [
-       -0.0887,
-       0.4276,
-       -0.0604
-      ]
-     },
-     {
-      "s": "shank_r",
-      "p": [
-       -0.0805,
-       0.2395,
-       -0.0844
-      ]
-     },
-     {
-      "s": "foot_r",
-      "p": [
-       -0.0736,
-       0.0287,
-       -0.0969
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
-    "shape": {
-     "face": [
-      0,
-      0,
-      -1
-     ],
-     "width": 1.35,
-     "thickness": 0.65
-    }
+     "soleus",
+     "calcaneal_tendon"
+    ]
    }
   ]
  },
@@ -1871,55 +1188,9 @@
    {
     "id": "tibialis_anterior",
     "name": "Tibial anterior",
-    "layer": "superficial",
-    "radius": 0.019,
-    "tendon": [
-     0.03,
-     0.42
-    ],
-    "path": [
-     {
-      "s": "shank_r",
-      "p": [
-       -0.0948,
-       0.4171,
-       -0.0046
-      ]
-     },
-     {
-      "s": "shank_r",
-      "p": [
-       -0.0906,
-       0.2377,
-       0.0016
-      ]
-     },
-     {
-      "s": "shank_r",
-      "p": [
-       -0.0701,
-       0.0816,
-       0.0203
-      ]
-     },
-     {
-      "s": "foot_r",
-      "p": [
-       -0.0745,
-       0.0289,
-       0.0482
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    }
+    "mesh": [
+     "tibialis_anterior"
+    ]
    }
   ]
  },
@@ -1959,56 +1230,9 @@
    {
     "id": "rectus_abdominis",
     "name": "Reto do abdome",
-    "layer": "superficial",
-    "radius": 0.026,
-    "tendon": [
-     0.06,
-     0.02
-    ],
-    "path": [
-     {
-      "s": "pelvis",
-      "p": [
-       -0.0274,
-       0.8335,
-       0.0627
-      ]
-     },
-     {
-      "s": "trunk",
-      "p": [
-       -0.0421,
-       1.0229,
-       0.133
-      ]
-     },
-     {
-      "s": "trunk",
-      "p": [
-       -0.0561,
-       1.2363,
-       0.1268
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
-    "shape": {
-     "face": [
-      0,
-      0,
-      1
-     ],
-     "width": 1.4,
-     "thickness": 0.5
-    }
+    "mesh": [
+     "rectus_abdominis"
+    ]
    }
   ]
  },
@@ -2075,56 +1299,9 @@
    {
     "id": "external_oblique",
     "name": "Oblíquo externo",
-    "layer": "superficial",
-    "radius": 0.028,
-    "tendon": [
-     0,
-     0.15
-    ],
-    "path": [
-     {
-      "s": "trunk",
-      "p": [
-       -0.1328,
-       1.2328,
-       0.0528
-      ]
-     },
-     {
-      "s": "trunk",
-      "p": [
-       -0.1234,
-       1.0656,
-       0.0843
-      ]
-     },
-     {
-      "s": "pelvis",
-      "p": [
-       -0.0831,
-       0.916,
-       0.087
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
-    "shape": {
-     "face": [
-      -0.8,
-      0,
-      0.6
-     ],
-     "width": 1.9,
-     "thickness": 0.38
-    }
+    "mesh": [
+     "external_oblique"
+    ]
    }
   ]
  },
@@ -2157,7 +1334,11 @@
       }
      ],
      "confidence": "provavel"
-    }
+    },
+    "parts": [
+     "iliocostalis",
+     "longissimus"
+    ]
    },
    {
     "movement": "trunk_lateral_flexion",
@@ -2175,58 +1356,31 @@
   ],
   "parts": [
    {
-    "id": "erector_spinae",
-    "name": "Eretores da espinha",
-    "layer": "deep",
-    "radius": 0.026,
-    "tendon": [
-     0.08,
-     0.04
-    ],
-    "path": [
-     {
-      "s": "pelvis",
-      "p": [
-       -0.0342,
-       0.9538,
-       -0.0909
-      ]
-     },
-     {
-      "s": "trunk",
-      "p": [
-       -0.0374,
-       1.1132,
-       -0.1007
-      ]
-     },
-     {
-      "s": "trunk",
-      "p": [
-       -0.0327,
-       1.3724,
-       -0.0906
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
-    "shape": {
-     "face": [
-      0,
-      0,
-      -1
-     ],
-     "width": 1.3,
-     "thickness": 0.7
-    }
+    "id": "iliocostalis",
+    "name": "Iliocostal",
+    "mesh": [
+     "iliocostalis_lumborum",
+     "iliocostalis_thoracis",
+     "iliocostalis_cervicis"
+    ]
+   },
+   {
+    "id": "longissimus",
+    "name": "Longuíssimo",
+    "mesh": [
+     "longissimus_thoracis",
+     "longissimus_cervicis",
+     "longissimus_capitis"
+    ]
+   },
+   {
+    "id": "spinalis",
+    "name": "Espinal",
+    "mesh": [
+     "spinalis_thoracis",
+     "spinalis_cervicis",
+     "spinalis_capitis"
+    ]
    }
   ]
  },
@@ -2262,10 +1416,10 @@
       }
      ],
      "confidence": "estabelecido",
-     "note": "Faixa estreitada ao trocar para o esqueleto medido na malha (Fase 7): o caminho desenhado à mão perde o sinal na ponta. Volta com a linha central da malha (Fase 8)."
+     "note": "Fora dela a linha central da malha passa sobre o eixo e o modelo deixa de representar o músculo; o gráfico para aqui."
     },
     "rangeDeg": [
-     -10,
+     0,
      140
     ]
    },
@@ -2306,56 +1460,9 @@
    {
     "id": "latissimus_dorsi",
     "name": "Latíssimo do dorso",
-    "layer": "superficial",
-    "radius": 0.032,
-    "tendon": [
-     0.04,
-     0.16
-    ],
-    "path": [
-     {
-      "s": "trunk",
-      "p": [
-       -0.0374,
-       1.0347,
-       -0.0977
-      ]
-     },
-     {
-      "s": "trunk",
-      "p": [
-       -0.1328,
-       1.1929,
-       -0.0807
-      ]
-     },
-     {
-      "s": "upperarm_r",
-      "p": [
-       -0.1688,
-       1.3519,
-       -0.0152
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
-    "shape": {
-     "face": [
-      -0.45,
-      0,
-      -1
-     ],
-     "width": 2.1,
-     "thickness": 0.38
-    }
+    "mesh": [
+     "latissimus_dorsi"
+    ]
    }
   ]
  },
@@ -2462,157 +1569,24 @@
   "parts": [
    {
     "id": "trapezius_sup",
-    "name": "Fibras superiores",
-    "layer": "superficial",
-    "radius": 0.022,
-    "tendon": [
-     0.05,
-     0.05
-    ],
-    "path": [
-     {
-      "s": "head",
-      "p": [
-       -0.02,
-       1.581,
-       -0.0658
-      ]
-     },
-     {
-      "s": "trunk",
-      "p": [
-       -0.0842,
-       1.4922,
-       -0.0522
-      ]
-     },
-     {
-      "s": "trunk",
-      "p": [
-       -0.1683,
-       1.4601,
-       -0.018
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
-    "shape": {
-     "face": [
-      -0.2,
-      0.5,
-      -1
-     ],
-     "width": 1.5,
-     "thickness": 0.45
-    }
+    "name": "Parte descendente (superior)",
+    "mesh": [
+     "trapezius_descending"
+    ]
    },
    {
     "id": "trapezius_mid",
-    "name": "Fibras médias",
-    "layer": "superficial",
-    "radius": 0.019,
-    "tendon": [
-     0.05,
-     0.05
-    ],
-    "path": [
-     {
-      "s": "trunk",
-      "p": [
-       -0.0094,
-       1.3942,
-       -0.1035
-      ]
-     },
-     {
-      "s": "trunk",
-      "p": [
-       -0.1496,
-       1.4242,
-       -0.0646
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
-    "shape": {
-     "face": [
-      0,
-      0.1,
-      -1
-     ],
-     "width": 1.8,
-     "thickness": 0.38
-    }
+    "name": "Parte transversa (média)",
+    "mesh": [
+     "trapezius_transverse"
+    ]
    },
    {
     "id": "trapezius_inf",
-    "name": "Fibras inferiores",
-    "layer": "superficial",
-    "radius": 0.018,
-    "tendon": [
-     0.05,
-     0.08
-    ],
-    "path": [
-     {
-      "s": "trunk",
-      "p": [
-       -0.0094,
-       1.1918,
-       -0.1037
-      ]
-     },
-     {
-      "s": "trunk",
-      "p": [
-       -0.0935,
-       1.3494,
-       -0.0998
-      ]
-     },
-     {
-      "s": "trunk",
-      "p": [
-       -0.1403,
-       1.4186,
-       -0.0644
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
-    "shape": {
-     "face": [
-      0,
-      0,
-      -1
-     ],
-     "width": 1.7,
-     "thickness": 0.38
-    }
+    "name": "Parte ascendente (inferior)",
+    "mesh": [
+     "trapezius_ascending"
+    ]
    }
   ]
  },
@@ -2688,10 +1662,6 @@
     "parts": [
      "pectoralis_major_clav"
     ],
-    "rangeDeg": [
-     0,
-     40
-    ],
     "evidence": {
      "source": [
       {
@@ -2703,15 +1673,16 @@
       }
      ],
      "confidence": "estabelecido",
-     "note": "Parte clavicular. Acima disso o caminho desenhado à mão deixa de representar o músculo; o gráfico para aqui."
-    }
+     "note": "Parte clavicular. Fora dela a linha central da malha passa sobre o eixo e o modelo deixa de representar o músculo; o gráfico para aqui."
+    },
+    "rangeDeg": [
+     -10,
+     50
+    ]
    },
    {
     "movement": "shoulder_extension",
     "role": "secundaria",
-    "parts": [
-     "pectoralis_major_stern"
-    ],
     "rangeDeg": [
      90,
      150
@@ -2728,117 +1699,34 @@
      ],
      "confidence": "provavel",
      "note": "Parte esternocostal, a partir do braço já elevado à frente."
-    }
+    },
+    "parts": [
+     "pectoralis_major_stern",
+     "pectoralis_major_abd"
+    ]
    }
   ],
   "parts": [
    {
     "id": "pectoralis_major_clav",
-    "name": "Porção clavicular",
-    "layer": "superficial",
-    "radius": 0.022,
-    "tendon": [
-     0.03,
-     0.12
-    ],
-    "path": [
-     {
-      "s": "trunk",
-      "p": [
-       -0.0514,
-       1.4417,
-       0.0698
-      ]
-     },
-     {
-      "s": "trunk",
-      "p": [
-       -0.1309,
-       1.4081,
-       0.0741
-      ]
-     },
-     {
-      "s": "upperarm_r",
-      "p": [
-       -0.1748,
-       1.352,
-       0.0068
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
-    "shape": {
-     "face": [
-      -0.25,
-      0.2,
-      1
-     ],
-     "width": 1.7,
-     "thickness": 0.45
-    }
+    "name": "Parte clavicular",
+    "mesh": [
+     "pectoralis_major_clavicular"
+    ]
    },
    {
     "id": "pectoralis_major_stern",
-    "name": "Porção esternocostal",
-    "layer": "superficial",
-    "radius": 0.032,
-    "tendon": [
-     0.03,
-     0.12
-    ],
-    "path": [
-     {
-      "s": "trunk",
-      "p": [
-       -0.0187,
-       1.3144,
-       0.1148
-      ]
-     },
-     {
-      "s": "trunk",
-      "p": [
-       -0.1122,
-       1.3252,
-       0.1043
-      ]
-     },
-     {
-      "s": "upperarm_r",
-      "p": [
-       -0.1755,
-       1.3477,
-       0.0066
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
-    "shape": {
-     "face": [
-      -0.25,
-      0,
-      1
-     ],
-     "width": 1.9,
-     "thickness": 0.42
-    }
+    "name": "Parte esternocostal",
+    "mesh": [
+     "pectoralis_major_sternocostal"
+    ]
+   },
+   {
+    "id": "pectoralis_major_abd",
+    "name": "Parte abdominal",
+    "mesh": [
+     "pectoralis_major_abdominal"
+    ]
    }
   ]
  },
@@ -2886,10 +1774,6 @@
     "parts": [
      "deltoid_ant"
     ],
-    "rangeDeg": [
-     -20,
-     90
-    ],
     "evidence": {
      "source": [
       {
@@ -2901,8 +1785,12 @@
       }
      ],
      "confidence": "estabelecido",
-     "note": "Parte clavicular. Acima disso o caminho desenhado à mão deixa de representar o músculo; o gráfico para aqui."
-    }
+     "note": "Parte clavicular. Fora dela a linha central da malha passa sobre o eixo e o modelo deixa de representar o músculo; o gráfico para aqui."
+    },
+    "rangeDeg": [
+     -20,
+     80
+    ]
    },
    {
     "movement": "shoulder_extension",
@@ -2921,11 +1809,11 @@
       }
      ],
      "confidence": "estabelecido",
-     "note": "Parte espinal. Faixa estreitada ao trocar para o esqueleto medido na malha (Fase 7): o caminho desenhado à mão perde o sinal na ponta. Volta com a linha central da malha (Fase 8)."
+     "note": "Parte espinal. Fora dela a linha central da malha passa sobre o eixo e o modelo deixa de representar o músculo; o gráfico para aqui."
     },
     "rangeDeg": [
      -20,
-     130
+     120
     ]
    },
    {
@@ -2989,165 +1877,24 @@
   "parts": [
    {
     "id": "deltoid_ant",
-    "name": "Porção anterior",
-    "layer": "superficial",
-    "radius": 0.022,
-    "tendon": [
-     0.03,
-     0.12
-    ],
-    "path": [
-     {
-      "s": "trunk",
-      "p": [
-       -0.1216,
-       1.4576,
-       0.0492
-      ]
-     },
-     {
-      "s": "trunk",
-      "p": [
-       -0.1936,
-       1.4463,
-       0.0486
-      ]
-     },
-     {
-      "s": "upperarm_r",
-      "p": [
-       -0.217,
-       1.2901,
-       -0.0123
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
-    "shape": {
-     "face": [
-      -0.4,
-      0.2,
-      1
-     ],
-     "width": 1.35,
-     "thickness": 0.6
-    }
+    "name": "Parte clavicular (anterior)",
+    "mesh": [
+     "deltoid_anterior"
+    ]
    },
    {
     "id": "deltoid_lat",
-    "name": "Porção lateral",
-    "layer": "superficial",
-    "radius": 0.024,
-    "tendon": [
-     0.03,
-     0.12
-    ],
-    "path": [
-     {
-      "s": "trunk",
-      "p": [
-       -0.1824,
-       1.4687,
-       -0.0013
-      ]
-     },
-     {
-      "s": "upperarm_r",
-      "p": [
-       -0.2171,
-       1.4132,
-       -0.0226
-      ]
-     },
-     {
-      "s": "upperarm_r",
-      "p": [
-       -0.2189,
-       1.291,
-       -0.0232
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
-    "shape": {
-     "face": [
-      -1,
-      0.3,
-      0
-     ],
-     "width": 1.35,
-     "thickness": 0.6
-    }
+    "name": "Parte acromial (lateral)",
+    "mesh": [
+     "deltoid_lateral"
+    ]
    },
    {
     "id": "deltoid_post",
-    "name": "Porção posterior",
-    "layer": "superficial",
-    "radius": 0.022,
-    "tendon": [
-     0.03,
-     0.12
-    ],
-    "path": [
-     {
-      "s": "trunk",
-      "p": [
-       -0.1403,
-       1.4465,
-       -0.0675
-      ]
-     },
-     {
-      "s": "upperarm_r",
-      "p": [
-       -0.1972,
-       1.4117,
-       -0.0646
-      ]
-     },
-     {
-      "s": "upperarm_r",
-      "p": [
-       -0.2162,
-       1.2954,
-       -0.034
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
-    "shape": {
-     "face": [
-      -0.4,
-      0.2,
-      -1
-     ],
-     "width": 1.35,
-     "thickness": 0.6
-    }
+    "name": "Parte espinal (posterior)",
+    "mesh": [
+     "deltoid_posterior"
+    ]
    }
   ]
  },
@@ -3182,13 +1929,8 @@
        "refId": "holzbaur2005"
       }
      ],
-     "confidence": "estabelecido",
-     "note": "Faixa estreitada ao trocar para o esqueleto medido na malha (Fase 7): o caminho desenhado à mão perde o sinal na ponta. Volta com a linha central da malha (Fase 8)."
-    },
-    "rangeDeg": [
-     0,
-     110
-    ]
+     "confidence": "estabelecido"
+    }
    },
    {
     "movement": "forearm_supination",
@@ -3229,49 +1971,51 @@
   ],
   "parts": [
    {
-    "id": "biceps_brachii",
-    "name": "Bíceps braquial",
-    "layer": "superficial",
-    "radius": 0.024,
-    "tendon": [
-     0.2,
-     0.15
+    "id": "biceps_brachii_long",
+    "name": "Cabeça longa",
+    "mesh": [
+     "biceps_brachii_long"
     ],
     "path": [
      {
-      "s": "trunk",
+      "s": "scapula_r",
       "p": [
-       -0.1571,
-       1.434,
-       0.0271
-      ]
+       -0.155,
+       1.44,
+       -0.02
+      ],
+      "note": "Tubérculo supraglenoidal, acima da glenoide (o tendão da cabeça longa não está na malha)."
      },
+     "biceps_brachii_long"
+    ]
+   },
+   {
+    "id": "biceps_brachii_short",
+    "name": "Cabeça curta",
+    "mesh": [
+     "biceps_brachii_short"
+    ],
+    "path": [
      {
-      "s": "upperarm_r",
+      "s": "scapula_r",
       "p": [
-       -0.2047,
-       1.2605,
-       0.0144
-      ]
+       -0.1429,
+       1.4209,
+       0
+      ],
+      "note": "Processo coracoide: ponta proximal da linha central do coracobraquial."
      },
+     "biceps_brachii_short",
      {
       "s": "forearm_r",
       "p": [
-       -0.2282,
-       1.1079,
-       -0.0069
-      ]
+       -0.2386,
+       1.0884,
+       -0.0138
+      ],
+      "note": "Tuberosidade do rádio: ponta distal da cabeça longa."
      }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    }
+    ]
    }
   ]
  },
@@ -3296,10 +2040,6 @@
    {
     "movement": "elbow_flexion",
     "role": "principal",
-    "rangeDeg": [
-     0,
-     90
-    ],
     "evidence": {
      "source": [
       {
@@ -3310,8 +2050,7 @@
        "refId": "holzbaur2005"
       }
      ],
-     "confidence": "estabelecido",
-     "note": "Acima disso o caminho desenhado à mão deixa de representar o músculo; o gráfico para aqui. Faixa estreitada ao trocar para o esqueleto medido na malha (Fase 7): o caminho desenhado à mão perde o sinal na ponta. Volta com a linha central da malha (Fase 8)."
+     "confidence": "estabelecido"
     }
    }
   ],
@@ -3319,47 +2058,9 @@
    {
     "id": "brachialis",
     "name": "Braquial",
-    "layer": "deep",
-    "radius": 0.02,
-    "tendon": [
-     0.02,
-     0.15
-    ],
-    "path": [
-     {
-      "s": "upperarm_r",
-      "p": [
-       -0.2081,
-       1.2537,
-       -0.0159
-      ]
-     },
-     {
-      "s": "upperarm_r",
-      "p": [
-       -0.2189,
-       1.1676,
-       -0.0059
-      ]
-     },
-     {
-      "s": "forearm_r",
-      "p": [
-       -0.2254,
-       1.1164,
-       -0.0168
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    }
+    "mesh": [
+     "brachialis"
+    ]
    }
   ]
  },
@@ -3394,23 +2095,14 @@
        "refId": "holzbaur2005"
       }
      ],
-     "confidence": "estabelecido",
-     "note": "Faixa estreitada ao trocar para o esqueleto medido na malha (Fase 7): o caminho desenhado à mão perde o sinal na ponta. Volta com a linha central da malha (Fase 8)."
-    },
-    "rangeDeg": [
-     0,
-     110
-    ]
+     "confidence": "estabelecido"
+    }
    },
    {
     "movement": "shoulder_extension",
     "role": "secundaria",
     "parts": [
      "triceps_brachii_long"
-    ],
-    "rangeDeg": [
-     -20,
-     120
     ],
     "evidence": {
      "source": [
@@ -3423,57 +2115,22 @@
       }
      ],
      "confidence": "provavel",
-     "note": "Só a cabeça longa cruza o ombro. Acima disso o caminho desenhado à mão deixa de representar o músculo; o gráfico para aqui. Faixa estreitada ao trocar para o esqueleto medido na malha (Fase 7): o caminho desenhado à mão perde o sinal na ponta. Volta com a linha central da malha (Fase 8)."
-    }
+     "note": "Só a cabeça longa cruza o ombro. Fora dela a linha central da malha passa sobre o eixo e o modelo deixa de representar o músculo; o gráfico para aqui."
+    },
+    "rangeDeg": [
+     -10,
+     140
+    ]
    }
   ],
   "parts": [
    {
     "id": "triceps_brachii_long",
     "name": "Cabeça longa",
-    "layer": "superficial",
-    "radius": 0.025,
-    "tendon": [
-     0.08,
-     0.15
+    "mesh": [
+     "triceps_brachii_long"
     ],
-    "path": [
-     {
-      "s": "trunk",
-      "p": [
-       -0.1608,
-       1.4088,
-       -0.032
-      ]
-     },
-     {
-      "s": "upperarm_r",
-      "p": [
-       -0.1995,
-       1.2633,
-       -0.0645
-      ]
-     },
-     {
-      "s": "forearm_r",
-      "p": [
-       -0.2242,
-       1.1185,
-       -0.0582
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
     "wrap": {
-     "span": 1,
      "segment": "upperarm_r",
      "center": [
       -0.2213,
@@ -3493,56 +2150,35 @@
        }
       ],
       "confidence": "especulativo",
-      "note": "Contorno ilustrativo no olécrano; sem ele a linha cruzava o eixo do cotovelo acima de 60° de flexão."
+      "note": "Cilindro no olécrano: sem ele a linha cruza o eixo do cotovelo em flexão funda."
      }
-    }
+    },
+    "path": [
+     {
+      "mesh": "triceps_brachii_long",
+      "only": [
+       "scapula_r",
+       "upperarm_r"
+      ]
+     },
+     {
+      "s": "forearm_r",
+      "p": [
+       -0.222,
+       1.138,
+       -0.06
+      ],
+      "note": "Ponta do olécrano, 2,5 cm atrás do eixo do cotovelo: a linha central da malha termina quase sobre o eixo."
+     }
+    ]
    },
    {
     "id": "triceps_brachii_lat",
     "name": "Cabeça lateral",
-    "layer": "superficial",
-    "radius": 0.022,
-    "tendon": [
-     0.03,
-     0.15
+    "mesh": [
+     "triceps_brachii_lateral"
     ],
-    "path": [
-     {
-      "s": "upperarm_r",
-      "p": [
-       -0.2056,
-       1.3509,
-       -0.0434
-      ]
-     },
-     {
-      "s": "upperarm_r",
-      "p": [
-       -0.2256,
-       1.2238,
-       -0.0594
-      ]
-     },
-     {
-      "s": "forearm_r",
-      "p": [
-       -0.2242,
-       1.1185,
-       -0.0582
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
-    },
     "wrap": {
-     "span": 1,
      "segment": "upperarm_r",
      "center": [
       -0.2213,
@@ -3562,9 +2198,73 @@
        }
       ],
       "confidence": "especulativo",
-      "note": "Contorno ilustrativo no olécrano; sem ele a linha cruzava o eixo do cotovelo acima de 60° de flexão."
+      "note": "Cilindro no olécrano: sem ele a linha cruza o eixo do cotovelo em flexão funda."
      }
-    }
+    },
+    "path": [
+     {
+      "mesh": "triceps_brachii_lateral",
+      "only": [
+       "upperarm_r"
+      ]
+     },
+     {
+      "s": "forearm_r",
+      "p": [
+       -0.222,
+       1.138,
+       -0.06
+      ],
+      "note": "Ponta do olécrano, 2,5 cm atrás do eixo do cotovelo: a linha central da malha termina quase sobre o eixo."
+     }
+    ]
+   },
+   {
+    "id": "triceps_brachii_med",
+    "name": "Cabeça medial",
+    "mesh": [
+     "triceps_brachii_medial"
+    ],
+    "wrap": {
+     "segment": "upperarm_r",
+     "center": [
+      -0.2213,
+      1.1366,
+      -0.0354
+     ],
+     "radius": 0.02,
+     "side": [
+      0.004,
+      0.0462,
+      -0.9989
+     ],
+     "evidence": {
+      "source": [
+       {
+        "refId": "sbl_authored"
+       }
+      ],
+      "confidence": "especulativo",
+      "note": "Cilindro no olécrano: sem ele a linha cruza o eixo do cotovelo em flexão funda."
+     }
+    },
+    "path": [
+     {
+      "mesh": "triceps_brachii_medial",
+      "only": [
+       "upperarm_r"
+      ]
+     },
+     {
+      "s": "forearm_r",
+      "p": [
+       -0.222,
+       1.138,
+       -0.06
+      ],
+      "note": "Ponta do olécrano, 2,5 cm atrás do eixo do cotovelo: a linha central da malha termina quase sobre o eixo."
+     }
+    ]
    }
   ]
  },
@@ -3599,55 +2299,43 @@
        "refId": "holzbaur2005"
       }
      ],
-     "confidence": "estabelecido"
-    }
+     "confidence": "estabelecido",
+     "note": "Com o punho estendido a linha passa sobre o eixo; o gráfico para aqui."
+    },
+    "rangeDeg": [
+     -20,
+     50
+    ]
    }
   ],
   "parts": [
    {
-    "id": "forearm_flexors",
-    "name": "Flexores do antebraço",
-    "layer": "superficial",
-    "radius": 0.02,
-    "tendon": [
-     0.04,
-     0.35
-    ],
-    "path": [
-     {
-      "s": "upperarm_r",
-      "p": [
-       -0.199,
-       1.1301,
-       -0.0256
-      ]
-     },
-     {
-      "s": "forearm_r",
-      "p": [
-       -0.2339,
-       1.004,
-       0.0209
-      ]
-     },
-     {
-      "s": "hand_r",
-      "p": [
-       -0.2683,
-       0.8786,
-       0.0429
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Grupo agregado. Caminho ilustrativo."
-    }
+    "id": "flexor_carpi_radialis",
+    "name": "Flexor radial do carpo",
+    "mesh": [
+     "flexor_carpi_radialis"
+    ]
+   },
+   {
+    "id": "palmaris_longus",
+    "name": "Palmar longo",
+    "mesh": [
+     "palmaris_longus"
+    ]
+   },
+   {
+    "id": "flexor_carpi_ulnaris",
+    "name": "Flexor ulnar do carpo",
+    "mesh": [
+     "flexor_carpi_ulnaris"
+    ]
+   },
+   {
+    "id": "flexor_digitorum_superficialis",
+    "name": "Flexor superficial dos dedos",
+    "mesh": [
+     "flexor_digitorum_superficialis"
+    ]
    }
   ]
  },
@@ -3672,10 +2360,6 @@
    {
     "movement": "wrist_extension",
     "role": "principal",
-    "rangeDeg": [
-     -40,
-     0
-    ],
     "evidence": {
      "source": [
       {
@@ -3687,55 +2371,37 @@
       }
      ],
      "confidence": "estabelecido",
-     "note": "Com o punho muito fletido o caminho desenhado à mão deixa de representar o músculo; o gráfico para aqui. Faixa estreitada ao trocar para o esqueleto medido na malha (Fase 7): o caminho desenhado à mão perde o sinal na ponta. Volta com a linha central da malha (Fase 8)."
-    }
+     "note": "Com o punho fletido a linha passa sobre o eixo; o gráfico para aqui."
+    },
+    "rangeDeg": [
+     -40,
+     -10
+    ]
    }
   ],
   "parts": [
    {
-    "id": "forearm_extensors",
-    "name": "Extensores do antebraço",
-    "layer": "superficial",
-    "radius": 0.019,
-    "tendon": [
-     0.04,
-     0.35
-    ],
-    "path": [
-     {
-      "s": "upperarm_r",
-      "p": [
-       -0.2488,
-       1.1477,
-       -0.031
-      ]
-     },
-     {
-      "s": "forearm_r",
-      "p": [
-       -0.2672,
-       1.0003,
-       -0.0268
-      ]
-     },
-     {
-      "s": "hand_r",
-      "p": [
-       -0.2823,
-       0.8291,
-       0.0282
-      ]
-     }
-    ],
-    "pathEvidence": {
-     "source": [
-      {
-       "refId": "sbl_authored"
-      }
-     ],
-     "confidence": "especulativo",
-     "note": "Grupo agregado. Caminho ilustrativo."
-    }
+    "id": "extensor_carpi_radialis",
+    "name": "Extensores radiais do carpo",
+    "mesh": [
+     "extensor_carpi_radialis_longus",
+     "extensor_carpi_radialis_brevis"
+    ]
+   },
+   {
+    "id": "extensor_digitorum",
+    "name": "Extensor dos dedos",
+    "mesh": [
+     "extensor_digitorum",
+     "extensor_digiti_minimi"
+    ]
+   },
+   {
+    "id": "extensor_carpi_ulnaris",
+    "name": "Extensor ulnar do carpo",
+    "mesh": [
+     "extensor_carpi_ulnaris"
+    ]
    }
   ]
  },
@@ -3789,47 +2455,1638 @@
    {
     "id": "sternocleidomastoid",
     "name": "Esternocleidomastóideo",
-    "layer": "superficial",
-    "radius": 0.014,
-    "tendon": [
-     0.08,
-     0.05
+    "mesh": [
+     "sternocleidomastoid"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "gluteus_minimus",
+  "latin": "Gluteus minimus",
+  "name": "Glúteo mínimo",
+  "group": "gluteals",
+  "origin": "Face glútea do ílio, entre as linhas glúteas anterior e inferior",
+  "insertion": "Trocanter maior do fêmur, face anterior",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "hip_abduction",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "hip_internal_rotation",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Fibras anteriores."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "gluteus_minimus",
+    "name": "Glúteo mínimo",
+    "mesh": [
+     "gluteus_minimus"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "tensor_fasciae_latae",
+  "latin": "Tensor fasciae latae",
+  "name": "Tensor da fáscia lata",
+  "group": "gluteals",
+  "origin": "Espinha ilíaca anterossuperior e crista ilíaca adjacente",
+  "insertion": "Trato iliotibial, que segue até o côndilo lateral da tíbia",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "hip_flexion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "hip_abduction",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "hip_internal_rotation",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "tensor_fasciae_latae",
+    "name": "Tensor da fáscia lata",
+    "mesh": [
+     "tensor_fasciae_latae"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "deep_external_rotators",
+  "latin": "Musculi rotatores laterales profundi",
+  "name": "Rotadores laterais profundos",
+  "group": "gluteals",
+  "origin": "Face anterior do sacro, ísquio e margem do forame obturado",
+  "insertion": "Trocanter maior e crista intertrocantérica do fêmur",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "hip_external_rotation",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "hip_abduction",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Piriforme, com o quadril fletido."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "piriformis",
+    "name": "Piriforme",
+    "mesh": [
+     "piriformis"
+    ]
+   },
+   {
+    "id": "gemelli",
+    "name": "Gêmeos superior e inferior",
+    "mesh": [
+     "gemellus_superior",
+     "gemellus_inferior"
+    ]
+   },
+   {
+    "id": "obturator_internus",
+    "name": "Obturador interno",
+    "mesh": [
+     "obturator_internus"
+    ]
+   },
+   {
+    "id": "quadratus_femoris",
+    "name": "Quadrado femoral",
+    "mesh": [
+     "quadratus_femoris"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "sartorius",
+  "latin": "Sartorius",
+  "name": "Sartório",
+  "group": "hip_flexors",
+  "origin": "Espinha ilíaca anterossuperior",
+  "insertion": "Face medial da tíbia proximal (pata de ganso)",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "hip_flexion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "knee_flexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Na linha central da malha o sartório só passa atrás do eixo do joelho com o joelho já fletido."
+    },
+    "rangeDeg": [
+     50,
+     130
+    ]
+   },
+   {
+    "movement": "hip_abduction",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "hip_external_rotation",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "sartorius",
+    "name": "Sartório",
+    "mesh": [
+     "sartorius"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "gracilis",
+  "latin": "Gracilis",
+  "name": "Grácil",
+  "group": "adductors",
+  "origin": "Corpo e ramo inferior do púbis",
+  "insertion": "Face medial da tíbia proximal (pata de ganso)",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "hip_adduction",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "knee_flexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Perto da extensão completa a linha do grácil passa quase sobre o eixo do joelho; o modelo só lhe dá braço de flexor a partir de 20°."
+    },
+    "rangeDeg": [
+     20,
+     130
+    ]
+   }
+  ],
+  "parts": [
+   {
+    "id": "gracilis",
+    "name": "Grácil",
+    "mesh": [
+     "gracilis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "pectineus",
+  "latin": "Pectineus",
+  "name": "Pectíneo",
+  "group": "adductors",
+  "origin": "Linha pectínea do púbis",
+  "insertion": "Linha pectínea do fêmur, abaixo do trocanter menor",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "hip_adduction",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "hip_flexion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Flexor perto da posição em pé; com o quadril muito fletido, a linha de ação passa para trás do eixo e ele vira extensor."
+    },
+    "rangeDeg": [
+     -10,
+     50
+    ]
+   }
+  ],
+  "parts": [
+   {
+    "id": "pectineus",
+    "name": "Pectíneo",
+    "mesh": [
+     "pectineus"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "adductor_brevis",
+  "latin": "Adductor brevis",
+  "name": "Adutor curto",
+  "group": "adductors",
+  "origin": "Corpo e ramo inferior do púbis",
+  "insertion": "Linha pectínea e parte proximal da linha áspera do fêmur",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "hip_adduction",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "hip_flexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Flexor perto da posição em pé; com o quadril muito fletido, a linha de ação passa para trás do eixo e ele vira extensor."
+    },
+    "rangeDeg": [
+     -10,
+     30
+    ]
+   }
+  ],
+  "parts": [
+   {
+    "id": "adductor_brevis",
+    "name": "Adutor curto",
+    "mesh": [
+     "adductor_brevis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "tibialis_posterior",
+  "latin": "Tibialis posterior",
+  "name": "Tibial posterior",
+  "group": "triceps_surae",
+  "origin": "Membrana interóssea e faces posteriores da tíbia e da fíbula",
+  "insertion": "Tuberosidade do navicular, cuneiformes e bases dos metatarsais II a IV",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "ankle_inversion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "ankle_plantarflexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "tibialis_posterior",
+    "name": "Tibial posterior",
+    "mesh": [
+     "tibialis_posterior"
     ],
     "path": [
      {
-      "s": "trunk",
-      "p": [
-       -0.0206,
-       1.4303,
-       0.0673
+      "mesh": "tibialis_posterior",
+      "only": [
+       "shank_r"
       ]
      },
      {
-      "s": "head",
+      "s": "shank_r",
       "p": [
-       -0.04,
-       1.5266,
-       0.0315
-      ]
+       -0.058,
+       0.052,
+       -0.068
+      ],
+      "note": "Sulco atrás do maléolo medial, que desce abaixo do eixo do tornozelo: o tendão contorna essa polia antes de ir ao pé."
      },
      {
-      "s": "head",
-      "p": [
-       -0.055,
-       1.6019,
-       -0.0136
+      "mesh": "tibialis_posterior",
+      "only": [
+       "foot_r"
       ]
      }
-    ],
-    "pathEvidence": {
+    ]
+   }
+  ]
+ },
+ {
+  "id": "fibulares",
+  "latin": "Musculi fibulares",
+  "name": "Fibulares",
+  "group": "shin",
+  "origin": "Face lateral da fíbula (longo: dois terços proximais; curto: dois terços distais)",
+  "insertion": "Longo: cuneiforme medial e base do 1º metatarsal; curto: base do 5º metatarsal",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "ankle_eversion",
+    "role": "principal",
+    "evidence": {
      "source": [
       {
-       "refId": "sbl_authored"
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
       }
      ],
-     "confidence": "especulativo",
-     "note": "Caminho ilustrativo."
+     "confidence": "provavel"
     }
+   },
+   {
+    "movement": "ankle_plantarflexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "fibularis_longus",
+    "name": "Fibular longo",
+    "mesh": [
+     "fibularis_longus"
+    ],
+    "path": [
+     {
+      "mesh": "fibularis_longus",
+      "only": [
+       "shank_r"
+      ]
+     },
+     {
+      "s": "shank_r",
+      "p": [
+       -0.104,
+       0.05,
+       -0.075
+      ],
+      "note": "Sulco atrás do maléolo lateral, que desce abaixo do eixo do tornozelo: o tendão contorna essa polia antes de ir ao pé."
+     },
+     {
+      "mesh": "fibularis_longus",
+      "only": [
+       "foot_r"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "fibularis_brevis",
+    "name": "Fibular curto",
+    "mesh": [
+     "fibularis_brevis"
+    ],
+    "path": [
+     {
+      "mesh": "fibularis_brevis",
+      "only": [
+       "shank_r"
+      ]
+     },
+     {
+      "s": "shank_r",
+      "p": [
+       -0.104,
+       0.05,
+       -0.075
+      ],
+      "note": "Sulco atrás do maléolo lateral, que desce abaixo do eixo do tornozelo: o tendão contorna essa polia antes de ir ao pé."
+     },
+     {
+      "mesh": "fibularis_brevis",
+      "only": [
+       "foot_r"
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "internal_oblique",
+  "latin": "Obliquus internus abdominis",
+  "name": "Oblíquo interno",
+  "group": "abdominals",
+  "origin": "Fáscia toracolombar, crista ilíaca e ligamento inguinal",
+  "insertion": "Costelas X a XII, linha alba e púbis",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "trunk_flexion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "trunk_rotation",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Para o mesmo lado."
+    }
+   },
+   {
+    "movement": "trunk_lateral_flexion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "internal_oblique",
+    "name": "Oblíquo interno",
+    "mesh": [
+     "internal_oblique"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "quadratus_lumborum",
+  "latin": "Quadratus lumborum",
+  "name": "Quadrado do lombo",
+  "group": "abdominals",
+  "origin": "Crista ilíaca posterior e ligamento iliolombar",
+  "insertion": "Costela XII e processos transversos de L1 a L4",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "trunk_lateral_flexion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "trunk_extension",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Bilateral."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "quadratus_lumborum",
+    "name": "Quadrado do lombo",
+    "mesh": [
+     "quadratus_lumborum"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "multifidus",
+  "latin": "Multifidus",
+  "name": "Multífido",
+  "group": "spinal_erectors",
+  "origin": "Sacro, ílio e processos transversos e mamilares de L5 a C4",
+  "insertion": "Processos espinhosos de duas a quatro vértebras acima",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "trunk_extension",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "trunk_rotation",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Para o lado oposto."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "multifidus",
+    "name": "Multífido",
+    "mesh": [
+     "multifidus"
+    ],
+    "path": [
+     {
+      "s": "pelvis",
+      "p": [
+       -0.0097,
+       0.9397,
+       -0.0839
+      ],
+      "note": "Face dorsal do sacro: ponta proximal do longuíssimo do tórax."
+     },
+     "multifidus"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "teres_major",
+  "latin": "Teres major",
+  "name": "Redondo maior",
+  "group": "lats",
+  "origin": "Ângulo inferior da escápula, face posterior",
+  "insertion": "Crista do tubérculo menor do úmero",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "shoulder_extension",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "shoulder_adduction",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "shoulder_internal_rotation",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "teres_major",
+    "name": "Redondo maior",
+    "mesh": [
+     "teres_major"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "rhomboids",
+  "latin": "Musculi rhomboidei",
+  "name": "Romboides",
+  "group": "scapular",
+  "origin": "Processos espinhosos de C7 a T5 (menor: C7–T1; maior: T2–T5)",
+  "insertion": "Margem medial da escápula, da raiz da espinha ao ângulo inferior",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "scapular_retraction",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "scapular_downward_rotation",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "scapular_elevation",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "rhomboid_major",
+    "name": "Romboide maior",
+    "mesh": [
+     "rhomboid_major"
+    ]
+   },
+   {
+    "id": "rhomboid_minor",
+    "name": "Romboide menor",
+    "mesh": [
+     "rhomboid_minor"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "levator_scapulae",
+  "latin": "Levator scapulae",
+  "name": "Levantador da escápula",
+  "group": "scapular",
+  "origin": "Processos transversos de C1 a C4",
+  "insertion": "Ângulo superior e margem medial da escápula, acima da espinha",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "scapular_elevation",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "scapular_downward_rotation",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "neck_lateral_flexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "levator_scapulae",
+    "name": "Levantador da escápula",
+    "mesh": [
+     "levator_scapulae"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "serratus_anterior",
+  "latin": "Serratus anterior",
+  "name": "Serrátil anterior",
+  "group": "scapular",
+  "origin": "Faces externas das costelas I a VIII ou IX",
+  "insertion": "Face costal da margem medial da escápula",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "scapular_protraction",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "scapular_upward_rotation",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Fibras inferiores."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "serratus_anterior",
+    "name": "Serrátil anterior",
+    "mesh": [
+     "serratus_anterior"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "pectoralis_minor",
+  "latin": "Pectoralis minor",
+  "name": "Peitoral menor",
+  "group": "scapular",
+  "origin": "Costelas III a V, perto das cartilagens",
+  "insertion": "Processo coracoide da escápula",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "scapular_protraction",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "scapular_depression",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "scapular_downward_rotation",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "pectoralis_minor",
+    "name": "Peitoral menor",
+    "mesh": [
+     "pectoralis_minor"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "supraspinatus",
+  "latin": "Supraspinatus",
+  "name": "Supraespinal",
+  "group": "rotator_cuff",
+  "origin": "Fossa supraespinal da escápula",
+  "insertion": "Faceta superior do tubérculo maior do úmero",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "shoulder_abduction",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Sobretudo no início do movimento."
+    }
+   },
+   {
+    "movement": "shoulder_external_rotation",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "supraspinatus",
+    "name": "Supraespinal",
+    "mesh": [
+     "supraspinatus"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "infraspinatus",
+  "latin": "Infraspinatus",
+  "name": "Infraespinal",
+  "group": "rotator_cuff",
+  "origin": "Fossa infraespinal da escápula",
+  "insertion": "Faceta média do tubérculo maior do úmero",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "shoulder_external_rotation",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "shoulder_horizontal_abduction",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "infraspinatus",
+    "name": "Infraespinal",
+    "mesh": [
+     "infraspinatus"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "teres_minor",
+  "latin": "Teres minor",
+  "name": "Redondo menor",
+  "group": "rotator_cuff",
+  "origin": "Margem lateral da escápula, dois terços superiores",
+  "insertion": "Faceta inferior do tubérculo maior do úmero",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "shoulder_external_rotation",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "shoulder_adduction",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "teres_minor",
+    "name": "Redondo menor",
+    "mesh": [
+     "teres_minor"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "subscapularis",
+  "latin": "Subscapularis",
+  "name": "Subescapular",
+  "group": "rotator_cuff",
+  "origin": "Fossa subescapular da escápula",
+  "insertion": "Tubérculo menor do úmero",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "shoulder_internal_rotation",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "shoulder_adduction",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "subscapularis",
+    "name": "Subescapular",
+    "mesh": [
+     "subscapularis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "brachioradialis",
+  "latin": "Brachioradialis",
+  "name": "Braquiorradial",
+  "group": "elbow_flexors",
+  "origin": "Crista supraepicondilar lateral do úmero",
+  "insertion": "Processo estiloide do rádio",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "elbow_flexion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Mais forte com o antebraço em posição neutra."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "brachioradialis",
+    "name": "Braquiorradial",
+    "mesh": [
+     "brachioradialis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "anconeus",
+  "latin": "Anconeus",
+  "name": "Ancôneo",
+  "group": "elbow_extensors",
+  "origin": "Epicôndilo lateral do úmero",
+  "insertion": "Olécrano e face posterior proximal da ulna",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "elbow_extension",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Fora dela a linha central da malha passa sobre o eixo e o modelo deixa de representar o músculo; o gráfico para aqui."
+    },
+    "rangeDeg": [
+     0,
+     70
+    ]
+   }
+  ],
+  "parts": [
+   {
+    "id": "anconeus",
+    "name": "Ancôneo",
+    "mesh": [
+     "anconeus"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "pronator_teres",
+  "latin": "Pronator teres",
+  "name": "Pronador redondo",
+  "group": "forearm",
+  "origin": "Epicôndilo medial do úmero e processo coronoide da ulna",
+  "insertion": "Face lateral do rádio, no meio da diáfise",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "forearm_pronation",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "elbow_flexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Fora dela a linha central da malha passa sobre o eixo e o modelo deixa de representar o músculo; o gráfico para aqui."
+    },
+    "rangeDeg": [
+     0,
+     90
+    ]
+   }
+  ],
+  "parts": [
+   {
+    "id": "pronator_teres",
+    "name": "Pronador redondo",
+    "mesh": [
+     "pronator_teres"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "splenius",
+  "latin": "Splenius",
+  "name": "Esplênio",
+  "group": "neck",
+  "origin": "Ligamento nucal e processos espinhosos de C7 a T6",
+  "insertion": "Cabeça: processo mastoide e linha nucal superior; pescoço: processos transversos de C1 a C3",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "neck_extension",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "neck_rotation",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Para o mesmo lado."
+    }
+   },
+   {
+    "movement": "neck_lateral_flexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "splenius_capitis",
+    "name": "Esplênio da cabeça",
+    "mesh": [
+     "splenius_capitis"
+    ]
+   },
+   {
+    "id": "splenius_cervicis",
+    "name": "Esplênio do pescoço",
+    "mesh": [
+     "splenius_cervicis"
+    ]
    }
   ]
  }

@@ -67,27 +67,3 @@
 .heat__swatch[data-level='4'] { background: var(--c-stain-4); }
 .heat__swatch[data-level='5'] { background: var(--c-stain-5); }
 
-.model-switch {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--s-2) var(--s-3);
-}
-
-.model-switch__label {
-  font-size: var(--fs-1);
-  color: var(--c-ink-2);
-}
-
-.model-switch__options {
-  display: flex;
-  gap: var(--s-1);
-}
-
-.model-switch__note {
-  flex-basis: 100%;
-  margin: 0;
-  min-height: 1lh;
-  font-size: var(--fs-1);
-  color: var(--c-ink-2);
-}

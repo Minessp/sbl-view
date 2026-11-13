@@ -1,10 +1,10 @@
 /** Lê os tokens de cor do CSS (fonte única) para uso no WebGL. Valores sRGB 0..1, sem conversão. */
 import { Vector3 } from 'three';
 
-export type PaletteKey = 'bg' | 'bg-2' | 'ink' | 'ink-2' | 'rule' | 'accent' | 'bone';
+export type PaletteKey = 'bg' | 'bg-2' | 'ink' | 'ink-2' | 'rule' | 'accent' | 'bone' | 'body-muscle' | 'body-tendon' | 'body-bone' | 'body-skin';
 export type Palette = Record<PaletteKey, Vector3>;
 
-const KEYS: PaletteKey[] = ['bg', 'bg-2', 'ink', 'ink-2', 'rule', 'accent', 'bone'];
+const KEYS: PaletteKey[] = ['bg', 'bg-2', 'ink', 'ink-2', 'rule', 'accent', 'bone', 'body-muscle', 'body-tendon', 'body-bone', 'body-skin'];
 
 function hexToVec(hex: string, out: Vector3): Vector3 {
   const h = hex.trim().replace('#', '');

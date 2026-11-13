@@ -2,6 +2,7 @@ import { readFileSync, statSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import anatomyJson from '@/data/anatomy.json';
 import musclesJson from '@/data/muscles.json';
+import musclePathsJson from '@/data/muscle-paths.json';
 import { skeletonDef as skeletonJson } from '@/data';
 import { forwardKinematics } from '@/engine/kinematics/fk';
 import { buildSkeleton, degToAngles } from '@/engine/kinematics/skeleton';
@@ -54,8 +55,8 @@ describe.each(['hi', 'lo'] as const)('pacote anatômico SBL5 (%s)', (lod) => {
   it('tem todo músculo do Atlas, toda parte mapeada, ossos de todo segmento e pele', () => {
     const ids = new Set(pack.parts.map((p) => p.id));
     for (const id of [...Object.keys(anatomyJson.muscles), ...Object.keys(anatomyJson.tendons)]) expect(ids, id).toContain(id);
-    const linked = new Set(pack.parts.flatMap((p) => p.muscle ?? []));
-    for (const m of musclesJson) expect(linked, m.id).toContain(m.id);
+    for (const m of musclesJson) for (const part of m.parts) for (const id of part.mesh) expect(ids, `${m.id}: ${id}`).toContain(id);
+    for (const p of pack.parts.filter((q) => q.kind === 'muscle' || q.kind === 'tendon')) expect(['superficial', 'deep'], p.id).toContain(p.layer);
     for (const s of skeletonJson.segments) expect(pack.parts.some((p) => p.kind === 'bone' && p.segment === s.id), s.id).toBe(true);
     expect(pack.parts.filter((p) => p.kind === 'skin')).toHaveLength(1);
   });
@@ -124,6 +125,20 @@ describe.each(['hi', 'lo'] as const)('pacote anatômico SBL5 (%s)', (lod) => {
     expect(pack.parts.find((p) => p.id === 'calcaneal_tendon')?.ends).toEqual(['shank_r', 'foot_r']);
     const bic = pack.parts.find((p) => p.id === 'biceps_brachii_long');
     expect(bic?.ends?.[1]).toBe('forearm_r');
+  });
+});
+
+describe('linhas centrais do motor (muscle-paths.json) = as do pacote', () => {
+  it.each(['hi', 'lo'] as const)('%s', (lod) => {
+    const byId = new Map(packs[lod].pack.parts.map((p) => [p.id, p]));
+    const lines = Object.entries(musclePathsJson.parts);
+    expect(lines.length).toBeGreaterThan(70);
+    for (const [id, c] of lines) {
+      const p = byId.get(id);
+      expect(p?.ends, id).toEqual(c.ends);
+      expect(p?.layer, id).toBe(c.layer);
+      c.line.forEach((q, k) => q.forEach((x, i) => expect(p?.centerline?.[k]?.[i], `${id}[${k}]`).toBeCloseTo(x, 4)));
+    }
   });
 });
 

@@ -251,27 +251,18 @@
   color: var(--c-ink-2);
 }
 
-.fallback__svg {
-  width: 100%;
+.fallback__views {
+  display: flex;
+  justify-content: center;
+  gap: var(--s-4);
+  min-height: 0;
+}
+
+.fallback__views img {
   height: 100%;
-  min-height: 300px;
-}
-
-.fallback__seg {
-  stroke: var(--c-ink);
-  stroke-width: 0.012;
-  stroke-linecap: round;
-}
-
-.fallback__joint {
-  fill: var(--c-bg);
-  stroke: var(--c-accent);
-  stroke-width: 0.006;
-}
-
-.fallback__floor {
-  stroke: var(--c-rule);
-  stroke-width: 0.004;
+  width: auto;
+  max-width: 48%;
+  object-fit: contain;
 }
 
 /* ---------- Página genérica ---------- */
