@@ -20,6 +20,8 @@
   --c-cool: #7ec1e5;
   /* Luz do 3D: brilho do destaque, luz principal, contraluz, poça de luz no chão. */
   --c-glow: #f8b65d;
+  /* Alongar no 3D (aço que acende). */
+  --c-stretch: #6cc4f2;
   --c-light-key: #fff1dc;
   --c-light-rim: #9fd0f0;
   --c-floor: #1e2731;
@@ -44,6 +46,7 @@
   --c-on-accent: #faf8f5;
   --c-cool: #1d5e85;
   --c-glow: #f2a03c;
+  --c-stretch: #3d9fd8;
   --c-light-key: #fff6ea;
   --c-light-rim: #c4dcef;
   --c-floor: #c9ced4;

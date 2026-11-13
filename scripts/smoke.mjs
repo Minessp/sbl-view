@@ -78,6 +78,35 @@ await step('atlas: índice lista músculos e a página desenha corpo e curvas', 
   if (charts < 4) throw new Error(`só ${charts} gráficos`);
 });
 
+await step('atlas: explorador busca, isola, troca camada, abre e demonstra', async () => {
+  await page.goto(`${base}/atlas`, { waitUntil: 'networkidle' });
+  await page.waitForSelector('.stage[data-ready="true"]', { timeout: 20000 });
+  await page.getByRole('combobox', { name: 'Buscar estrutura' }).fill('gluteo max');
+  await page.getByRole('option', { name: /Glúteo máximo/ }).waitFor();
+  await page.keyboard.press('Enter');
+  await page.locator('.sel__name', { hasText: 'Glúteo máximo' }).waitFor();
+  await page.getByRole('button', { name: 'Isolar' }).click();
+  await page.locator('.sel button[aria-pressed="true"]', { hasText: 'Isolar' }).waitFor();
+  await page.getByRole('group', { name: 'Ossos' }).getByRole('button', { name: 'Oculta' }).click();
+  await page.getByText('Vista explodida').click();
+  await page.getByRole('button', { name: 'Sagital' }).click();
+  const demo = page.locator('.sel__demo-list button').first();
+  await demo.click();
+  const a = await page.locator('.demo__value').textContent();
+  await page.waitForTimeout(900);
+  const b = await page.locator('.demo__value').textContent();
+  if (a === b) throw new Error(`demonstração parada em ${a}`);
+  // Arrastar gira a câmera sem selecionar nada.
+  const view = page.locator('.explorer__view');
+  const box = await view.boundingBox();
+  if (!box) throw new Error('sem vista');
+  await page.mouse.move(box.x + box.width * 0.3, box.y + box.height * 0.5);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.5, { steps: 8 });
+  await page.mouse.up();
+  await page.locator('.sel__name', { hasText: 'Glúteo máximo' }).waitFor();
+});
+
 await step('biblioteca: filtro de comprimento longo + hipótese deixa um exercício', async () => {
   await page.goto(`${base}/exercicios`, { waitUntil: 'networkidle' });
   await page.getByText('Só carga no músculo alongado').click();

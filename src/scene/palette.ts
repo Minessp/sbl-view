@@ -11,6 +11,7 @@ const KEYS = [
   'accent',
   'cool',
   'glow',
+  'stretch',
   'light-key',
   'light-rim',
   'floor',

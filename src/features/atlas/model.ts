@@ -21,7 +21,11 @@ export function atlasBody() {
 }
 
 export interface ActionCurve {
+  /** Identidade estável (ação + partes). */
+  key: string;
   movement: Movement;
+  /** Grau de liberdade do esqueleto que a curva mexe (`hip_flex_r`). */
+  dof: string;
   /** Nome do sentido positivo do eixo x (ex.: "Flexão do quadril"). */
   axisLabel: string;
   range: readonly [number, number];
@@ -58,7 +62,9 @@ export function actionCurves(m: MuscleDef): ActionCurve[] {
     if (series.length === 0) continue;
     const pos = movements.find((x) => x.dof === mv.dof && x.sign === 1);
     out.push({
+      key: `${mv.id}-${series.map((s) => s.partId).join()}`,
       movement: mv,
+      dof,
       axisLabel: pos?.label ?? mv.label,
       range,
       neutralAt: (0 - range[0]) / (range[1] - range[0]),

@@ -20,6 +20,8 @@ export const rig = {
   uKeyColor: { value: new Vector3(1, 0.95, 0.88) },
   uRimColor: { value: new Vector3(0.62, 0.8, 0.94) },
   uGlow: { value: new Vector3(0.97, 0.71, 0.36) },
+  /** Alongar (aço): cor do músculo que fica mais comprido que em pé. */
+  uStretch: { value: new Vector3(0.42, 0.77, 0.95) },
   uTendon: { value: new Vector3(0.9, 0.87, 0.8) },
   uSky: { value: new Vector3(0.2, 0.24, 0.3) },
   uGround: { value: new Vector3(0.12, 0.13, 0.15) },
@@ -44,6 +46,7 @@ export function refreshPalette() {
   rig.uKeyColor.value.copy(palette['light-key']);
   rig.uRimColor.value.copy(palette['light-rim']);
   rig.uGlow.value.copy(palette.glow);
+  rig.uStretch.value.copy(palette.stretch);
   rig.uTendon.value.copy(palette['body-tendon']);
   rig.uSky.value.copy(palette['bg-2']).lerp(palette['light-rim'], 0.35);
   rig.uGround.value.copy(palette.floor).lerp(palette['light-key'], 0.08);

@@ -97,21 +97,8 @@
   min-height: 320px;
 }
 
-.atlas-stage__cap {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--s-2) var(--s-3);
-}
 
-.atlas-stage__label {
-  font-size: var(--fs-1);
-  color: var(--c-ink-2);
-}
 
-.atlas-stage__slot[data-hover='true'] {
-  cursor: pointer;
-}
 
 .atlas-stage__hint {
   margin: 0;
@@ -126,10 +113,6 @@
   color: var(--c-ink-2);
 }
 
-.atlas-stage__views {
-  display: flex;
-  gap: var(--s-1);
-}
 
 @media (min-width: 1000px) {
   .atlas-page {
@@ -149,7 +132,7 @@
     padding-top: 0;
   }
   .atlas-stage__slot {
-    height: calc(100svh - var(--header-h) - 132px);
+    height: calc(100svh - var(--header-h) - 200px);
     max-height: 820px;
   }
   .atlas-page__body {

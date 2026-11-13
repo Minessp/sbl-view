@@ -1,66 +1,189 @@
-import { OrthographicCamera, View } from '@react-three/drei';
+/**
+ * Explorador do corpo: uma vista recortada no slot da página, câmera em órbita amortecida, camadas, isolar/ocultar/
+ * fantasma, vista explodida, plano de corte e demonstração de ação (o esqueleto percorre a faixa, o músculo muda de
+ * comprimento, volume e cor). Todo o estado vem de `useAtlas` (sem three.js); aqui só se aplica.
+ */
+import { PerspectiveCamera, View } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
-import { type OrthographicCamera as OrthoCam, Vector3 } from 'three';
+import { type PerspectiveCamera as PerspCam, Vector3 } from 'three';
 import { skeletonDef } from '@/data';
-import { forwardKinematics } from '@/engine/kinematics/fk';
+import { forwardKinematics, pointToWorld } from '@/engine/kinematics/fk';
 import { buildSkeleton } from '@/engine/kinematics/skeleton';
-import type { Vec3 } from '@/engine/math/vec';
-import { useAtlas, type AtlasView } from '@/features/atlas/store';
-import { boxOfSlots, type Box } from '../body/model';
+import type { Pose } from '@/engine/kinematics/types';
+import { DEG, type Vec3 } from '@/engine/math/vec';
+import { EXPLODE_SPACING } from '@/features/abertura/timeline';
+import { advanceDemo, demoAngle, strainOf } from '@/features/atlas/explorer/demo';
+import { BODY_BOX, dampOrbit, fitDistance, FOV_DEG, orbitPosition, orbitsClose, screenAxes, type Orbit } from '@/features/atlas/explorer/orbit';
+import { keyOf, LAYER_ORDER, samePick, useAtlas, type BodyLayerId, type LayerMode, type Pick, type StructureInfo } from '@/features/atlas/store';
 import { ContactShadow } from '../body/ContactShadow';
+import type { BodyInstance } from '../body/instance';
+import { layerOf, mergeBoxes, type Box, type BodyModel } from '../body/model';
 import { footContacts, STANDING } from '../body/poses';
 import { pulse } from '../body/rig';
 import { useBodyInstance, useBodyModel } from '../body/useBody';
 import { useStage } from '../stageStore';
 
-const DEFAULT_BOX: Box = { center: [0, 0.93, 0], size: [0.5, 1.8, 0.3] };
-/** Câmera: direção de onde olha (o sujeito olha +Z; o lado direito dele fica em −X). */
-const DIR: Record<AtlasView, Vec3> = { front: [0, 0, 1], back: [0, 0, -1], side: [-1, 0, 0] };
 const sk = buildSkeleton(skeletonDef);
-const pose = forwardKinematics(sk, STANDING);
-const feet = footContacts(sk, pose);
-const getFeet = () => feet;
-const HOVER = 0.4;
-const GHOST = 0.14;
+const standing = forwardKinematics(sk, STANDING);
+const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-function AtlasBody({ slot }: { slot: HTMLElement }) {
+const HOVER = 0.4;
+/** Opacidade do fantasma por camada (pele: alfa da mistura). */
+const GHOST: Record<BodyLayerId, number> = { skin: 0.22, superficial: 0.14, deep: 0.14, bone: 0.2 };
+const CUT_GHOST = 0.05;
+/** Faixa de cada eixo de corte (m), na ordem do controle 0..1, e a normal (o lado positivo some). */
+const CUTS = {
+  transverse: { n: [0, 1, 0] as Vec3, lo: 1.85, hi: -0.02 },
+  frontal: { n: [0, 0, 1] as Vec3, lo: 0.2, hi: -0.2 },
+  // O lado direito do sujeito (−X) sai primeiro.
+  sagittal: { n: [-1, 0, 0] as Vec3, lo: 0.35, hi: -0.35 },
+} as const;
+
+/** Posição de cada camada na vista explodida: só as visíveis abrem, centradas (em unidades de espaçamento). */
+function spreadSlots(layers: Record<BodyLayerId, LayerMode>): Record<BodyLayerId, number> {
+  const shown = LAYER_ORDER.filter((l) => layers[l] !== 'off');
+  const mid = (shown.length - 1) / 2;
+  return Object.fromEntries(LAYER_ORDER.map((l) => [l, shown.includes(l) ? shown.indexOf(l) - mid : 0])) as Record<BodyLayerId, number>;
+}
+
+const keySlots = (model: BodyModel, p: { kind: string; id: string }): readonly number[] =>
+  p.kind === 'muscle' ? (model.byMuscle.get(p.id) ?? []) : model.slots.filter((s) => s.anatomyId === p.id).map((s) => s.index);
+
+function parseKey(k: string): { kind: string; id: string } {
+  const i = k.indexOf(':');
+  return { kind: k.slice(0, i), id: k.slice(i + 1) };
+}
+
+function structuresOf(model: BodyModel): StructureInfo[] {
+  return model.pack.parts.map((p) => {
+    const muscleId = model.slots.find((s) => s.anatomyId === p.id)?.muscleId;
+    return {
+      id: p.id,
+      kind: p.kind,
+      layer: layerOf(p),
+      source: (p.objects[0] ?? p.id).replace(/\.[rl]$/, ''),
+      ...(muscleId && { muscleId }),
+    };
+  });
+}
+
+/** Caixa que enquadra a seleção: lado tocado, com contexto em volta. */
+function selectionBox(body: BodyInstance, model: BodyModel, sel: Pick): Box | null {
+  const all = keySlots(model, sel);
+  const side = all.filter((i) => model.slots[i]?.side === sel.side || model.slots[i]?.side === 'c');
+  const box = body.posedBox(side.length ? side : all);
+  if (!box) return null;
+  const s = box.size;
+  const h = Math.max(0.42, s[1] * 1.5);
+  return { center: box.center, size: [Math.max(0.3, s[0] * 1.5), h, Math.max(0.25, s[2] * 1.4)] };
+}
+
+function ExplorerBody({ slot }: { slot: HTMLElement }) {
   const invalidate = useThree((s) => s.invalidate);
   const gl = useThree((s) => s.gl);
-  const camRef = useRef<OrthoCam>(null);
-  const muscleId = useAtlas((s) => s.muscleId);
-  const hover = useAtlas((s) => s.hover);
-  const view = useAtlas((s) => s.view);
+  const camRef = useRef<PerspCam>(null);
   const { model } = useBodyModel();
   const body = useBodyInstance(model);
 
-  useEffect(() => {
-    if (!body) return;
-    body.setPose(sk, pose);
-    body.layer('skin', { visible: false });
-    useStage.getState().setReady(true);
-    invalidate();
-  }, [body, invalidate]);
+  /** Órbita desenhada (amortecida até a meta do store). */
+  const cur = useRef<Orbit>(useAtlas.getState().orbit);
+  /** Comprimento de cada vaga em pé (base da cor de deformação). */
+  const rest = useRef<Float32Array | null>(null);
+  const explode = useRef(0);
+  /** Eixo lateral em que as camadas abrem (fixo enquanto abertas; segue a vista pedida). */
+  const spreadAxis = useRef<Vec3>([1, 0, 0]);
+  const feet = useRef<Vec3[]>(footContacts(sk, standing));
+  const getFeet = useMemo(() => () => {
+    const e = explode.current;
+    if (e < 0.01) return feet.current;
+    const a = spreadAxis.current;
+    const slots = spreadSlots(useAtlas.getState().layers);
+    return LAYER_ORDER.flatMap((l) => feet.current.filter((_, i) => i % 2 === 0).map((f): Vec3 => [f[0] + a[0] * slots[l] * EXPLODE_SPACING * e, 0, f[2] + a[2] * slots[l] * EXPLODE_SPACING * e]));
+  }, []);
+  const demoSpec = useRef<string | null>(null);
 
-  // Músculo novo: o brilho percorre a fibra da origem à inserção.
-  useEffect(() => {
-    if (muscleId) pulse();
-  }, [muscleId]);
-
-  // Destaque: o alvo aceso; se for profundo, a camada superficial vira fantasma para ele aparecer.
+  // Corpo pronto: pose em pé, comprimentos de base, lista de estruturas para a busca.
   useEffect(() => {
     if (!body || !model) return;
-    const target = (muscleId && model.byMuscle.get(muscleId)) || [];
-    const deep = target.length > 0 && target.every((i) => model.slots[i]?.layer === 'deep');
-    body.fill('highlight', 0);
-    body.fill('opacity', 1);
-    if (deep) body.fillLayer('superficial', 'opacity', GHOST);
-    if (hover && hover !== muscleId) body.fill('highlight', HOVER, model.byMuscle.get(hover) ?? []);
-    body.fill('highlight', 1, target);
-    body.fill('opacity', 1, target);
-    body.commit();
+    body.setPose(sk, standing);
+    rest.current = body.lengths.slice();
+    useAtlas.getState().setStructures(structuresOf(model));
+    useStage.getState().setReady(true);
     invalidate();
-  }, [body, model, muscleId, hover, invalidate]);
+    // Troca de página entre duas vistas do Atlas: o slot muda, o corpo fica; o palco precisa voltar a "pronto".
+  }, [body, model, invalidate, slot]);
+
+  // Estado visual (camadas, seleção, ocultos…): reaplica quando algo relevante muda.
+  useEffect(() => {
+    if (!body || !model) return;
+    let last: unknown[] = [];
+    const apply = () => {
+      const st = useAtlas.getState();
+      const sig = [st.layers, st.hidden, st.ghosted, st.isolate, st.selection, st.hover, st.exploded, st.cut.axis, st.demo.spec];
+      if (sig.every((v, i) => v === last[i])) return;
+      last = sig;
+      const { layers, selection, hover, demo, exploded } = st;
+      body.fill('highlight', 0);
+      body.fill('opacity', 1);
+      body.fill('hidden', 0);
+      if (!demo.spec) body.fill('strain', 0);
+      const sel = selection ? keySlots(model, selection) : [];
+      const selLayers = new Set(sel.map((i) => model.slots[i]?.layer));
+      const inner = Math.min(...LAYER_ORDER.map((l, i) => (selLayers.has(l) ? i : 99)));
+      let skinAlpha = layers.skin === 'on' ? 1 : GHOST.skin;
+      for (const l of LAYER_ORDER) {
+        body.layer(l, { visible: layers[l] !== 'off' || selLayers.has(l) });
+        if (layers[l] === 'off' && selLayers.has(l)) body.fillLayer(l, 'hidden', 1);
+        if (l !== 'skin' && layers[l] === 'ghost') body.fillLayer(l, 'opacity', GHOST[l]);
+      }
+      // Raio X: as camadas por fora da seleção viram fantasma para ela aparecer (com as camadas juntas).
+      if (sel.length && !exploded) {
+        LAYER_ORDER.forEach((l, i) => {
+          if (i >= inner || layers[l] !== 'on') return;
+          if (l === 'skin') skinAlpha = GHOST.skin;
+          else body.fillLayer(l, 'opacity', GHOST[l]);
+        });
+      }
+      // Fáscias e aponeuroses (trato iliotibial, fáscia toracolombar…) cobrem o ventre: com um músculo em foco, viram vulto.
+      if (selection?.kind === 'muscle') for (const sl of model.slots) if (sl.kind === 'tendon') body.set(sl.index, 'opacity', GHOST.superficial);
+      body.layer('skin', { alpha: skinAlpha });
+      for (const k of st.ghosted) body.fill('opacity', GHOST.superficial, keySlots(model, parseKey(k)));
+      for (const k of st.hidden) body.fill('hidden', 1, keySlots(model, parseKey(k)));
+      if (st.isolate && sel.length) {
+        const keep = new Set(sel);
+        for (const s of model.slots) {
+          if (keep.has(s.index)) continue;
+          if (s.layer === 'bone') body.set(s.index, 'opacity', GHOST.bone);
+          else body.set(s.index, 'hidden', 1);
+        }
+        body.layer('bone', { visible: true });
+      }
+      if (hover && !samePick(hover, selection)) body.fill('highlight', HOVER, keySlots(model, hover));
+      if (selection) {
+        const k = keyOf(selection);
+        body.fill('highlight', demo.spec ? 0.1 : 1, sel);
+        if (!st.hidden.includes(k)) body.fill('hidden', 0, sel);
+        if (!st.ghosted.includes(k)) body.fill('opacity', 1, sel);
+      }
+      // Pele intacta e opaca: o que está embaixo não precisa desenhar (e não fura a pele onde encosta).
+      const sealed = layers.skin === 'on' && skinAlpha >= 1 && !exploded && st.cut.axis === 'none';
+      for (const l of ['superficial', 'deep', 'bone'] as const) body.layer(l, { showAbove: sealed ? 99 : -99 });
+      body.commit();
+      invalidate();
+    };
+    apply();
+    return useAtlas.subscribe(apply);
+  }, [body, model, invalidate]);
+
+  // Seleção nova: o brilho percorre a fibra.
+  useEffect(
+    () =>
+      useAtlas.subscribe((s, p) => {
+        if (s.selection && !samePick(s.selection, p.selection)) pulse();
+      }),
+    [],
+  );
 
   // Seleção pelo slot da página (o canvas fixo não recebe ponteiro).
   useEffect(() => {
@@ -70,40 +193,157 @@ function AtlasBody({ slot }: { slot: HTMLElement }) {
       if (!cam) return null;
       const r = slot.getBoundingClientRect();
       const i = body.pick(gl, cam, x, y, r.width, r.height);
-      return i === null ? null : (model.slots[i]?.muscleId ?? null);
+      const s = i === null ? undefined : model.slots[i];
+      if (!s) return null;
+      return s.muscleId ? { kind: 'muscle', id: s.muscleId, side: s.side } : { kind: 'part', id: s.anatomyId, side: s.side };
     });
     return () => useAtlas.getState().setPick(null);
   }, [body, model, gl, slot]);
 
-  const frame = useMemo(() => {
-    const box = (muscleId && model && boxOfSlots(model, model.byMuscle.get(muscleId) ?? [])) || DEFAULT_BOX;
-    const h = Math.min(1.95, Math.max(0.75, box.size[1] * 2.2));
-    const cy = Math.min(1.82 - h / 2, Math.max(h / 2 - 0.04, box.center[1]));
-    const across = view === 'side' ? box.size[2] : box.size[0];
-    const w = Math.max(0.55, across * 1.35 + 0.12, h * 0.42);
-    return { cy, h, w, cz: view === 'side' ? box.center[2] : 0 };
-  }, [model, muscleId, view]);
+  // Pedido de voo: enquadra a seleção (ou o corpo) e escreve a nova meta.
+  useEffect(() => {
+    if (!body || !model) return;
+    const run = () => {
+      const st = useAtlas.getState();
+      const rect = slot.getBoundingClientRect();
+      const aspect = rect.width / Math.max(1, rect.height);
+      const yaw = st.fly.yaw ?? st.orbit.yaw;
+      const ex = st.exploded;
+      if (st.fly.yaw !== null || !ex) {
+        const { right } = screenAxes({ ...st.orbit, yaw });
+        spreadAxis.current = right;
+      }
+      let box: Box | null = null;
+      if (st.selection) {
+        box = selectionBox(body, model, st.selection);
+        if (box && st.demo.spec) box = demoBox(body, model, st.selection, st.demo.spec) ?? box;
+        if (box && ex) {
+          const l = model.slots[keySlots(model, st.selection)[0] ?? -1]?.layer ?? 'deep';
+          const o = spreadSlots(st.layers)[l] * EXPLODE_SPACING;
+          const a = spreadAxis.current;
+          box = { center: [box.center[0] + a[0] * o, box.center[1], box.center[2] + a[2] * o], size: box.size };
+        }
+      }
+      let dist: number;
+      if (box) dist = fitDistance(box.size, yaw, aspect);
+      else {
+        box = BODY_BOX;
+        dist = ex ? fitDistance([BODY_BOX.size[0] + Math.max(0, LAYER_ORDER.filter((l) => st.layers[l] !== 'off').length - 1) * EXPLODE_SPACING, BODY_BOX.size[1], BODY_BOX.size[2]], 0, aspect, 1.08) : fitDistance(BODY_BOX.size, yaw, aspect, 1.06);
+      }
+      const goal: Orbit = { yaw, pitch: st.orbit.pitch, dist, target: box.center };
+      st.setOrbit(goal);
+      if (st.fly.instant || reduceMotion()) cur.current = useAtlas.getState().orbit;
+      invalidate();
+    };
+    run();
+    return useAtlas.subscribe((s, p) => {
+      if (s.fly.nonce !== p.fly.nonce) run();
+    });
+  }, [body, model, slot, invalidate]);
 
   const look = useMemo(() => new Vector3(), []);
+  const clock = useRef(0);
   useFrame(() => {
     const cam = camRef.current;
-    if (!cam) return;
+    if (!cam || !body || !model) return;
+    // Relógio de parede: a demonstração anda no tempo certo mesmo com poucos quadros por segundo.
+    const now = performance.now() / 1000;
+    // Depois de um tempo parado (sem quadro pedido) o primeiro passo é curto, para nada saltar.
+    const gap = now - clock.current;
+    const dt = gap > 0 && gap < 0.5 ? gap : 1 / 60;
+    clock.current = now;
+    const st = useAtlas.getState();
+    const reduce = reduceMotion();
+
+    // ---- Demonstração: pose, deformação e cor ----
+    const spec = st.demo.spec;
+    const specKey = spec ? `${spec.key}|${keyOf(st.selection ?? { kind: 'part', id: '-', side: 'c' })}` : null;
+    if (spec || demoSpec.current !== specKey) {
+      let phase = st.demo.phase;
+      if (spec && st.demo.playing) {
+        const r = advanceDemo(phase, dt, st.demo.speed, st.demo.loop);
+        phase = r.phase;
+        st.setDemo(r.done ? { phase, playing: false } : { phase });
+      }
+      const pose: Pose = spec ? forwardKinematics(sk, { ...STANDING, [spec.dof]: demoAngle(spec.range, phase) * DEG }) : standing;
+      body.setPose(sk, pose);
+      feet.current = footContacts(sk, pose);
+      const base = rest.current;
+      if (spec && st.selection && base) {
+        for (const i of keySlots(model, st.selection)) body.set(i, 'strain', strainOf(body.lengths[i] ?? 0, base[i] ?? 0));
+      } else body.fill('strain', 0);
+      body.commit();
+      demoSpec.current = specKey;
+      if (spec && st.demo.playing) invalidate();
+    }
+
+    // ---- Vista explodida ----
+    const goalE = st.exploded ? 1 : 0;
+    explode.current = reduce ? goalE : explode.current + (goalE - explode.current) * (1 - Math.exp(-dt * 5));
+    if (Math.abs(goalE - explode.current) < 1e-3) explode.current = goalE;
+    else invalidate();
+    const e = explode.current;
+    const a = spreadAxis.current;
+    const cut = st.cut.axis === 'none' ? null : CUTS[st.cut.axis];
+    const spread = spreadSlots(st.layers);
+    for (const l of LAYER_ORDER) {
+      const o = spread[l] * EXPLODE_SPACING * e;
+      body.meshes[l].position.set(a[0] * o, 0, a[2] * o);
+      if (cut) {
+        // O plano acompanha a camada aberta.
+        const d = cut.lo + (cut.hi - cut.lo) * st.cut.at + (cut.n[0] * a[0] + cut.n[2] * a[2]) * o;
+        body.layer(l, { cut: d, cutNormal: cut.n, ghost: CUT_GHOST });
+      } else body.layer(l, { cut: 99, cutNormal: [0, 1, 0], ghost: 0 });
+    }
+
+    // ---- Câmera ----
+    const goal = st.orbit;
+    cur.current = reduce ? goal : dampOrbit(cur.current, goal, 1 - Math.exp(-dt * 6));
+    if (orbitsClose(cur.current, goal)) cur.current = goal;
+    else invalidate();
     const rect = slot.getBoundingClientRect();
-    const d = DIR[view];
-    look.set(0, frame.cy, frame.cz);
-    cam.position.set(d[0] * 4, frame.cy, frame.cz + d[2] * 4);
+    const p = orbitPosition(cur.current);
+    const t = cur.current.target;
+    cam.position.set(p[0], p[1], p[2]);
+    look.set(t[0], t[1], t[2]);
     cam.lookAt(look);
-    cam.zoom = Math.min(rect.height / frame.h, rect.width / frame.w);
+    cam.aspect = rect.width / Math.max(1, rect.height);
+    cam.near = Math.max(0.02, cur.current.dist * 0.05);
+    cam.far = cur.current.dist + 12;
     cam.updateProjectionMatrix();
   });
 
   return (
     <>
-      <OrthographicCamera ref={camRef} makeDefault near={0.1} far={20} position={[0, 1, 4]} />
+      <PerspectiveCamera ref={camRef} makeDefault manual fov={FOV_DEG} near={0.05} far={30} position={[0, 1, 4]} />
       {body && <ContactShadow feet={getFeet} />}
       {body && <primitive object={body.group} />}
     </>
   );
+}
+
+/** Caixa que contém o músculo nas duas pontas da faixa e em pé (a câmera não perde o membro que se move). */
+function demoBox(body: BodyInstance, model: BodyModel, sel: Pick, spec: { dof: string; range: readonly [number, number] }): Box | null {
+  const boxes: Box[] = [];
+  const side = keySlots(model, sel).filter((i) => model.slots[i]?.side !== 'l');
+  // O segmento que a articulação move e os que vêm depois dele (a perna inteira na flexão do joelho).
+  const owner = sk.segments.find((g) => g.dofs.some((d) => d.id === spec.dof));
+  const moved = new Set(owner ? [owner.id] : []);
+  for (const g of sk.segments) if (g.parent && moved.has(g.parent)) moved.add(g.id);
+  for (const deg of [spec.range[0], 0, spec.range[1]]) {
+    const pose = forwardKinematics(sk, { ...STANDING, [spec.dof]: deg * DEG });
+    body.setPose(sk, pose);
+    const b = body.posedBox(side);
+    if (b) boxes.push(b);
+    for (const g of sk.segments) {
+      if (!moved.has(g.id)) continue;
+      for (const q of [pointToWorld(pose, g.id, [0, 0, 0]), pointToWorld(pose, g.id, g.tip)]) boxes.push({ center: q, size: [0.08, 0.08, 0.08] });
+    }
+  }
+  body.setPose(sk, standing);
+  const m = mergeBoxes(boxes);
+  if (!m) return null;
+  return { center: m.center, size: [Math.max(0.4, m.size[0] * 1.15), Math.max(0.5, m.size[1] * 1.15), Math.max(0.4, m.size[2] * 1.15)] };
 }
 
 /** Uma vista recortada no retângulo do slot da página (o canvas fixo desenha por cima). */
@@ -131,7 +371,7 @@ export function AtlasScene() {
   if (!slot) return null;
   return (
     <View track={ref as React.RefObject<HTMLElement>} index={1}>
-      <AtlasBody slot={slot} />
+      <ExplorerBody slot={slot} />
     </View>
   );
 }

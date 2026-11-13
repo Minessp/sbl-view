@@ -4,7 +4,7 @@
  *
  * Estado (2 texels por vaga, RGBA float):
  *   linha 0: destaque, opacidade, calor, ativação (0..1)
- *   linha 1: oculto (> 0,5), volume (fração radial somada ao ventre), —, —
+ *   linha 1: oculto (> 0,5), volume (fração radial somada ao ventre), deformação (−1 alongado … +1 encurtado), —
  * Opacidade abaixo de 1 vira pontilhado (sem ordenar transparência); a pele é a única camada com mistura.
  *
  * Luz (rig.ts): fluxo linear, key de tungstênio com difusão envolvente (luz atravessa a borda: vermelho no músculo),
@@ -13,7 +13,9 @@
  * Músculo: brilho anisotrópico ao longo da fibra (Kajiya-Kay; a direção da fibra é o gradiente do parâmetro t
  * origem→inserção na superfície, por derivada de tela) e tendão claro nas pontas. Osso: marfim fosco.
  * Pele: translúcida, mais opaca na silhueta (Fresnel).
- * Destaque, calor e ativação acendem o músculo (incandescência na cor --c-glow).
+ * Destaque, calor e ativação acendem o músculo (incandescência na cor --c-glow). Deformação: encurtar acende em
+ * tungstênio (--c-glow), alongar em aço (--c-stretch).
+ * Corte: plano de normal `uCutN` (mundo); do lado positivo, a camada vira fantasma. Padrão = horizontal (altura).
  */
 import { DoubleSide, FrontSide, ShaderMaterial, type DataTexture, type IUniform, type Matrix4, type Vector3 } from 'three';
 import { rig, type Rig } from './rig';
@@ -28,8 +30,10 @@ export type BodyUniforms = Rig & {
   uColor: IUniform<Vector3>;
   /** Alfa da camada (só a pele mistura). */
   uAlpha: IUniform<number>;
-  /** Acima desta altura (m) a camada vira fantasma. */
+  /** Além desta distância (m) ao longo de `uCutN` a camada vira fantasma. */
   uCut: IUniform<number>;
+  /** Normal do plano de corte (mundo, unitária). (0, 1, 0) = corte por altura. */
+  uCutN: IUniform<Vector3>;
   /** Opacidade do fantasma acima do corte. */
   uGhost: IUniform<number>;
   /** Abaixo desta altura (m) a camada não aparece: o que está sob a pele intacta fica escondido. */
@@ -93,7 +97,7 @@ const vertex = (joints: number) => /* glsl */ `
   uniform float uStateW;
   varying vec3 vN;
   varying vec3 vView;
-  varying float vY;
+  varying vec3 vW;
   varying vec4 vS0;
   varying vec4 vS1;
   varying float vSlot;
@@ -113,7 +117,7 @@ const vertex = (joints: number) => /* glsl */ `
     p.xyz += mat3(M) * aRadial * (vS1.y * belly);
     #endif
     vec4 w = modelMatrix * p;
-    vY = w.y;
+    vW = w.xyz;
     vec4 mv = viewMatrix * w;
     vView = mv.xyz;
     vN = normalize(normalMatrix * (mat3(M) * normal));
@@ -127,13 +131,15 @@ const fragment = /* glsl */ `
   uniform vec3 uTendon;
   uniform float uAlpha;
   uniform float uCut;
+  uniform vec3 uCutN;
+  uniform vec3 uStretch;
   uniform float uGhost;
   uniform float uShowAbove;
   uniform float uTime;
   uniform float uPulseStart;
   varying vec3 vN;
   varying vec3 vView;
-  varying float vY;
+  varying vec3 vW;
   varying vec4 vS0;
   varying vec4 vS1;
   varying float vSlot;
@@ -144,8 +150,8 @@ const fragment = /* glsl */ `
   ${LIGHT_GLSL}
 
   void main() {
-    if (vS1.x > 0.5 || vY < uShowAbove) discard;
-    float a = vS0.y * (vY > uCut ? uGhost : 1.0);
+    if (vS1.x > 0.5 || vW.y < uShowAbove) discard;
+    float a = vS0.y * (dot(vW, uCutN) > uCut ? uGhost : 1.0);
     #ifdef PICK
       if (a < 0.5) discard;
       float id = floor(vSlot + 0.5) + 1.0;
@@ -173,6 +179,12 @@ const fragment = /* glsl */ `
         float tendon = 1.0 - smoothstep(0.015, 0.1, t) * (1.0 - smoothstep(0.9, 0.985, t));
         albedo = mix(albedo, toLinear(uTendon) * 0.8, tendon * 0.6);
         albedo = mix(albedo, glow * 0.7, lit * 0.45);
+        // Deformação: encurtar = tungstênio, alongar = aço (pouco no tendão, que quase não muda).
+        float sh = max(vS1.z, 0.0) * (1.0 - tendon * 0.7);
+        float st = max(-vS1.z, 0.0) * (1.0 - tendon * 0.7);
+        vec3 cool = toLinear(uStretch);
+        albedo = mix(albedo, glow * 0.75, sh * 0.8);
+        albedo = mix(albedo, cool * 0.7, st * 0.85);
         // Direção da fibra: gradiente de t na superfície.
         vec3 dp1 = dFdx(vView);
         vec3 dp2 = dFdy(vView);
@@ -206,6 +218,9 @@ const fragment = /* glsl */ `
 
       // Incandescência: o que está em foco ou trabalhando acende.
       emit += glow * lit * (0.1 + 0.22 * lit);
+      #ifdef MUSCLE
+        emit += glow * sh * 0.6 + cool * st * 0.95;
+      #endif
       col += emit;
 
       #ifdef TRANSLUCENT

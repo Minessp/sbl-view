@@ -1,42 +1,188 @@
-/** Estado do Atlas. Sem three.js: a cena lê via getState() e reage por subscribe. */
+/**
+ * Estado do explorador do corpo (Atlas). Sem three.js: a cena lê via getState() e reage por subscribe.
+ * A interface muda a órbita "meta"; a cena amortece até ela e calcula enquadramentos (pedidos por `fly`).
+ */
 import { create } from 'zustand';
 import type { MuscleGroup } from '@/data/schema/muscle';
+import { DEMO_SPEEDS, type DemoSpeed } from './explorer/demo';
+import { BODY_BOX, clampOrbit, panOrbit, VIEW_YAW, type AtlasView, type Orbit } from './explorer/orbit';
 
-export type AtlasView = 'front' | 'back' | 'side';
+export type { AtlasView } from './explorer/orbit';
+export type BodyLayerId = 'skin' | 'superficial' | 'deep' | 'bone';
+export const LAYER_ORDER: readonly BodyLayerId[] = ['skin', 'superficial', 'deep', 'bone'];
+export type LayerMode = 'on' | 'ghost' | 'off';
+export type CutAxis = 'none' | 'transverse' | 'frontal' | 'sagittal';
 
 /** Vista que mostra melhor cada grupo (o lado de onde o músculo é visto sem cortes). */
 const BACK: ReadonlySet<MuscleGroup> = new Set(['gluteals', 'hamstrings', 'triceps_surae', 'spinal_erectors', 'lats', 'traps', 'elbow_extensors', 'rotator_cuff', 'scapular']);
 const SIDE: ReadonlySet<MuscleGroup> = new Set(['delts', 'neck']);
 export const defaultView = (g: MuscleGroup): AtlasView => (BACK.has(g) ? 'back' : SIDE.has(g) ? 'side' : 'front');
 
-/** Seleção: o palco devolve o músculo sob o ponto (px dentro do slot), ou null. */
-export type AtlasPick = (x: number, y: number) => string | null;
+/** Estrutura selecionável: músculo do Atlas (as duas cópias) ou parte do pacote sem página. */
+export interface Pick {
+  readonly kind: 'muscle' | 'part';
+  readonly id: string;
+  /** Lado tocado (a câmera voa até ele); 'c' = linha média. */
+  readonly side: 'r' | 'l' | 'c';
+}
+export const keyOf = (p: Pick): string => `${p.kind}:${p.id}`;
+export const samePick = (a: Pick | null, b: Pick | null) => (a && b ? a.kind === b.kind && a.id === b.id : a === b);
 
-interface AtlasState {
-  muscleId: string | null;
-  view: AtlasView;
-  /** Elemento onde o palco desenha o corpo. */
-  slot: HTMLElement | null;
-  /** Músculo sob o ponteiro (destaque leve no palco). */
-  hover: string | null;
-  /** Registrada pela cena quando o corpo está pronto. */
-  pick: AtlasPick | null;
-  show: (muscleId: string | null, view: AtlasView) => void;
-  setView: (v: AtlasView) => void;
-  setSlot: (el: HTMLElement | null) => void;
-  setHover: (id: string | null) => void;
-  setPick: (f: AtlasPick | null) => void;
+/** Parte do pacote, registrada pela cena quando o modelo carrega (busca e nome do que não tem página). */
+export interface StructureInfo {
+  readonly id: string;
+  readonly kind: 'bone' | 'cartilage' | 'muscle' | 'tendon' | 'skin';
+  readonly layer: BodyLayerId;
+  /** Nome do objeto no Z-Anatomy (inglês), sem o sufixo de lado. */
+  readonly source: string;
+  /** Músculo do Atlas que usa a malha. */
+  readonly muscleId?: string;
 }
 
-export const useAtlas = create<AtlasState>((set) => ({
-  muscleId: null,
-  view: 'front',
-  slot: null,
-  hover: null,
-  pick: null,
-  show: (muscleId, view) => set({ muscleId, view, hover: null }),
-  setView: (view) => set({ view }),
-  setSlot: (slot) => set((s) => (s.slot === slot ? s : { slot })),
-  setHover: (hover) => set((s) => (s.hover === hover ? s : { hover })),
-  setPick: (pick) => set({ pick }),
-}));
+/** Seleção: o palco devolve a estrutura sob o ponto (px dentro do slot), ou null. */
+export type AtlasPickFn = (x: number, y: number) => Pick | null;
+
+export interface DemoSpec {
+  /** Grau de liberdade do esqueleto (`hip_flex_r`). */
+  readonly dof: string;
+  readonly range: readonly [number, number];
+  /** Chave da curva (para a interface saber qual está tocando). */
+  readonly key: string;
+}
+
+export interface DemoState {
+  readonly spec: DemoSpec | null;
+  readonly playing: boolean;
+  readonly speed: DemoSpeed;
+  readonly loop: boolean;
+  readonly phase: number;
+}
+
+export interface FlyRequest {
+  readonly nonce: number;
+  /** Guinada nova (vista pedida) ou null = mantém a atual. */
+  readonly yaw: number | null;
+  readonly instant: boolean;
+}
+
+const START: Orbit = { yaw: 0, pitch: 0.04, dist: 4.4, target: BODY_BOX.center };
+
+interface AtlasState {
+  selection: Pick | null;
+  hover: Pick | null;
+  /** Órbita meta; a cena amortece até ela. */
+  orbit: Orbit;
+  fly: FlyRequest;
+  layers: Record<BodyLayerId, LayerMode>;
+  hidden: readonly string[];
+  ghosted: readonly string[];
+  isolate: boolean;
+  exploded: boolean;
+  cut: { axis: CutAxis; at: number };
+  demo: DemoState;
+  structures: readonly StructureInfo[];
+  /** Elemento onde o palco desenha o corpo. */
+  slot: HTMLElement | null;
+  pick: AtlasPickFn | null;
+
+  select: (p: Pick | null, opts?: { fly?: boolean; view?: AtlasView | null }) => void;
+  setHover: (p: Pick | null) => void;
+  orbitBy: (dyaw: number, dpitch: number) => void;
+  zoomBy: (factor: number) => void;
+  panBy: (dx: number, dy: number) => void;
+  setOrbit: (o: Orbit) => void;
+  setView: (v: AtlasView) => void;
+  /** Reenquadra a seleção (ou o corpo) sem mudar a guinada. */
+  frame: (instant?: boolean) => void;
+  resetCamera: () => void;
+  setLayer: (l: BodyLayerId, m: LayerMode) => void;
+  toggleHidden: (key: string) => void;
+  toggleGhost: (key: string) => void;
+  setIsolate: (on: boolean) => void;
+  showAll: () => void;
+  setExploded: (on: boolean) => void;
+  setCut: (c: Partial<{ axis: CutAxis; at: number }>) => void;
+  startDemo: (spec: DemoSpec) => void;
+  setDemo: (d: Partial<Omit<DemoState, 'spec'>>) => void;
+  stopDemo: () => void;
+  setStructures: (s: readonly StructureInfo[]) => void;
+  setSlot: (el: HTMLElement | null) => void;
+  setPick: (f: AtlasPickFn | null) => void;
+  /** Volta ao estado inicial (troca de página). */
+  reset: (selection?: Pick | null, view?: AtlasView) => void;
+}
+
+const LAYERS_DEFAULT: Record<BodyLayerId, LayerMode> = { skin: 'off', superficial: 'on', deep: 'on', bone: 'on' };
+const DEMO_DEFAULT: DemoState = { spec: null, playing: false, speed: 1, loop: true, phase: 0 };
+const toggle = (list: readonly string[], k: string) => (list.includes(k) ? list.filter((x) => x !== k) : [...list, k]);
+
+export const useAtlas = create<AtlasState>((set, get) => {
+  const fly = (yaw: number | null, instant = false): FlyRequest => ({ nonce: get().fly.nonce + 1, yaw, instant });
+  return {
+    selection: null,
+    hover: null,
+    orbit: START,
+    fly: { nonce: 0, yaw: 0, instant: true },
+    layers: { ...LAYERS_DEFAULT },
+    hidden: [],
+    ghosted: [],
+    isolate: false,
+    exploded: false,
+    cut: { axis: 'none', at: 0.5 },
+    demo: DEMO_DEFAULT,
+    structures: [],
+    slot: null,
+    pick: null,
+
+    select: (p, opts = {}) =>
+      set((s) => {
+        const changed = !samePick(s.selection, p);
+        const view = opts.view ?? null;
+        return {
+          selection: p,
+          hover: null,
+          ...(changed && { demo: { ...s.demo, spec: null, playing: false, phase: 0 }, isolate: s.isolate && p !== null }),
+          ...(opts.fly && { fly: fly(view === null ? null : VIEW_YAW[view]) }),
+        };
+      }),
+    setHover: (hover) => set((s) => (samePick(s.hover, hover) ? s : { hover })),
+    orbitBy: (dyaw, dpitch) => set((s) => ({ orbit: clampOrbit({ ...s.orbit, yaw: s.orbit.yaw + dyaw, pitch: s.orbit.pitch + dpitch }) })),
+    zoomBy: (f) => set((s) => ({ orbit: clampOrbit({ ...s.orbit, dist: s.orbit.dist * f }) })),
+    panBy: (dx, dy) => set((s) => ({ orbit: panOrbit(s.orbit, dx, dy) })),
+    setOrbit: (orbit) => set({ orbit: clampOrbit(orbit) }),
+    setView: (v) => set((s) => ({ orbit: { ...s.orbit, pitch: START.pitch }, fly: fly(VIEW_YAW[v]) })),
+    frame: (instant = false) => set({ fly: fly(null, instant) }),
+    resetCamera: () => set((s) => ({ orbit: { ...s.orbit, pitch: START.pitch }, fly: fly(0) })),
+    // Aberta, a vista explodida reenquadra (o número de camadas abertas muda).
+    setLayer: (l, m) => set((s) => ({ layers: { ...s.layers, [l]: m }, ...(s.exploded && { fly: fly(null) }) })),
+    toggleHidden: (k) => set((s) => ({ hidden: toggle(s.hidden, k), ghosted: s.ghosted.filter((x) => x !== k) })),
+    toggleGhost: (k) => set((s) => ({ ghosted: toggle(s.ghosted, k), hidden: s.hidden.filter((x) => x !== k) })),
+    setIsolate: (isolate) => set({ isolate }),
+    showAll: () => set({ hidden: [], ghosted: [], isolate: false, layers: { ...LAYERS_DEFAULT } }),
+    setExploded: (exploded) => set({ exploded, fly: fly(null) }),
+    setCut: (c) => set((s) => ({ cut: { ...s.cut, ...c } })),
+    // Ação sagital: o perfil direito mostra o plano do movimento; a câmera reenquadra o membro que se move.
+    startDemo: (spec) => set((s) => ({ demo: { ...s.demo, spec, playing: true, phase: 0 }, exploded: false, fly: fly(VIEW_YAW.side) })),
+    setDemo: (d) => set((s) => ({ demo: { ...s.demo, ...d } })),
+    stopDemo: () => set((s) => ({ demo: { ...s.demo, spec: null, playing: false, phase: 0 } })),
+    setStructures: (structures) => set({ structures }),
+    setSlot: (slot) => set((s) => (s.slot === slot ? s : { slot })),
+    setPick: (pick) => set({ pick }),
+    reset: (selection = null, view = 'front') =>
+      set((s) => ({
+        selection,
+        hover: null,
+        orbit: { ...START, yaw: VIEW_YAW[view] },
+        fly: { nonce: s.fly.nonce + 1, yaw: VIEW_YAW[view], instant: true },
+        layers: { ...LAYERS_DEFAULT },
+        hidden: [],
+        ghosted: [],
+        isolate: false,
+        exploded: false,
+        cut: { axis: 'none', at: 0.5 },
+        demo: DEMO_DEFAULT,
+      })),
+  };
+});
+
+export { DEMO_SPEEDS };

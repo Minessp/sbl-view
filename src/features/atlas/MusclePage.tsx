@@ -1,83 +1,54 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Link, useLocation } from 'wouter';
 import { LineChart, type LinePattern } from '@/charts/LineChart';
 import { getReference } from '@/data';
 import type { MuscleDef } from '@/data/schema/muscle';
 import { fmt, t } from '@/i18n/app';
-import { useStage } from '@/scene/stageStore';
 import { EvidenceSeal } from '@/ui/EvidenceSeal';
 import { Sources } from '@/ui/Sources';
 import { exercisesForMuscle, movementById, muscleById, muscleRefIds } from '@/features/library/catalog';
 import { EmphasisMark } from '@/features/library/EmphasisMark';
 import { actionCurves, type ActionCurve } from './model';
-import { defaultView, useAtlas, type AtlasView } from './store';
+import { DemoButton, DemoControls, useDemoActive, useDemoMarker } from './explorer/ActionDemo';
+import { CameraBar, LayerControls, ToolControls } from './explorer/Panel';
+import { Viewport } from './explorer/Viewport';
+import { defaultView, useAtlas, type Pick } from './store';
+import './explorer/explorer.css';
 import '@/features/heat/heat.css';
 import './atlas.css';
 
 const PATTERNS: LinePattern[] = ['solid', 'dashed', 'dotted'];
-const VIEWS: AtlasView[] = ['front', 'back', 'side'];
 
 /** Sem nenhuma fonte conferida = marca [a verificar]. */
 const unverifiedOf = (src: readonly { refId: string }[]) => !src.some((s) => getReference(s.refId)?.verified === true);
 
 function Stage({ m }: { m: MuscleDef }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const setSlot = useAtlas((s) => s.setSlot);
-  const show = useAtlas((s) => s.show);
-  const view = useAtlas((s) => s.view);
-  const setView = useAtlas((s) => s.setView);
-  const setScene = useStage((s) => s.setScene);
-  const ready = useStage((s) => s.ready);
-  const hover = useAtlas((s) => s.hover);
-  const setHover = useAtlas((s) => s.setHover);
   const [, navigate] = useLocation();
-
+  const E = t.atlas.ex;
   useEffect(() => {
-    show(m.id, defaultView(m.group));
-  }, [m, show]);
-  useEffect(() => {
-    setScene('atlas');
-    setSlot(ref.current);
-    return () => {
-      setSlot(null);
-      setScene('none');
-    };
-  }, [setScene, setSlot]);
-
+    useAtlas.getState().reset({ kind: 'muscle', id: m.id, side: 'r' }, defaultView(m.group));
+  }, [m]);
+  const onTap = (p: Pick) => {
+    if (p.kind === 'muscle' && p.id !== m.id) navigate(`/atlas/${p.id}`);
+    else if (p.kind === 'muscle') useAtlas.getState().frame();
+  };
   return (
     <figure className="atlas-stage">
-      <figcaption className="atlas-stage__cap">
-        <span className="atlas-stage__label">{t.atlas.views}</span>
-        <span className="atlas-stage__views">
-          {VIEWS.map((v) => (
-            <button key={v} type="button" className="chip chip--small" aria-pressed={view === v} onClick={() => setView(v)}>
-              {t.atlas.view[v]}
-            </button>
-          ))}
-        </span>
-      </figcaption>
-      <div
-        ref={ref}
-        className="atlas-stage__slot viewport"
-        role="img"
-        aria-label={`${t.atlas.figure} ${m.name}.`}
-        data-ready={ready}
-        data-hover={hover !== null && hover !== m.id}
-        onPointerMove={(e) => {
-          if (e.pointerType !== 'mouse') return;
-          const r = e.currentTarget.getBoundingClientRect();
-          setHover(useAtlas.getState().pick?.(e.clientX - r.left, e.clientY - r.top) ?? null);
-        }}
-        onPointerLeave={() => setHover(null)}
-        onClick={(e) => {
-          const r = e.currentTarget.getBoundingClientRect();
-          const id = useAtlas.getState().pick?.(e.clientX - r.left, e.clientY - r.top);
-          if (id && id !== m.id) navigate(`/atlas/${id}`);
-        }}
+      <CameraBar compact />
+      <Viewport
+        label={`${t.atlas.figure} ${m.name}.`}
+        className="atlas-stage__slot"
+        onTap={onTap}
+        hoverText={(name, p) => (p.kind === 'muscle' && p.id !== m.id ? E.hoverOpen(name) : null)}
       />
-      <p className="atlas-stage__hint" aria-hidden="true">
-        {hover && hover !== m.id ? t.atlas.hoverOpen(muscleById(hover)?.name ?? hover) : t.atlas.pickHint}
-      </p>
+      <details className="atlas-stage__more">
+        <summary className="chip chip--small">{`${E.layers} e ${E.tools.toLowerCase()}`}</summary>
+        <div className="atlas-stage__more-body">
+          <LayerControls />
+          <ToolControls />
+        </div>
+      </details>
+      <figcaption className="atlas-stage__hint">{t.atlas.pickHint}</figcaption>
       <p className="atlas-stage__credit">{t.body.credit}</p>
     </figure>
   );
@@ -90,65 +61,73 @@ function describe(title: string, c: ActionCurve, pick: (s: ActionCurve['series']
   }).join('; ');
 }
 
+function CurveCard({ c }: { c: ActionCurve }) {
+  const A = t.atlas;
+  const marker = useDemoMarker(c);
+  const active = useDemoActive(c);
+  const labels = [`${c.range[0]}°`, `${c.range[1]}°`] as const;
+  const lenSeries = c.series.map((s, i) => ({ id: s.partId, label: s.label, values: s.length.map((v) => v * 100), pattern: PATTERNS[i] ?? 'solid' }));
+  const armSeries = c.series.map((s, i) => ({ id: s.partId, label: s.label, values: s.arm.map((v) => v * 100), pattern: PATTERNS[i] ?? 'solid' }));
+  return (
+    <div className="curve" data-active={active}>
+      <h3 className="curve__title">
+        {c.movement.label}
+        <span className="curve__axis">eixo: {c.axisLabel.toLowerCase()}, em graus</span>
+      </h3>
+      <div className="curve__demo">
+        <DemoButton c={c} className="chip chip--small curve__play" />
+      </div>
+      {active && <DemoControls c={c} />}
+      {c.series.length > 1 && (
+        <ul className="curve__legend">
+          {c.series.map((s, i) => (
+            <li key={s.partId}>
+              <svg className="pattern-key" viewBox="0 0 28 8" aria-hidden="true">
+                <line x1="1" y1="4" x2="27" y2="4" strokeDasharray={PATTERNS[i] === 'dashed' ? '6 4' : PATTERNS[i] === 'dotted' ? '1.4 3.4' : undefined} />
+              </svg>
+              {s.label}
+            </li>
+          ))}
+        </ul>
+      )}
+      <div className="chart-pair">
+        <LineChart
+          title={A.length}
+          unit={A.lengthUnit}
+          x={c.x}
+          series={lenSeries}
+          marker={marker}
+          xLabels={labels}
+          zeroLine
+          reveal={false}
+          yFormat={(v) => `${fmt.n0(Math.round(v) || 0)}%`}
+          description={describe(A.length, c, (s) => s.length.map((v) => v * 100), 'por cento')}
+        />
+        <LineChart
+          title={A.arm}
+          unit={A.armUnit}
+          x={c.x}
+          series={armSeries}
+          marker={marker}
+          xLabels={labels}
+          zeroLine
+          reveal={false}
+          yFormat={(v) => fmt.n1(v)}
+          description={describe(A.arm, c, (s) => s.arm.map((v) => v * 100), 'centímetros')}
+        />
+      </div>
+    </div>
+  );
+}
+
 function Curves({ m }: { m: MuscleDef }) {
   const curves = useMemo(() => actionCurves(m), [m]);
-  const A = t.atlas;
-  if (curves.length === 0) return <p className="section__note">{A.noModel}</p>;
+  if (curves.length === 0) return <p className="section__note">{t.atlas.noModel}</p>;
   return (
     <div className="curve-list">
-      {curves.map((c) => {
-        const labels = [`${c.range[0]}°`, `${c.range[1]}°`] as const;
-        const lenSeries = c.series.map((s, i) => ({ id: s.partId, label: s.label, values: s.length.map((v) => v * 100), pattern: PATTERNS[i] ?? 'solid' }));
-        const armSeries = c.series.map((s, i) => ({ id: s.partId, label: s.label, values: s.arm.map((v) => v * 100), pattern: PATTERNS[i] ?? 'solid' }));
-        return (
-          <div key={`${c.movement.id}-${c.series.map((s) => s.partId).join()}`} className="curve">
-            <h3 className="curve__title">
-              {c.movement.label}
-              <span className="curve__axis">
-                eixo: {c.axisLabel.toLowerCase()}, em graus
-              </span>
-            </h3>
-            {c.series.length > 1 && (
-              <ul className="curve__legend">
-                {c.series.map((s, i) => (
-                  <li key={s.partId}>
-                    <svg className="pattern-key" viewBox="0 0 28 8" aria-hidden="true">
-                      <line x1="1" y1="4" x2="27" y2="4" strokeDasharray={PATTERNS[i] === 'dashed' ? '6 4' : PATTERNS[i] === 'dotted' ? '1.4 3.4' : undefined} />
-                    </svg>
-                    {s.label}
-                  </li>
-                ))}
-              </ul>
-            )}
-            <div className="chart-pair">
-              <LineChart
-                title={A.length}
-                unit={A.lengthUnit}
-                x={c.x}
-                series={lenSeries}
-                marker={c.neutralAt}
-                xLabels={labels}
-                zeroLine
-                reveal={false}
-                yFormat={(v) => `${fmt.n0(Math.round(v) || 0)}%`}
-                description={describe(A.length, c, (s) => s.length.map((v) => v * 100), 'por cento')}
-              />
-              <LineChart
-                title={A.arm}
-                unit={A.armUnit}
-                x={c.x}
-                series={armSeries}
-                marker={c.neutralAt}
-                xLabels={labels}
-                zeroLine
-                reveal={false}
-                yFormat={(v) => fmt.n1(v)}
-                description={describe(A.arm, c, (s) => s.arm.map((v) => v * 100), 'centímetros')}
-              />
-            </div>
-          </div>
-        );
-      })}
+      {curves.map((c) => (
+        <CurveCard key={c.key} c={c} />
+      ))}
     </div>
   );
 }

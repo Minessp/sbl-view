@@ -12,6 +12,7 @@ import {
   NearestFilter,
   RGBAFormat,
   type ShaderMaterial,
+  Vector3,
   type WebGLRenderer,
   WebGLRenderTarget,
 } from 'three';
@@ -20,10 +21,10 @@ import type { EngineSkeleton, Pose } from '@/engine/kinematics/types';
 import type { Palette, PaletteKey } from '../palette';
 import { createBodyMaterial, STATE_ROWS, type BodyUniforms } from './material';
 import { rig } from './rig';
-import { LAYERS, type BodyLayer, type BodyModel } from './model';
+import { LAYERS, mergeBoxes, type Box, type BodyLayer, type BodyModel } from './model';
 
 /** Canais do estado por vaga. */
-export const CH = { highlight: 0, opacity: 1, heat: 2, activation: 3, hidden: 4, bulge: 5 } as const;
+export const CH = { highlight: 0, opacity: 1, heat: 2, activation: 3, hidden: 4, bulge: 5, strain: 6 } as const;
 export type Channel = keyof typeof CH;
 
 const COLOR: Record<BodyLayer, keyof Palette> = { bone: 'body-bone', deep: 'body-muscle', superficial: 'body-muscle', skin: 'body-skin' };
@@ -31,8 +32,10 @@ const COLOR: Record<BodyLayer, keyof Palette> = { bone: 'body-bone', deep: 'body
 const BULGE = [-0.25, 0.45] as const;
 
 export interface LayerControl {
-  /** Altura do corte (m). Acima: fantasma. */
+  /** Posição do corte (m) ao longo de `cutNormal`. Além dela: fantasma. */
   cut: number;
+  /** Normal do plano de corte (mundo). Padrão (0, 1, 0): corte por altura. */
+  cutNormal: readonly [number, number, number];
   ghost: number;
   alpha: number;
   /** Abaixo desta altura (m) a camada some. */
@@ -52,6 +55,10 @@ export class BodyInstance {
   private readonly picking: Record<BodyLayer, ShaderMaterial>;
   private readonly bind: Map<string, readonly [number, number, number]>;
   private target: WebGLRenderTarget | null = null;
+  /** Matrizes da última pose (12 por junta), para medir caixas posadas. */
+  private matrices: Float64Array | null = null;
+  /** Comprimento da linha central de cada vaga na última pose (m; 0 sem linha). */
+  readonly lengths: Float32Array;
 
   constructor(
     readonly model: BodyModel,
@@ -59,6 +66,7 @@ export class BodyInstance {
   ) {
     const n = model.slots.length;
     this.width = n;
+    this.lengths = new Float32Array(n);
     this.state = new Float32Array(n * 4 * STATE_ROWS);
     this.texture = new DataTexture(this.state, n, STATE_ROWS, RGBAFormat, FloatType);
     this.texture.magFilter = NearestFilter;
@@ -76,6 +84,7 @@ export class BodyInstance {
       uColor: { value: palette[COLOR[l]] },
       uAlpha: { value: l === 'skin' ? 0.22 : 1 },
       uCut: { value: 99 },
+      uCutN: { value: new Vector3(0, 1, 0) },
       uGhost: { value: 0 },
       uShowAbove: { value: -99 },
     });
@@ -99,6 +108,7 @@ export class BodyInstance {
   /** Pose do esqueleto do motor → matrizes do shader e volume de cada músculo. */
   setPose(sk: EngineSkeleton, pose: Pose, opts: Omit<SkinMatrixOptions, 'bind'> = {}) {
     const M = skinMatrices(sk, pose, this.model.jointIds, { ...opts, bind: this.bind });
+    this.matrices = M;
     this.joints.forEach((m, j) => {
       const o = j * 12;
       const g = (k: number) => M[o + k] ?? 0;
@@ -126,6 +136,7 @@ export class BodyInstance {
         a[1] = b[1];
         a[2] = b[2];
       }
+      this.lengths[s.index] = L;
       const ratio = line.rest > 0 ? L / line.rest : 1;
       this.set(s.index, 'bulge', Math.min(BULGE[1], Math.max(BULGE[0], 1 / Math.sqrt(Math.max(ratio, 0.2)) - 1)));
     }
@@ -164,10 +175,63 @@ export class BodyInstance {
   layer(l: BodyLayer, c: Partial<LayerControl>) {
     const u = this.layers[l];
     if (c.cut !== undefined) u.uCut.value = c.cut;
+    if (c.cutNormal !== undefined) u.uCutN.value.set(...c.cutNormal);
     if (c.ghost !== undefined) u.uGhost.value = c.ghost;
     if (c.alpha !== undefined) u.uAlpha.value = c.alpha;
     if (c.showAbove !== undefined) u.uShowAbove.value = c.showAbove;
     if (c.visible !== undefined) this.meshes[l].visible = c.visible;
+  }
+
+  /**
+   * Caixa das vagas na última pose (m, mundo, sem o deslocamento das malhas). Músculo e tendão: linha central posada
+   * com folga do raio; osso rígido: caixa da ligação levada pela junta do segmento; resto: caixa da ligação.
+   */
+  posedBox(slots: readonly number[]): Box | null {
+    const M = this.matrices;
+    const boxes: Box[] = [];
+    const tmp: [number, number, number] = [0, 0, 0];
+    const jointOf = new Map(this.model.jointIds.map((id, i) => [id, i]));
+    for (const i of slots) {
+      const s = this.model.slots[i];
+      if (!s) continue;
+      if (!M) {
+        boxes.push(s.box);
+        continue;
+      }
+      if (s.line) {
+        const lo = [Infinity, Infinity, Infinity], hi = [-Infinity, -Infinity, -Infinity];
+        const p = [0, 0, 0];
+        for (let k = 0; k < 16; k++) {
+          p[0] = p[1] = p[2] = 0;
+          for (let j = 0; j < 4; j++) {
+            const w = s.line.weights[k * 4 + j] ?? 0;
+            if (w === 0) continue;
+            skinPoint(M, s.line.joints[k * 4 + j] ?? 0, s.line.points[k * 3] ?? 0, s.line.points[k * 3 + 1] ?? 0, s.line.points[k * 3 + 2] ?? 0, tmp);
+            for (let a = 0; a < 3; a++) p[a] = (p[a] ?? 0) + w * (tmp[a] ?? 0);
+          }
+          for (let a = 0; a < 3; a++) {
+            lo[a] = Math.min(lo[a] ?? 0, p[a] ?? 0);
+            hi[a] = Math.max(hi[a] ?? 0, p[a] ?? 0);
+          }
+        }
+        // A linha é o eixo: o ventre se estende para os lados (raio típico ~3 cm).
+        const pad = Math.min(0.06, Math.max(0.025, Math.min(...[0, 1, 2].map((a) => s.box.size[a] ?? 0)) / 2));
+        const c = (a: number) => ((lo[a] ?? 0) + (hi[a] ?? 0)) / 2;
+        const d = (a: number) => (hi[a] ?? 0) - (lo[a] ?? 0) + 2 * pad;
+        boxes.push({ center: [c(0), c(1), c(2)], size: [d(0), d(1), d(2)] });
+        continue;
+      }
+      const seg = this.model.pack.parts.find((p) => p.id === s.anatomyId)?.segment;
+      const segId = seg && s.side === 'l' ? seg.replace(/_r$/, '_l') : seg;
+      const j = segId === undefined ? undefined : jointOf.get(segId);
+      if (j === undefined) {
+        boxes.push(s.box);
+        continue;
+      }
+      skinPoint(M, j, s.box.center[0], s.box.center[1], s.box.center[2], tmp);
+      boxes.push({ center: [tmp[0], tmp[1], tmp[2]], size: s.box.size });
+    }
+    return mergeBoxes(boxes);
   }
 
   /**
