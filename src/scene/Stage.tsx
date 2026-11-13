@@ -7,9 +7,9 @@ import { Canvas } from '@react-three/fiber';
 import { AtlasScene } from './atlas/AtlasScene';
 import { LightRig } from './body/LightRig';
 import { HeatScene } from './heat/HeatScene';
+import { HomeScene } from './home/HomeScene';
 import { LabScene } from './lab/LabScene';
 import { MotionScene } from './motion/MotionScene';
-import { OpeningScene } from './opening/OpeningScene';
 import { useStage } from './stageStore';
 
 const coarse = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
@@ -28,7 +28,7 @@ export default function Stage() {
       onCreated={({ gl }) => gl.setClearColor(0x000000, 0)}
     >
       <LightRig />
-      {scene === 'opening' && <OpeningScene />}
+      {scene === 'home' && <HomeScene />}
       {scene === 'lab' && <LabScene />}
       {scene === 'atlas' && <AtlasScene />}
       {scene === 'heat' && <HeatScene />}

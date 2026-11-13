@@ -9,7 +9,7 @@ export const ptBR = {
   },
   nav: {
     label: 'Navegação principal',
-    home: 'Abertura',
+    home: 'Início',
     atlas: 'Atlas',
     library: 'Exercícios',
     lab: 'Lab',
@@ -20,7 +20,7 @@ export const ptBR = {
   page: {
     notFound: 'Página não encontrada',
     notFoundLead: 'Este endereço não leva a nenhuma página do SBL View. Talvez o link esteja quebrado ou a página tenha mudado de lugar.',
-    notFoundHome: 'Voltar para a abertura',
+    notFoundHome: 'Voltar para o início',
     error: 'A página não carregou',
     errorLead: 'Pode ser falta de internet ou uma versão nova do site publicada enquanto esta aba estava aberta. Recarregar costuma resolver; seus registros ficam no aparelho.',
     reload: 'Recarregar',
@@ -33,43 +33,29 @@ export const ptBR = {
   theme: {
     label: 'Tema claro',
   },
-  opening: {
-    title: 'O corpo em camadas',
-    lead: 'Role para baixo. Um plano de corte desce pelo corpo e tira uma camada por vez. No fim sobra a alavanca.',
-    cutLabel: 'Plano de corte',
-    cutUnit: 'cm',
-    layers: {
-      skin: {
-        name: 'Pele',
-        body: 'A forma que aparece no espelho. Mostra volume, mas esconde o que importa para o treino: onde cada músculo se prende e por onde passa.',
-      },
-      superficial: {
-        name: 'Músculo superficial',
-        body: 'Cada músculo tem uma linha de ação, da origem à inserção. Quando a articulação gira, essa linha encurta ou alonga, e a força que o músculo consegue produzir muda junto.',
-      },
-      deep: {
-        name: 'Músculo profundo',
-        body: 'Por baixo ficam músculos que quase não aparecem e trabalham em quase todo agachamento, remada ou rosca: peitoral menor, ilíaco, adutor curto, vasto intermédio.',
-      },
-      bone: {
-        name: 'Osso',
-        body: 'As alavancas. O ângulo entre o segmento e a linha da carga decide quanto torque o músculo precisa vencer em cada ponto do movimento. É isso que o Lab vai calcular.',
-      },
+  home: {
+    title: 'Veja o músculo trabalhar',
+    lead: 'Um corpo anatômico em 3D para entender o treino: onde cada músculo se prende, quando ele alonga ou encurta em cada exercício, quanto torque o agachamento pede e como montar a semana. Cada número traz a fonte e o grau de confiança.',
+    hintFine: 'Passe o cursor pelo corpo: a lente tira a pele. Clique num músculo para abrir no Atlas. Arraste para girar.',
+    hintCoarse: 'Toque no corpo: a lente tira a pele. Toque de novo no mesmo músculo para abrir no Atlas. Arraste para girar.',
+    viewer: 'Corpo anatômico interativo',
+    keys: 'Setas giram o corpo. Enter abre no Atlas o que está no centro da lente. 1, 2 e 3 escolhem a profundidade da lente.',
+    lens: { label: 'Profundidade da lente', superficial: 'Músculo', deep: 'Profundo', bone: 'Osso' },
+    open: (name: string) => `${name}: abrir no Atlas`,
+    entries: 'Por onde começar',
+    doors: {
+      atlas: { name: 'Atlas', body: 'Cada músculo, camada por camada: origem, inserção e ação' },
+      library: { name: 'Exercícios', body: 'Animados, com o comprimento de cada alvo na repetição' },
+      lab: { name: 'Lab', body: 'Carga, ângulo e torque no agachamento' },
+      training: { name: 'Treino', body: 'Divisão, sessão ao vivo, recordes e análise' },
     },
-    end: {
-      title: 'Para onde ir',
-      lab: 'Agachamento no Lab',
-      labStatus: 'Carga, ângulo e torque',
-      atlas: 'Atlas dos músculos',
-      atlasStatus: 'O que cada um faz',
-      library: 'Biblioteca de exercícios',
-      libraryStatus: 'Filtre por comprimento',
-      system: 'Ver o sistema visual',
+    cue: 'Role para abrir as camadas',
+    explode: {
+      title: 'Quatro camadas, um corpo',
+      body: 'Pele, músculo superficial, músculo profundo e osso, lado a lado. No Atlas cada camada liga, desliga ou vira fantasma, e qualquer estrutura se isola.',
     },
-    note: 'Malha anatômica do Z-Anatomy (CC BY-SA 4.0), simplificada; as linhas de ação saem dela e são estimativa, não medida. Os números do Lab vêm de modelos publicados, sempre com fonte e grau de confiança ao lado.',
+    layers: { skin: 'Pele', superficial: 'Músculo superficial', deep: 'Músculo profundo', bone: 'Osso' },
     loading: 'Montando o corpo',
-    deckFinale: 'Quatro camadas',
-    deckOf: 'de',
   },
 } as const;
 

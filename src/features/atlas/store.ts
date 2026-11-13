@@ -84,6 +84,8 @@ interface AtlasState {
   /** Elemento onde o palco desenha o corpo. */
   slot: HTMLElement | null;
   pick: AtlasPickFn | null;
+  /** Chegada da página inicial: a câmera começa onde a de lá parou e voa até a seleção. Consumida por `reset`. */
+  handoff: { orbit: Orbit; selection: Pick } | null;
 
   select: (p: Pick | null, opts?: { fly?: boolean; view?: AtlasView | null }) => void;
   setHover: (p: Pick | null) => void;
@@ -108,6 +110,7 @@ interface AtlasState {
   setStructures: (s: readonly StructureInfo[]) => void;
   setSlot: (el: HTMLElement | null) => void;
   setPick: (f: AtlasPickFn | null) => void;
+  setHandoff: (h: AtlasState['handoff']) => void;
   /** Volta ao estado inicial (troca de página). */
   reset: (selection?: Pick | null, view?: AtlasView) => void;
 }
@@ -133,6 +136,7 @@ export const useAtlas = create<AtlasState>((set, get) => {
     structures: [],
     slot: null,
     pick: null,
+    handoff: null,
 
     select: (p, opts = {}) =>
       set((s) => {
@@ -168,12 +172,17 @@ export const useAtlas = create<AtlasState>((set, get) => {
     setStructures: (structures) => set({ structures }),
     setSlot: (slot) => set((s) => (s.slot === slot ? s : { slot })),
     setPick: (pick) => set({ pick }),
+    setHandoff: (handoff) => set({ handoff }),
     reset: (selection = null, view = 'front') =>
-      set((s) => ({
+      set((s) => {
+        // Vindo da página inicial com a mesma estrutura: parte da câmera de lá e voa (sem corte seco).
+        const h = s.handoff && samePick(s.handoff.selection, selection) ? s.handoff : null;
+        return {
         selection,
         hover: null,
-        orbit: { ...START, yaw: VIEW_YAW[view] },
-        fly: { nonce: s.fly.nonce + 1, yaw: VIEW_YAW[view], instant: true },
+        orbit: h ? clampOrbit(h.orbit) : { ...START, yaw: VIEW_YAW[view] },
+        fly: { nonce: s.fly.nonce + 1, yaw: VIEW_YAW[view], instant: !h },
+        handoff: null,
         layers: { ...LAYERS_DEFAULT },
         hidden: [],
         ghosted: [],
@@ -181,7 +190,8 @@ export const useAtlas = create<AtlasState>((set, get) => {
         exploded: false,
         cut: { axis: 'none', at: 0.5 },
         demo: DEMO_DEFAULT,
-      })),
+        };
+      }),
   };
 });
 

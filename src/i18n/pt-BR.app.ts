@@ -1,5 +1,5 @@
 /**
- * Textos das rotas além da abertura. Ficam fora da shell (entram no chunk das páginas).
+ * Textos das rotas além da página inicial. Ficam fora da shell (entram no chunk das páginas).
  */
 export const ptBRApp = {
   groups: {
@@ -839,6 +839,31 @@ export const ptBRApp = {
     motionPlay: 'Reproduzir',
     motionBack: 'Voltar',
     contrast: 'contraste',
+  },
+  homeMore: {
+    show: {
+      eyebrow: 'Ao vivo',
+      title: 'O exercício, músculo por músculo',
+      body: 'O corpo executa o exercício da biblioteca. A cor mostra o comprimento de cada alvo em relação à posição em pé: tungstênio encurta, aço alonga.',
+      list: 'Exercícios em demonstração',
+      viewer: (name: string) => `Demonstração animada: ${name}`,
+      targets: 'Alvos',
+      shorter: 'Encurta',
+      longer: 'Alonga',
+      open: (name: string) => `Abrir ${name}`,
+      all: (n: number) => `Ver os ${n} exercícios`,
+      play: 'Reproduzir',
+      pause: 'Pausar',
+      note: 'Clipes autorais, não captura de movimento. O comprimento sai da linha central de cada músculo na malha: estimativa, não medida.',
+    },
+    doors: {
+      title: 'Quatro entradas',
+      atlas: (n: number) => `${n} músculos`,
+      library: (n: number) => `${n} exercícios animados`,
+      lab: 'Solver estático',
+      training: 'No aparelho, sem conta',
+    },
+    note: 'Malha anatômica do Z-Anatomy (CC BY-SA 4.0), simplificada. Linhas de ação e comprimentos saem dela e são estimativa. Os números vêm de estudos publicados, com fonte e grau de confiança ao lado; o que ainda não foi conferido aparece marcado.',
   },
 } as const;
 

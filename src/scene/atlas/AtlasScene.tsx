@@ -12,7 +12,7 @@ import { forwardKinematics, pointToWorld } from '@/engine/kinematics/fk';
 import { buildSkeleton } from '@/engine/kinematics/skeleton';
 import type { Pose } from '@/engine/kinematics/types';
 import { DEG, type Vec3 } from '@/engine/math/vec';
-import { EXPLODE_SPACING } from '@/features/abertura/timeline';
+import { EXPLODE_SPACING } from '@/features/home/timeline';
 import { advanceDemo, demoAngle, strainOf } from '@/features/atlas/explorer/demo';
 import { BODY_BOX, dampOrbit, fitDistance, FOV_DEG, orbitPosition, orbitsClose, screenAxes, type Orbit } from '@/features/atlas/explorer/orbit';
 import { keyOf, LAYER_ORDER, samePick, useAtlas, type BodyLayerId, type LayerMode, type Pick, type StructureInfo } from '@/features/atlas/store';
@@ -55,7 +55,7 @@ function parseKey(k: string): { kind: string; id: string } {
   return { kind: k.slice(0, i), id: k.slice(i + 1) };
 }
 
-function structuresOf(model: BodyModel): StructureInfo[] {
+export function structuresOf(model: BodyModel): StructureInfo[] {
   return model.pack.parts.map((p) => {
     const muscleId = model.slots.find((s) => s.anatomyId === p.id)?.muscleId;
     return {

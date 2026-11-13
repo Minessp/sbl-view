@@ -41,7 +41,7 @@ export function StageHost() {
           {!ready && (
             <p className="stage__loading" role="status">
               <span className="stage__loading-rule" aria-hidden="true" />
-              {t.opening.loading}
+              {t.home.loading}
             </p>
           )}
         </>

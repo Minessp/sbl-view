@@ -16,6 +16,8 @@
  * Destaque, calor e ativação acendem o músculo (incandescência na cor --c-glow). Deformação: encurtar acende em
  * tungstênio (--c-glow), alongar em aço (--c-stretch).
  * Corte: plano de normal `uCutN` (mundo); do lado positivo, a camada vira fantasma. Padrão = horizontal (altura).
+ * Lente (página inicial): círculo na tela; cada camada é tirada dentro de uma fração do raio (anéis em degrau, borda
+ * acesa em tungstênio). Montagem: o músculo cresce da origem à inserção com uma frente incandescente.
  */
 import { DoubleSide, FrontSide, ShaderMaterial, type DataTexture, type IUniform, type Matrix4, type Vector3 } from 'three';
 import { rig, type Rig } from './rig';
@@ -38,6 +40,14 @@ export type BodyUniforms = Rig & {
   uGhost: IUniform<number>;
   /** Abaixo desta altura (m) a camada não aparece: o que está sob a pele intacta fica escondido. */
   uShowAbove: IUniform<number>;
+  /** Lente (px do quadro, origem embaixo à esquerda): centro x, y e raio. Raio 0 = sem lente. Um objeto por instância. */
+  uLens: IUniform<Vector3>;
+  /** Fração do raio da lente dentro da qual esta camada é tirada (0 = não tira). */
+  uLensK: IUniform<number>;
+  /** > 0: a camada só aparece dentro desta fração do raio (o que está sob a pele intacta só se vê pelo buraco). */
+  uLensIn: IUniform<number>;
+  /** Montagem das fibras: cada músculo cresce da origem à inserção até este parâmetro (≥ 2 = inteiro). Um objeto por instância. */
+  uGrow: IUniform<number>;
 };
 
 /** Funções de luz compartilhadas (corpo e equipamento). */
@@ -137,6 +147,10 @@ const fragment = /* glsl */ `
   uniform float uShowAbove;
   uniform float uTime;
   uniform float uPulseStart;
+  uniform vec3 uLens;
+  uniform float uLensK;
+  uniform float uLensIn;
+  uniform float uGrow;
   varying vec3 vN;
   varying vec3 vView;
   varying vec3 vW;
@@ -151,6 +165,16 @@ const fragment = /* glsl */ `
 
   void main() {
     if (vS1.x > 0.5 || vW.y < uShowAbove) discard;
+    // Lente: dentro de uLensK × raio a camada sai (borda de 3 px pontilhada); com uLensIn, só existe dentro do buraco.
+    float lensD = length(gl_FragCoord.xy - uLens.xy);
+    float peel = uLens.z * uLensK;
+    if (peel > 0.0 && lensD < peel + 1.5 && (lensD < peel - 1.5 || ign(gl_FragCoord.xy) > (lensD - peel + 1.5) / 3.0)) discard;
+    if (uLensIn > 0.0 && lensD > uLens.z * uLensIn) discard;
+    #ifdef MUSCLE
+    // Montagem: a fibra cresce da origem à inserção; cada músculo tem seu atraso (hash da vaga).
+    float grow = uGrow - fract(sin(floor(vSlot + 0.5) * 12.9898) * 43758.5453) * 0.45;
+    if (uGrow < 2.0 && vAlong > grow) discard;
+    #endif
     float a = vS0.y * (dot(vW, uCutN) > uCut ? uGhost : 1.0);
     #ifdef PICK
       if (a < 0.5) discard;
@@ -218,6 +242,12 @@ const fragment = /* glsl */ `
 
       // Incandescência: o que está em foco ou trabalhando acende.
       emit += glow * lit * (0.1 + 0.22 * lit);
+      // Borda da lente: a camada acende onde foi cortada.
+      if (peel > 0.0) emit += glow * exp(-pow((lensD - peel) / max(2.0, uLens.z * 0.025), 2.0)) * 1.4;
+      #ifdef MUSCLE
+        // Frente da montagem.
+        if (uGrow < 2.0) emit += glow * exp(-pow((grow - t) * 16.0, 2.0)) * 2.2;
+      #endif
       #ifdef MUSCLE
         emit += glow * sh * 0.6 + cool * st * 0.95;
       #endif

@@ -34,7 +34,8 @@ export default function AtlasIndex() {
   const A = t.atlas;
   const top = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    useAtlas.getState().reset(null, 'front');
+    // Vindo da página inicial com uma parte sem página (osso…): chega selecionada.
+    useAtlas.getState().reset(useAtlas.getState().handoff?.selection ?? null, 'front');
   }, []);
   const showOnBody = (id: string) => {
     const m = muscleDefs.find((x) => x.id === id);

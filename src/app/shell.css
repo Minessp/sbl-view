@@ -299,6 +299,7 @@
 }
 
 /* Lab, Atlas, calor: o canvas cobre a viewport e desenha só nos retângulos das vistas, acima do conteúdo. */
+.stage[data-scene='home'],
 .stage[data-scene='lab'],
 .stage[data-scene='atlas'],
 .stage[data-scene='heat'],

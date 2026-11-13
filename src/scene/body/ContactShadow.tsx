@@ -96,7 +96,7 @@ export function ContactShadow({ feet, strength = 0.8 }: { feet: () => readonly V
       center.z += p[2] / n;
     }
     if (u.uCount) u.uCount.value = n;
-    // Largura acompanha o espalhamento dos apoios (camadas abertas na abertura).
+    // Largura acompanha o espalhamento dos apoios (camadas abertas na página inicial).
     let r = 0;
     for (let i = 0; i < n; i++) {
       const q = list[i];

@@ -1,13 +1,13 @@
 import { lazy, Suspense, useEffect, useRef, type ReactNode } from 'react';
 import { flushSync } from 'react-dom';
 import { Route, Router, Switch, useLocation, type AroundNavHandler } from 'wouter';
-import Abertura from '@/features/abertura/Abertura';
+import Home from '@/features/home/Home';
 import { t } from '@/i18n';
 import { ErrorBoundary } from './ErrorBoundary';
 import { NotFound } from './NotFound';
 import { Shell } from './Shell';
 
-// Rotas além da abertura carregam sob demanda.
+// Rotas além da página inicial carregam sob demanda.
 const Sistema = lazy(() => import('@/features/sistema/Sistema'));
 const Lab = lazy(() => import('@/features/lab/Lab'));
 const AtlasIndex = lazy(() => import('@/features/atlas/AtlasIndex'));
@@ -100,7 +100,7 @@ export function App() {
         <RouteBoundary>
           <Suspense fallback={null}>
             <Switch>
-              <Route path="/" component={Abertura} />
+              <Route path="/" component={Home} />
               <Route path="/lab/agachamento" component={Lab} />
               <Route path="/lab" component={Lab} />
               <Route path="/atlas" component={AtlasIndex} />

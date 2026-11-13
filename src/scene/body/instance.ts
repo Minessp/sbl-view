@@ -41,6 +41,10 @@ export interface LayerControl {
   /** Abaixo desta altura (m) a camada some. */
   showAbove: number;
   visible: boolean;
+  /** Fração do raio da lente em que a camada sai (0 = não sai). */
+  lensPeel: number;
+  /** > 0: a camada só aparece dentro desta fração do raio da lente. */
+  lensOnly: number;
 }
 
 export class BodyInstance {
@@ -59,6 +63,10 @@ export class BodyInstance {
   private matrices: Float64Array | null = null;
   /** Comprimento da linha central de cada vaga na última pose (m; 0 sem linha). */
   readonly lengths: Float32Array;
+  /** Lente: centro (px do quadro, origem embaixo) e raio (px). Raio 0 = desligada. */
+  readonly lens: { value: Vector3 };
+  /** Montagem das fibras (≥ 2 = músculos inteiros). */
+  readonly grow: { value: number };
 
   constructor(
     readonly model: BodyModel,
@@ -75,6 +83,9 @@ export class BodyInstance {
     this.commit();
     this.joints = model.jointIds.map(() => new Matrix4());
     this.bind = new Map(model.pack.joints.map((j) => [j.id, j.origin]));
+    // Lente e montagem: um objeto por instância, o mesmo nas quatro camadas.
+    this.lens = { value: new Vector3(0, 0, 0) };
+    this.grow = { value: 9 };
     // Luz (rig) compartilhada: as mesmas referências de uniform em todas as instâncias.
     const mk = (l: BodyLayer): BodyUniforms => ({
       ...rig,
@@ -87,6 +98,10 @@ export class BodyInstance {
       uCutN: { value: new Vector3(0, 1, 0) },
       uGhost: { value: 0 },
       uShowAbove: { value: -99 },
+      uLens: this.lens,
+      uLensK: { value: 0 },
+      uLensIn: { value: 0 },
+      uGrow: this.grow,
     });
     this.layers = Object.fromEntries(LAYERS.map((l) => [l, mk(l)])) as Record<BodyLayer, BodyUniforms>;
     const mat = (l: BodyLayer, pick: boolean) =>
@@ -180,6 +195,8 @@ export class BodyInstance {
     if (c.alpha !== undefined) u.uAlpha.value = c.alpha;
     if (c.showAbove !== undefined) u.uShowAbove.value = c.showAbove;
     if (c.visible !== undefined) this.meshes[l].visible = c.visible;
+    if (c.lensPeel !== undefined) u.uLensK.value = c.lensPeel;
+    if (c.lensOnly !== undefined) u.uLensIn.value = c.lensOnly;
   }
 
   /**
@@ -245,6 +262,10 @@ export class BodyInstance {
     const skinVisible = this.meshes.skin.visible;
     this.meshes.skin.visible = false;
     camera.setViewOffset(w, h, Math.floor(x), Math.floor(y), 1, 1);
+    // No alvo 1 × 1 o pixel escolhido fica em (0,5; 0,5): a lente, centrada no ponteiro, vai junto.
+    const lx = this.lens.value.x, ly = this.lens.value.y;
+    this.lens.value.x = 0.5;
+    this.lens.value.y = 0.5;
     const prevTarget = gl.getRenderTarget();
     const prevScissor = gl.getScissorTest();
     gl.setScissorTest(false);
@@ -257,6 +278,8 @@ export class BodyInstance {
     gl.setRenderTarget(prevTarget);
     gl.setScissorTest(prevScissor);
     camera.clearViewOffset();
+    this.lens.value.x = lx;
+    this.lens.value.y = ly;
     this.meshes.skin.visible = skinVisible;
     for (const l of LAYERS) this.meshes[l].material = this.display[l];
     const id = (px[0] ?? 0) + (px[1] ?? 0) * 256;

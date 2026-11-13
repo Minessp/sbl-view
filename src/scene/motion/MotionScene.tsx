@@ -82,7 +82,7 @@ function applyLook(body: BodyInstance, model: BodyModel) {
   body.commit();
 }
 
-function PlayerBody({ slot }: { slot: HTMLElement }) {
+export function PlayerBody({ slot }: { slot: HTMLElement }) {
   const invalidate = useThree((s) => s.invalidate);
   const camRef = useRef<PerspCam>(null);
   const { model } = useBodyModel();

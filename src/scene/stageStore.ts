@@ -4,11 +4,11 @@
  */
 import { create } from 'zustand';
 
-export type SceneId = 'none' | 'opening' | 'lab' | 'atlas' | 'heat' | 'motion';
+export type SceneId = 'none' | 'home' | 'lab' | 'atlas' | 'heat' | 'motion';
 
 interface StageState {
   scene: SceneId;
-  /** Progresso da abertura, 0..1 (vem do scroll). */
+  /** Progresso do scroll da página inicial, 0..1. */
   progress: number;
   /** O palco terminou de montar a geometria e desenhou o primeiro quadro. */
   ready: boolean;

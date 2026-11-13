@@ -31,9 +31,33 @@ const step = async (name, fn) => {
   }
 };
 
-await step('abertura carrega e palco fica pronto', async () => {
+await step('página inicial carrega e palco fica pronto', async () => {
   await page.goto(`${base}/`, { waitUntil: 'networkidle' });
   await page.waitForSelector('.stage[data-ready="true"]', { timeout: 20000 });
+});
+
+await step('página inicial: lente escolhe profundidade, acende o músculo e o clique leva ao Atlas', async () => {
+  await page.getByRole('button', { name: 'Osso' }).click();
+  await page.getByRole('button', { name: 'Músculo', exact: true }).click();
+  if ((await page.getByRole('button', { name: 'Músculo', exact: true }).getAttribute('aria-pressed')) !== 'true') throw new Error('profundidade não mudou');
+  // Entrada da página (~3 s) antes de a lente valer.
+  await page.waitForTimeout(3500);
+  const box = await page.locator('.home-hero__view').boundingBox();
+  if (!box) throw new Error('sem vista');
+  // Pontos no peito, na coxa e no braço (o corpo fica na faixa de baixo no celular).
+  for (const [fx, fy] of [[0.42, 0.56], [0.4, 0.78], [0.6, 0.78], [0.25, 0.62]]) {
+    const x = box.x + box.width * fx, y = box.y + box.height * fy;
+    await page.mouse.move(x - 4, y - 4);
+    await page.mouse.move(x, y, { steps: 3 });
+    await page.waitForTimeout(400);
+    if (/abrir no Atlas/.test((await page.locator('.home-tip__label').textContent()) ?? '')) {
+      await page.mouse.click(x, y);
+      await page.waitForURL(/\/atlas\/[a-z_]+$/, { timeout: 8000 });
+      await page.waitForSelector('.stage[data-ready="true"]', { timeout: 20000 });
+      return;
+    }
+  }
+  throw new Error('nenhum músculo sob a lente');
 });
 
 await step('sistema carrega', async () => {
