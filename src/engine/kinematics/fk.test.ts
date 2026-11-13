@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { skeletonDef } from '@/data';
 import { at, must } from '../math/arr';
-import { angleBetween, distance, DEG, sub, type Vec3 } from '../math/vec';
+import { distance, DEG, sub, type Vec3 } from '../math/vec';
 import { anchorPose, forwardKinematics, jointPosition, pointToWorld } from './fk';
 import { bilateral, buildSkeleton, degToAngles } from './skeleton';
 
@@ -30,7 +30,7 @@ describe('buildSkeleton', () => {
   it('escala com a estatura', () => {
     const tall = buildSkeleton(skeletonDef, 1.9);
     const p = forwardKinematics(tall, {});
-    expect(jointPosition(p, 'thigh_r')[1]).toBeCloseTo(0.9275 * (1.9 / 1.75), 9);
+    expect(jointPosition(p, 'thigh_r')[1]).toBeCloseTo(must(sk.neutralOrigin, 'thigh_r')[1] * (1.9 / 1.75), 9);
   });
 });
 
@@ -43,7 +43,7 @@ describe('forwardKinematics', () => {
   it('preserva comprimento de segmento em qualquer ângulo', () => {
     const pose = forwardKinematics(sk, degToAngles({ hip_flex_r: 70, knee_flex_r: 110, ankle_dorsi_r: 25 }));
     const thigh = distance(jointPosition(pose, 'thigh_r'), jointPosition(pose, 'shank_r'));
-    expect(thigh).toBeCloseTo(0.42875, 9);
+    expect(thigh).toBeCloseTo(distance(must(sk.neutralOrigin, 'thigh_r'), must(sk.neutralOrigin, 'shank_r')), 9);
   });
 
   it('flexão de joelho positiva leva a perna para trás (−Z)', () => {
@@ -51,7 +51,8 @@ describe('forwardKinematics', () => {
     const ankle = jointPosition(pose, 'foot_r');
     const knee = jointPosition(pose, 'shank_r');
     expect(ankle[2]).toBeLessThan(knee[2] - 0.4);
-    expect(ankle[1]).toBeCloseTo(knee[1], 6);
+    // A perna medida na malha não é perpendicular ao eixo: sobra menos de 2 cm na vertical.
+    expect(Math.abs(ankle[1] - knee[1])).toBeLessThan(0.02);
   });
 
   it('flexão de quadril positiva leva a coxa para frente (+Z)', () => {
@@ -77,12 +78,17 @@ describe('forwardKinematics', () => {
     close(jointPosition(a, 'foot_r'), jointPosition(b, 'foot_r'));
   });
 
-  it('o ângulo medido entre coxa e perna confere com o comando', () => {
-    const pose = forwardKinematics(sk, degToAngles({ knee_flex_r: 63 }));
-    const hip = jointPosition(pose, 'thigh_r');
-    const knee = jointPosition(pose, 'shank_r');
-    const ankle = jointPosition(pose, 'foot_r');
-    expect(angleBetween(sub(knee, hip), sub(ankle, knee)) / DEG).toBeCloseTo(63, 6);
+  it('o ângulo medido entre coxa e perna (plano sagital) muda o mesmo que o comando', () => {
+    const sagittal = (deg: number) => {
+      const pose = forwardKinematics(sk, degToAngles({ knee_flex_r: deg }));
+      const hip = jointPosition(pose, 'thigh_r');
+      const knee = jointPosition(pose, 'shank_r');
+      const ankle = jointPosition(pose, 'foot_r');
+      // Inclinação no plano sagital (positivo = para frente); flexão do joelho leva a perna para trás.
+      const tilt = (v: Vec3) => Math.atan2(v[2], -v[1]);
+      return (tilt(sub(knee, hip)) - tilt(sub(ankle, knee))) / DEG;
+    };
+    expect(sagittal(63) - sagittal(0)).toBeCloseTo(63, 6);
   });
 });
 

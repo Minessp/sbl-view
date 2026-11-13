@@ -4,8 +4,8 @@
     {
       "id": "pelvis",
       "parent": null,
-      "origin": [0, 0.9275, 0],
-      "tip": [0, 1.0325, -0.035],
+      "origin": [0, 0.8814, 0],
+      "tip": [0, 0.9852, -0.0127],
       "bilateral": false,
       "joint": null,
       "dofs": [
@@ -16,45 +16,164 @@
         { "id": "pelvis_rot", "positive": "rotacao", "axis": "y", "sign": 1, "romDeg": [-90, 90],
           "rom": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo" } }
       ],
-      "geometry": { "source": [{ "refId": "winter2009", "locator": "Fig. 4.1" }, { "refId": "sbl_authored" }], "confidence": "provavel",
-        "note": "Centro do quadril a 0,530 H. Posição da junção lombossacral ajustada visualmente." }
+      "geometry": { "source": [{ "refId": "zanatomy" }, { "refId": "sbl_authored" }], "confidence": "provavel",
+        "note": "Origem no ponto médio dos centros dos quadris; ponta no centro do disco L5-S1. Medido na malha por scripts/anatomy-pack.mjs." }
     },
     {
-      "id": "trunk",
+      "id": "lumbar",
       "parent": "pelvis",
-      "origin": [0, 1.0325, -0.035],
-      "tip": [0, 1.47, -0.02],
+      "origin": [0, 0.9852, -0.0127],
+      "tip": [0, 1.1593, -0.011],
       "bilateral": false,
       "joint": "lumbar",
       "dofs": [
         { "id": "lumbar_flex", "positive": "flexao", "axis": "x", "sign": 1, "romDeg": [-25, 60],
-          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } },
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel", "note": "Amplitude toracolombar da fonte, posta toda na lombar." } },
         { "id": "lumbar_bend", "positive": "inclinacao", "axis": "z", "sign": 1, "romDeg": [-30, 30],
           "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } },
         { "id": "lumbar_rot", "positive": "rotacao", "axis": "y", "sign": 1, "romDeg": [-30, 30],
           "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } }
       ],
-      "geometry": { "source": [{ "refId": "winter2009", "locator": "Fig. 4.1" }], "confidence": "provavel",
-        "note": "Ombro a 0,818 H. Tronco tratado como um bloco rígido acima da lombar." }
+      "geometry": { "source": [{ "refId": "zanatomy" }, { "refId": "sbl_authored" }], "confidence": "provavel",
+        "note": "Do centro do disco L5-S1 ao centro do disco T12-L1 (centróides na malha)." }
     },
     {
-      "id": "head",
+      "id": "trunk",
+      "parent": "lumbar",
+      "origin": [0, 1.1593, -0.011],
+      "tip": [0, 1.477, -0.0166],
+      "bilateral": false,
+      "joint": "thoracic",
+      "dofs": [
+        { "id": "thorax_flex", "positive": "flexao", "axis": "x", "sign": 1, "romDeg": [-15, 30],
+          "rom": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Limite só evita pose absurda; amplitude torácica a conferir em fonte." } },
+        { "id": "thorax_bend", "positive": "inclinacao", "axis": "z", "sign": 1, "romDeg": [-20, 20],
+          "rom": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo" } },
+        { "id": "thorax_rot", "positive": "rotacao", "axis": "y", "sign": 1, "romDeg": [-35, 35],
+          "rom": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo" } }
+      ],
+      "geometry": { "source": [{ "refId": "zanatomy" }, { "refId": "sbl_authored" }], "confidence": "provavel",
+        "note": "Tórax: do disco T12-L1 ao disco C7-T1. Costelas, esterno e cartilagens costais rígidos neste segmento." }
+    },
+    {
+      "id": "neck",
       "parent": "trunk",
-      "origin": [0, 1.47, -0.02],
-      "tip": [0, 1.75, 0],
+      "origin": [0, 1.477, -0.0166],
+      "tip": [0, 1.5794, -0.014],
       "bilateral": false,
       "joint": "neck",
       "dofs": [
         { "id": "neck_flex", "positive": "flexao", "axis": "x", "sign": 1, "romDeg": [-50, 45],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } },
+        { "id": "neck_bend", "positive": "inclinacao", "axis": "z", "sign": 1, "romDeg": [-45, 45],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } },
+        { "id": "neck_rot", "positive": "rotacao", "axis": "y", "sign": 1, "romDeg": [-70, 70],
           "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } }
       ],
-      "geometry": { "source": [{ "refId": "winter2009", "locator": "Fig. 4.1" }], "confidence": "provavel" }
+      "geometry": { "source": [{ "refId": "zanatomy" }, { "refId": "sbl_authored" }], "confidence": "provavel",
+        "note": "Do disco C7-T1 ao centróide do atlas (C1)." }
+    },
+    {
+      "id": "head",
+      "parent": "neck",
+      "origin": [0, 1.5794, -0.014],
+      "tip": [0, 1.7462, -0.0073],
+      "bilateral": false,
+      "joint": "atlanto_occipital",
+      "dofs": [
+        { "id": "head_flex", "positive": "flexao", "axis": "x", "sign": 1, "romDeg": [-20, 20],
+          "rom": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo", "note": "Parte craniovertebral da flexão do pescoço; valor a conferir." } }
+      ],
+      "geometry": { "source": [{ "refId": "zanatomy" }, { "refId": "sbl_authored" }], "confidence": "provavel",
+        "note": "Pivô no centróide do atlas; ponta no vértice do crânio." }
+    },
+    {
+      "id": "clavicle_r",
+      "parent": "trunk",
+      "origin": [-0.0115, 1.4295, 0.0367],
+      "tip": [-0.158, 1.4542, -0.0305],
+      "bilateral": true,
+      "joint": "sternoclavicular_r",
+      "dofs": [
+        { "id": "clav_elev_r", "positive": "elevacao", "axis": "z", "sign": -1, "romDeg": [-10, 45],
+          "rom": { "source": [{ "refId": "neumann2010" }], "confidence": "provavel" } },
+        { "id": "clav_prot_r", "positive": "protracao", "axis": "y", "sign": 1, "romDeg": [-20, 20],
+          "rom": { "source": [{ "refId": "neumann2010" }], "confidence": "provavel" } }
+      ],
+      "geometry": { "source": [{ "refId": "zanatomy" }, { "refId": "sbl_authored" }], "confidence": "provavel",
+        "note": "Extremidade medial da clavícula (esternoclavicular) à lateral (acromioclavicular)." }
+    },
+    {
+      "id": "scapula_r",
+      "parent": "clavicle_r",
+      "origin": [-0.158, 1.4542, -0.0305],
+      "tip": [-0.173, 1.4156, -0.0223],
+      "bilateral": true,
+      "joint": "acromioclavicular_r",
+      "dofs": [
+        { "id": "scap_uprot_r", "positive": "rotacao_superior", "axis": "z", "sign": -1, "romDeg": [-10, 35],
+          "rom": { "source": [{ "refId": "neumann2010" }, { "refId": "ludewig2009" }], "confidence": "provavel",
+            "note": "Parte acromioclavicular da rotação superior; o resto vem da elevação da clavícula." } }
+      ],
+      "geometry": { "source": [{ "refId": "zanatomy" }, { "refId": "sbl_authored" }], "confidence": "provavel",
+        "note": "Pivô na acromioclavicular; ponta no centro da cabeça do úmero (glenoumeral)." }
+    },
+    {
+      "id": "upperarm_r",
+      "parent": "scapula_r",
+      "origin": [-0.173, 1.4156, -0.0223],
+      "tip": [-0.2213, 1.1366, -0.0354],
+      "bilateral": true,
+      "joint": "shoulder_r",
+      "dofs": [
+        { "id": "shoulder_flex_r", "positive": "flexao", "axis": "x", "sign": -1, "romDeg": [-60, 180],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } },
+        { "id": "shoulder_abd_r", "positive": "abducao", "axis": "z", "sign": -1, "romDeg": [-30, 180],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } },
+        { "id": "shoulder_rot_r", "positive": "rotacao_interna", "axis": "y", "sign": 1, "romDeg": [-90, 70],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } }
+      ],
+      "geometry": { "source": [{ "refId": "zanatomy" }, { "refId": "sbl_authored" }], "confidence": "provavel",
+        "note": "Centro da cabeça do úmero (esfera ajustada, raio 23 mm) ao ponto médio dos epicôndilos." }
+    },
+    {
+      "id": "forearm_r",
+      "parent": "upperarm_r",
+      "origin": [-0.2213, 1.1366, -0.0354],
+      "tip": [-0.2708, 0.8766, 0.0193],
+      "bilateral": true,
+      "joint": "elbow_r",
+      "dofs": [
+        { "id": "elbow_flex_r", "positive": "flexao", "axis": "x", "sign": -1, "romDeg": [0, 150],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } }
+      ],
+      "geometry": { "source": [{ "refId": "zanatomy" }, { "refId": "sbl_authored" }], "confidence": "provavel",
+        "note": "Ponto médio dos epicôndilos do úmero ao ponto médio dos processos estiloides do rádio e da ulna." }
+    },
+    {
+      "id": "hand_r",
+      "parent": "forearm_r",
+      "origin": [-0.2708, 0.8766, 0.0193],
+      "tip": [-0.2943, 0.7156, 0.1024],
+      "bilateral": true,
+      "joint": "wrist_r",
+      "dofs": [
+        { "id": "forearm_pro_r", "positive": "pronacao", "axis": "y", "sign": 1, "romDeg": [0, 160],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel",
+            "note": "Zero = posição anatômica (supinação completa); 160° = 80° de supinação + 80° de pronação a partir da posição neutra. Aplicada no punho: o rádio não é segmento próprio." } },
+        { "id": "wrist_flex_r", "positive": "flexao", "axis": "x", "sign": -1, "romDeg": [-70, 80],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } },
+        { "id": "wrist_dev_r", "positive": "desvio_radial", "axis": "z", "sign": -1, "romDeg": [-30, 20],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } }
+      ],
+      "geometry": { "source": [{ "refId": "zanatomy" }, { "refId": "sbl_authored" }], "confidence": "provavel",
+        "note": "Punho à ponta da falange distal do 3º dedo." }
     },
     {
       "id": "thigh_r",
       "parent": "pelvis",
-      "origin": [-0.0875, 0.9275, 0],
-      "tip": [-0.0875, 0.49875, 0],
+      "origin": [-0.0855, 0.8814, 0],
+      "tip": [-0.0758, 0.4728, -0.0294],
       "bilateral": true,
       "joint": "hip_r",
       "dofs": [
@@ -65,82 +184,36 @@
         { "id": "hip_rot_r", "positive": "rotacao_interna", "axis": "y", "sign": 1, "romDeg": [-45, 45],
           "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } }
       ],
-      "geometry": { "source": [{ "refId": "winter2009", "locator": "Fig. 4.1" }, { "refId": "sbl_authored" }], "confidence": "provavel",
-        "note": "Joelho a 0,285 H (coxa 0,245 H). Distância entre centros do quadril (0,10 H) ajustada visualmente." }
+      "geometry": { "source": [{ "refId": "zanatomy" }, { "refId": "sbl_authored" }], "confidence": "provavel",
+        "note": "Centro da cabeça do fêmur (esfera ajustada, raio 24 mm) ao ponto médio dos epicôndilos femorais." }
     },
     {
       "id": "shank_r",
       "parent": "thigh_r",
-      "origin": [-0.0875, 0.49875, 0],
-      "tip": [-0.0875, 0.06825, 0],
+      "origin": [-0.0758, 0.4728, -0.0294],
+      "tip": [-0.0797, 0.0671, -0.038],
       "bilateral": true,
       "joint": "knee_r",
       "dofs": [
         { "id": "knee_flex_r", "positive": "flexao", "axis": "x", "sign": 1, "romDeg": [-5, 155],
-          "rom": { "source": [{ "refId": "greene1994" }, { "refId": "hemmerich2006" }], "confidence": "provavel",
-            "note": "Limite superior vem do agachamento profundo com carga corporal (Hemmerich 2006), maior que a amplitude ativa clínica." } }
+          "rom": { "source": [{ "refId": "greene1994" }, { "refId": "hemmerich2006" }], "confidence": "provavel" } }
       ],
-      "geometry": { "source": [{ "refId": "winter2009", "locator": "Fig. 4.1" }], "confidence": "provavel",
-        "note": "Tornozelo a 0,039 H (perna 0,246 H)." }
+      "geometry": { "source": [{ "refId": "zanatomy" }, { "refId": "sbl_authored" }], "confidence": "provavel",
+        "note": "Ponto médio dos epicôndilos femorais ao ponto médio das pontas dos maléolos." }
     },
     {
       "id": "foot_r",
       "parent": "shank_r",
-      "origin": [-0.0875, 0.06825, 0],
-      "tip": [-0.0875, 0.012, 0.2],
+      "origin": [-0.0797, 0.0671, -0.038],
+      "tip": [-0.1052, 0.0123, 0.1455],
       "bilateral": true,
       "joint": "ankle_r",
       "dofs": [
         { "id": "ankle_dorsi_r", "positive": "dorsiflexao", "axis": "x", "sign": -1, "romDeg": [-50, 40],
-          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "especulativo",
-            "note": "Valor clínico ativo é ~20°. Com carga no agachamento profundo a dorsiflexão passa disso; 40° é estimativa até conferir dados com carga." } }
-      ],
-      "geometry": { "source": [{ "refId": "winter2009", "locator": "Fig. 4.1" }], "confidence": "provavel",
-        "note": "Comprimento do pé 0,152 H; calcanhar ~5 cm atrás do tornozelo." }
-    },
-    {
-      "id": "upperarm_r",
-      "parent": "trunk",
-      "origin": [-0.185, 1.4315, -0.01],
-      "tip": [-0.185, 1.1025, -0.01],
-      "bilateral": true,
-      "joint": "shoulder_r",
-      "dofs": [
-        { "id": "shoulder_flex_r", "positive": "flexao", "axis": "x", "sign": -1, "romDeg": [-60, 180],
-          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel", "note": "Inclui o ritmo escapuloumeral; a escápula não é modelada à parte." } },
-        { "id": "shoulder_abd_r", "positive": "abducao", "axis": "z", "sign": -1, "romDeg": [-30, 180],
-          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } },
-        { "id": "shoulder_rot_r", "positive": "rotacao_interna", "axis": "y", "sign": 1, "romDeg": [-90, 70],
           "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } }
       ],
-      "geometry": { "source": [{ "refId": "winter2009", "locator": "Fig. 4.1" }, { "refId": "sbl_authored" }], "confidence": "provavel",
-        "note": "Cotovelo a 0,630 H. Largura entre ombros ajustada visualmente." }
-    },
-    {
-      "id": "forearm_r",
-      "parent": "upperarm_r",
-      "origin": [-0.185, 1.1025, -0.01],
-      "tip": [-0.185, 0.849, -0.01],
-      "bilateral": true,
-      "joint": "elbow_r",
-      "dofs": [
-        { "id": "elbow_flex_r", "positive": "flexao", "axis": "x", "sign": -1, "romDeg": [0, 150],
-          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } }
-      ],
-      "geometry": { "source": [{ "refId": "winter2009", "locator": "Fig. 4.1" }], "confidence": "provavel", "note": "Punho a 0,485 H." }
-    },
-    {
-      "id": "hand_r",
-      "parent": "forearm_r",
-      "origin": [-0.185, 0.849, -0.01],
-      "tip": [-0.185, 0.66, -0.01],
-      "bilateral": true,
-      "joint": "wrist_r",
-      "dofs": [
-        { "id": "wrist_flex_r", "positive": "flexao", "axis": "x", "sign": -1, "romDeg": [-70, 80],
-          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } }
-      ],
-      "geometry": { "source": [{ "refId": "winter2009", "locator": "Fig. 4.1" }], "confidence": "provavel", "note": "Comprimento da mão 0,108 H." }
+      "geometry": { "source": [{ "refId": "zanatomy" }, { "refId": "sbl_authored" }], "confidence": "provavel",
+        "note": "Tornozelo à ponta do hálux (ponto mais anterior dos ossos do pé)." }
     }
   ]
 }

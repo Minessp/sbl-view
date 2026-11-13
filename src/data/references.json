@@ -25,6 +25,19 @@
     "note": "Conferido na Tabela 4 (p. 1228) e Fig. 1 (p. 1227): massa e CM longitudinal por segmento, colunas masculinas (M = 73,0 kg; 1,741 m). CM referenciado a centros articulares."
   },
   {
+    "id": "neumann2010",
+    "citation": "Neumann DA. Kinesiology of the Musculoskeletal System: Foundations for Rehabilitation. 2nd ed. St. Louis: Mosby/Elsevier; 2010.",
+    "verified": false,
+    "note": "Amplitudes da cintura escapular (esternoclavicular e acromioclavicular). Valores ainda não conferidos na fonte."
+  },
+  {
+    "id": "ludewig2009",
+    "citation": "Ludewig PM, Phadke V, Braman JP, Hassett DR, Cieminski CJ, LaPrade RF. Motion of the shoulder complex during multiplanar humeral elevation. Journal of Bone and Joint Surgery (Am). 2009;91(2):378-389.",
+    "doi": "10.2106/JBJS.G.01483",
+    "verified": false,
+    "note": "Rotação superior da escápula e movimento da clavícula na elevação do braço. Números ainda não conferidos."
+  },
+  {
     "id": "greene1994",
     "citation": "Greene WB, Heckman JD (eds.). The Clinical Measurement of Joint Motion. Rosemont: American Academy of Orthopaedic Surgeons; 1994.",
     "verified": false,
