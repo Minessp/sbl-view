@@ -5,21 +5,6 @@
   --ex: 0;
 }
 
-/* Poça de luz atrás do corpo; acompanha o corpo do lado direito até o centro quando as camadas abrem. */
-.stage[data-scene='home'] {
-  background:
-    radial-gradient(ellipse 34% 58% at calc(66% - 16% * var(--home-ex, 0)) 40%, color-mix(in oklch, var(--c-light-key) 8%, transparent), transparent 72%),
-    radial-gradient(ellipse calc(26% + 30% * var(--home-ex, 0)) 8% at calc(66% - 16% * var(--home-ex, 0)) 92%, color-mix(in oklch, var(--c-floor) 92%, transparent), transparent 80%);
-}
-
-@media (max-width: 899px) {
-  .stage[data-scene='home'] {
-    background:
-      radial-gradient(ellipse 70% 40% at 50% 62%, color-mix(in oklch, var(--c-light-key) 8%, transparent), transparent 72%),
-      radial-gradient(ellipse 60% 6% at 50% 95%, color-mix(in oklch, var(--c-floor) 92%, transparent), transparent 80%);
-  }
-}
-
 .home-hero {
   position: relative;
   height: 250svh;
@@ -30,6 +15,22 @@
   top: 0;
   height: 100svh;
   overflow: hidden;
+}
+
+/* Poça de luz atrás do corpo; acompanha o corpo do lado direito até o centro quando as camadas abrem. Mora no bloco fixo
+   (atrás do texto), não no palco: o palco fica acima do conteúdo e a poça do chão cobria o texto das camadas abertas. */
+.home-hero__pin {
+  background:
+    radial-gradient(ellipse 34% 58% at calc(66% - 16% * var(--home-ex, 0)) 40%, color-mix(in oklch, var(--c-light-key) 8%, transparent), transparent 72%),
+    radial-gradient(ellipse calc(26% + 30% * var(--home-ex, 0)) 8% at calc(66% - 16% * var(--home-ex, 0)) 92%, color-mix(in oklch, var(--c-floor) 92%, transparent), transparent 80%);
+}
+
+@media (max-width: 899px) {
+  .home-hero__pin {
+    background:
+      radial-gradient(ellipse 70% 40% at 50% 62%, color-mix(in oklch, var(--c-light-key) 8%, transparent), transparent 72%),
+      radial-gradient(ellipse 60% 6% at 50% 95%, color-mix(in oklch, var(--c-floor) 92%, transparent), transparent 80%);
+  }
 }
 
 .home-hero__view {
@@ -53,7 +54,7 @@
   position: absolute;
   left: var(--s-4);
   right: var(--s-4);
-  top: calc(var(--header-h) + var(--s-4));
+  top: calc(var(--header-h) + var(--s-6));
   display: grid;
   gap: var(--s-3);
   pointer-events: none;
@@ -444,17 +445,35 @@
     display: none;
   }
 
+  /* Ancorado embaixo, mas nunca acima da faixa livre sob o cabeçalho: o título encolhe com a altura da tela. */
   .home-hero__copy {
     left: var(--s-7);
     right: auto;
-    top: auto;
+    top: calc(var(--header-h) + var(--s-7));
     bottom: var(--s-7);
     width: min(36rem, 40vw);
     gap: var(--s-4);
+    align-content: safe end;
   }
 
   .home-hero__title {
-    font-size: var(--fs-9);
+    font-size: min(var(--fs-9), 10.5svh);
+  }
+}
+
+/* Tela baixa: as entradas saem do bloco fixo e vão para logo abaixo dele. */
+@media (min-width: 900px) and (max-height: 819px) {
+  .home-hero__copy .home-doors {
+    display: none;
+  }
+
+  .home-flow {
+    display: grid;
+    padding: var(--s-7) var(--s-7) 0;
+  }
+
+  .home-flow .home-hero__lead {
+    display: none;
   }
 }
 

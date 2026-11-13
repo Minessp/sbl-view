@@ -14,7 +14,6 @@ export const ptBR = {
     library: 'Exercícios',
     lab: 'Lab',
     training: 'Treino',
-    system: 'Sistema',
     skip: 'Pular para o conteúdo',
   },
   page: {

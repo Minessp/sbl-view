@@ -34,7 +34,7 @@ function edgeStretch(pack: AnatomyPack, part: AnatomyPart, deg: Record<string, n
         const a = (I[t + e] ?? 0) * 3, b = (I[t + ((e + 1) % 3)] ?? 0) * 3;
         const rest = Math.hypot((P[a] ?? 0) - (P[b] ?? 0), (P[a + 1] ?? 0) - (P[b + 1] ?? 0), (P[a + 2] ?? 0) - (P[b + 2] ?? 0));
         const now = Math.hypot((Q[a] ?? 0) - (Q[b] ?? 0), (Q[a + 1] ?? 0) - (Q[b + 1] ?? 0), (Q[a + 2] ?? 0) - (Q[b + 2] ?? 0));
-        // Aresta abaixo de 1 mm (a membrana que fecha a virilha, modesty.ts) não aparece: razão não se aplica.
+        // Aresta abaixo de 1 mm não aparece: razão não se aplica.
         out[o++] = rest > 1e-3 ? now / rest : 1;
       }
     }
@@ -184,8 +184,52 @@ describe('deformação do corpo inteiro nas poses de referência (critério da F
   });
 });
 
-describe('sem genitália (modesty.ts)', () => {
-  it.each(['hi', 'lo'] as const)('%s: a região urogenital da pele não se projeta à frente do púbis', (lod) => {
+/** Arestas da pele: quantos triângulos usam cada uma, e em que sentido. */
+function skinEdges(part: AnatomyPart) {
+  const I = part.indices;
+  const P = part.positions;
+  const n = P.length / 3;
+  const use = new Map<number, number>();
+  const directed = new Map<number, number>();
+  for (let t = 0; t < I.length; t += 3) {
+    for (let e = 0; e < 3; e++) {
+      const a = I[t + e] ?? 0, b = I[t + ((e + 1) % 3)] ?? 0;
+      const k = a < b ? a * n + b : b * n + a;
+      use.set(k, (use.get(k) ?? 0) + 1);
+      directed.set(a * n + b, (directed.get(a * n + b) ?? 0) + 1);
+    }
+  }
+  const onSeam = (v: number) => P[v * 3] === 0;
+  let border = 0, seam = 0, nonManifold = 0, flipped = 0;
+  for (const [k, c] of use) {
+    if (c > 2) nonManifold++;
+    if (c !== 1) continue;
+    if (onSeam(Math.floor(k / n)) && onSeam(k % n)) seam++;
+    else border++;
+  }
+  for (const c of directed.values()) if (c > 1) flipped += c - 1;
+  return { border, seam, nonManifold, flipped };
+}
+
+describe.each(['hi', 'lo'] as const)('pele estanque (%s)', (lod) => {
+  const skin = packs[lod].pack.parts.find((p) => p.kind === 'skin');
+  if (!skin) throw new Error('pacote sem pele');
+  const e = skinEdges(skin);
+
+  it('nenhuma aresta de borda fora da linha média (a cópia espelhada fecha a costura)', () => {
+    // Sem aberturas permitidas: olhos, boca, orelha e a região urogenital também são tampados no empacotamento.
+    expect(e.border).toBe(0);
+    expect(e.seam).toBeGreaterThan(100);
+  });
+
+  it('sem aresta não-variedade e com orientação coerente', () => {
+    expect(e.nonManifold).toBe(0);
+    expect(e.flipped).toBe(0);
+  });
+});
+
+describe('sem genitália (região urogenital fora da pele, buraco tampado)', () => {
+  it.each(['hi', 'lo'] as const)('%s: a pele da virilha não se projeta à frente do púbis', (lod) => {
     const skin = packs[lod].pack.parts.find((p) => p.kind === 'skin');
     const P = skin?.positions ?? new Float32Array();
     let zMax = -Infinity;
@@ -193,7 +237,7 @@ describe('sem genitália (modesty.ts)', () => {
       const x = P[i] ?? 0, y = P[i + 1] ?? 0, z = P[i + 2] ?? 0;
       if (x > -0.04 && y > 0.72 && y < 0.84) zMax = Math.max(zMax, z);
     }
-    // Antes do alisamento a ponta chegava a 11,8 cm à frente; o púbis fica em ~8 cm.
+    // Com a região original a ponta chegava a 11,8 cm à frente; o púbis fica em ~8 cm.
     expect(zMax).toBeLessThan(0.09);
   });
 });

@@ -18,6 +18,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { MeshoptSimplifier } from 'meshoptimizer';
 import { packSBL5 } from './sbl5.mjs';
+import { closeCracks, dropFolds, dropNonManifold, edgeCensus, edgeUse, fillHoles, fixTJunctions, orientationErrors, weld } from './mesh-tools.mjs';
 
 const args = process.argv.slice(2);
 const onlyLandmarks = args.includes('--landmarks');
@@ -246,70 +247,6 @@ function merge(names) {
   }
   return weld({ pos, idx });
 }
-/** Solda vértices a menos de 0,02 mm e remove triângulos degenerados. */
-function weld({ pos, idx }) {
-  const key = new Map();
-  const out = [];
-  const remap = new Uint32Array(pos.length / 3);
-  for (let i = 0; i < remap.length; i++) {
-    const k = `${Math.round(pos[i * 3] * 5e4)},${Math.round(pos[i * 3 + 1] * 5e4)},${Math.round(pos[i * 3 + 2] * 5e4)}`;
-    let j = key.get(k);
-    if (j === undefined) {
-      j = out.length / 3;
-      key.set(k, j);
-      out.push(pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]);
-    }
-    remap[i] = j;
-  }
-  const tri = [];
-  for (let i = 0; i < idx.length; i += 3) {
-    const a = remap[idx[i]], b = remap[idx[i + 1]], c = remap[idx[i + 2]];
-    if (a !== b && b !== c && a !== c) tri.push(a, b, c);
-  }
-  return { pos: new Float32Array(out), idx: new Uint32Array(tri) };
-}
-
-/**
- * Fecha frestas entre retalhos (a pele vem em regiões): vértices de borda a menos de `tol` viram um só.
- * Bordas na linha média ficam (a cópia espelhada fecha).
- */
-function closeCracks({ pos, idx }, tol) {
-  const count = new Map();
-  for (let t = 0; t < idx.length; t += 3) {
-    for (let e = 0; e < 3; e++) {
-      const a = idx[t + e], b = idx[t + ((e + 1) % 3)];
-      const k = a < b ? a * 4294967296 + b : b * 4294967296 + a;
-      count.set(k, (count.get(k) ?? 0) + 1);
-    }
-  }
-  const border = new Set();
-  for (const [k, c] of count) {
-    if (c !== 1) continue;
-    const a = Math.floor(k / 4294967296), b = k % 4294967296;
-    for (const v of [a, b]) if (Math.abs(pos[v * 3]) > 5e-4) border.add(v);
-  }
-  const parent = new Uint32Array(pos.length / 3).map((_, i) => i);
-  const find = (i) => (parent[i] === i ? i : (parent[i] = find(parent[i])));
-  const cell = new Map();
-  const key = (x, y, z) => `${Math.floor(x / tol)},${Math.floor(y / tol)},${Math.floor(z / tol)}`;
-  for (const v of border) {
-    const x = pos[v * 3], y = pos[v * 3 + 1], z = pos[v * 3 + 2];
-    for (let dx = -1; dx <= 1; dx++)
-      for (let dy = -1; dy <= 1; dy++)
-        for (let dz = -1; dz <= 1; dz++) {
-          for (const u of cell.get(key(x + dx * tol, y + dy * tol, z + dz * tol)) ?? []) {
-            if (Math.hypot(pos[u * 3] - x, pos[u * 3 + 1] - y, pos[u * 3 + 2] - z) < tol) parent[find(v)] = find(u);
-          }
-        }
-    const k = key(x, y, z);
-    if (!cell.has(k)) cell.set(k, []);
-    cell.get(k).push(v);
-  }
-  const out = new Uint32Array(idx.length);
-  for (let i = 0; i < idx.length; i++) out[i] = find(idx[i]);
-  return weld({ pos, idx: out });
-}
-
 const parts = [];
 const soft = anatomy.softBones;
 for (const [seg, names] of Object.entries(anatomy.segments)) {
@@ -355,9 +292,24 @@ for (const o of objects.values()) {
   parts.push({ id, kind: 'muscle', mirror: isRightObj(o.name), names: [o.name], mesh: merge([o.name]) });
 }
 {
-  const skin = closeCracks(merge(skinNames), 0.001);
+  // Pele estanque: as regiões do Z-Anatomy viram uma superfície fechada (só a linha média fica aberta; a cópia
+  // espelhada fecha). A região urogenital fica de fora (anatomy.json) e o buraco dela é tampado como os outros.
+  let skin = closeCracks(merge(skinNames), 0.001);
   // Linha média exata: a cópia espelhada encosta sem fresta.
   for (let i = 0; i < skin.pos.length; i += 3) if (Math.abs(skin.pos[i]) < 5e-4) skin.pos[i] = 0;
+  const onSeam = (v, P) => P[v * 3] === 0;
+  skin = fixTJunctions(skin, 5e-4, onSeam);
+  const nm = dropNonManifold(skin);
+  const folds = dropFolds(nm.mesh);
+  const filled = fillHoles(folds.mesh, { onSeam });
+  skin = weld(filled.mesh);
+  const census = edgeCensus(skin, onSeam);
+  const flips = orientationErrors(skin.idx);
+  console.log(
+    `pele: ${nm.removed} triângulos em aresta não-variedade, ${folds.removed} em aba dobrada, ${filled.report.length} buracos tampados ` +
+      `(${filled.report.reduce((n, r) => n + r.added, 0)} triângulos novos); borda fora da costura ${census.border.length}, não-variedade ${census.nonManifold}, orientação ${flips}`,
+  );
+  if (census.border.length || census.nonManifold || flips) throw new Error('pele não ficou estanque');
   parts.push({ id: 'skin', kind: 'skin', mirror: true, names: skinNames, mesh: skin });
 }
 for (const p of parts) {
@@ -908,8 +860,33 @@ function simplifyIdx(p, ratio, min) {
   const { pos, idx } = p.mesh;
   const target = Math.min(idx.length, Math.max(min * 3, Math.round((idx.length * ratio) / 3) * 3));
   if (target >= idx.length) return idx;
-  const flags = p.kind === 'skin' ? ['LockBorder'] : [];
-  let [out] = MeshoptSimplifier.simplify(idx, pos, 3, target, 0.05, flags);
+  if (p.kind === 'skin') {
+    // O colapso de arestas às vezes amassa paredes muito próximas (entrada do canal auditivo, entre os dedos do pé) e
+    // deixa aresta com três triângulos. A pele tem de continuar estanque: trava os vértices a 1,5 cm do defeito e refaz.
+    const n = pos.length / 3;
+    const lock = new Uint8Array(n);
+    const none = new Float32Array(n);
+    for (let attempt = 0; attempt < 8; attempt++) {
+      const [out] = MeshoptSimplifier.simplifyWithAttributes(idx, pos, 3, none, 1, [0], lock, target, 0.05, ['LockBorder']);
+      const c = edgeCensus({ pos, idx: out }, (v, P) => P[v * 3] === 0);
+      const bad = new Set();
+      for (const [e, k] of edgeUse(out)) if (k > 2) bad.add(Math.floor(e / 4294967296)).add(e % 4294967296);
+      const dir = new Map();
+      for (let t = 0; t < out.length; t += 3)
+        for (let e = 0; e < 3; e++) {
+          const key = `${out[t + e]},${out[t + ((e + 1) % 3)]}`;
+          if (dir.has(key)) bad.add(out[t + e]).add(out[t + ((e + 1) % 3)]);
+          dir.set(key, 1);
+        }
+      for (const [a2, b2] of c.border) bad.add(a2).add(b2);
+      if (bad.size === 0) return out;
+      for (let v = 0; v < n; v++)
+        for (const u of bad)
+          if (Math.hypot(pos[v * 3] - pos[u * 3], pos[v * 3 + 1] - pos[u * 3 + 1], pos[v * 3 + 2] - pos[u * 3 + 2]) < 0.015) lock[v] = 1;
+    }
+    throw new Error('pele simplificada não ficou estanque');
+  }
+  let [out] = MeshoptSimplifier.simplify(idx, pos, 3, target, 0.05, []);
   if (out.length > target * 1.4 && p.kind !== 'skin') [out] = MeshoptSimplifier.simplifySloppy(idx, pos, 3, null, target, 0.05);
   return out;
 }

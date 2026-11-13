@@ -60,12 +60,6 @@ await step('página inicial: lente escolhe profundidade, acende o músculo e o c
   throw new Error('nenhum músculo sob a lente');
 });
 
-await step('sistema carrega', async () => {
-  await page.goto(`${base}/sistema`, { waitUntil: 'networkidle' });
-  await page.getByRole('heading', { name: 'Sistema visual' }).waitFor();
-  await page.waitForFunction(() => document.title === 'Sistema visual — SBL View', null, { timeout: 5000 });
-});
-
 await step('rota inexistente mostra 404 e navegação leva o foco ao h1', async () => {
   await page.goto(`${base}/nao-existe`, { waitUntil: 'networkidle' });
   await page.getByRole('heading', { name: 'Página não encontrada' }).waitFor();

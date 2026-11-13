@@ -8,7 +8,6 @@ import { NotFound } from './NotFound';
 import { Shell } from './Shell';
 
 // Rotas além da página inicial carregam sob demanda.
-const Sistema = lazy(() => import('@/features/sistema/Sistema'));
 const Lab = lazy(() => import('@/features/lab/Lab'));
 const AtlasIndex = lazy(() => import('@/features/atlas/AtlasIndex'));
 const MusclePage = lazy(() => import('@/features/atlas/MusclePage'));
@@ -113,7 +112,6 @@ export function App() {
               <Route path="/treino/progresso" component={Progresso} />
               <Route path="/treino/analise" component={Analise} />
               <Route path="/treino/dados" component={Dados} />
-              <Route path="/sistema" component={Sistema} />
               {DevBody && <Route path="/dev/corpo" component={DevBody} />}
               {DevClips && <Route path="/dev/clipes" component={DevClips} />}
               <Route component={NotFound} />

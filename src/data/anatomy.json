@@ -3,7 +3,7 @@
     "refId": "zanatomy",
     "commit": "dd72c25bb57e47f8baf0333c3a926fb4ec8172fd",
     "file": "Z-Anatomy.zip → Z-Anatomy/Startup.blend",
-    "note": "Lado direito e linha média; o esquerdo é espelhado no navegador. Exportado por tools/anatomy/export.py e empacotado por scripts/anatomy-pack.mjs. Ficam de fora o sistema nervoso, órgãos dos sentidos e vísceras (inclui as peças CC BY-NC e CC BY-NC-SA)."
+    "note": "Lado direito e linha média; o esquerdo é espelhado no navegador. Exportado por tools/anatomy/export.py e empacotado por scripts/anatomy-pack.mjs. Ficam de fora o sistema nervoso, órgãos dos sentidos e vísceras (inclui as peças CC BY-NC e CC BY-NC-SA). Da pele saem pelos, unhas e as regiões urogenital e anal; os buracos são tampados no empacotamento (pele estanque)."
   },
   "segments": {
     "pelvis": ["Hip bone.r", "Sacrum", "Coccyx", "Pubic symphysis", "Interpubic disc", "Intervertebral disc L5-S1"],
@@ -71,7 +71,7 @@
     "sartorius": { "objects": ["Sartorius muscle.r"] },
     "gracilis": { "objects": ["Gracilis muscle.r"] },
     "pectineus": { "objects": ["Pectineus muscle.r"] },
-    "adductor_magnus": { "objects": ["Adductor magnus.r", "(Adductor minimus).r"] },
+    "adductor_magnus": { "objects": ["Adductor magnus.r", "(Adductor minimus).r"], "layer": "deep", "note": "Profundo por decisão: o tampo da pele na virilha (região urogenital tirada) passa a poucos mm da origem." },
     "adductor_longus": { "objects": ["Adductor longus.r"] },
     "adductor_brevis": { "objects": ["Adductor brevis.r"] },
     "biceps_femoris_long": { "objects": ["Long head of biceps femoris.r"] },
@@ -186,6 +186,6 @@
     "Innermost intercostal", "Transversus thoracis", "Diaphragm", "Iliopectineal arch", "Intermediate tendon",
     "patellar retinaculum", "aponeurosis", "Calcaneal tendon", "Iliotibial tract", "Tendon of extensor digitorum longus"
   ],
-  "skinExclude": ["Hairs", "hairs", "Eyelashes", "Nail plate", "Perionyx"],
+  "skinExclude": ["Hairs", "hairs", "Eyelashes", "Nail plate", "Perionyx", "Urogenital region", "Anal region"],
   "boneExclude": "Ossículos (martelo, bigorna, estribo), etmoide, cartilagens nasais e laríngeas: internos ou de licença incerta; ficam fora por não constarem de `segments`."
 }

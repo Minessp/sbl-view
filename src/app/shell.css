@@ -146,12 +146,6 @@
   transform: translate(6px, -6px);
 }
 
-@media (max-width: 899px) {
-  .site-nav__extra {
-    display: none !important;
-  }
-}
-
 @media (max-width: 560px) {
   .site-header {
     gap: var(--s-1);

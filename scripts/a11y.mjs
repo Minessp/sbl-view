@@ -25,7 +25,6 @@ const ROUTES = [
   '/treino/progresso',
   '/treino/analise',
   '/treino/dados',
-  '/sistema',
   '/rota-que-nao-existe',
 ];
 

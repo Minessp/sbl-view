@@ -51,8 +51,11 @@ export function layerOf(p: AnatomyPart): BodyLayer {
   return p.layer === 'superficial' ? 'superficial' : 'deep';
 }
 
-/** Normais por área, no lugar. */
-function vertexNormals(pos: Float32Array, idx: Uint32Array): Float32Array {
+/**
+ * Normais por área. Parte espelhada: o vértice da linha média (x = 0) só vê as faces do lado direito, e a cópia
+ * espelhada inverteria o x da normal, um vinco no meio do corpo. A normal dele é a média com o espelho (x = 0).
+ */
+function vertexNormals(pos: Float32Array, idx: Uint32Array, mirror: boolean): Float32Array {
   const n = new Float32Array(pos.length);
   for (let t = 0; t < idx.length; t += 3) {
     const a = (idx[t] ?? 0) * 3, b = (idx[t + 1] ?? 0) * 3, c = (idx[t + 2] ?? 0) * 3;
@@ -66,8 +69,9 @@ function vertexNormals(pos: Float32Array, idx: Uint32Array): Float32Array {
     }
   }
   for (let i = 0; i < n.length; i += 3) {
+    if (mirror && pos[i] === 0) n[i] = 0;
     const l = Math.hypot(n[i] ?? 0, n[i + 1] ?? 0, n[i + 2] ?? 0);
-    // Área quase nula (membrana da virilha, anatomy/modesty.ts): normal indefinida viraria NaN no shader. Frente.
+    // Área nula: normal indefinida viraria NaN no shader. Frente.
     if (l < 1e-9) {
       n[i] = 0;
       n[i + 1] = -0.3;
@@ -167,7 +171,7 @@ export function buildBodyModel(pack: AnatomyPack, muscles: readonly MuscleDef[])
 
   for (const part of pack.parts) {
     const layer = layerOf(part);
-    const normals = vertexNormals(part.positions, part.indices);
+    const normals = vertexNormals(part.positions, part.indices, part.mirror);
     const copies: (Uint8Array | null)[] = part.mirror ? [null, pack.jointMirror] : [null];
     for (const mirror of copies) {
       const index = slots.length;

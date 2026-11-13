@@ -31,7 +31,7 @@ import { REFERENCE_POSES } from '@/scene/anatomy/poses';
 type Layer = 'pele' | 'musculo' | 'osso';
 const LAYER_OF: Record<AnatomyKind, Layer> = { skin: 'pele', muscle: 'musculo', tendon: 'musculo', bone: 'osso', cartilage: 'osso' };
 const COLOR: Record<AnatomyKind, string> = { skin: '#d9a98c', muscle: '#a8323a', tendon: '#e8dcc4', bone: '#efe6d2', cartilage: '#9fb6c8' };
-const VIEWS = { frente: [0, 1, 3.2], lado: [3.2, 1, 0], costas: [0, 1, -3.2], diagonal: [-2.2, 1.4, -2.2], ombro: [-1.1, 1.25, 0.55], cima: [0.6, 3.6, 1.2] } as const;
+const VIEWS = { frente: [0, 1, 3.2], lado: [3.2, 1, 0], costas: [0, 1, -3.2], diagonal: [-2.2, 1.4, -2.2], ombro: [-1.1, 1.25, 0.55], cima: [0.6, 3.6, 1.2], baixo: [0.35, -0.9, 1.1] } as const;
 
 interface Item {
   readonly mesh: Mesh;

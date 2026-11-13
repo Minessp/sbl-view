@@ -38,9 +38,6 @@ export function Shell({ children }: { children: ReactNode }) {
           <NavLink href="/exercicios">{t.nav.library}</NavLink>
           <NavLink href="/lab">{t.nav.lab}</NavLink>
           <NavLink href="/treino">{t.nav.training}</NavLink>
-          <NavLink href="/sistema" className="site-nav__extra">
-            {t.nav.system}
-          </NavLink>
         </nav>
         <ThemeSwitch />
       </header>
