@@ -335,7 +335,9 @@ const fragment = /* glsl */ `
 
       #ifdef TRANSLUCENT
         float fres = pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 2.0);
-        float alpha = uAlpha >= 0.999 ? 1.0 : clamp(uAlpha * (0.4 + 1.6 * fres), 0.0, 1.0);
+        // Translúcida (vulto, mais opaca na silhueta) até a metade; dali até 1 vai junto para opaca. Antes o alfa pulava
+        // de ~0,4 para 1 no fim da entrada da pele (uAlpha 0,998 → 1).
+        float alpha = mix(clamp(uAlpha * (0.4 + 1.6 * fres), 0.0, 1.0), 1.0, smoothstep(0.5, 1.0, uAlpha));
         gl_FragColor = vec4(finish(col), alpha * a);
       #else
         gl_FragColor = vec4(finish(col), 1.0);
