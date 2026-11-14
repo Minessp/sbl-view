@@ -1,10 +1,11 @@
 /**
- * Atmosfera do herói: feixe de tungstênio vindo de cima, fumaça lenta dentro dele e poeira que só brilha onde a luz
- * passa. Um quadro em tela cheia, WebGL puro (GLSL ES 1.0), atrás do corpo (o palco transparente desenha por cima).
- * O feixe acompanha o ponteiro de leve e a poeira abre caminho em volta dele.
+ * Atmosfera do herói: feixe de tungstênio vindo de cima, fumaça lenta dentro dele e poeira luminosa nítida em duas
+ * profundidades, acesa no feixe e em volta do corpo. Um quadro em tela cheia, WebGL puro (GLSL ES 1.0),
+ * atrás do corpo (o palco transparente desenha por cima). O feixe acompanha o ponteiro e a poeira abre caminho.
  *
- * Custo: meia resolução, só desenha com o herói na tela e a aba visível. Redução de movimento: um quadro parado.
- * Tema claro: desligado (luz somada em fundo claro não aparece). Sem WebGL: nada (a poça de luz em CSS continua).
+ * Custo: resolução cheia (o shader é leve), só desenha com o herói na tela e a aba visível. Redução de movimento: um quadro parado.
+ * Tema claro: o feixe clareia o ciclorama e a poeira vira faísca âmbar (mistura normal).
+ * Sem WebGL: nada (a poça de luz em CSS continua).
  */
 import { useEffect, useRef } from 'react';
 import { useTheme } from '@/ui/theme';
@@ -25,8 +26,9 @@ uniform float uTime;
 uniform vec2 uPtr;
 uniform vec2 uBody;
 uniform vec3 uKey;
-uniform vec3 uRim;
+uniform vec3 uLine;
 uniform float uFade;
+uniform float uLight;
 
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float noise(vec2 p) {
@@ -40,20 +42,29 @@ float fbm(vec2 p) {
   return v;
 }
 
-/* Poeira: uma partícula por célula, deriva para cima e oscila; tamanho e brilho por célula. */
-float dust(vec2 p, float scale, float speed, float seed) {
+/*
+ * Uma partícula por célula (algumas células vazias): núcleo nítido (disco de cr, borda de ~1 px) e halo curto. Tudo em
+ * unidades da célula; a partícula fica a ≥ 0,25 da borda e o halo zera antes disso (nada de quadrado cortado).
+ * Deriva para cima balançando, cintila e, rara, lampeja.
+ */
+float dust(vec2 p, float scale, float speed, float seed, float cr, float density) {
   vec2 q = p * scale;
-  q.y -= uTime * speed;
+  q.y -= uTime * speed * scale;
+  q.x += sin(q.y * 0.6 + seed) * 0.25;
   vec2 id = floor(q);
   vec2 f = fract(q);
   float h = hash(id + seed);
-  if (h < 0.55) return 0.0;
-  vec2 c = vec2(hash(id + seed + 3.1), hash(id + seed + 7.7));
-  c += 0.18 * vec2(sin(uTime * (0.3 + h) + h * 40.0), cos(uTime * (0.25 + h) + h * 23.0));
-  float d = length(f - c);
-  float size = mix(0.035, 0.11, hash(id + seed + 1.3));
-  float tw = 0.55 + 0.45 * sin(uTime * (1.0 + 2.0 * h) + h * 60.0);
-  return (1.0 - smoothstep(0.0, size, d)) * tw;
+  if (h > density) return 0.0;
+  vec2 c = vec2(hash(id + seed + 3.1), hash(id + seed + 7.7)) * 0.4 + 0.3;
+  c += 0.05 * vec2(sin(uTime * (0.3 + h) + h * 40.0), cos(uTime * (0.25 + h) + h * 23.0));
+  float r = length(f - c);
+  float rr = cr * mix(0.6, 1.0, hash(id + seed + 1.3));
+  float aa = 0.9 * scale / uRes.y; /* ~1 px em unidades da célula */
+  float core = 1.0 - smoothstep(rr - aa, rr + aa, r);
+  float glow = exp(-(r * r) / (0.0036)) * 0.22;
+  float tw = 0.45 + 0.55 * sin(uTime * (0.9 + 2.0 * h) + h * 60.0);
+  float flash = pow(max(0.0, sin(uTime * (0.35 + h) + h * 90.0)), 60.0) * 1.4;
+  return (core + glow) * max(0.0, tw + flash);
 }
 
 void main() {
@@ -61,6 +72,7 @@ void main() {
   vec2 p = vec2(vUv.x * aspect, vUv.y);
   vec2 body = vec2(uBody.x * aspect, uBody.y);
   vec2 ptr = vec2(uPtr.x * aspect, uPtr.y);
+  float t = uTime;
 
   /* Feixe: fonte acima do quadro, mira no corpo; o ponteiro desloca a fonte. */
   vec2 src = vec2(body.x + (uPtr.x - 0.5) * 0.35 * aspect + 0.18, 1.45);
@@ -68,23 +80,39 @@ void main() {
   vec2 rel = p - src;
   float along = dot(rel, axis);
   float across = abs(rel.x * axis.y - rel.y * axis.x);
-  float width = 0.08 + along * 0.26;
+  float width = 0.08 + max(along, 0.0) * 0.26;
   float cone = (1.0 - smoothstep(width * 0.15, width, across)) * smoothstep(0.0, 0.35, along);
   float fall = exp(-max(along, 0.0) * 0.55);
-  float smoke = fbm(p * 2.6 + vec2(uTime * 0.03, -uTime * 0.05));
-  float shaft = cone * fall * (0.35 + 0.9 * smoke);
+  float beam = cone * fall;
 
-  /* Poeira em três profundidades; só acende dentro do feixe (e um pouco fora, pela luz refletida). */
+  /* Poeira em duas profundidades (perto maior e mais lenta, longe fina). O ponteiro abre caminho. */
   vec2 away = p - ptr;
-  float push = 0.06 * exp(-dot(away, away) * 18.0);
-  vec2 pd = p + normalize(away + 1e-4) * push;
-  float motes = dust(pd, 9.0, 0.020, 0.0) * 0.9 + dust(pd + 3.7, 16.0, 0.035, 11.0) * 0.6 + dust(pd + 9.1, 27.0, 0.05, 23.0) * 0.4;
-  float lit = cone * fall * 1.6 + 0.08;
-  float glow = exp(-dot(away, away) * 10.0) * 0.12;
+  float near = exp(-dot(away, away) * 14.0);
+  vec2 pd = p + normalize(away + 1e-4) * near * 0.07;
+  float motes = dust(pd + 3.7, 9.0, 0.018, 11.0, 0.028, 0.42) * 1.0
+              + dust(pd + 9.1, 17.0, 0.03, 23.0, 0.034, 0.38) * 0.6;
+  float smoke = fbm(p * 2.4 + vec2(t * 0.03, -t * 0.05));
+  vec2 db = (p - body) * vec2(1.2, 0.8);
+  float halo = exp(-dot(db, db) * 1.4);
+  /* Presente na sala inteira, acesa de verdade dentro do feixe e em volta do corpo. */
+  float lit = 0.16 + beam * 1.8 + halo * 0.35 + near * 0.5;
+  /* Desktop (corpo à direita): sobre a coluna de texto a poeira recua, para não brigar com a leitura. */
+  float text = uBody.x > 0.6 ? mix(0.28, 1.0, smoothstep(0.26, 0.5, vUv.x)) : 1.0;
+  motes *= text;
 
-  vec3 col = clamp(uKey * (shaft * 0.16 + motes * lit * 0.9) + uRim * glow * 0.6, 0.0, 1.0) * clamp(uFade, 0.0, 1.0);
-  /* Pré-multiplicado: com a mistura "screen" do CSS, preto = nada; alfa = o canal mais forte. */
-  gl_FragColor = vec4(col, max(max(col.r, col.g), col.b));
+  float fade = clamp(uFade, 0.0, 1.0);
+  if (uLight < 0.5) {
+    vec3 tint = mix(uKey, vec3(1.0), clamp(motes * 0.6, 0.0, 1.0));
+    vec3 col = uKey * beam * (0.12 + 0.18 * smoke) + tint * motes * lit * 0.6;
+    col = clamp(col, 0.0, 1.0) * fade;
+    gl_FragColor = vec4(col, max(max(col.r, col.g), col.b));
+  } else {
+    /* Ciclorama: o feixe clareia o fundo e a poeira vira faísca âmbar. */
+    float sh = clamp(beam * (0.35 + 0.4 * smoke), 0.0, 1.0) * 0.55 * fade;
+    float ln = clamp(motes * lit * 0.5, 0.0, 1.0) * fade;
+    vec3 c = vec3(1.0) * sh * (1.0 - ln) + uLine * ln;
+    gl_FragColor = vec4(c, sh + ln - sh * ln);
+  }
 }`;
 
 function hexToRgb(hex: string): [number, number, number] {
@@ -107,7 +135,7 @@ export default function Atmosphere() {
 
   useEffect(() => {
     const canvas = ref.current;
-    if (!canvas || mode === 'light') return;
+    if (!canvas) return;
     const gl = canvas.getContext('webgl', { premultipliedAlpha: true, alpha: true, antialias: false });
     if (!gl) return;
     const vs = compile(gl, gl.VERTEX_SHADER, VERT);
@@ -126,10 +154,11 @@ export default function Atmosphere() {
     gl.enableVertexAttribArray(loc);
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
     const u = (n: string) => gl.getUniformLocation(prog, n);
-    const uRes = u('uRes'), uTime = u('uTime'), uPtr = u('uPtr'), uBody = u('uBody'), uKey = u('uKey'), uRim = u('uRim'), uFade = u('uFade');
+    const uRes = u('uRes'), uTime = u('uTime'), uPtr = u('uPtr'), uBody = u('uBody'), uKey = u('uKey'), uLine = u('uLine'), uFade = u('uFade'), uLight = u('uLight');
     const css = getComputedStyle(document.documentElement);
     gl.uniform3fv(uKey, hexToRgb(css.getPropertyValue('--c-light-key') || '#fff1dc'));
-    gl.uniform3fv(uRim, hexToRgb(css.getPropertyValue('--c-light-rim') || '#9fd0f0'));
+    gl.uniform3fv(uLine, hexToRgb(css.getPropertyValue('--c-glow') || '#f2a03c'));
+    gl.uniform1f(uLight, mode === 'light' ? 1 : 0);
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const ptr = { x: 0.62, y: 0.6, tx: 0.62, ty: 0.6 };
@@ -138,7 +167,8 @@ export default function Atmosphere() {
     const t0 = performance.now();
 
     const resize = () => {
-      const scale = Math.min(window.devicePixelRatio || 1, 2) * 0.5;
+      // Resolução cheia (até 2×): a partícula é um disco de 2–3 px e precisa de borda nítida.
+      const scale = Math.min(window.devicePixelRatio || 1, 2);
       const w = Math.max(1, Math.round(canvas.clientWidth * scale));
       const h = Math.max(1, Math.round(canvas.clientHeight * scale));
       if (canvas.width !== w || canvas.height !== h) {
@@ -202,6 +232,6 @@ export default function Atmosphere() {
     };
   }, [mode]);
 
-  if (mode === 'light') return null;
-  return <canvas ref={ref} className="home-atmos" aria-hidden="true" />;
+  // Canvas novo por tema (o efeito relê as cores e o modo de mistura muda no CSS).
+  return <canvas key={mode} ref={ref} className="home-atmos" data-mode={mode} aria-hidden="true" />;
 }

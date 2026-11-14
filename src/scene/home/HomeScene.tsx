@@ -18,7 +18,7 @@ import { buildSkeleton } from '@/engine/kinematics/skeleton';
 import type { Vec3 } from '@/engine/math/vec';
 import { BODY_BOX, dampOrbit, fitDistance, FOV_DEG, orbitPosition, orbitsClose, screenAxes, type Orbit } from '@/features/atlas/explorer/orbit';
 import { useAtlas } from '@/features/atlas/store';
-import { heroCamera, lens, samePick, useHome, type HomePick } from '@/features/home/store';
+import { auto, heroCamera, lens, samePick, useHome, type HomePick } from '@/features/home/store';
 import { CUT_OFF, EXPLODE_SLOT, EXPLODE_SPACING, EXPLODE_YAW, explodeAt, introFrame, LAYER_IDS, lensPeel, lensRadius } from '@/features/home/timeline';
 import { usePlayer } from '@/features/library/player/store';
 import { anchors } from '../annotations';
@@ -191,7 +191,7 @@ function HeroBody({ slot }: { slot: HTMLElement }) {
     const dpr = gl.getPixelRatio();
     const rect = slot.getBoundingClientRect();
     const lensOn = st.live && lens.on && ex < 0.02 && !st.leaving;
-    const goalR = lensOn ? lensRadius(rect.width) * dpr : 0;
+    const goalR = lensOn ? lensRadius(rect.width) * dpr * lens.scale : 0;
     const px = (lens.x - canvas.left) * dpr, py = (canvas.bottom - lens.y) * dpr;
     const L = lensCur.current;
     if (L.r < 0.5 || reduce) {
@@ -213,7 +213,8 @@ function HeroBody({ slot }: { slot: HTMLElement }) {
     const aspect = rect.width / Math.max(1, rect.height);
     const wide = aspect > 1.15;
     const portrait = aspect < 0.8;
-    const yaw = st.yaw + EXPLODE_YAW * ex + intro.orbit;
+    const yaw = st.yaw + auto.yaw + EXPLODE_YAW * ex + intro.orbit;
+    if (auto.running) invalidate();
     const H = BODY_BOX.size[1] + 0.08;
     const depth = BODY_BOX.size[2] / 2;
     const hpx = Math.max(1, rect.height);

@@ -363,6 +363,20 @@
   scale: 1;
 }
 
+/* Piloto automático: a lente fantasma vira retícula acesa que gira devagar e cresce no "raio X" (--k). */
+.home-ring[data-auto='true'][data-live='true'][data-on='true']::before {
+  scale: var(--k, 1);
+  border-color: color-mix(in oklch, var(--c-accent) 50%, transparent);
+  box-shadow: 0 0 24px -6px color-mix(in oklch, var(--c-glow) 60%, transparent), inset 0 0 18px -8px color-mix(in oklch, var(--c-glow) 50%, transparent);
+  animation: ring-spin 14s linear infinite;
+}
+
+@keyframes ring-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
 .home-tip__label {
   position: absolute;
   left: calc(var(--r, 120px) * 0.72);
@@ -549,4 +563,8 @@
   .home-atmos {
     animation: none;
   }
+}
+
+.home-atmos[data-mode='light'] {
+  mix-blend-mode: normal;
 }
