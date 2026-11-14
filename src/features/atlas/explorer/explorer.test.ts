@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { advanceDemo, demoAngle, demoPhaseOf, strainOf } from './demo';
+import { advanceDemo, demoAngle, demoEnds, demoPhaseOf, demoStage, enterEase, strainOf } from './demo';
 import { clampOrbit, dampOrbit, fitDistance, orbitPosition, orbitsClose, panOrbit, VIEW_YAW, wrapAngle, type Orbit } from './orbit';
 
 const O: Orbit = { yaw: 0.4, pitch: 0.2, dist: 3, target: [0, 1, 0] };
@@ -47,21 +47,30 @@ describe('órbita', () => {
 });
 
 describe('demonstração', () => {
-  const R = [-20, 120] as const;
-  it('começa na posição em pé e cobre a faixa inteira', () => {
-    expect(demoAngle(R, 0)).toBeCloseTo(0, 6);
-    const xs = Array.from({ length: 401 }, (_, i) => demoAngle(R, i / 400));
-    expect(Math.max(...xs)).toBeCloseTo(120, 1);
-    expect(Math.min(...xs)).toBeCloseTo(-20, 1);
-    expect(demoAngle(R, 1)).toBeCloseTo(0, 6);
+  it('extensor (sinal −): começa alongado na ponta de cima, encurta até a de baixo e volta', () => {
+    const { from, to } = demoEnds([-10, 110], -1);
+    expect([from, to]).toEqual([110, -10]);
+    expect(demoAngle(from, to, 0)).toBeCloseTo(110, 6);
+    expect(demoAngle(from, to, 0.5)).toBeCloseTo(-10, 6);
+    expect(demoAngle(from, to, 1)).toBeCloseTo(110, 6);
+    const xs = Array.from({ length: 401 }, (_, i) => demoAngle(from, to, i / 400));
+    expect(Math.min(...xs)).toBeCloseTo(-10, 1);
   });
 
-  it('faixa sem o zero começa na ponta mais perto', () => {
-    expect(demoAngle([30, 90], 0)).toBeCloseTo(30, 6);
+  it('fase: ida encurta, volta alonga', () => {
+    expect(demoStage(0.1)).toBe('shortening');
+    expect(demoStage(0.6)).toBe('lengthening');
+    expect(demoStage(1.2)).toBe('shortening');
   });
 
   it('cursor manual: fase do ângulo devolve o mesmo ângulo', () => {
-    for (const d of [-20, -5, 0, 33, 80, 120]) expect(demoAngle(R, demoPhaseOf(R, d))).toBeCloseTo(d, 6);
+    for (const d of [-20, -5, 0, 33, 80, 120]) expect(demoAngle(120, -20, demoPhaseOf(120, -20, d))).toBeCloseTo(d, 6);
+  });
+
+  it('entrada suave vai de 0 a 1 sem passar', () => {
+    expect(enterEase(-1)).toBe(0);
+    expect(enterEase(0.5)).toBeCloseTo(0.5, 6);
+    expect(enterEase(2)).toBe(1);
   });
 
   it('sem repetição para ao fim do ciclo; com repetição dá a volta', () => {

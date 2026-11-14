@@ -181,6 +181,15 @@
   font-style: italic;
 }
 
+.action-list__note--model {
+  font-style: normal;
+  color: var(--c-ink-2);
+}
+
+.atlas-stage .part-picker {
+  margin-block: var(--s-1);
+}
+
 /* Curvas */
 .curve-list {
   display: grid;

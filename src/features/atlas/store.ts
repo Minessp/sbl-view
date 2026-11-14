@@ -24,9 +24,13 @@ export interface Pick {
   readonly id: string;
   /** Lado tocado (a câmera voa até ele); 'c' = linha média. */
   readonly side: 'r' | 'l' | 'c';
+  /** Parte do músculo (deltoide anterior, trapézio inferior…); ausente = o músculo inteiro. */
+  readonly part?: string | undefined;
 }
-export const keyOf = (p: Pick): string => `${p.kind}:${p.id}`;
-export const samePick = (a: Pick | null, b: Pick | null) => (a && b ? a.kind === b.kind && a.id === b.id : a === b);
+export const keyOf = (p: Pick): string => `${p.kind}:${p.id}${p.part ? `/${p.part}` : ''}`;
+export const samePick = (a: Pick | null, b: Pick | null) => (a && b ? a.kind === b.kind && a.id === b.id && a.part === b.part : a === b);
+/** Mesma estrutura, qualquer parte (o músculo da página continua o mesmo). */
+export const sameStructure = (a: Pick | null, b: Pick | null) => (a && b ? a.kind === b.kind && a.id === b.id : a === b);
 
 /** Parte do pacote, registrada pela cena quando o modelo carrega (busca e nome do que não tem página). */
 export interface StructureInfo {
@@ -46,6 +50,13 @@ export interface DemoSpec {
   /** Grau de liberdade do esqueleto (`hip_flex_r`). */
   readonly dof: string;
   readonly range: readonly [number, number];
+  /** Ponta alongada (início do ciclo) e encurtada da ação, em graus do DOF. */
+  readonly from: number;
+  readonly to: number;
+  /** Outros DOFs fixos durante a ação (graus, com lado). */
+  readonly base: Readonly<Record<string, number>>;
+  /** Plano da ação: escolhe a vista (perfil no sagital, frente no frontal, de cima no transversal). */
+  readonly plane: 'sagital' | 'frontal' | 'transversal';
   /** Chave da curva (para a interface saber qual está tocando). */
   readonly key: string;
 }
@@ -66,6 +77,8 @@ export interface FlyRequest {
 }
 
 const START: Orbit = { yaw: 0, pitch: 0.04, dist: 4.4, target: BODY_BOX.center };
+/** Rotação (plano transversal) vista de cima e de frente. */
+const DEMO_TOP_PITCH = 0.75;
 
 interface AtlasState {
   selection: Pick | null;
@@ -165,8 +178,15 @@ export const useAtlas = create<AtlasState>((set, get) => {
     showAll: () => set({ hidden: [], ghosted: [], isolate: false, layers: { ...LAYERS_DEFAULT } }),
     setExploded: (exploded) => set({ exploded, fly: fly(null) }),
     setCut: (c) => set((s) => ({ cut: { ...s.cut, ...c } })),
-    // Ação sagital: o perfil direito mostra o plano do movimento; a câmera reenquadra o membro que se move.
-    startDemo: (spec) => set((s) => ({ demo: { ...s.demo, spec, playing: true, phase: 0 }, exploded: false, fly: fly(VIEW_YAW.side) })),
+    // A vista mostra o plano do movimento: perfil direito no sagital, frente (ou costas) no frontal, de cima e de frente no
+    // transversal; a câmera reenquadra o membro que se move.
+    startDemo: (spec) =>
+      set((s) => {
+        const back = Math.cos(s.orbit.yaw) < -0.5;
+        const yaw = spec.plane === 'sagital' ? VIEW_YAW.side : back ? VIEW_YAW.back : VIEW_YAW.front;
+        const pitch = spec.plane === 'transversal' ? DEMO_TOP_PITCH : START.pitch;
+        return { demo: { ...s.demo, spec, playing: true, phase: 0 }, exploded: false, orbit: clampOrbit({ ...s.orbit, pitch }), fly: fly(yaw) };
+      }),
     setDemo: (d) => set((s) => ({ demo: { ...s.demo, ...d } })),
     stopDemo: () => set((s) => ({ demo: { ...s.demo, spec: null, playing: false, phase: 0 } })),
     setStructures: (structures) => set({ structures }),

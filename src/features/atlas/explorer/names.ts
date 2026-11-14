@@ -12,12 +12,22 @@ export interface Described {
   readonly latin: string;
   readonly kind: StructureInfo['kind'];
   readonly muscle?: MuscleDef;
+  /** Parte do músculo em foco (com o nome dela já em `name`). */
+  readonly part?: MuscleDef['parts'][number];
+}
+
+/** Nome de uma parte que se lê sozinho: "Romboide maior" fica; "Cabeça longa" vira "Bíceps femoral, cabeça longa". */
+export function partLabel(m: MuscleDef, partName: string): string {
+  const stem = fold(m.name.split(/\s+/)[0] ?? '').slice(0, 6);
+  return stem && fold(partName).includes(stem) ? partName : `${m.name}, ${partName.charAt(0).toLowerCase()}${partName.slice(1)}`;
 }
 
 export function describe(p: Pick, structures: readonly StructureInfo[]): Described | null {
   if (p.kind === 'muscle') {
     const m = muscleById(p.id);
-    return m ? { pick: p, name: m.name, latin: m.latin, kind: 'muscle', muscle: m } : null;
+    if (!m) return null;
+    const part = p.part ? m.parts.find((x) => x.id === p.part) : undefined;
+    return part ? { pick: p, name: partLabel(m, part.name), latin: m.latin, kind: 'muscle', muscle: m, part } : { pick: p, name: m.name, latin: m.latin, kind: 'muscle', muscle: m };
   }
   const s = structures.find((x) => x.id === p.id);
   if (!s) return null;
@@ -42,13 +52,22 @@ export function searchIndex(structures: readonly StructureInfo[]): SearchItem[] 
     detail: t.groups[m.group],
     hay: fold(`${m.name} ${m.latin} ${t.groups[m.group]}`),
   }));
+  // Partes como estruturas próprias: "deltoide anterior" acha a parte, não só o deltoide.
+  const muscleParts = muscleDefs.flatMap((m) =>
+    m.parts.length < 2
+      ? []
+      : m.parts.map((pt): SearchItem => {
+          const name = partLabel(m, pt.name);
+          return { pick: { kind: 'muscle', id: m.id, side: 'r', part: pt.id }, name, detail: m.name, hay: fold(`${name} ${m.name} ${m.latin}`) };
+        }),
+  );
   const parts = structures
     .filter((s) => !s.muscleId)
     .map((s): SearchItem => {
       const name = t.atlas.structures[s.id] ?? s.source;
       return { pick: { kind: 'part', id: s.id, side: 'r' }, name, detail: t.atlas.ex.kind[s.kind], hay: fold(`${name} ${s.source}`) };
     });
-  return [...muscles, ...parts];
+  return [...muscles, ...muscleParts, ...parts];
 }
 
 /** Busca por prefixo de palavra primeiro, depois por trecho. */

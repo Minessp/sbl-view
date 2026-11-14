@@ -6,14 +6,14 @@ import { useId } from 'react';
 import { fmt, t } from '@/i18n/app';
 import type { ActionCurve } from '../model';
 import { DEMO_SPEEDS, useAtlas } from '../store';
-import { demoAngle, demoPhaseOf } from './demo';
+import { demoAngle, demoPhaseOf, demoStage } from './demo';
 
 /** Fração do eixo x do gráfico onde está o ângulo da demonstração (ou a posição em pé, se ela não toca esta curva). */
 export function useDemoMarker(c: ActionCurve): number {
   return useAtlas((s) => {
     const spec = s.demo.spec;
     if (spec?.key !== c.key) return c.neutralAt;
-    return (demoAngle(spec.range, s.demo.phase) - c.range[0]) / (c.range[1] - c.range[0]);
+    return (demoAngle(spec.from, spec.to, s.demo.phase) - c.range[0]) / (c.range[1] - c.range[0]);
   });
 }
 
@@ -38,7 +38,7 @@ export function DemoButton({ c, className = 'chip chip--small' }: { c: ActionCur
       onClick={() => {
         const st = useAtlas.getState();
         if (active) st.stopDemo();
-        else st.startDemo({ dof: c.dof, range: c.range, key: c.key });
+        else st.startDemo({ dof: c.dof, range: c.range, from: c.from, to: c.to, base: c.base, plane: c.movement.plane, key: c.key });
       }}
     >
       <svg className="demo-icon" viewBox="0 0 16 16" aria-hidden="true">
@@ -58,7 +58,8 @@ export function DemoControls({ c }: { c: ActionCurve }) {
   const loop = useAtlas((s) => s.demo.loop);
   const phase = useAtlas((s) => s.demo.phase);
   const setDemo = useAtlas((s) => s.setDemo);
-  const deg = demoAngle(c.range, phase);
+  const deg = demoAngle(c.from, c.to, phase);
+  const stage = demoStage(phase);
   const f = (deg - c.range[0]) / (c.range[1] - c.range[0]);
   return (
     <div className="demo" role="group" aria-label={`${E.demo}: ${c.movement.label}`}>
@@ -78,6 +79,9 @@ export function DemoControls({ c }: { c: ActionCurve }) {
           <label htmlFor={id} className="demo__label">
             {E.angle}
             <span className="demo__value">{`${fmt.n0(Math.round(deg))}°`}</span>
+            <span className="demo__stage" data-stage={stage}>
+              {stage === 'shortening' ? E.stageShorten : E.stageLengthen}
+            </span>
           </label>
           <input
             id={id}
@@ -87,7 +91,7 @@ export function DemoControls({ c }: { c: ActionCurve }) {
             step={1}
             value={Math.round(deg)}
             aria-valuetext={`${c.axisLabel} ${fmt.n0(Math.round(deg))} graus`}
-            onChange={(e) => setDemo({ playing: false, phase: demoPhaseOf(c.range, Number(e.target.value)) })}
+            onChange={(e) => setDemo({ playing: false, phase: demoPhaseOf(c.from, c.to, Number(e.target.value)) })}
           />
         </div>
         <button type="button" className="demo__stop chip chip--small" onClick={() => useAtlas.getState().stopDemo()}>

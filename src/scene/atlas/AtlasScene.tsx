@@ -7,15 +7,15 @@ import { PerspectiveCamera, View } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
 import { type PerspectiveCamera as PerspCam, Vector3 } from 'three';
-import { skeletonDef } from '@/data';
+import { muscleDefs, skeletonDef } from '@/data';
 import { forwardKinematics, pointToWorld } from '@/engine/kinematics/fk';
 import { buildSkeleton } from '@/engine/kinematics/skeleton';
-import type { Pose } from '@/engine/kinematics/types';
+import type { Angles, Pose } from '@/engine/kinematics/types';
 import { DEG, type Vec3 } from '@/engine/math/vec';
 import { EXPLODE_SPACING } from '@/features/home/timeline';
-import { advanceDemo, demoAngle, strainOf } from '@/features/atlas/explorer/demo';
+import { advanceDemo, DEMO_ENTER_SECONDS, demoAngle, demoPhaseOf, enterEase, strainOf } from '@/features/atlas/explorer/demo';
 import { BODY_BOX, dampOrbit, fitDistance, FOV_DEG, orbitPosition, orbitsClose, screenAxes, type Orbit } from '@/features/atlas/explorer/orbit';
-import { keyOf, LAYER_ORDER, samePick, useAtlas, type BodyLayerId, type LayerMode, type Pick, type StructureInfo } from '@/features/atlas/store';
+import { keyOf, LAYER_ORDER, samePick, useAtlas, type BodyLayerId, type DemoSpec, type LayerMode, type Pick, type StructureInfo } from '@/features/atlas/store';
 import { ContactShadow } from '../body/ContactShadow';
 import type { BodyInstance } from '../body/instance';
 import { layerOf, mergeBoxes, type Box, type BodyModel } from '../body/model';
@@ -26,6 +26,8 @@ import { useStage } from '../stageStore';
 
 const sk = buildSkeleton(skeletonDef);
 const standing = forwardKinematics(sk, STANDING);
+/** Destaque do resto do músculo quando uma parte está selecionada. */
+const PART_CONTEXT = 0.3;
 const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const HOVER = 0.4;
@@ -47,12 +49,19 @@ function spreadSlots(layers: Record<BodyLayerId, LayerMode>): Record<BodyLayerId
   return Object.fromEntries(LAYER_ORDER.map((l) => [l, shown.includes(l) ? shown.indexOf(l) - mid : 0])) as Record<BodyLayerId, number>;
 }
 
-const keySlots = (model: BodyModel, p: { kind: string; id: string }): readonly number[] =>
-  p.kind === 'muscle' ? (model.byMuscle.get(p.id) ?? []) : model.slots.filter((s) => s.anatomyId === p.id).map((s) => s.index);
+/** Músculos com mais de uma parte: o toque escolhe a parte (deltoide anterior, não o deltoide inteiro). */
+const MULTI_PART = new Set(muscleDefs.filter((m) => m.parts.length > 1).map((m) => m.id));
 
-function parseKey(k: string): { kind: string; id: string } {
+const keySlots = (model: BodyModel, p: { kind: string; id: string; part?: string | undefined }): readonly number[] =>
+  p.kind === 'muscle'
+    ? ((p.part ? model.byPart.get(p.part) : model.byMuscle.get(p.id)) ?? [])
+    : model.slots.filter((s) => s.anatomyId === p.id).map((s) => s.index);
+
+function parseKey(k: string): { kind: string; id: string; part?: string } {
   const i = k.indexOf(':');
-  return { kind: k.slice(0, i), id: k.slice(i + 1) };
+  const rest = k.slice(i + 1);
+  const j = rest.indexOf('/');
+  return j < 0 ? { kind: k.slice(0, i), id: rest } : { kind: k.slice(0, i), id: rest.slice(0, j), part: rest.slice(j + 1) };
 }
 
 export function structuresOf(model: BodyModel): StructureInfo[] {
@@ -102,6 +111,9 @@ function ExplorerBody({ slot }: { slot: HTMLElement }) {
     return LAYER_ORDER.flatMap((l) => feet.current.filter((_, i) => i % 2 === 0).map((f): Vec3 => [f[0] + a[0] * slots[l] * EXPLODE_SPACING * e, 0, f[2] + a[2] * slots[l] * EXPLODE_SPACING * e]));
   }, []);
   const demoSpec = useRef<string | null>(null);
+  /** Entrada da demonstração (0 = em pé, 1 = na pose da ação) e a demonstração a que ela se refere. */
+  const enter = useRef(1);
+  const enterKey = useRef<string | null>(null);
 
   // Corpo pronto: pose em pé, comprimentos de base, lista de estruturas para a busca.
   useEffect(() => {
@@ -162,6 +174,8 @@ function ExplorerBody({ slot }: { slot: HTMLElement }) {
       if (hover && !samePick(hover, selection)) body.fill('highlight', HOVER, keySlots(model, hover));
       if (selection) {
         const k = keyOf(selection);
+        // Parte em foco: o resto do músculo fica aceso de leve, como contexto.
+        if (selection.part && !demo.spec) body.fill('highlight', PART_CONTEXT, keySlots(model, { ...selection, part: undefined }));
         body.fill('highlight', demo.spec ? 0.1 : 1, sel);
         if (!st.hidden.includes(k)) body.fill('hidden', 0, sel);
         if (!st.ghosted.includes(k)) body.fill('opacity', 1, sel);
@@ -195,7 +209,8 @@ function ExplorerBody({ slot }: { slot: HTMLElement }) {
       const i = body.pick(gl, cam, x, y, r.width, r.height);
       const s = i === null ? undefined : model.slots[i];
       if (!s) return null;
-      return s.muscleId ? { kind: 'muscle', id: s.muscleId, side: s.side } : { kind: 'part', id: s.anatomyId, side: s.side };
+      if (!s.muscleId) return { kind: 'part', id: s.anatomyId, side: s.side };
+      return { kind: 'muscle', id: s.muscleId, side: s.side, ...(MULTI_PART.has(s.muscleId) && s.musclePartId && { part: s.musclePartId }) };
     });
     return () => useAtlas.getState().setPick(null);
   }, [body, model, gl, slot]);
@@ -258,14 +273,20 @@ function ExplorerBody({ slot }: { slot: HTMLElement }) {
     // ---- Demonstração: pose, deformação e cor ----
     const spec = st.demo.spec;
     const specKey = spec ? `${spec.key}|${keyOf(st.selection ?? { kind: 'part', id: '-', side: 'c' })}` : null;
+    if (specKey !== enterKey.current) {
+      enterKey.current = specKey;
+      enter.current = reduce || !spec ? 1 : 0;
+    }
+    if (spec && enter.current < 1) enter.current = Math.min(1, enter.current + dt / DEMO_ENTER_SECONDS);
     if (spec || demoSpec.current !== specKey) {
       let phase = st.demo.phase;
-      if (spec && st.demo.playing) {
+      // Na entrada o ciclo espera: a pose sai de em pé e chega à ponta alongada antes de andar.
+      if (spec && st.demo.playing && enter.current >= 1) {
         const r = advanceDemo(phase, dt, st.demo.speed, st.demo.loop);
         phase = r.phase;
         st.setDemo(r.done ? { phase, playing: false } : { phase });
       }
-      const pose: Pose = spec ? forwardKinematics(sk, { ...STANDING, [spec.dof]: demoAngle(spec.range, phase) * DEG }) : standing;
+      const pose: Pose = spec ? forwardKinematics(sk, demoAngles(spec, phase, enterEase(enter.current))) : standing;
       body.setPose(sk, pose);
       feet.current = footContacts(sk, pose);
       const base = rest.current;
@@ -274,7 +295,7 @@ function ExplorerBody({ slot }: { slot: HTMLElement }) {
       } else body.fill('strain', 0);
       body.commit();
       demoSpec.current = specKey;
-      if (spec && st.demo.playing) invalidate();
+      if (spec && (st.demo.playing || enter.current < 1)) invalidate();
     }
 
     // ---- Vista explodida ----
@@ -322,8 +343,22 @@ function ExplorerBody({ slot }: { slot: HTMLElement }) {
   );
 }
 
+/** Ângulos da demonstração na fase dada; `k` mistura da pose em pé (0) até a da ação (1). */
+function demoAngles(spec: DemoSpec, phase: number, k: number): Angles {
+  const goal: Record<string, number> = { ...STANDING };
+  for (const [d, v] of Object.entries(spec.base)) goal[d] = v * DEG;
+  goal[spec.dof] = demoAngle(spec.from, spec.to, phase) * DEG;
+  if (k >= 1) return goal;
+  const out: Record<string, number> = {};
+  for (const d of new Set([...Object.keys(STANDING), ...Object.keys(goal)])) {
+    const a = STANDING[d] ?? 0;
+    out[d] = a + ((goal[d] ?? 0) - a) * k;
+  }
+  return out;
+}
+
 /** Caixa que contém o músculo nas duas pontas da faixa e em pé (a câmera não perde o membro que se move). */
-function demoBox(body: BodyInstance, model: BodyModel, sel: Pick, spec: { dof: string; range: readonly [number, number] }): Box | null {
+function demoBox(body: BodyInstance, model: BodyModel, sel: Pick, spec: DemoSpec): Box | null {
   const boxes: Box[] = [];
   const side = keySlots(model, sel).filter((i) => model.slots[i]?.side !== 'l');
   // O segmento que a articulação move e os que vêm depois dele (a perna inteira na flexão do joelho).
@@ -331,7 +366,7 @@ function demoBox(body: BodyInstance, model: BodyModel, sel: Pick, spec: { dof: s
   const moved = new Set(owner ? [owner.id] : []);
   for (const g of sk.segments) if (g.parent && moved.has(g.parent)) moved.add(g.id);
   for (const deg of [spec.range[0], 0, spec.range[1]]) {
-    const pose = forwardKinematics(sk, { ...STANDING, [spec.dof]: deg * DEG });
+    const pose = forwardKinematics(sk, demoAngles(spec, demoPhaseOf(spec.from, spec.to, deg), 1));
     body.setPose(sk, pose);
     const b = body.posedBox(side);
     if (b) boxes.push(b);

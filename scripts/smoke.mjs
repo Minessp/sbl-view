@@ -126,6 +126,26 @@ await step('atlas: explorador busca, isola, troca camada, abre e demonstra', asy
   await page.locator('.sel__name', { hasText: 'Glúteo máximo' }).waitFor();
 });
 
+await step('atlas: parte pela busca e pela URL; demonstração no plano frontal vai do alongado ao encurtado', async () => {
+  await page.goto(`${base}/atlas`, { waitUntil: 'networkidle' });
+  await page.waitForSelector('.stage[data-ready="true"]', { timeout: 20000 });
+  await page.getByRole('combobox', { name: 'Buscar estrutura' }).fill('trapezio ascendente');
+  await page.getByRole('option', { name: /Trapézio, parte ascendente/ }).first().waitFor();
+  await page.keyboard.press('Enter');
+  await page.locator('.sel__name', { hasText: 'Trapézio, parte ascendente' }).waitFor();
+  await page.goto(`${base}/atlas/deltoid?parte=deltoid_lat`, { waitUntil: 'networkidle' });
+  await page.waitForSelector('.stage[data-ready="true"]', { timeout: 20000 });
+  await page.getByRole('heading', { level: 2, name: /Ações: parte acromial/ }).waitFor();
+  await page.locator('.part-picker button[aria-pressed="true"]', { hasText: 'Parte acromial' }).waitFor();
+  const demo = page.locator('.curve__play', { hasText: 'Abdução do ombro' });
+  await demo.click();
+  await page.locator('.demo__stage', { hasText: 'encurtando' }).waitFor();
+  const a = await page.locator('.demo__value').textContent();
+  await page.waitForTimeout(1500);
+  const b = await page.locator('.demo__value').textContent();
+  if (a === b) throw new Error(`demonstração parada em ${a}`);
+});
+
 await step('biblioteca: busca + comprimento longo + hipótese deixa um exercício', async () => {
   await page.goto(`${base}/exercicios`, { waitUntil: 'networkidle' });
   await page.getByText('Só carga no músculo alongado').click();

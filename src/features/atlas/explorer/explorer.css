@@ -462,6 +462,13 @@ fieldset.panel-block > legend + * {
   gap: var(--s-1);
 }
 
+/* Partes do músculo: cada uma se seleciona sozinha. */
+.part-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+}
+
 .chip--accent {
   border-color: color-mix(in oklch, var(--c-accent) 70%, transparent);
   color: var(--c-ink);
@@ -567,6 +574,18 @@ fieldset.panel-block > legend + * {
   font-size: var(--fs-1);
   font-stretch: var(--wd-cond);
   color: var(--c-ink-2);
+}
+
+.demo__stage {
+  margin-inline-start: var(--s-1);
+  font-size: var(--fs-1);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--c-accent);
+}
+
+.demo__stage[data-stage='lengthening'] {
+  color: var(--c-cool);
 }
 
 .demo__value {

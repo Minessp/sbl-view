@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react';
-import { Link, useLocation } from 'wouter';
+import { Link, useLocation, useSearch } from 'wouter';
 import { LineChart, type LinePattern } from '@/charts/LineChart';
 import { getReference } from '@/data';
 import type { MuscleDef } from '@/data/schema/muscle';
@@ -8,9 +8,9 @@ import { EvidenceSeal } from '@/ui/EvidenceSeal';
 import { Sources } from '@/ui/Sources';
 import { exercisesForMuscle, movementById, muscleById, muscleRefIds } from '@/features/library/catalog';
 import { EmphasisMark } from '@/features/library/EmphasisMark';
-import { actionCurves, type ActionCurve } from './model';
+import { actionCurves, actionHasPart, type ActionCurve } from './model';
 import { DemoButton, DemoControls, useDemoActive, useDemoMarker } from './explorer/ActionDemo';
-import { CameraBar, LayerControls, ToolControls } from './explorer/Panel';
+import { CameraBar, LayerControls, PartPicker, ToolControls } from './explorer/Panel';
 import { Viewport } from './explorer/Viewport';
 import { defaultView, useAtlas, type Pick } from './store';
 import './explorer/explorer.css';
@@ -22,14 +22,32 @@ const PATTERNS: LinePattern[] = ['solid', 'dashed', 'dotted'];
 /** Sem nenhuma fonte conferida = marca [a verificar]. */
 const unverifiedOf = (src: readonly { refId: string }[]) => !src.some((s) => getReference(s.refId)?.verified === true);
 
-function Stage({ m }: { m: MuscleDef }) {
+/** Parte em foco pela URL (`?parte=deltoid_ant`): dá para mandar o link da parte. */
+function usePart(m: MuscleDef): [string | undefined, (part: string | undefined) => void] {
+  const search = useSearch();
+  const [, navigate] = useLocation();
+  const raw = new URLSearchParams(search).get('parte') ?? undefined;
+  const part = m.parts.length > 1 && m.parts.some((p) => p.id === raw) ? raw : undefined;
+  const setPart = (p: string | undefined) => navigate(`/atlas/${m.id}${p ? `?parte=${p}` : ''}`, { replace: true });
+  return [part, setPart];
+}
+
+function Stage({ m, part, setPart }: { m: MuscleDef; part: string | undefined; setPart: (p: string | undefined) => void }) {
   const [, navigate] = useLocation();
   const E = t.atlas.ex;
   useEffect(() => {
     useAtlas.getState().reset({ kind: 'muscle', id: m.id, side: 'r' }, defaultView(m.group));
   }, [m]);
+  // A parte muda sem refazer a página: só a seleção (e a câmera voa até ela).
+  useEffect(() => {
+    const st = useAtlas.getState();
+    const sel = st.selection;
+    if (sel?.kind === 'muscle' && sel.id === m.id && sel.part === part) return;
+    st.select({ kind: 'muscle', id: m.id, side: sel?.side ?? 'r', part }, { fly: true });
+  }, [m, part]);
   const onTap = (p: Pick) => {
-    if (p.kind === 'muscle' && p.id !== m.id) navigate(`/atlas/${p.id}`);
+    if (p.kind === 'muscle' && p.id !== m.id) navigate(`/atlas/${p.id}${p.part ? `?parte=${p.part}` : ''}`);
+    else if (p.kind === 'muscle' && p.part !== part) setPart(p.part);
     else if (p.kind === 'muscle') useAtlas.getState().frame();
   };
   return (
@@ -39,8 +57,9 @@ function Stage({ m }: { m: MuscleDef }) {
         label={`${t.atlas.figure} ${m.name}.`}
         className="atlas-stage__slot"
         onTap={onTap}
-        hoverText={(name, p) => (p.kind === 'muscle' && p.id !== m.id ? E.hoverOpen(name) : null)}
+        hoverText={(name, p) => (p.kind === 'muscle' && p.id !== m.id ? E.hoverOpen(name) : p.kind === 'muscle' && p.part !== part ? E.hoverPart(name) : null)}
       />
+      {m.parts.length > 1 && <PartPicker muscle={m} selection={{ kind: 'muscle', id: m.id, side: 'r', part }} onPick={setPart} />}
       <details className="atlas-stage__more">
         <summary className="chip chip--small">{`${E.layers} e ${E.tools.toLowerCase()}`}</summary>
         <div className="atlas-stage__more-body">
@@ -120,8 +139,8 @@ function CurveCard({ c }: { c: ActionCurve }) {
   );
 }
 
-function Curves({ m }: { m: MuscleDef }) {
-  const curves = useMemo(() => actionCurves(m), [m]);
+function Curves({ m, part }: { m: MuscleDef; part: string | undefined }) {
+  const curves = useMemo(() => actionCurves(m, part), [m, part]);
   if (curves.length === 0) return <p className="section__note">{t.atlas.noModel}</p>;
   return (
     <div className="curve-list">
@@ -145,6 +164,14 @@ export default function MusclePage({ id }: { id: string }) {
       </main>
     );
   }
+  return <MuscleBody m={m} />;
+}
+
+function MuscleBody({ m }: { m: MuscleDef }) {
+  const A = t.atlas;
+  const [part, setPart] = usePart(m);
+  const partDef = part ? m.parts.find((p) => p.id === part) : undefined;
+  const actions = m.actions.filter((a) => actionHasPart(a, part));
   const uses = exercisesForMuscle(m.id);
 
   return (
@@ -158,7 +185,7 @@ export default function MusclePage({ id }: { id: string }) {
         <p className="atlas-page__group">{t.groups[m.group]}</p>
       </header>
 
-      <Stage m={m} />
+      <Stage m={m} part={part} setPart={setPart} />
 
       <div className="atlas-page__body">
         <section className="section" aria-labelledby="mu-anat">
@@ -180,15 +207,17 @@ export default function MusclePage({ id }: { id: string }) {
 
         <section className="section" aria-labelledby="mu-act">
           <header className="section__head">
-            <h2 id="mu-act">{A.actions}</h2>
+            <h2 id="mu-act">{partDef ? A.actionsOfPart(partDef.name) : A.actions}</h2>
             <p>{A.actionsNote}</p>
           </header>
           <ul className="action-list">
-            {m.actions.map((a) => {
+            {actions.map((a) => {
               const parts = a.parts?.map((p) => m.parts.find((x) => x.id === p)?.name ?? p);
+              const mv = movementById(a.movement);
+              const gap = a.unmodeled ?? (mv && !mv.dof ? mv.note : undefined);
               return (
                 <li key={`${a.movement}-${a.parts?.join() ?? ''}`} data-role={a.role}>
-                  <span className="action-list__name">{movementById(a.movement)?.label ?? a.movement}</span>
+                  <span className="action-list__name">{mv?.label ?? a.movement}</span>
                   <span className="action-list__role">{t.roles[a.role]}</span>
                   {parts && (
                     <span className="action-list__parts">
@@ -197,6 +226,11 @@ export default function MusclePage({ id }: { id: string }) {
                   )}
                   <EvidenceSeal confidence={a.evidence.confidence} unverified={unverifiedOf(a.evidence.source)} compact />
                   {a.evidence.note && <span className="action-list__note">{a.evidence.note}</span>}
+                  {gap && (
+                    <span className="action-list__note action-list__note--model">
+                      {A.unmodeled} {gap}
+                    </span>
+                  )}
                 </li>
               );
             })}
@@ -209,7 +243,7 @@ export default function MusclePage({ id }: { id: string }) {
             <p>{A.modelNote}</p>
             <EvidenceSeal confidence="especulativo" />
           </header>
-          <Curves m={m} />
+          <Curves m={m} part={part} />
         </section>
 
         <section className="section" aria-labelledby="mu-ex">

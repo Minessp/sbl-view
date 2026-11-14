@@ -6,6 +6,7 @@ import { useId, useMemo, useRef, useState } from 'react';
 import { Link } from 'wouter';
 import { LineChart } from '@/charts/LineChart';
 import { fmt, t } from '@/i18n/app';
+import type { MuscleDef } from '@/data/schema/muscle';
 import { actionCurves } from '../model';
 import { defaultView as defaultViewOf, keyOf, LAYER_ORDER, useAtlas, type AtlasView, type CutAxis, type LayerMode, type Pick } from '../store';
 import { DemoButton, DemoControls, useDemoMarker } from './ActionDemo';
@@ -240,6 +241,23 @@ function DemoChart({ c }: { c: ReturnType<typeof actionCurves>[number] }) {
   );
 }
 
+/** Partes do músculo: escolher uma acende só ela (o resto do músculo fica de contexto) e filtra as ações. */
+export function PartPicker({ muscle, selection, onPick }: { muscle: MuscleDef; selection: Pick; onPick?: (part: string | undefined) => void }) {
+  const choose = (part: string | undefined) => (onPick ? onPick(part) : useAtlas.getState().select({ ...selection, part }, { fly: true }));
+  return (
+    <div className="part-picker" role="group" aria-label={E().partsOf(muscle.name)}>
+      <button type="button" className="chip chip--small" aria-pressed={!selection.part} onClick={() => choose(undefined)}>
+        {E().wholeMuscle}
+      </button>
+      {muscle.parts.map((p) => (
+        <button key={p.id} type="button" className="chip chip--small" aria-pressed={selection.part === p.id} onClick={() => choose(p.id)}>
+          {p.name}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 /** Ficha da estrutura selecionada: nome, ações (isolar, fantasma, ocultar), página e demonstração. */
 export function SelectionCard() {
   const selection = useAtlas((s) => s.selection);
@@ -249,7 +267,7 @@ export function SelectionCard() {
   const isolate = useAtlas((s) => s.isolate);
   const demoKey = useAtlas((s) => s.demo.spec?.key ?? null);
   const d = selection ? describe(selection, structures) : null;
-  const curves = useMemo(() => (d?.muscle ? actionCurves(d.muscle) : []), [d?.muscle]);
+  const curves = useMemo(() => (d?.muscle ? actionCurves(d.muscle, d.part?.id) : []), [d?.muscle, d?.part?.id]);
   const active = curves.find((c) => c.key === demoKey);
   const st = useAtlas.getState;
   const count = hidden.length + ghosted.length;
@@ -272,6 +290,7 @@ export function SelectionCard() {
             <p className="sel__latin latin">{d.latin}</p>
             {!d.muscle && <p className="panel-note">{E().noPage}</p>}
           </div>
+          {d.muscle && d.muscle.parts.length > 1 && <PartPicker muscle={d.muscle} selection={selection} />}
           <div className="sel__actions">
             {d.muscle && (
               <Link href={`/atlas/${d.muscle.id}`} className="chip chip--small chip--accent">
