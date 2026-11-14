@@ -528,7 +528,7 @@
   }
 }
 
-/* Atmosfera (Atmosphere.tsx): feixe e poeira atrás do corpo, somados à luz do fundo. Entra devagar. */
+/* Atmosfera (Atmosphere.tsx): feixe e fumaça atrás do corpo, somados à luz do fundo. Entra devagar. */
 .home-atmos {
   position: absolute;
   inset: 0;
