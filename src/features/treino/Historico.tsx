@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, type CSSProperties } from 'react';
 import { t } from '@/i18n/app';
 import { repository } from '@/storage/db';
 import type { SessionWithSets } from '@/storage/types';
-import { dayFmt, exerciseName, SetRow, timeFmt, TreinoHeader } from './shared';
+import { dayFmt, exerciseName, NothingLogged, SetRow, StoreError, StoreLoading, timeFmt, TreinoHeader } from './shared';
 
-function SessionBlock({ item, onChanged }: { item: SessionWithSets; onChanged: () => void }) {
+function SessionBlock({ item, i, onChanged }: { item: SessionWithSets; i: number; onChanged: () => void }) {
   const L = t.training;
   const { session, sets } = item;
   const [confirm, setConfirm] = useState(false);
@@ -24,7 +24,7 @@ function SessionBlock({ item, onChanged }: { item: SessionWithSets; onChanged: (
   }
 
   return (
-    <article className="session" aria-label={dayFmt.format(session.startedAt)}>
+    <article className="session rise" style={{ '--i': i } as CSSProperties} aria-label={dayFmt.format(session.startedAt)}>
       <header className="session__head">
         <h2 className="log-day__title">{dayFmt.format(session.startedAt)}</h2>
         <p className="session__meta">
@@ -68,14 +68,10 @@ export default function Historico() {
   return (
     <main id="conteudo" className="sheet">
       <TreinoHeader title={L.history.title} lead={L.history.lead} />
-      {error && (
-        <p className="logger__status" role="status">
-          {L.error}
-        </p>
-      )}
-      {items && items.length === 0 && <p className="logger__empty">{L.history.empty}</p>}
-      {items?.map((it) => (
-        <SessionBlock key={it.session.id} item={it} onChanged={() => void refresh()} />
+      {error ? <StoreError /> : !items && <StoreLoading />}
+      {items && items.length === 0 && <NothingLogged title={L.history.emptyTitle} body={L.history.empty} />}
+      {items?.map((it, i) => (
+        <SessionBlock key={it.session.id} item={it} i={i} onChanged={() => void refresh()} />
       ))}
     </main>
   );

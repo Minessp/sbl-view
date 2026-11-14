@@ -147,3 +147,9 @@
     height: min(46svh, calc(100svh - var(--header-h) - var(--scrub-h) - 260px));
   }
 }
+
+@media (pointer: coarse) {
+  .compare-vars .chip--small {
+    min-height: 44px;
+  }
+}

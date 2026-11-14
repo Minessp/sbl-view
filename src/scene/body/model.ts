@@ -43,11 +43,13 @@ export interface BodyModel {
   readonly slots: readonly BodySlot[];
   /** Geometria do nível atual (troca em `upgrade`; as instâncias assinam com `subscribe`). */
   readonly geometry: Readonly<Record<BodyLayer, BufferGeometry>>;
+  /** Geometria do primeiro nível (o leve), mantida depois da troca: vista pequena volta a ela (LOD por distância). */
+  readonly base: Readonly<Record<BodyLayer, BufferGeometry>>;
   /** Nível da geometria atual. */
   readonly lod: AnatomyLod;
   /** Ordem e tipo das partes: outro nível só entra com a mesma assinatura. */
   readonly signature: string;
-  /** Troca a malha por outro nível; avisa as instâncias e descarta a anterior. */
+  /** Troca a malha por outro nível; avisa as instâncias e descarta a anterior (a `base` fica). */
   upgrade(lod: AnatomyLod, data: BodyGeometryData): void;
   subscribe(f: () => void): () => void;
   /** Vagas de cada músculo do Atlas (os dois lados). */
@@ -173,7 +175,8 @@ export function buildBodyModel(pack: AnatomyPack, muscles: readonly MuscleDef[])
     }
   }
 
-  let geometry = bodyGeometry(buildBodyGeometryData(pack));
+  const base = bodyGeometry(buildBodyGeometryData(pack));
+  let geometry = base;
   let lod = pack.lod;
   const listeners = new Set<() => void>();
   return {
@@ -183,6 +186,7 @@ export function buildBodyModel(pack: AnatomyPack, muscles: readonly MuscleDef[])
     get geometry() {
       return geometry;
     },
+    base,
     get lod() {
       return lod;
     },
@@ -192,7 +196,7 @@ export function buildBodyModel(pack: AnatomyPack, muscles: readonly MuscleDef[])
       geometry = bodyGeometry(data);
       lod = next;
       listeners.forEach((f) => f());
-      LAYERS.forEach((l) => old[l].dispose());
+      if (old !== base) LAYERS.forEach((l) => old[l].dispose());
     },
     subscribe(f) {
       listeners.add(f);
@@ -202,7 +206,10 @@ export function buildBodyModel(pack: AnatomyPack, muscles: readonly MuscleDef[])
     },
     byMuscle,
     byPart,
-    dispose: () => LAYERS.forEach((l) => geometry[l].dispose()),
+    dispose: () => {
+      LAYERS.forEach((l) => base[l].dispose());
+      if (geometry !== base) LAYERS.forEach((l) => geometry[l].dispose());
+    },
   };
 }
 

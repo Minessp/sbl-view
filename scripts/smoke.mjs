@@ -293,6 +293,20 @@ await step('dados: exportar e reimportar o backup não duplica', async () => {
   await page.getByRole('status').filter({ hasText: /Importado: 0 séries novas, 0 atualizadas, \d+ já estavam aqui/ }).waitFor();
 });
 
+// Com dados já registrados (sessão, plano, medida): nenhuma página rola na horizontal no celular estreito.
+await step('celular 320 px: nenhuma rota transborda na horizontal', async () => {
+  await page.setViewportSize({ width: 320, height: 700 });
+  const wide = [];
+  for (const r of ['/', '/atlas', '/atlas/biceps_brachii', '/exercicios', '/exercicios/bayesian_curl', '/lab', '/lab/comparar', '/treino', '/treino/plano', '/treino/historico', '/treino/progresso', '/treino/analise', '/treino/dados']) {
+    await page.goto(base + r, { waitUntil: 'networkidle' });
+    await page.locator('main h1').first().waitFor();
+    const over = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    if (over > 1) wide.push(`${r} (+${over} px)`);
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  if (wide.length) throw new Error(`transborda: ${wide.join(', ')}`);
+});
+
 const hasSw = await page.request
   .get(`${base}/sw.js`)
   // Em dev, /sw.js cai no fallback SPA (HTML): sem service worker.

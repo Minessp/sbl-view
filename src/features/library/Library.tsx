@@ -1,4 +1,4 @@
-import { useId, useMemo, useState } from 'react';
+import { useId, useMemo, useState, type CSSProperties } from 'react';
 import { Link } from 'wouter';
 import type { Equipment, LibraryExercise, MovementPattern } from '@/data/schema/exercise';
 import type { MuscleGroup } from '@/data/schema/muscle';
@@ -8,14 +8,15 @@ import { EXERCISE_REGIONS, filterExercises, library, muscleById, NO_FILTERS, tar
 import { EmphasisMark } from './EmphasisMark';
 import './library.css';
 import { Title } from '@/ui/Title';
+import { EmptyState } from '@/ui/States';
 
 const PATTERNS = Object.keys(t.patterns) as MovementPattern[];
 const EQUIPMENT = (Object.keys(t.equipment) as Equipment[]).filter((q) => library.some((e) => e.equipment.includes(q)));
 
-function ExerciseCard({ e }: { e: LibraryExercise }) {
+function ExerciseCard({ e, i }: { e: LibraryExercise; i: number }) {
   const targets = e.targets.filter((x) => x.role === 'alvo').map((x) => muscleById(x.muscle)?.name ?? x.muscle);
   return (
-    <li className="ex-card">
+    <li className="ex-card rise lamp" style={{ '--i': i } as CSSProperties}>
       <Link href={`/exercicios/${e.id}`} className="ex-card__link">
         <span className="ex-card__name">{e.name}</span>
         <span className="ex-card__pattern">{t.patterns[e.pattern]}</span>
@@ -139,11 +140,20 @@ export default function Library() {
       </section>
 
       {list.length === 0 ? (
-        <p className="ex-empty">{L.empty}</p>
+        <EmptyState
+          title={L.empty}
+          actions={
+            <button type="button" className="btn-secondary" onClick={() => setF(NO_FILTERS)}>
+              {L.clear}
+            </button>
+          }
+        >
+          <p>{L.emptyBody}</p>
+        </EmptyState>
       ) : (
         <ul className="ex-grid">
-          {list.map((e) => (
-            <ExerciseCard key={e.id} e={e} />
+          {list.map((e, i) => (
+            <ExerciseCard key={e.id} e={e} i={i} />
           ))}
         </ul>
       )}

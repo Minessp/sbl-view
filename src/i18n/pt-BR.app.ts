@@ -219,7 +219,8 @@ export const ptBRApp = {
     clear: 'Limpar filtros',
     results: 'exercícios',
     result: 'exercício',
-    empty: 'Nenhum exercício com essa combinação. Tire um filtro.',
+    empty: 'Nenhum exercício com essa combinação',
+    emptyBody: 'Tire um filtro ou busque pelo nome do músculo.',
     targets: 'Alvo',
     open: 'Abrir',
   },
@@ -446,11 +447,18 @@ export const ptBRApp = {
   },
   body: {
     credit: 'Malha anatômica: Z-Anatomy, CC BY-SA 4.0. Simplificada; lado esquerdo espelhado.',
-    loading: 'Baixando o corpo anatômico.',
-    error: 'Não deu para baixar o corpo anatômico. Recarregue a página para tentar de novo.',
   },
   training: {
     plate: 'Registro',
+    states: {
+      loading: 'Lendo os registros deste aparelho',
+      errorTitle: 'Não deu para ler os registros',
+      errorBody:
+        'O navegador recusou o armazenamento do site, o que costuma acontecer em janela privada ou com o disco cheio. Abra numa janela normal ou libere espaço e recarregue.',
+      reload: 'Recarregar',
+      log: 'Registrar série',
+      plan: 'Montar um plano',
+    },
     title: 'Treino',
     lead: 'Anote cada série logo depois de fazer. Séries com menos de 4 horas entre si entram na mesma sessão.',
     tabs: {
@@ -566,7 +574,8 @@ export const ptBRApp = {
     history: {
       title: 'Histórico',
       lead: 'Cada sessão, da mais nova para a mais antiga. Corrija carga, repetições ou tipo de série quando anotar errado.',
-      empty: 'Nenhuma sessão registrada neste aparelho ainda.',
+      emptyTitle: 'Nenhuma sessão ainda',
+      empty: 'Cada série anotada em Registrar entra aqui, agrupada por sessão e por exercício. Carga e repetições podem ser corrigidas depois.',
       exercises: (n: number) => (n === 1 ? '1 exercício' : `${n} exercícios`),
     },
     records: {
@@ -614,6 +623,8 @@ export const ptBRApp = {
       adherence: 'Aderência ao plano',
       adherenceLead: 'Semana a semana: dias feitos e séries de trabalho feitas contra o planejado. Série a mais num exercício não cobre a que faltou noutro.',
       adherenceEmpty: 'Comece um mesociclo na aba Plano para medir a aderência.',
+      emptyTitle: 'Nada para analisar ainda',
+      emptyBody: 'Volume por grupo, aderência e estagnação saem das séries que você registra. Com um plano ativo, cada grupo ganha a faixa da prioridade escolhida.',
       week: 'Semana',
       sessions: 'Dias',
       sets: 'Séries',
@@ -637,6 +648,8 @@ export const ptBRApp = {
       title: 'Progresso',
       lead: 'Recordes, a linha de cada exercício e as medidas do corpo. Aquecimento fica de fora.',
       empty: 'Registre séries de um exercício em duas sessões ou mais para ver a linha.',
+      emptyTitle: 'Sem séries de trabalho ainda',
+      emptyBody: 'Recordes e a linha de cada exercício aparecem depois das primeiras séries de trabalho (aquecimento não conta). As medidas do corpo, logo abaixo, já podem ser anotadas.',
       none: 'Nenhuma série de trabalho registrada ainda.',
       chartTitle: 'Carga por sessão',
       e1rm: '1RM estimado',

@@ -10,6 +10,7 @@ import { BodyInstance } from './instance';
 import type { LodReply, LodRequest } from './lodWorker';
 import { buildBodyModel, type BodyModel } from './model';
 import { palette, refreshPalette } from './rig';
+import { useStage } from '../stageStore';
 
 /** Nível salvo pelo usuário (sobrepõe a escolha automática); `localStorage['sbl-lod']`. */
 export function savedLod(): AnatomyLod | undefined {
@@ -131,9 +132,14 @@ export function useBodyModel(): { model: BodyModel | null; error: boolean } {
       (m) => {
         if (!alive) return;
         setState({ model: m, error: false });
+        useStage.getState().setFailed(false);
         upgradeBody(m, gl);
       },
-      () => alive && setState({ model: null, error: true }),
+      () => {
+        if (!alive) return;
+        setState({ model: null, error: true });
+        useStage.getState().setFailed(true);
+      },
     );
     return () => {
       alive = false;
@@ -150,6 +156,7 @@ export function useBodyInstance(m: BodyModel | null): BodyInstance | null {
   useEffect(() => {
     if (!m) return;
     const b = new BodyInstance(m, palette);
+    b.onDetailChange = invalidate;
     setInst(b);
     const off = m.subscribe(() => {
       b.syncGeometry();

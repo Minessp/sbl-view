@@ -3,7 +3,6 @@
  * (leitura e edição no lugar).
  */
 import { useState } from 'react';
-import { Link, useRoute } from 'wouter';
 import { fmt, locale, t } from '@/i18n/app';
 import { exerciseById } from '@/features/library/catalog';
 import squatJson from '@/data/exercises/squat.json';
@@ -12,6 +11,9 @@ import { repository } from '@/storage/db';
 import { SET_KINDS, type SetEntry, type SetKind, type Unit } from '@/storage/types';
 import { fmtLoad, fromKg, toKg, useUnit } from './units';
 import './treino.css';
+import { Link } from 'wouter';
+import { RouteTabs } from '@/ui/RouteTabs';
+import { EmptyState, Loading } from '@/ui/States';
 import { Title } from '@/ui/Title';
 
 export const dayFmt = new Intl.DateTimeFormat(locale, { weekday: 'long', day: '2-digit', month: 'long' });
@@ -38,15 +40,6 @@ export const parseLoad = (s: string): number => (s.trim() === '' ? NaN : Number(
 export const loadValid = (n: number): boolean => Number.isFinite(n) && n >= 0 && n <= 2000;
 export const repsValid = (n: number): boolean => Number.isInteger(n) && n > 0 && n <= 1000;
 
-function Tab({ href, children }: { href: string; children: string }) {
-  const [active] = useRoute(href);
-  return (
-    <Link href={href} className="tabs__link" aria-current={active ? 'page' : undefined}>
-      {children}
-    </Link>
-  );
-}
-
 export function TreinoHeader({ title, lead }: { title: string; lead: string }) {
   const L = t.training;
   return (
@@ -54,14 +47,18 @@ export function TreinoHeader({ title, lead }: { title: string; lead: string }) {
       <p className="sheet__plate">{L.plate}</p>
       <Title text={title} />
       <p className="sheet__lead prose">{lead}</p>
-      <nav className="tabs" aria-label={L.tabs.label}>
-        <Tab href="/treino">{L.tabs.log}</Tab>
-        <Tab href="/treino/plano">{L.tabs.plan}</Tab>
-        <Tab href="/treino/historico">{L.tabs.history}</Tab>
-        <Tab href="/treino/progresso">{L.tabs.progress}</Tab>
-        <Tab href="/treino/analise">{L.tabs.analysis}</Tab>
-        <Tab href="/treino/dados">{L.tabs.data}</Tab>
-      </nav>
+      <RouteTabs
+        className="treino-tabs"
+        label={L.tabs.label}
+        tabs={[
+          { href: '/treino', label: L.tabs.log },
+          { href: '/treino/plano', label: L.tabs.plan },
+          { href: '/treino/historico', label: L.tabs.history },
+          { href: '/treino/progresso', label: L.tabs.progress },
+          { href: '/treino/analise', label: L.tabs.analysis },
+          { href: '/treino/dados', label: L.tabs.data },
+        ]}
+      />
     </header>
   );
 }
@@ -205,5 +202,50 @@ export function SetRow({ set, showExercise = true, onChanged }: { set: SetEntry;
         </span>
       )}
     </li>
+  );
+}
+
+/** Lendo o IndexedDB: esqueleto (só aparece se demorar). */
+export function StoreLoading() {
+  return <Loading label={t.training.states.loading} lines={4} />;
+}
+
+/** IndexedDB recusado (janela privada, disco cheio): diz o que houve e oferece recarregar. */
+export function StoreError() {
+  const S = t.training.states;
+  return (
+    <EmptyState
+      tone="error"
+      title={S.errorTitle}
+      actions={
+        <button type="button" className="btn-secondary" onClick={() => window.location.reload()}>
+          {S.reload}
+        </button>
+      }
+    >
+      <p>{S.errorBody}</p>
+    </EmptyState>
+  );
+}
+
+/** Nada registrado ainda: ensina por onde começar. */
+export function NothingLogged({ title, body }: { title: string; body: string }) {
+  const S = t.training.states;
+  return (
+    <EmptyState
+      title={title}
+      actions={
+        <>
+          <Link href="/treino" className="btn-primary">
+            {S.log}
+          </Link>
+          <Link href="/treino/plano" className="btn-secondary">
+            {S.plan}
+          </Link>
+        </>
+      }
+    >
+      <p>{body}</p>
+    </EmptyState>
   );
 }

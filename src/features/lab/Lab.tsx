@@ -324,7 +324,7 @@ function NumberTable({ series, u }: { series: VariantSeries[]; u: number }) {
 
 function ModelNotes({ series }: { series: VariantSeries[] }) {
   const refIds = useMemo(() => {
-    const ids = new Set<string>(['statics_textbook', 'deleva1996', 'winter2009', 'knee_torque_angle_lit', 'hip_torque_hhd_2017', 'hip_torque_angle_2019', 'sbl_authored']);
+    const ids = new Set<string>(['statics_textbook', 'deleva1996', 'knee_torque_angle_lit', 'hip_torque_hhd_2017', 'hip_torque_angle_2019', 'sbl_authored']);
     series.forEach((s) => s.variant.rationale.source.forEach((r) => ids.add(r.refId)));
     return [...ids];
   }, [series]);

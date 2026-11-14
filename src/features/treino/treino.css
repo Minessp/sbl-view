@@ -1,38 +1,6 @@
-/* Abas do Treino: trilho de pílulas; a ativa fica acesa. */
-.tabs {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 2px;
+/* Abas do Treino: RouteTabs (src/ui/route-tabs.css); aqui só o espaço acima. */
+.treino-tabs {
   margin-top: var(--s-4);
-  padding: 4px;
-  border-radius: var(--r-pill);
-  background: var(--c-bg-2);
-  box-shadow: inset 0 0 0 var(--lw-hair) var(--c-edge);
-}
-
-.tabs__link {
-  display: inline-flex;
-  align-items: center;
-  min-height: 40px;
-  padding: 0 var(--s-4);
-  border-radius: var(--r-pill);
-  font-size: var(--fs-2);
-  font-weight: 540;
-  font-stretch: var(--wd-cond);
-  color: var(--c-ink-2);
-  text-decoration: none;
-  transition: background-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
-}
-
-.tabs__link:hover {
-  color: var(--c-ink);
-  background: var(--c-hover);
-}
-
-.tabs__link[aria-current='page'] {
-  color: var(--c-ink);
-  background: var(--c-bg-3);
-  box-shadow: inset 0 -2px 0 var(--c-accent);
 }
 
 .log-day + .log-day {
@@ -199,11 +167,6 @@
   max-width: 64ch;
   font-size: var(--fs-2);
   color: var(--c-ink-2);
-}
-
-.table-wrap {
-  max-width: 100%;
-  overflow-x: auto;
 }
 
 .data-table {

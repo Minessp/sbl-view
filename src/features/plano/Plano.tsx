@@ -13,7 +13,7 @@ import { newId, repository } from '@/storage/db';
 import type { Plan, PlanDayEntry, PlanItemEntry } from '@/storage/types';
 import { EvidenceSeal } from '@/ui/EvidenceSeal';
 import { Sources } from '@/ui/Sources';
-import { exerciseName, TreinoHeader } from '@/features/treino/shared';
+import { exerciseName, StoreLoading, TreinoHeader } from '@/features/treino/shared';
 import { setProfiles, usePrefs } from '@/features/treino/units';
 import {
   BUILTIN_PROFILES,
@@ -667,7 +667,13 @@ export default function Plano() {
     return Object.fromEntries([...volumeOf(plan.days).byMuscle].map(([m, v]) => [m, v.direct]));
   }, [plan]);
 
-  if (plan === undefined) return <main id="conteudo" className="sheet" />;
+  if (plan === undefined)
+    return (
+      <main id="conteudo" className="sheet">
+        <TreinoHeader title={P.title} lead={P.lead} />
+        <StoreLoading />
+      </main>
+    );
 
   const showBuilder = editing || plan === null;
   const meso = planning.mesocycle;

@@ -1,0 +1,98 @@
+/* Trilho de abas entre rotas (RouteTabs.tsx). */
+.route-tabs {
+  display: inline-flex;
+  max-width: 100%;
+  gap: 2px;
+  padding: 4px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  border-radius: var(--r-pill);
+  background: var(--c-bg-2);
+  box-shadow: inset 0 0 0 var(--lw-hair) var(--c-edge);
+}
+
+.route-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+/* Transborda no celular: as pontas somem na penumbra para dizer que há mais abas. */
+@media (max-width: 599px) {
+  .route-tabs {
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
+  }
+}
+
+.route-tabs__link {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 var(--s-4);
+  border-radius: var(--r-pill);
+  font-size: var(--fs-2);
+  font-weight: 540;
+  font-stretch: var(--wd-cond);
+  white-space: nowrap;
+  color: var(--c-ink-2);
+  text-decoration: none;
+  transition:
+    background-color var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease),
+    scale var(--t-fast) var(--ease);
+}
+
+.route-tabs__link:hover {
+  color: var(--c-ink);
+  background: var(--c-hover);
+}
+
+.route-tabs__link:active {
+  scale: 0.96;
+}
+
+.route-tabs__link[aria-current='page'] {
+  color: var(--c-ink);
+  background: var(--c-bg-3);
+  box-shadow: inset 0 -2px 0 var(--c-accent);
+  view-transition-name: route-tab;
+}
+
+@media (pointer: coarse) {
+  .route-tabs__link {
+    min-height: 44px;
+  }
+}
+
+/* A pílula acesa desliza de uma aba para a outra na troca de rota (o resto da página faz a revelação normal). */
+::view-transition-group(route-tab) {
+  animation-duration: var(--t-slow);
+  animation-timing-function: var(--ease);
+}
+
+::view-transition-old(route-tab),
+::view-transition-new(route-tab) {
+  height: 100%;
+}
+
+::view-transition-old(route-tab) {
+  animation: route-tab-out var(--t-mid) var(--ease-in) both;
+}
+
+::view-transition-new(route-tab) {
+  animation: route-tab-in var(--t-slow) var(--ease) both;
+}
+
+@keyframes route-tab-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes route-tab-in {
+  from {
+    opacity: 0;
+  }
+}

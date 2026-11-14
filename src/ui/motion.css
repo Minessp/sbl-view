@@ -232,3 +232,17 @@ html:not(.vt) main.page > :nth-child(n + 3) {
     animation: none !important;
   }
 }
+
+/* Item que chega numa lista (resultado novo do filtro, sessão do histórico): sobe da penumbra em cascata pelo índice
+   (--i, teto de 10). Item que já estava fica parado: a chave do React mantém o nó. */
+.rise {
+  animation: rise var(--t-slow) var(--ease) backwards;
+  animation-delay: calc(min(var(--i, 0), 10) * var(--stagger) * 2);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+}

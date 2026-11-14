@@ -99,7 +99,7 @@
   --fs-5: 1.5rem;    /* 24 */
   --fs-6: 1.875rem;  /* 30 */
   --fs-7: clamp(2rem, 1.5rem + 2vw, 2.75rem);      /* até 44 */
-  --fs-8: clamp(2.5rem, 1.6rem + 3.6vw, 4rem);     /* até 64 */
+  --fs-8: clamp(2.125rem, 1.4rem + 4vw, 4rem);     /* até 64; 34 px no celular estreito ("Agachamento" cabe em 320) */
   --fs-9: clamp(3rem, 1.8rem + 5vw, 5.5rem);       /* até 88 */
 
   --wd-tight: 68%;

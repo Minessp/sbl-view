@@ -19,7 +19,7 @@ import type { Plan, SessionWithSets, SetEntry } from '@/storage/types';
 import { EvidenceSeal } from '@/ui/EvidenceSeal';
 import { Sources } from '@/ui/Sources';
 import { TableWrap } from '@/ui/TableWrap';
-import { exerciseName, shortDateFmt, TreinoHeader } from './shared';
+import { exerciseName, NothingLogged, shortDateFmt, StoreError, StoreLoading, TreinoHeader } from './shared';
 import { fmtLoad, useUnit } from './units';
 
 const training = trainingJson as unknown as TrainingFile;
@@ -298,12 +298,9 @@ export default function Analise() {
   return (
     <main id="conteudo" className="sheet">
       <TreinoHeader title={L.title} lead={L.lead} />
-      {error && (
-        <p className="logger__status" role="status">
-          {t.training.error}
-        </p>
-      )}
-      {sets && (
+      {error ? <StoreError /> : !sets && <StoreLoading />}
+      {sets && !sets.some((x) => !x.deletedAt) && <NothingLogged title={L.emptyTitle} body={L.emptyBody} />}
+      {sets && sets.some((x) => !x.deletedAt) && (
         <>
           <section className="section" aria-labelledby={`${uid}-vol`}>
             <header className="section__head">

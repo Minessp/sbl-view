@@ -1,0 +1,7 @@
+/* Tabela rolável (TableWrap.tsx). Posicionado: texto só para leitor de tela (absoluto) dentro da tabela fica preso aqui
+   e é recortado; sem isso ele escapava para a página e alargava a viewport do celular. */
+.table-wrap {
+  position: relative;
+  max-width: 100%;
+  overflow-x: auto;
+}

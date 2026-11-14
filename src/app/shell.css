@@ -232,11 +232,25 @@ html.menu-open {
   }
 }
 
+/* Celular estreito (320–360): marca, tema e Menu não deixam espaço para o nome da seção; o h1 da página já diz onde se está. */
+@media (max-width: 360px) {
+  .site-where {
+    display: none;
+  }
+
+  .site-header .wordmark {
+    margin-right: auto;
+  }
+}
+
 /* ---------- Palco ---------- */
 .stage {
   position: fixed;
   inset: var(--header-h) 0 0 0;
   z-index: 0;
+  /* O canvas guarda a largura em px da última medida; se transbordasse o palco fixo, alargaria a viewport de layout no
+     celular, e o palco mediria de novo a largura maior (laço). */
+  overflow: hidden;
   pointer-events: none;
 }
 
@@ -309,6 +323,20 @@ html.menu-open {
   }
 }
 
+/* Chunk da rota baixando (App.tsx). */
+.route-wait {
+  display: grid;
+  place-items: center;
+  min-height: 60vh;
+  animation: route-wait 0s 300ms backwards;
+}
+
+@keyframes route-wait {
+  from {
+    visibility: hidden;
+  }
+}
+
 /* ---------- Sem WebGL ---------- */
 .fallback {
   position: absolute;
@@ -376,7 +404,17 @@ html.menu-open {
 .stage[data-scene='atlas'] .stage__loading,
 .stage[data-scene='heat'] .stage__loading,
 .stage[data-scene='motion'] .stage__loading {
-  display: none;
+  /* Fora da tela, mas anunciado: o sinal visual é o filamento de cada vista (.viewport em primitives.css). */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+/* O palco não recebe ponteiro; o aviso de falha precisa. */
+.stage-failed {
+  pointer-events: auto;
 }
 
 /* R3F põe pointer-events: auto inline no wrapper. O palco nunca recebe toque: a seleção passa pelo slot da página. */

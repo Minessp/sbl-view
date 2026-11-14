@@ -13,6 +13,7 @@ import {
   RGBAFormat,
   type ShaderMaterial,
   Vector3,
+  Vector4,
   type WebGLRenderer,
   WebGLRenderTarget,
 } from 'three';
@@ -21,6 +22,7 @@ import type { EngineSkeleton, Pose } from '@/engine/kinematics/types';
 import type { Palette, PaletteKey } from '../palette';
 import { createBodyMaterial, STATE_ROWS, type BodyUniforms } from './material';
 import { rig } from './rig';
+import { detailFor, screenHeightPx, type Detail } from '../anatomy/lod';
 import { LAYERS, mergeBoxes, type Box, type BodyLayer, type BodyModel } from './model';
 
 /** Canais do estado por vaga. */
@@ -47,6 +49,11 @@ export interface LayerControl {
   lensOnly: number;
 }
 
+const BODY_HEIGHT = 1.75;
+const VIEWPORT = new Vector4();
+const CENTER = new Vector3();
+const EYE = new Vector3();
+
 export class BodyInstance {
   readonly group = new Group();
   readonly meshes: Readonly<Record<BodyLayer, Mesh>>;
@@ -69,6 +76,10 @@ export class BodyInstance {
   readonly lens: { value: Vector3 };
   /** Montagem das fibras (≥ 2 = músculos inteiros). */
   readonly grow: { value: number };
+  /** LOD por distância: nível alto ou o leve do primeiro quadro, pela altura do corpo nesta vista. */
+  private detail: Detail = 'full';
+  /** Avisado quando a malha da vista muda (a troca vale a partir do próximo quadro: quem usa pede um quadro). */
+  onDetailChange: (() => void) | null = null;
 
   constructor(
     readonly model: BodyModel,
@@ -130,17 +141,42 @@ export class BodyInstance {
           m.add(pre);
           this.skinDepth = depth;
         }
+        m.onBeforeRender = (renderer, _scene, camera) => this.checkDetail(renderer, camera);
         return [l, m];
       }),
     ) as unknown as Record<BodyLayer, Mesh>;
   }
 
+  /**
+   * Mede a altura do corpo na vista que está desenhando (viewport atual, px físicos) e escolhe a malha. Roda no
+   * `onBeforeRender` de cada camada; a seleção (alvo 1 × 1) não conta. Trocar a geometria aqui só vale no próximo
+   * quadro (a lista deste já foi montada), por isso o aviso.
+   */
+  private checkDetail(renderer: WebGLRenderer, camera: Camera) {
+    if (this.model.base === this.model.geometry || renderer.getRenderTarget() !== null) return;
+    renderer.getCurrentViewport(VIEWPORT);
+    this.group.getWorldPosition(CENTER);
+    CENTER.y += BODY_HEIGHT / 2;
+    const dist = camera.getWorldPosition(EYE).distanceTo(CENTER);
+    const c = camera as Camera & { isPerspectiveCamera?: boolean; isOrthographicCamera?: boolean; fov?: number; zoom?: number; top?: number; bottom?: number };
+    const zoom = c.zoom ?? 1;
+    const px = c.isOrthographicCamera
+      ? screenHeightPx({ viewportPx: VIEWPORT.w, size: BODY_HEIGHT, dist, orthoSpan: ((c.top ?? 1) - (c.bottom ?? -1)) / zoom })
+      : screenHeightPx({ viewportPx: VIEWPORT.w, size: BODY_HEIGHT, dist, fovDeg: (2 * Math.atan(Math.tan(((c.fov ?? 28) * Math.PI) / 360) / zoom) * 180) / Math.PI });
+    const next = detailFor(this.detail, px);
+    if (next === this.detail) return;
+    this.detail = next;
+    this.syncGeometry();
+    this.onDetailChange?.();
+  }
+
   /** Troca de nível: as malhas (e o pré-passe da pele) passam a usar a geometria atual do modelo. */
   syncGeometry() {
+    const g = this.detail === 'base' ? this.model.base : this.model.geometry;
     for (const l of LAYERS) {
       const m = this.meshes[l];
-      m.geometry = this.model.geometry[l];
-      for (const c of m.children) if (c instanceof Mesh) c.geometry = this.model.geometry[l];
+      m.geometry = g[l];
+      for (const c of m.children) if (c instanceof Mesh) c.geometry = g[l];
     }
   }
 

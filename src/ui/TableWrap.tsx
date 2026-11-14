@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import './table-wrap.css';
 
 /**
  * Contêiner de tabela com rolagem horizontal. Quando a tabela transborda, vira região

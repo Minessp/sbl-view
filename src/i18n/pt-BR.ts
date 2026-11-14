@@ -58,6 +58,10 @@ export const ptBR = {
     layers: { skin: 'Pele', superficial: 'Músculo superficial', deep: 'Músculo profundo', bone: 'Osso' },
     loading: 'Montando o corpo',
   },
+  stage: {
+    failed: 'Não deu para baixar o corpo anatômico. Confira a conexão e tente de novo.',
+    retry: 'Tentar de novo',
+  },
 } as const;
 
 export type Widen<T> = T extends string

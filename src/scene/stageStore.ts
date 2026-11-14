@@ -12,6 +12,12 @@ interface StageState {
   progress: number;
   /** O palco terminou de montar a geometria e desenhou o primeiro quadro. */
   ready: boolean;
+  /** O corpo (ou o chunk do palco) não baixou. `retry` remonta o palco e tenta de novo. */
+  failed: boolean;
+  /** Conta as tentativas: vira a `key` do palco. */
+  attempt: number;
+  setFailed: (f: boolean) => void;
+  retry: () => void;
   setScene: (scene: SceneId) => void;
   setProgress: (p: number) => void;
   setReady: (r: boolean) => void;
@@ -21,6 +27,10 @@ export const useStage = create<StageState>((set) => ({
   scene: 'none',
   progress: 0,
   ready: false,
+  failed: false,
+  attempt: 0,
+  setFailed: (failed) => set({ failed }),
+  retry: () => set((s) => ({ failed: false, ready: false, attempt: s.attempt + 1 })),
   setScene: (scene) => set({ scene }),
   setProgress: (p) => set({ progress: Math.min(1, Math.max(0, p)) }),
   setReady: (ready) => set({ ready }),

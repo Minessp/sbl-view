@@ -6,18 +6,6 @@
     "note": "Usar só para forma e posição ilustrativas. Nunca para números que entram em cálculo de força."
   },
   {
-    "id": "winter2009",
-    "citation": "Winter DA. Biomechanics and Motor Control of Human Movement. 4ª ed. Hoboken: Wiley; 2009.",
-    "verified": false,
-    "note": "Proporções de segmento em fração da estatura (originais de Drillis & Contini 1966). Valores ainda não conferidos na figura do livro."
-  },
-  {
-    "id": "drillis1966",
-    "citation": "Drillis R, Contini R. Body segment parameters. Report 1166-03. New York University, School of Engineering and Science; 1966.",
-    "verified": false,
-    "note": "Número do relatório citado de forma diferente entre fontes secundárias (1163-03 / 1166-03)."
-  },
-  {
     "id": "deleva1996",
     "citation": "de Leva P. Adjustments to Zatsiorsky-Seluyanov's segment inertia parameters. Journal of Biomechanics. 1996;29(9):1223-1230.",
     "doi": "10.1016/0021-9290(95)00178-6",
@@ -28,20 +16,21 @@
     "id": "neumann2010",
     "citation": "Neumann DA. Kinesiology of the Musculoskeletal System: Foundations for Rehabilitation. 2nd ed. St. Louis: Mosby/Elsevier; 2010.",
     "verified": false,
-    "note": "Amplitudes da cintura escapular (esternoclavicular e acromioclavicular). Valores ainda não conferidos na fonte."
+    "note": "Amplitudes da cintura escapular (esternoclavicular e acromioclavicular). Livro sem acesso aberto; valores não conferidos na fonte."
   },
   {
     "id": "ludewig2009",
     "citation": "Ludewig PM, Phadke V, Braman JP, Hassett DR, Cieminski CJ, LaPrade RF. Motion of the shoulder complex during multiplanar humeral elevation. Journal of Bone and Joint Surgery (Am). 2009;91(2):378-389.",
     "doi": "10.2106/JBJS.G.01483",
-    "verified": false,
-    "note": "Rotação superior da escápula e movimento da clavícula na elevação do braço. Números ainda não conferidos."
+    "verified": true,
+    "note": "Resumo conferido: 12 sujeitos com pinos transcorticais; na elevação do braço a clavícula eleva, retrai e roda para trás (média de 31° no esternoclavicular) e a escápula roda para cima e inclina para trás (19° de inclinação no acromioclavicular). A divisão da rotação superior entre as articulações está no texto completo, não no resumo.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/19181982/"
   },
   {
     "id": "greene1994",
     "citation": "Greene WB, Heckman JD (eds.). The Clinical Measurement of Joint Motion. Rosemont: American Academy of Orthopaedic Surgeons; 1994.",
     "verified": false,
-    "note": "Amplitudes articulares ativas, sem carga. Valores de referência ainda não conferidos."
+    "note": "Amplitudes articulares ativas, sem carga. Manual sem acesso aberto; valores de referência não conferidos na fonte."
   },
   {
     "id": "hemmerich2006",
@@ -68,7 +57,7 @@
     "url": "https://openstax.org/books/anatomy-and-physiology-2e/pages/11-introduction",
     "license": "CC BY 4.0",
     "verified": false,
-    "note": "Livro aberto. Origem, inserção e ação de cada músculo ainda não conferidas linha a linha nas tabelas do capítulo."
+    "note": "Conferido nas tabelas do cap. 11 (seções 11.3 a 11.6). Elas confirmam a origem e a ação principal de boa parte dos músculos dos membros e do tronco, mas as figuras de quadril, coxa, perna, pé, braço e antebraço não trazem inserção, e os músculos profundos (suboccipitais, escalenos, multífidos, rotadores, interespinais) não aparecem. A fonte tem erros evidentes que os dados daqui não seguem: glúteo mínimo \"aduz\" e pectíneo \"abduz\" (é o contrário), supinador \"palma para baixo\", quadrado lombar com origem nas costelas 5 a 10. Por isso não basta sozinha para nenhum número ou texto: segue como apoio, sem selo de conferida."
   },
   {
     "id": "sbl_reasoning",
@@ -101,17 +90,18 @@
   },
   {
     "id": "hip_torque_angle_2019",
-    "citation": "Estudo de torque isométrico de extensores e flexores do quadril a 15°, 60°, 90° e 100° de flexão em mulheres idosas (PubMed 31563360).",
+    "citation": "Bertoli J, Diefenthaeler F, Lusa Cadore E, Monteiro de Moura B, de la Rocha Freitas C. The relation between force production at different hip angles and functional capacity in older women. Journal of Bodywork and Movement Therapies. 2019;23(3):489-493.",
     "url": "https://pubmed.ncbi.nlm.nih.gov/31563360/",
-    "verified": false,
-    "note": "Lido só o resumo: extensores com pico a 100°. Autores e periódico a conferir."
+    "verified": true,
+    "note": "Resumo conferido: 17 mulheres idosas, torque isométrico a 15°, 60°, 90° e 100° de flexão do quadril; extensores com pico a 100°, flexores a 15°.",
+    "doi": "10.1016/j.jbmt.2018.05.007"
   },
   {
     "id": "hip_torque_hhd_2017",
-    "citation": "Estudo com dinamômetro manual: torque extensor do quadril a 0°, 30° e 90° de flexão (International Journal of Sports Physical Therapy, 2017).",
-    "url": "https://ijspt.scholasticahq.com/article/124117.pdf",
-    "verified": false,
-    "note": "Resumo via busca: maior torque a 90° (1,43 ± 0,50 N·m/kg·m), menor a 0°. Autores a conferir."
+    "citation": "Bazett-Jones DM, Tylinksi T, Krstic J, Stromquist A, Sparks J. Peak hip muscle torque measurements are influenced by sagittal plane hip position. International Journal of Sports Physical Therapy. 2017;12(4):535-542.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/28900559/",
+    "verified": true,
+    "note": "Resumo conferido: 29 mulheres ativas, dinamômetro manual preso por cinta; torque extensor maior a 90° de flexão (1,43 ± 0,50 N·m/kg·m) e menor a 0° (0,83 ± 0,30), diferença entre as três posições."
   },
   {
     "id": "knee_torque_angle_lit",
@@ -166,13 +156,14 @@
     "id": "epley1985",
     "citation": "Epley B. Poundage Chart. In: Boyd Epley Workout. Lincoln (NE): Body Enterprises; 1985.",
     "verified": false,
-    "note": "Origem da fórmula carga × (1 + reps/30). Material de treinador, citado de segunda mão; não conferido no original."
+    "note": "Origem da fórmula carga × (1 + reps/30). Material de treinador sem edição localizável; só citado de segunda mão. Não dá para conferir no original."
   },
   {
     "id": "lesuer1997",
     "citation": "LeSuer DA, McCormick JH, Mayhew JL, Wasserstein RL, Arnold MD. The accuracy of prediction equations for estimating 1-RM performance in the bench press, squat, and deadlift. Journal of Strength and Conditioning Research. 1997;11(4):211-213.",
     "verified": false,
-    "note": "Compara equações de 1RM estimado em três levantamentos. Página e números ainda não conferidos."
+    "note": "Registro conferido no Crossref (autores, periódico, volume e páginas). O resumo não está aberto em nenhuma base (PubMed não indexa, Crossref e Semantic Scholar sem resumo): o conteúdo segue não conferido.",
+    "doi": "10.1519/00124278-199711000-00001"
   },
   {
     "id": "schoenfeld2017volume",
@@ -191,8 +182,10 @@
   {
     "id": "schoenfeld2016rest",
     "citation": "Schoenfeld BJ, Pope ZK, Benik FM, et al. Longer interset rest periods enhance muscle strength and hypertrophy in resistance-trained men. Journal of Strength and Conditioning Research. 2016;30(7):1805-1812.",
-    "verified": false,
-    "note": "Descanso de 3 min contra 1 min. Conferir dados e números na fonte primária."
+    "verified": true,
+    "note": "Resumo conferido: 21 homens treinados, 8 semanas, 3 séries de 8–12 RM em 7 exercícios, 3 vezes por semana; 3 min entre séries deram mais força (1RM no supino e no agachamento) e mais espessura no quadríceps que 1 min (tríceps: tendência, p = 0,06; flexores do cotovelo: sem diferença).",
+    "doi": "10.1519/JSC.0000000000001272",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/26605807/"
   },
   {
     "id": "bickel2011",

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { chooseLod, type DeviceCaps } from './lod';
+import { chooseLod, detailFor, screenHeightPx, type DeviceCaps } from './lod';
 
 const desk: DeviceCaps = { coarse: false, width: 1440, dpr: 2, memory: 8 };
 
@@ -36,5 +36,24 @@ describe('chooseLod', () => {
 
   it('escolha do usuário vence', () => {
     expect(chooseLod({ ...desk, coarse: true, override: 'ultra' })).toBe('ultra');
+  });
+});
+
+describe('detalhe por tamanho na tela', () => {
+  it('troca com histerese', () => {
+    expect(detailFor('full', 700)).toBe('full');
+    expect(detailFor('full', 520)).toBe('full');
+    expect(detailFor('full', 400)).toBe('full');
+    expect(detailFor('full', 370)).toBe('base');
+    expect(detailFor('base', 420)).toBe('base');
+    expect(detailFor('base', 480)).toBe('full');
+  });
+
+  it('altura na tela: perspectiva e ortográfica', () => {
+    // fov 28°, 4 m: cabem 2·4·tan14° ≈ 1,995 m na vista; corpo de 1,75 m em 800 px ≈ 702 px.
+    expect(screenHeightPx({ viewportPx: 800, size: 1.75, dist: 4, fovDeg: 28 })).toBeCloseTo(701.8, 0);
+    // Mais longe, menor.
+    expect(screenHeightPx({ viewportPx: 800, size: 1.75, dist: 8, fovDeg: 28 })).toBeCloseTo(350.9, 0);
+    expect(screenHeightPx({ viewportPx: 600, size: 1.75, dist: 9, orthoSpan: 2.1 })).toBeCloseTo(500, 0);
   });
 });

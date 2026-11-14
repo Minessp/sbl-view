@@ -46,3 +46,27 @@ export function chooseLod(c: DeviceCaps): AnatomyLod {
   if (DEDICATED.test(r)) return 'hi';
   return 'mid';
 }
+
+/**
+ * LOD por distância: cada vista usa o nível alto (`full`) ou o leve do primeiro quadro (`base`) conforme a altura do
+ * corpo na tela, em px físicos. Corpo pequeno (Comparar com três vistas, Lab, mapa de calor, vitrine da home) não mostra
+ * a diferença e custava o triângulo inteiro do nível alto. Histerese para não trocar a cada quadro na borda.
+ */
+export type Detail = 'full' | 'base';
+/** Abaixo de ~380 px físicos o triângulo do nível leve já tem 1–2 px; o player de uma vista só fica acima. */
+export const DETAIL_PX = { down: 380, up: 460 } as const;
+
+export function detailFor(prev: Detail, px: number): Detail {
+  if (prev === 'full') return px < DETAIL_PX.down ? 'base' : 'full';
+  return px > DETAIL_PX.up ? 'full' : 'base';
+}
+
+/**
+ * Altura em px na tela de um objeto de altura `size` (m) a `dist` (m) da câmera. Perspectiva: `fovDeg` vertical.
+ * Ortográfica: `orthoSpan` = altura do mundo que cabe na vista (top − bottom, já dividida pelo zoom).
+ */
+export function screenHeightPx(o: { viewportPx: number; size: number; dist: number; fovDeg?: number; orthoSpan?: number }): number {
+  if (o.orthoSpan !== undefined) return o.orthoSpan > 0 ? (o.viewportPx * o.size) / o.orthoSpan : 0;
+  const span = 2 * Math.max(o.dist, 1e-3) * Math.tan(((o.fovDeg ?? 28) * Math.PI) / 360);
+  return (o.viewportPx * o.size) / span;
+}

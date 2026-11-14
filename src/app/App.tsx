@@ -171,6 +171,15 @@ function useTransitionClass() {
   }, []);
 }
 
+/** Chunk da rota ainda baixando: um filamento no meio da área da página, só depois de 300 ms (carga rápida não pisca). */
+function RouteWait() {
+  return (
+    <main id="conteudo" className="sheet route-wait" aria-busy="true">
+      <span className="stage__loading-rule" />
+    </main>
+  );
+}
+
 function RouteBoundary({ children }: { children: ReactNode }) {
   const [loc] = useLocation();
   return <ErrorBoundary resetKey={loc}>{children}</ErrorBoundary>;
@@ -184,7 +193,7 @@ export function App() {
       <RouteChange />
       <Shell>
         <RouteBoundary>
-          <Suspense fallback={null}>
+          <Suspense fallback={<RouteWait />}>
             <Switch>
               <Route path="/" component={Home} />
               <Route path="/lab/agachamento" component={Lab} />

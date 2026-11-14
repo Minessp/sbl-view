@@ -1,5 +1,6 @@
 /**
- * Auditoria de acessibilidade com axe-core (WCAG 2.2 A/AA) em todas as rotas, tema claro e escuro.
+ * Auditoria de acessibilidade com axe-core (WCAG 2.2 A/AA) em todas as rotas: desktop vazio nos temas claro e escuro,
+ * celular com redução de movimento e dados registrados.
  *   node scripts/a11y.mjs [url-base]
  * Sai com código 1 se houver violação. Roda no CI contra o build (`vite preview`).
  */
@@ -33,8 +34,7 @@ const channel = process.env.PW_CHANNEL ?? (process.platform === 'win32' ? 'msedg
 const browser = await chromium.launch(channel ? { channel } : {});
 let failures = 0;
 
-for (const scheme of ['light', 'dark']) {
-  const page = await browser.newPage({ viewport: { width: 1280, height: 860 }, colorScheme: scheme });
+async function audit(page, label) {
   for (const route of ROUTES) {
     await page.goto(base + route, { waitUntil: 'networkidle' });
     await page.waitForSelector('main', { timeout: 15000 });
@@ -55,14 +55,45 @@ for (const scheme of ['light', 'dark']) {
     });
     if (res.length) {
       failures += res.length;
-      console.log(`\n[${scheme}] ${route}`);
+      console.log(`\n[${label}] ${route}`);
       for (const v of res) {
         console.log(`  ${v.impact} ${v.id} (${v.count}): ${v.help}`);
         for (const n of v.nodes) console.log(`    ${n}`);
       }
     }
   }
+}
+
+/** Registra duas séries, uma medida e um plano ativo pela interface: as páginas do treino saem do estado vazio. */
+async function seed(page) {
+  for (const [load, reps] of [['40', '10'], ['42,5', '8']]) {
+    await page.goto(`${base}/treino?exercicio=seated_leg_curl`, { waitUntil: 'networkidle' });
+    await page.getByLabel('Carga (kg)').fill(load);
+    await page.getByLabel('Repetições', { exact: true }).fill(reps);
+    await page.getByRole('button', { name: 'Registrar série' }).click();
+    await page.getByRole('status').filter({ hasText: 'Série registrada' }).waitFor();
+  }
+  await page.goto(`${base}/treino/progresso`, { waitUntil: 'networkidle' });
+  await page.getByLabel('Valor (kg)').fill('80');
+  await page.getByRole('button', { name: 'Anotar medida' }).click();
+  await page.getByRole('status').filter({ hasText: 'Medida anotada.' }).waitFor();
+  await page.goto(`${base}/treino/plano`, { waitUntil: 'networkidle' });
+  await page.getByRole('button', { name: 'Gerar plano' }).click();
+  await page.getByRole('button', { name: 'Começar mesociclo' }).click();
+}
+
+// Desktop vazio nos dois temas; celular com redução de movimento e dados registrados (estados preenchidos).
+for (const scheme of ['light', 'dark']) {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 860 }, colorScheme: scheme });
+  await audit(page, scheme);
   await page.close();
+}
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, colorScheme: 'dark', reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  await seed(page);
+  await audit(page, 'celular, com dados');
+  await ctx.close();
 }
 
 await browser.close();

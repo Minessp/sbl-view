@@ -1,0 +1,121 @@
+/* Estados de página (States.tsx). */
+.state {
+  display: grid;
+  justify-items: start;
+  gap: var(--s-2);
+  max-width: 46ch;
+  margin-top: var(--s-6);
+  padding: var(--s-5) 0 var(--s-2);
+  animation: state-in var(--t-slow) var(--ease) backwards;
+}
+
+/* Filamento: apagado no vazio (fio frio com um resto de calor no meio), aceso no erro. */
+.state__lamp {
+  position: relative;
+  display: block;
+  width: 56px;
+  height: 2px;
+  margin-bottom: var(--s-2);
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--c-rule), color-mix(in oklch, var(--c-glow) 45%, var(--c-rule)), var(--c-rule));
+}
+
+.state[data-tone='error'] .state__lamp {
+  background: var(--c-accent);
+  box-shadow: var(--glow-line);
+}
+
+.state__title {
+  font-size: var(--fs-5);
+  font-weight: 520;
+  font-stretch: var(--wd-wide);
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.state__body {
+  font-size: var(--fs-3);
+  line-height: 1.55;
+  color: var(--c-ink-2);
+  text-wrap: pretty;
+}
+
+.state__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-top: var(--s-3);
+}
+
+/* Estado dentro de uma seção: menor, sem o espaço de página. */
+.section .state {
+  margin-top: var(--s-2);
+  padding-top: var(--s-2);
+}
+
+.section .state__title {
+  font-size: var(--fs-4);
+}
+
+@keyframes state-in {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+}
+
+/* Esqueleto: barras no ritmo do texto; a luz passa devagar da esquerda. */
+.skeleton {
+  display: grid;
+  gap: var(--s-3);
+  max-width: 640px;
+  margin-top: var(--s-6);
+}
+
+.skeleton__line,
+.skeleton__block {
+  display: block;
+  height: 0.9em;
+  border-radius: var(--r-1);
+  background:
+    linear-gradient(90deg, transparent, color-mix(in oklch, var(--c-ink) 7%, transparent), transparent) no-repeat,
+    var(--c-bg-2);
+  background-size: 40% 100%, 100% 100%;
+  animation: skeleton-sweep 1.6s var(--ease-in-out) infinite;
+}
+
+.skeleton__block {
+  height: 160px;
+  border-radius: var(--r-2);
+}
+
+@keyframes skeleton-sweep {
+  from {
+    background-position: -60% 0, 0 0;
+  }
+  to {
+    background-position: 160% 0, 0 0;
+  }
+}
+
+/* Carga rápida não pisca: o esqueleto só aparece depois de 250 ms. */
+.skeleton {
+  animation: skeleton-wait 0s 250ms backwards;
+}
+
+@keyframes skeleton-wait {
+  from {
+    visibility: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .state {
+    animation: none;
+  }
+
+  .skeleton__line,
+  .skeleton__block {
+    animation: none;
+  }
+}

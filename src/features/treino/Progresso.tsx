@@ -10,7 +10,7 @@ import { EvidenceSeal } from '@/ui/EvidenceSeal';
 import { Sources } from '@/ui/Sources';
 import { getReference } from '@/data';
 import type { Confidence } from '@/data/schema/evidence';
-import { exerciseName, parseLoad, shortDateFmt, TreinoHeader } from './shared';
+import { exerciseName, NothingLogged, parseLoad, shortDateFmt, StoreError, StoreLoading, TreinoHeader } from './shared';
 import { TableWrap } from '@/ui/TableWrap';
 import { fmtLoad, fromKg, toKg, useUnit } from './units';
 
@@ -354,12 +354,9 @@ export default function Progresso() {
   return (
     <main id="conteudo" className="sheet">
       <TreinoHeader title={L.title} lead={L.lead} />
-      {error && (
-        <p className="logger__status" role="status">
-          {t.training.error}
-        </p>
-      )}
-      {sets && (
+      {error ? <StoreError /> : !sets && <StoreLoading />}
+      {sets && options.length === 0 && <NothingLogged title={L.emptyTitle} body={L.emptyBody} />}
+      {sets && options.length > 0 && (
         <>
           <section className="section" aria-labelledby={`${uid}-rec`}>
             <header className="section__head">
