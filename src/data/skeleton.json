@@ -210,7 +210,13 @@
       "joint": "ankle_r",
       "dofs": [
         { "id": "ankle_dorsi_r", "positive": "dorsiflexao", "axis": "x", "sign": -1, "romDeg": [-50, 40],
-          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } }
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel" } },
+        { "id": "ankle_inv_r", "positive": "inversao", "axis": "z", "sign": 1, "romDeg": [-15, 35],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel",
+            "note": "Inversão e eversão do pé (subtalar e mediotársica juntas), num eixo ântero-posterior pelo centro do tornozelo: simplificação do eixo oblíquo da subtalar." } },
+        { "id": "foot_add_r", "positive": "aducao", "axis": "y", "sign": 1, "romDeg": [-10, 20],
+          "rom": { "source": [{ "refId": "greene1994" }], "confidence": "provavel",
+            "note": "Adução e abdução do antepé, num eixo vertical pelo centro do tornozelo. Serve para o pé assentar no chão com o quadril rodado." } }
       ],
       "geometry": { "source": [{ "refId": "zanatomy" }, { "refId": "sbl_authored" }], "confidence": "provavel",
         "note": "Tornozelo à ponta do hálux (ponto mais anterior dos ossos do pé)." }

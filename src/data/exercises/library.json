@@ -1148,7 +1148,7 @@
     "pattern": "puxar_horizontal",
     "equipment": ["halteres", "banco"],
     "status": "consolidado",
-    "summary": "Uma mão no banco, puxar o halter com a outra até o quadril, cotovelo junto ao corpo.",
+    "summary": "Joelho e mão do mesmo lado no banco, puxar o halter com a outra mão até o quadril, cotovelo junto ao corpo.",
     "targets": [
       { "muscle": "latissimus_dorsi", "role": "alvo" },
       { "muscle": "teres_major", "role": "sinergista" },

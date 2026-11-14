@@ -19,11 +19,11 @@
       "plates": 2,
       "loadKg": 100,
       "tempo": {
-        "out": 2.2,
-        "hold": 0.3,
-        "back": 1.4,
-        "rest": 0.6,
-        "concentric": "back"
+        "eccentric": 2.2,
+        "stretched": 0.3,
+        "concentric": 1.4,
+        "shortened": 0.6,
+        "start": "shortened"
       },
       "view": "diagonal"
     },
@@ -55,11 +55,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 0
+            "deg": 82
           },
           {
             "u": 1,
-            "deg": 82
+            "deg": 0
           }
         ]
       },
@@ -68,7 +68,7 @@
         "keys": [
           {
             "u": 0,
-            "deg": 6
+            "deg": 20
           },
           {
             "u": 0.5,
@@ -76,7 +76,7 @@
           },
           {
             "u": 1,
-            "deg": 20
+            "deg": 6
           }
         ]
       }
@@ -86,7 +86,7 @@
         "limb": "arm",
         "side": "both",
         "target": {
-          "kind": "hang"
+          "kind": "plumb"
         },
         "pole": [
           -0.3,
@@ -112,11 +112,11 @@
       "kind": "gravity"
     },
     "tempo": {
-      "out": 2.4,
-      "hold": 0.3,
-      "back": 1.3,
-      "rest": 0.6,
-      "concentric": "back"
+      "eccentric": 2.4,
+      "stretched": 0.3,
+      "concentric": 1.3,
+      "shortened": 0.6,
+      "start": "shortened"
     },
     "view": "side",
     "evidence": {
@@ -222,11 +222,11 @@
       "kind": "gravity"
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.8,
-      "back": 1.8,
-      "rest": 0.4,
-      "concentric": "out"
+      "eccentric": 1.8,
+      "stretched": 0.4,
+      "concentric": 1.2,
+      "shortened": 0.8,
+      "start": "stretched"
     },
     "view": "side",
     "evidence": {
@@ -339,11 +339,11 @@
       "kind": "lever"
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.6,
-      "back": 2,
-      "rest": 0.4,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.4,
+      "concentric": 1.2,
+      "shortened": 0.6,
+      "start": "stretched"
     },
     "view": "side",
     "evidence": {
@@ -456,11 +456,11 @@
       "kind": "lever"
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.6,
-      "back": 2,
-      "rest": 0.4,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.4,
+      "concentric": 1.2,
+      "shortened": 0.6,
+      "start": "stretched"
     },
     "view": "side",
     "evidence": {
@@ -576,11 +576,11 @@
       "kind": "lever"
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "side",
     "evidence": {
@@ -680,11 +680,11 @@
       "kind": "lever"
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "side",
     "evidence": {
@@ -774,11 +774,11 @@
       ]
     },
     "tempo": {
-      "out": 1,
-      "hold": 0.6,
-      "back": 2,
-      "rest": 1,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 1,
+      "concentric": 1,
+      "shortened": 0.6,
+      "start": "stretched"
     },
     "view": "side",
     "evidence": {
@@ -896,11 +896,11 @@
       ]
     },
     "tempo": {
-      "out": 1,
-      "hold": 0.6,
-      "back": 2,
-      "rest": 1,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 1,
+      "concentric": 1,
+      "shortened": 0.6,
+      "start": "stretched"
     },
     "view": "side",
     "evidence": {
@@ -922,13 +922,13 @@
       "path": [
         {
           "u": 0,
-          "y": 1.12,
-          "z": -0.09
+          "y": 0.77,
+          "z": 0.06
         },
         {
           "u": 1,
-          "y": 0.77,
-          "z": 0.06
+          "y": 1.12,
+          "z": -0.09
         }
       ],
       "pole": [
@@ -938,11 +938,11 @@
       ],
       "plates": 2,
       "tempo": {
-        "out": 2,
-        "hold": 0.3,
-        "back": 1.2,
-        "rest": 0.6,
-        "concentric": "back"
+        "eccentric": 2,
+        "stretched": 0.3,
+        "concentric": 1.2,
+        "shortened": 0.6,
+        "start": "shortened"
       },
       "view": "diagonal"
     },
@@ -992,11 +992,11 @@
       "plates": 1,
       "loadKg": 50,
       "tempo": {
-        "out": 1.3,
-        "hold": 0.4,
-        "back": 2,
-        "rest": 0.6,
-        "concentric": "out"
+        "eccentric": 2,
+        "stretched": 0.6,
+        "concentric": 1.3,
+        "shortened": 0.4,
+        "start": "stretched"
       },
       "view": "side"
     },
@@ -1077,11 +1077,11 @@
         }
       ],
       "tempo": {
-        "out": 1.2,
-        "hold": 0.4,
-        "back": 2,
-        "rest": 0.5,
-        "concentric": "out"
+        "eccentric": 2,
+        "stretched": 0.5,
+        "concentric": 1.2,
+        "shortened": 0.4,
+        "start": "stretched"
       },
       "view": "diagonal"
     },
@@ -1164,11 +1164,11 @@
         }
       ],
       "tempo": {
-        "out": 1.2,
-        "hold": 0.5,
-        "back": 2,
-        "rest": 0.4,
-        "concentric": "out"
+        "eccentric": 2,
+        "stretched": 0.4,
+        "concentric": 1.2,
+        "shortened": 0.5,
+        "start": "stretched"
       },
       "view": "side"
     },
@@ -1201,11 +1201,11 @@
         "kind": "dumbbell"
       },
       "tempo": {
-        "out": 1.2,
-        "hold": 0.4,
-        "back": 2.2,
-        "rest": 0.5,
-        "concentric": "out"
+        "eccentric": 2.2,
+        "stretched": 0.5,
+        "concentric": 1.2,
+        "shortened": 0.4,
+        "start": "stretched"
       },
       "view": "side"
     },
@@ -1246,11 +1246,11 @@
         "handle": "rope"
       },
       "tempo": {
-        "out": 1.2,
-        "hold": 0.4,
-        "back": 2,
-        "rest": 0.5,
-        "concentric": "out"
+        "eccentric": 2,
+        "stretched": 0.5,
+        "concentric": 1.2,
+        "shortened": 0.4,
+        "start": "stretched"
       },
       "view": "side"
     },
@@ -1289,11 +1289,11 @@
         "handle": "bar"
       },
       "tempo": {
-        "out": 1,
-        "hold": 0.4,
-        "back": 1.8,
-        "rest": 0.5,
-        "concentric": "out"
+        "eccentric": 1.8,
+        "stretched": 0.5,
+        "concentric": 1,
+        "shortened": 0.4,
+        "start": "stretched"
       },
       "view": "side"
     },
@@ -1330,11 +1330,11 @@
         "forearm_pro": 30
       },
       "tempo": {
-        "out": 2.2,
-        "hold": 0.3,
-        "back": 1.4,
-        "rest": 0.6,
-        "concentric": "back"
+        "eccentric": 2.2,
+        "stretched": 0.3,
+        "concentric": 1.4,
+        "shortened": 0.6,
+        "start": "shortened"
       },
       "view": "diagonal"
     },
@@ -1374,11 +1374,11 @@
         "forearm_pro": 70
       },
       "tempo": {
-        "out": 2.2,
-        "hold": 0.3,
-        "back": 1.4,
-        "rest": 0.6,
-        "concentric": "back"
+        "eccentric": 2.2,
+        "stretched": 0.3,
+        "concentric": 1.4,
+        "shortened": 0.6,
+        "start": "shortened"
       },
       "view": "diagonal"
     },
@@ -1408,16 +1408,16 @@
           "u": 0,
           "p": [
             0,
-            0.756,
-            -0.06
+            0.47,
+            0.105
           ]
         },
         {
           "u": 1,
           "p": [
             0,
-            0.47,
-            0.105
+            0.756,
+            -0.06
           ]
         }
       ],
@@ -1493,19 +1493,18 @@
         ]
       },
       {
-        "kind": "block",
-        "role": "frame",
-        "center": [
+        "kind": "rail",
+        "from": [
           0,
-          0.8,
-          -0.32
+          0.05,
+          0.059
         ],
-        "size": [
-          0.1,
-          1.5,
-          0.06
+        "to": [
+          0,
+          1.75,
+          -0.923
         ],
-        "pitch": -30
+        "gauge": 0.36
       }
     ],
     "load": {
@@ -1518,11 +1517,11 @@
       ]
     },
     "tempo": {
-      "out": 2.2,
-      "hold": 0.3,
-      "back": 1.4,
-      "rest": 0.6,
-      "concentric": "back"
+      "eccentric": 2.2,
+      "stretched": 0.3,
+      "concentric": 1.4,
+      "shortened": 0.6,
+      "start": "shortened"
     },
     "view": "side",
     "evidence": {
@@ -1551,8 +1550,8 @@
           "u": 0,
           "p": [
             0,
-            0.88,
-            -0.1
+            0.52,
+            0.08
           ]
         },
         {
@@ -1567,19 +1566,19 @@
           "u": 1,
           "p": [
             0,
-            0.52,
-            0.08
+            0.88,
+            -0.1
           ]
         }
       ],
       "pitch": [
         {
           "u": 0,
-          "deg": -22
+          "deg": -6
         },
         {
           "u": 1,
-          "deg": -6
+          "deg": -22
         }
       ]
     },
@@ -1666,6 +1665,20 @@
           0.14,
           0.2
         ]
+      },
+      {
+        "kind": "swing",
+        "pivot": [
+          0,
+          0.06,
+          -1.29
+        ],
+        "segment": "trunk",
+        "point": [
+          0,
+          1.2,
+          -0.21
+        ]
       }
     ],
     "load": {
@@ -1678,11 +1691,11 @@
       ]
     },
     "tempo": {
-      "out": 2.2,
-      "hold": 0.3,
-      "back": 1.4,
-      "rest": 0.6,
-      "concentric": "back"
+      "eccentric": 2.2,
+      "stretched": 0.3,
+      "concentric": 1.4,
+      "shortened": 0.6,
+      "start": "shortened"
     },
     "view": "side",
     "evidence": {
@@ -1731,16 +1744,16 @@
               "u": 0,
               "p": [
                 -0.1105,
-                1.1153,
-                0.6784
+                0.8607,
+                0.4238
               ]
             },
             {
               "u": 1,
               "p": [
                 -0.1105,
-                0.8607,
-                0.4238
+                1.1153,
+                0.6784
               ]
             }
           ],
@@ -1811,6 +1824,20 @@
           0.06,
           0.9
         ]
+      },
+      {
+        "kind": "rail",
+        "from": [
+          0,
+          0.418,
+          0.251
+        ],
+        "to": [
+          0,
+          1.337,
+          1.17
+        ],
+        "gauge": 0.5
       }
     ],
     "load": {
@@ -1823,11 +1850,11 @@
       ]
     },
     "tempo": {
-      "out": 2.2,
-      "hold": 0.3,
-      "back": 1.4,
-      "rest": 0.6,
-      "concentric": "back"
+      "eccentric": 2.2,
+      "stretched": 0.3,
+      "concentric": 1.4,
+      "shortened": 0.6,
+      "start": "shortened"
     },
     "view": "side",
     "evidence": {
@@ -1856,11 +1883,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 8
+            "deg": 88
           },
           {
             "u": 1,
-            "deg": 88
+            "deg": 8
           }
         ]
       },
@@ -1869,11 +1896,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 6
+            "deg": 100
           },
           {
             "u": 1,
-            "deg": 100
+            "deg": 6
           }
         ]
       },
@@ -1882,11 +1909,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 2
+            "deg": 24
           },
           {
             "u": 1,
-            "deg": 24
+            "deg": 2
           }
         ]
       },
@@ -1895,11 +1922,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 0
+            "deg": 6
           },
           {
             "u": 1,
-            "deg": 6
+            "deg": 0
           }
         ]
       }
@@ -1959,11 +1986,11 @@
       "kind": "gravity"
     },
     "tempo": {
-      "out": 2.2,
-      "hold": 0.3,
-      "back": 1.4,
-      "rest": 0.6,
-      "concentric": "back"
+      "eccentric": 2.2,
+      "stretched": 0.3,
+      "concentric": 1.4,
+      "shortened": 0.6,
+      "start": "shortened"
     },
     "view": "side",
     "evidence": {
@@ -1992,11 +2019,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 2
+            "deg": 78
           },
           {
             "u": 1,
-            "deg": 78
+            "deg": 2
           }
         ]
       },
@@ -2005,11 +2032,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 3
+            "deg": 92
           },
           {
             "u": 1,
-            "deg": 92
+            "deg": 3
           }
         ]
       },
@@ -2018,11 +2045,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 0
+            "deg": 18
           },
           {
             "u": 1,
-            "deg": 18
+            "deg": 0
           }
         ]
       }
@@ -2039,11 +2066,11 @@
               "p": [
                 -0.105,
                 0.012,
-                0.14
+                -0.68
               ]
             },
             {
-              "u": 0.45,
+              "u": 0.55,
               "p": [
                 -0.105,
                 0.06,
@@ -2055,18 +2082,18 @@
               "p": [
                 -0.105,
                 0.012,
-                -0.68
+                0.14
               ]
             }
           ],
           "pitch": [
             {
               "u": 0,
-              "deg": 0
+              "deg": 55
             },
             {
               "u": 1,
-              "deg": 55
+              "deg": 0
             }
           ]
         },
@@ -2098,11 +2125,11 @@
       "kind": "gravity"
     },
     "tempo": {
-      "out": 2.2,
-      "hold": 0.3,
-      "back": 1.4,
-      "rest": 0.6,
-      "concentric": "back"
+      "eccentric": 2.2,
+      "stretched": 0.3,
+      "concentric": 1.4,
+      "shortened": 0.6,
+      "start": "shortened"
     },
     "view": "side",
     "evidence": {
@@ -2131,27 +2158,27 @@
           "u": 0,
           "p": [
             0,
-            0.876,
-            0.005
+            0.69,
+            0.19
           ]
         },
         {
           "u": 1,
           "p": [
             0,
-            0.69,
-            0.19
+            0.876,
+            0.005
           ]
         }
       ],
       "pitch": [
         {
           "u": 0,
-          "deg": 0
+          "deg": -35
         },
         {
           "u": 1,
-          "deg": -35
+          "deg": 0
         }
       ]
     },
@@ -2176,11 +2203,11 @@
           "pitch": [
             {
               "u": 0,
-              "deg": 0
+              "deg": 45
             },
             {
               "u": 1,
-              "deg": 45
+              "deg": 0
             }
           ]
         },
@@ -2202,11 +2229,11 @@
       ]
     },
     "tempo": {
-      "out": 2.2,
-      "hold": 0.3,
-      "back": 1.4,
-      "rest": 0.6,
-      "concentric": "back"
+      "eccentric": 2.2,
+      "stretched": 0.3,
+      "concentric": 1.4,
+      "shortened": 0.6,
+      "start": "shortened"
     },
     "view": "side",
     "evidence": {
@@ -2238,11 +2265,11 @@
       "pitch": [
         {
           "u": 0,
-          "deg": 0
+          "deg": -50
         },
         {
           "u": 1,
-          "deg": -50
+          "deg": 0
         }
       ]
     },
@@ -2259,11 +2286,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 90
+            "deg": 140
           },
           {
             "u": 1,
-            "deg": 140
+            "deg": 90
           }
         ]
       }
@@ -2295,11 +2322,11 @@
       ]
     },
     "tempo": {
-      "out": 2.2,
-      "hold": 0.3,
-      "back": 1.4,
-      "rest": 0.6,
-      "concentric": "back"
+      "eccentric": 2.2,
+      "stretched": 0.3,
+      "concentric": 1.4,
+      "shortened": 0.6,
+      "start": "shortened"
     },
     "view": "side",
     "evidence": {
@@ -2329,11 +2356,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 0
+            "deg": 90
           },
           {
             "u": 1,
-            "deg": 90
+            "deg": 0
           }
         ]
       },
@@ -2342,11 +2369,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 2
+            "deg": 6
           },
           {
             "u": 1,
-            "deg": 6
+            "deg": 2
           }
         ]
       },
@@ -2355,11 +2382,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 2
+            "deg": 12
           },
           {
             "u": 1,
-            "deg": 12
+            "deg": 2
           }
         ]
       }
@@ -2369,7 +2396,7 @@
         "limb": "arm",
         "side": "both",
         "target": {
-          "kind": "hang"
+          "kind": "plumb"
         },
         "pole": [
           -0.3,
@@ -2395,11 +2422,11 @@
       "kind": "gravity"
     },
     "tempo": {
-      "out": 2.2,
-      "hold": 0.3,
-      "back": 1.4,
-      "rest": 0.6,
-      "concentric": "back"
+      "eccentric": 2.2,
+      "stretched": 0.3,
+      "concentric": 1.4,
+      "shortened": 0.6,
+      "start": "shortened"
     },
     "view": "side",
     "evidence": {
@@ -2477,7 +2504,7 @@
         "limb": "arm",
         "side": "both",
         "target": {
-          "kind": "hang"
+          "kind": "plumb"
         },
         "pole": [
           -0.3,
@@ -2503,11 +2530,11 @@
       "kind": "gravity"
     },
     "tempo": {
-      "out": 1.4,
-      "hold": 0.4,
-      "back": 1.6,
-      "rest": 0.8,
-      "concentric": "out"
+      "eccentric": 1.6,
+      "stretched": 0.8,
+      "concentric": 1.4,
+      "shortened": 0.4,
+      "start": "stretched"
     },
     "view": "side",
     "evidence": {
@@ -2537,11 +2564,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 0
+            "deg": 80
           },
           {
             "u": 1,
-            "deg": 80
+            "deg": 0
           }
         ]
       },
@@ -2550,11 +2577,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 4
+            "deg": 16
           },
           {
             "u": 1,
-            "deg": 16
+            "deg": 4
           }
         ]
       },
@@ -2563,11 +2590,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 0
+            "deg": 6
           },
           {
             "u": 1,
-            "deg": 6
+            "deg": 0
           }
         ]
       }
@@ -2609,11 +2636,11 @@
       "kind": "gravity"
     },
     "tempo": {
-      "out": 2.2,
-      "hold": 0.3,
-      "back": 1.4,
-      "rest": 0.6,
-      "concentric": "back"
+      "eccentric": 2.2,
+      "stretched": 0.3,
+      "concentric": 1.4,
+      "shortened": 0.6,
+      "start": "shortened"
     },
     "view": "side",
     "evidence": {
@@ -2645,11 +2672,11 @@
       "pitch": [
         {
           "u": 0,
-          "deg": 45
+          "deg": 125
         },
         {
           "u": 1,
-          "deg": 125
+          "deg": 45
         }
       ]
     },
@@ -2666,11 +2693,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 0
+            "deg": 14
           },
           {
             "u": 1,
-            "deg": 14
+            "deg": 0
           }
         ]
       }
@@ -2751,11 +2778,11 @@
       ]
     },
     "tempo": {
-      "out": 2.2,
-      "hold": 0.3,
-      "back": 1.4,
-      "rest": 0.6,
-      "concentric": "back"
+      "eccentric": 2.2,
+      "stretched": 0.3,
+      "concentric": 1.4,
+      "shortened": 0.6,
+      "start": "shortened"
     },
     "view": "side",
     "evidence": {
@@ -2787,11 +2814,11 @@
       "pitch": [
         {
           "u": 0,
-          "deg": 0
+          "deg": 65
         },
         {
           "u": 1,
-          "deg": 65
+          "deg": 0
         }
       ]
     },
@@ -2809,11 +2836,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 95
+            "deg": 30
           },
           {
             "u": 1,
-            "deg": 30
+            "deg": 95
           }
         ]
       }
@@ -2856,11 +2883,11 @@
       ]
     },
     "tempo": {
-      "out": 3.2,
-      "hold": 0.3,
-      "back": 1.4,
-      "rest": 0.8,
-      "concentric": "back"
+      "eccentric": 3.2,
+      "stretched": 0.3,
+      "concentric": 1.4,
+      "shortened": 0.8,
+      "start": "shortened"
     },
     "view": "side",
     "evidence": {
@@ -2891,11 +2918,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 0
+            "deg": 85
           },
           {
             "u": 1,
-            "deg": 85
+            "deg": 0
           }
         ]
       },
@@ -2904,11 +2931,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 6
+            "deg": 22
           },
           {
             "u": 1,
-            "deg": 22
+            "deg": 6
           }
         ]
       },
@@ -2917,11 +2944,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 0
+            "deg": 6
           },
           {
             "u": 1,
-            "deg": 6
+            "deg": 0
           }
         ]
       }
@@ -2962,11 +2989,11 @@
       "kind": "cable"
     },
     "tempo": {
-      "out": 2.2,
-      "hold": 0.3,
-      "back": 1.4,
-      "rest": 0.6,
-      "concentric": "back"
+      "eccentric": 2.2,
+      "stretched": 0.3,
+      "concentric": 1.4,
+      "shortened": 0.6,
+      "start": "shortened"
     },
     "view": "side",
     "evidence": {
@@ -3072,11 +3099,11 @@
       ]
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "front",
     "evidence": {
@@ -3169,11 +3196,11 @@
       ]
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "diagonal",
     "evidence": {
@@ -3279,11 +3306,11 @@
       ]
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "front",
     "evidence": {
@@ -3408,6 +3435,20 @@
         ],
         "pitch": 0,
         "segment": "foot_r"
+      },
+      {
+        "kind": "rail",
+        "from": [
+          0,
+          0.358,
+          0.078
+        ],
+        "to": [
+          0,
+          1.35,
+          1.07
+        ],
+        "gauge": 0.5
       }
     ],
     "load": {
@@ -3420,11 +3461,11 @@
       ]
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "side",
     "evidence": {
@@ -3553,11 +3594,11 @@
       ]
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "side",
     "evidence": {
@@ -3665,11 +3706,11 @@
       ]
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "side",
     "evidence": {
@@ -3795,11 +3836,11 @@
       "kind": "cable"
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "side",
     "evidence": {
@@ -3901,7 +3942,8 @@
     "equipment": [
       {
         "kind": "barbell",
-        "plates": 0
+        "plates": 0,
+        "bar": "fixed"
       }
     ],
     "load": {
@@ -3914,11 +3956,11 @@
       ]
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "side",
     "evidence": {
@@ -3991,11 +4033,11 @@
       "kind": "cable"
     },
     "tempo": {
-      "out": 1,
-      "hold": 1.2,
-      "back": 1.2,
-      "rest": 0.4,
-      "concentric": "out"
+      "eccentric": 1.2,
+      "stretched": 0.4,
+      "concentric": 1,
+      "shortened": 1.2,
+      "start": "stretched"
     },
     "view": "front",
     "evidence": {
@@ -4149,11 +4191,11 @@
       "kind": "cable"
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "front",
     "evidence": {
@@ -4231,11 +4273,11 @@
       "kind": "gravity"
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "front",
     "evidence": {
@@ -4258,13 +4300,13 @@
       "path": [
         {
           "u": 0,
-          "y": 1.5,
-          "z": -0.34
+          "y": 1.06,
+          "z": -0.3
         },
         {
           "u": 1,
-          "y": 1.06,
-          "z": -0.3
+          "y": 1.5,
+          "z": -0.34
         }
       ],
       "pole": [
@@ -4274,11 +4316,11 @@
       ],
       "plates": 1,
       "tempo": {
-        "out": 2,
-        "hold": 0.3,
-        "back": 1.2,
-        "rest": 0.6,
-        "concentric": "back"
+        "eccentric": 2,
+        "stretched": 0.3,
+        "concentric": 1.2,
+        "shortened": 0.6,
+        "start": "shortened"
       },
       "view": "side"
     },
@@ -4302,13 +4344,13 @@
       "path": [
         {
           "u": 0,
-          "y": 1.1,
-          "z": -0.06
+          "y": 0.73,
+          "z": 0.06
         },
         {
           "u": 1,
-          "y": 0.73,
-          "z": 0.06
+          "y": 1.1,
+          "z": -0.06
         }
       ],
       "pole": [
@@ -4321,11 +4363,11 @@
         "forearm_pro": 75
       },
       "tempo": {
-        "out": 2,
-        "hold": 0.3,
-        "back": 1.2,
-        "rest": 0.6,
-        "concentric": "back"
+        "eccentric": 2,
+        "stretched": 0.3,
+        "concentric": 1.2,
+        "shortened": 0.6,
+        "start": "shortened"
       },
       "view": "diagonal"
     },
@@ -4350,13 +4392,13 @@
       "path": [
         {
           "u": 0,
-          "y": 1.5,
-          "z": -0.34
+          "y": 1.02,
+          "z": -0.3
         },
         {
           "u": 1,
-          "y": 1.02,
-          "z": -0.3
+          "y": 1.5,
+          "z": -0.34
         }
       ],
       "pole": [
@@ -4369,11 +4411,11 @@
         "forearm_pro": 75
       },
       "tempo": {
-        "out": 2,
-        "hold": 0.3,
-        "back": 1.2,
-        "rest": 0.6,
-        "concentric": "back"
+        "eccentric": 2,
+        "stretched": 0.3,
+        "concentric": 1.2,
+        "shortened": 0.6,
+        "start": "shortened"
       },
       "view": "side"
     },
@@ -4396,13 +4438,13 @@
       "path": [
         {
           "u": 0,
-          "y": 1.1,
-          "z": -0.05
+          "y": 0.78,
+          "z": 0.1
         },
         {
           "u": 1,
-          "y": 0.78,
-          "z": 0.1
+          "y": 1.1,
+          "z": -0.05
         }
       ],
       "pole": [
@@ -4412,11 +4454,11 @@
       ],
       "plates": 2,
       "tempo": {
-        "out": 2,
-        "hold": 0.3,
-        "back": 1.2,
-        "rest": 0.6,
-        "concentric": "back"
+        "eccentric": 2,
+        "stretched": 0.3,
+        "concentric": 1.2,
+        "shortened": 0.6,
+        "start": "shortened"
       },
       "view": "diagonal"
     },
@@ -4460,11 +4502,11 @@
         "forearm_pro": 90
       },
       "tempo": {
-        "out": 1.2,
-        "hold": 0.5,
-        "back": 2,
-        "rest": 0.5,
-        "concentric": "out"
+        "eccentric": 2,
+        "stretched": 0.5,
+        "concentric": 1.2,
+        "shortened": 0.5,
+        "start": "stretched"
       },
       "view": "side"
     },
@@ -4547,11 +4589,11 @@
       "kind": "cable"
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "diagonal",
     "evidence": {
@@ -4632,11 +4674,11 @@
       "kind": "cable"
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "diagonal",
     "evidence": {
@@ -4789,11 +4831,11 @@
       "kind": "guided"
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "diagonal",
     "evidence": {
@@ -4822,27 +4864,27 @@
           "u": 0,
           "p": [
             0,
-            1.86,
-            -0.02
+            1.56,
+            0.03
           ]
         },
         {
           "u": 1,
           "p": [
             0,
-            1.56,
-            0.03
+            1.86,
+            -0.02
           ]
         }
       ],
       "pitch": [
         {
           "u": 0,
-          "deg": 18
+          "deg": 28
         },
         {
           "u": 1,
-          "deg": 28
+          "deg": 18
         }
       ]
     },
@@ -4860,7 +4902,7 @@
           "kind": "path",
           "keys": [
             {
-              "u": 0,
+              "u": 1,
               "p": [
                 -0.27,
                 1.3,
@@ -4902,11 +4944,11 @@
       ]
     },
     "tempo": {
-      "out": 2.2,
-      "hold": 0.3,
-      "back": 1.4,
-      "rest": 0.6,
-      "concentric": "back"
+      "eccentric": 2.2,
+      "stretched": 0.3,
+      "concentric": 1.4,
+      "shortened": 0.6,
+      "start": "shortened"
     },
     "view": "side",
     "evidence": {
@@ -4938,11 +4980,11 @@
       "pitch": [
         {
           "u": 0,
-          "deg": 72
+          "deg": 82
         },
         {
           "u": 1,
-          "deg": 82
+          "deg": 72
         }
       ]
     },
@@ -4960,7 +5002,7 @@
           "kind": "path",
           "keys": [
             {
-              "u": 0,
+              "u": 1,
               "p": [
                 -0.27,
                 0.03,
@@ -4987,11 +5029,11 @@
       ]
     },
     "tempo": {
-      "out": 2.2,
-      "hold": 0.3,
-      "back": 1.4,
-      "rest": 0.6,
-      "concentric": "back"
+      "eccentric": 2.2,
+      "stretched": 0.3,
+      "concentric": 1.4,
+      "shortened": 0.6,
+      "start": "shortened"
     },
     "view": "side",
     "evidence": {
@@ -5116,11 +5158,11 @@
       "kind": "gravity"
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "side",
     "evidence": {
@@ -5202,11 +5244,11 @@
         }
       ],
       "tempo": {
-        "out": 1.2,
-        "hold": 0.5,
-        "back": 2,
-        "rest": 0.5,
-        "concentric": "out"
+        "eccentric": 2,
+        "stretched": 0.5,
+        "concentric": 1.2,
+        "shortened": 0.5,
+        "start": "stretched"
       },
       "view": "front"
     },
@@ -5293,7 +5335,8 @@
     "equipment": [
       {
         "kind": "barbell",
-        "plates": 0
+        "plates": 0,
+        "bar": "fixed"
       }
     ],
     "load": {
@@ -5306,11 +5349,11 @@
       ]
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "diagonal",
     "evidence": {
@@ -5396,7 +5439,8 @@
     "equipment": [
       {
         "kind": "barbell",
-        "plates": 0
+        "plates": 0,
+        "bar": "fixed"
       }
     ],
     "load": {
@@ -5409,11 +5453,11 @@
       ]
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "diagonal",
     "evidence": {
@@ -5490,11 +5534,11 @@
       "kind": "gravity"
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "side",
     "evidence": {
@@ -5509,20 +5553,51 @@
   },
   {
     "id": "one_arm_dumbbell_row",
-    "support": "standing",
+    "support": "kneeling",
     "root": {
-      "mode": "plant"
+      "mode": "pin",
+      "segment": "shank_l",
+      "point": [
+        0.078,
+        0.3,
+        0.012
+      ],
+      "at": [
+        0.078,
+        0.4,
+        0
+      ],
+      "pitch": 72
     },
     "hold": {
-      "hip_flex": 75,
-      "knee_flex": 20,
-      "lumbar_flex": 2,
-      "hip_abd": 8,
+      "hip_flex_l": 78,
+      "knee_flex_l": 90,
+      "ankle_dorsi_l": -35,
+      "lumbar_flex": 4,
+      "thorax_flex": 4,
       "forearm_pro": 80,
-      "neck_flex": -10
+      "neck_flex": -14
     },
     "tracks": [],
     "reach": [
+      {
+        "limb": "leg",
+        "side": "r",
+        "target": {
+          "kind": "ball",
+          "point": [
+            -0.2,
+            0.012,
+            0.32
+          ],
+          "yaw": 10
+        },
+        "pole": [
+          -0.2,
+          0.2,
+          1
+        ]
+      },
       {
         "limb": "arm",
         "side": "r",
@@ -5532,17 +5607,17 @@
             {
               "u": 0,
               "p": [
-                -0.22,
-                0.6,
-                0.36
+                -0.21,
+                0.4,
+                0.73
               ]
             },
             {
               "u": 1,
               "p": [
                 -0.24,
-                0.9,
-                0.12
+                0.76,
+                0.41
               ]
             }
           ]
@@ -5562,9 +5637,9 @@
             {
               "u": 0,
               "p": [
-                -0.22,
-                0.64,
-                0.56
+                -0.19,
+                0.44,
+                0.84
               ]
             }
           ]
@@ -5585,14 +5660,14 @@
         "kind": "block",
         "role": "bench",
         "center": [
-          0.22,
-          0.29,
-          0.56
+          0.14,
+          0.2,
+          0.32
         ],
         "size": [
-          0.3,
-          0.58,
-          0.5
+          0.32,
+          0.4,
+          1.25
         ]
       }
     ],
@@ -5600,11 +5675,11 @@
       "kind": "gravity"
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "diagonal",
     "evidence": {
@@ -5614,7 +5689,7 @@
         }
       ],
       "confidence": "especulativo",
-      "note": "Apoio da mão esquerda no banco fechado por IK; pés no chão (simplificação do joelho no banco)."
+      "note": "Joelho esquerdo e mão esquerda no banco, pé direito no chão: a canela esquerda fica presa no estofado (raiz), a mão fecha por IK."
     }
   },
   {
@@ -5688,11 +5763,11 @@
       "kind": "cable"
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "side",
     "evidence": {
@@ -5735,11 +5810,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 85
+            "deg": 160
           },
           {
             "u": 1,
-            "deg": 160
+            "deg": 85
           }
         ]
       },
@@ -5748,11 +5823,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 0
+            "deg": 12
           },
           {
             "u": 1,
-            "deg": 12
+            "deg": 0
           }
         ]
       },
@@ -5761,11 +5836,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 0
+            "deg": 20
           },
           {
             "u": 1,
-            "deg": 20
+            "deg": 0
           }
         ]
       }
@@ -5827,11 +5902,11 @@
       "kind": "gravity"
     },
     "tempo": {
-      "out": 2.2,
-      "hold": 0.3,
-      "back": 1.4,
-      "rest": 0.6,
-      "concentric": "back"
+      "eccentric": 2.2,
+      "stretched": 0.3,
+      "concentric": 1.4,
+      "shortened": 0.6,
+      "start": "shortened"
     },
     "view": "side",
     "evidence": {
@@ -5892,11 +5967,11 @@
       "kind": "gravity"
     },
     "tempo": {
-      "out": 1,
-      "hold": 1,
-      "back": 1.6,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 1.6,
+      "stretched": 0.5,
+      "concentric": 1,
+      "shortened": 1,
+      "start": "stretched"
     },
     "view": "front",
     "evidence": {
@@ -5939,11 +6014,11 @@
         "forearm_pro": 95
       },
       "tempo": {
-        "out": 1.2,
-        "hold": 0.5,
-        "back": 2,
-        "rest": 0.5,
-        "concentric": "out"
+        "eccentric": 2,
+        "stretched": 0.5,
+        "concentric": 1.2,
+        "shortened": 0.5,
+        "start": "stretched"
       },
       "view": "front"
     },
@@ -5987,11 +6062,11 @@
         "forearm_pro": 100
       },
       "tempo": {
-        "out": 1.2,
-        "hold": 0.5,
-        "back": 2,
-        "rest": 0.5,
-        "concentric": "out"
+        "eccentric": 2,
+        "stretched": 0.5,
+        "concentric": 1.2,
+        "shortened": 0.5,
+        "start": "stretched"
       },
       "view": "side"
     },
@@ -6070,11 +6145,11 @@
       "kind": "gravity"
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "front",
     "evidence": {
@@ -6171,11 +6246,11 @@
       "kind": "cable"
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "back",
     "evidence": {
@@ -6314,11 +6389,11 @@
       "kind": "guided"
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "diagonal",
     "evidence": {
@@ -6391,11 +6466,11 @@
       "kind": "cable"
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "diagonal",
     "evidence": {
@@ -6454,11 +6529,11 @@
       "kind": "cable"
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "front",
     "evidence": {
@@ -6607,11 +6682,11 @@
       "kind": "gravity"
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "side",
     "evidence": {
@@ -6650,11 +6725,11 @@
         "handle": "single"
       },
       "tempo": {
-        "out": 1.2,
-        "hold": 0.5,
-        "back": 2,
-        "rest": 0.5,
-        "concentric": "out"
+        "eccentric": 2,
+        "stretched": 0.5,
+        "concentric": 1.2,
+        "shortened": 0.5,
+        "start": "stretched"
       },
       "view": "side"
     },
@@ -6705,11 +6780,11 @@
         }
       ],
       "tempo": {
-        "out": 1.2,
-        "hold": 0.5,
-        "back": 2,
-        "rest": 0.5,
-        "concentric": "out"
+        "eccentric": 2,
+        "stretched": 0.5,
+        "concentric": 1.2,
+        "shortened": 0.5,
+        "start": "stretched"
       },
       "view": "side"
     },
@@ -6741,11 +6816,11 @@
         "kind": "barbell"
       },
       "tempo": {
-        "out": 1.2,
-        "hold": 0.5,
-        "back": 2,
-        "rest": 0.5,
-        "concentric": "out"
+        "eccentric": 2,
+        "stretched": 0.5,
+        "concentric": 1.2,
+        "shortened": 0.5,
+        "start": "stretched"
       },
       "view": "side"
     },
@@ -6777,11 +6852,11 @@
         "kind": "dumbbell"
       },
       "tempo": {
-        "out": 1.2,
-        "hold": 0.5,
-        "back": 2,
-        "rest": 0.5,
-        "concentric": "out"
+        "eccentric": 2,
+        "stretched": 0.5,
+        "concentric": 1.2,
+        "shortened": 0.5,
+        "start": "stretched"
       },
       "view": "side"
     },
@@ -6831,11 +6906,11 @@
         }
       ],
       "tempo": {
-        "out": 1.2,
-        "hold": 0.5,
-        "back": 2,
-        "rest": 0.5,
-        "concentric": "out"
+        "eccentric": 2,
+        "stretched": 0.5,
+        "concentric": 1.2,
+        "shortened": 0.5,
+        "start": "stretched"
       },
       "view": "side"
     },
@@ -6867,11 +6942,11 @@
         "kind": "barbell"
       },
       "tempo": {
-        "out": 1.2,
-        "hold": 0.5,
-        "back": 2,
-        "rest": 0.5,
-        "concentric": "out"
+        "eccentric": 2,
+        "stretched": 0.5,
+        "concentric": 1.2,
+        "shortened": 0.5,
+        "start": "stretched"
       },
       "view": "side"
     },
@@ -6915,11 +6990,11 @@
         "keys": [
           {
             "u": 0,
-            "deg": 8
+            "deg": 125
           },
           {
             "u": 1,
-            "deg": 125
+            "deg": 8
           }
         ]
       }
@@ -6981,11 +7056,11 @@
       "kind": "gravity"
     },
     "tempo": {
-      "out": 2.2,
-      "hold": 0.3,
-      "back": 1.4,
-      "rest": 0.6,
-      "concentric": "back"
+      "eccentric": 2.2,
+      "stretched": 0.3,
+      "concentric": 1.4,
+      "shortened": 0.6,
+      "start": "shortened"
     },
     "view": "side",
     "evidence": {
@@ -7020,11 +7095,11 @@
         "kind": "dumbbell"
       },
       "tempo": {
-        "out": 1.2,
-        "hold": 0.5,
-        "back": 2,
-        "rest": 0.5,
-        "concentric": "out"
+        "eccentric": 2,
+        "stretched": 0.5,
+        "concentric": 1.2,
+        "shortened": 0.5,
+        "start": "stretched"
       },
       "view": "side"
     },
@@ -7067,11 +7142,11 @@
         "knee_flex": 20
       },
       "tempo": {
-        "out": 1.2,
-        "hold": 0.5,
-        "back": 2,
-        "rest": 0.5,
-        "concentric": "out"
+        "eccentric": 2,
+        "stretched": 0.5,
+        "concentric": 1.2,
+        "shortened": 0.5,
+        "start": "stretched"
       },
       "view": "side"
     },
@@ -7169,11 +7244,11 @@
       "kind": "gravity"
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "side",
     "evidence": {
@@ -7270,11 +7345,11 @@
       "kind": "gravity"
     },
     "tempo": {
-      "out": 1.2,
-      "hold": 0.5,
-      "back": 2,
-      "rest": 0.5,
-      "concentric": "out"
+      "eccentric": 2,
+      "stretched": 0.5,
+      "concentric": 1.2,
+      "shortened": 0.5,
+      "start": "stretched"
     },
     "view": "side",
     "evidence": {

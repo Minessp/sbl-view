@@ -134,7 +134,7 @@ function Transport({ clip }: { clip: CompiledClip }) {
   const time = usePlayer((s) => s.time);
   const T = cycleLength(clip.clip.tempo);
   const rep = repAt(clip.clip.tempo, time);
-  const phase = rep.phase === 'hold' || rep.phase === 'rest' ? P.phase.pause : rep.concentric ? P.phase.concentric : P.phase.eccentric;
+  const phase = P.phase[rep.phase];
   return (
     <div className="demo__row player__transport">
       <button
@@ -290,6 +290,7 @@ function Lengths({ clip, targets }: { clip: CompiledClip; targets: PlayerTargets
 
 export function Player({ name, clip, targets }: { name: string; clip: CompiledClip; targets: PlayerTargets }) {
   const P = t.exercise.player;
+  const tp = clip.clip.tempo;
   useEffect(() => {
     usePlayer.getState().load(clip, targets);
     return () => usePlayer.getState().load(null, { primary: [], synergist: [] });
@@ -309,6 +310,7 @@ export function Player({ name, clip, targets }: { name: string; clip: CompiledCl
         <Options />
         <Focus targets={targets} />
       </div>
+      <p className="player__tempo">{P.tempo(fmt.n1(tp.eccentric), fmt.n1(tp.stretched), fmt.n1(tp.concentric), fmt.n1(tp.shortened))}</p>
       <Lengths clip={clip} targets={targets} />
       <p className="section__note">{P.clipNote}</p>
     </figure>

@@ -21,9 +21,12 @@ import musclePathsJson from './muscle-paths.json';
 import clipsJson from './exercises/clips.json';
 import { ClipFile, MotionClip } from './schema/motion';
 import { compileClip, evaluateClip } from '@/engine/motion/evaluate';
-import { DEG } from '@/engine/math/vec';
+import { angleBetween, DEG, normalize, rotate, scale, sub } from '@/engine/math/vec';
 import { pointToWorld } from '@/engine/kinematics/fk';
+import { readJoints } from '@/engine/kinematics/limits';
+import { must } from '@/engine/math/arr';
 import { expandEntry, motionMasses } from '@/features/library/motion';
+import { lengthCurves } from '@/features/library/player/lengths';
 import { PlanningFile, TrainingFile } from './schema/planning';
 import { E1RM_MAX_REPS } from '@/engine/training/progress';
 import { Reference, type Evidence } from './schema/evidence';
@@ -252,6 +255,68 @@ describe('clipes de movimento', () => {
     expect(ball[2]).toBeLessThan(-0.6);
   });
 
+  // u = 0 é a ponta alongada dos alvos e u = 1 a encurtada. O comprimento sai do caminho do Atlas; onde o caminho
+  // pela linha central falha (limites conhecidos), o exercício fica na lista com o motivo.
+  const LENGTH_EXCEPTIONS: Record<string, string> = {
+    overhead_press: 'deltoide acima de 80° de elevação: a linha central cruza o eixo',
+    seated_dumbbell_press: 'deltoide acima de 80° de elevação',
+    machine_shoulder_press: 'deltoide acima de 80° de elevação',
+    incline_y_raise: 'deltoide acima de 80° de elevação',
+    incline_bench_press: 'peitoral clavicular acima de 50° de flexão',
+    incline_dumbbell_press: 'peitoral clavicular acima de 50° de flexão',
+    low_to_high_cable_fly: 'peitoral clavicular acima de 50° de flexão',
+    reverse_wrist_curl: 'extensores do punho com o punho fletido',
+    shrug: 'levantador da escápula: caminho frágil na escápula elevada',
+    reverse_nordic: 'reto femoral e vasto medial com o joelho além de 120°',
+    dumbbell_side_bend: 'carga na mão direita: o alvo é o lado esquerdo, e a curva mede o direito',
+    cable_woodchop: 'oblíquos em lâmina larga numa linha central só (rotação)',
+  };
+
+  it('u = 0 é a ponta alongada: os alvos não ficam mais curtos lá que em u = 1', () => {
+    const wrong: string[] = [];
+    for (const ex of lib) {
+      const c = compiled(ex.id);
+      const prim = ex.targets.filter((t) => t.role === 'alvo').map((t) => t.muscle);
+      const { series } = lengthCurves(c, prim);
+      if (!series.length) continue;
+      const d = series.reduce((a, s) => a + (s.values[0] ?? 0) - (s.values[s.values.length - 1] ?? 0), 0) / series.length;
+      const known = ex.id in LENGTH_EXCEPTIONS;
+      if (d < -1 && !known) wrong.push(`${ex.id}: ${d.toFixed(1)} pontos`);
+      if (d >= -1 && known) wrong.push(`${ex.id} saiu da lista de exceções (${d.toFixed(1)})`);
+    }
+    expect(wrong).toEqual([]);
+  });
+
+  // Barra nas duas mãos: o eixo da palma (polegar → mínimo) corre ao longo da barra. Onde a pronação sozinha não basta
+  // (punho ou rotação do ombro teriam de mudar junto), o exercício fica na lista com o motivo.
+  const GRIP_EXCEPTIONS: Record<string, string> = {
+    front_squat: 'apoio frontal: a barra sobre os deltoides pede extensão do punho que o clipe não tem',
+    cable_pullover: 'braços acima da cabeça: a rotação do ombro que o IK escolhe não deixa a pronação alinhar',
+    chin_up: 'no alto da barra a supinação completa ainda deixa o punho desviado',
+  };
+
+  it('pegada na barra: palma ao longo da barra (supinada ou pronada)', () => {
+    const wrong: string[] = [];
+    for (const ex of lib) {
+      const c = compiled(ex.id);
+      if (!c.bar) continue;
+      let worst = 0;
+      for (let i = 0; i <= 8; i++) {
+        const f = evaluateClip(c, i / 8);
+        for (const side of ['r', 'l'] as const) {
+          const other = side === 'r' ? 'l' : 'r';
+          const bar = normalize(sub(f.grips[other], f.grips[side]));
+          const ulnar = rotate(must(f.pose.world, `hand_${side}`, 'segmento').rotation, [side === 'r' ? 1 : -1, 0, 0]);
+          worst = Math.max(worst, angleBetween(ulnar, c.bar[side] ? bar : scale(bar, -1)) / DEG);
+        }
+      }
+      const known = ex.id in GRIP_EXCEPTIONS;
+      if (worst > 30 && !known) wrong.push(`${ex.id}: ${worst.toFixed(0)}°`);
+      if (worst <= 30 && known) wrong.push(`${ex.id} saiu da lista de exceções (${worst.toFixed(0)}°)`);
+    }
+    expect(wrong).toEqual([]);
+  });
+
   it.each(entries.map((e) => [e.id, e] as const))('%s: molde gera clipe válido; DOFs na amplitude, restrições fechadas, sem NaN', (_, entry) => {
     const clip = MotionClip.parse(expandEntry(entry));
     const c = compileClip(clip, sk, motionMasses);
@@ -269,6 +334,15 @@ describe('clipes de movimento', () => {
       for (const t of f.pose.world.values()) for (const x of [...t.position, ...t.rotation]) expect(Number.isFinite(x)).toBe(true);
       // Nada atravessa o chão.
       for (const p of f.contacts) expect(p[1]).toBeGreaterThan(-0.02);
+      // Sem rotação absurda: coluna, ombro e quadril dentro dos limites por plano (a combinação, não só cada DOF).
+      for (const r of readJoints(sk, f.pose)) expect(r.over, `${r.segment} em u=${f.u.toFixed(2)}: torção ${r.twist.toFixed(0)}°, balanço ${r.swing.toFixed(0)}°`).toBeLessThan(1);
+      // Pé plantado sem alvo assenta a planta no chão (não rola com a abdução do quadril).
+      if (clip.root.mode === 'plant')
+        for (const s of ['r', 'l'] as const) {
+          if (clip.reach.some((r) => r.limb === 'leg' && (r.side === 'both' || r.side === s))) continue;
+          const up = rotate(must(f.pose.world, `foot_${s}`, 'segmento').rotation, [0, 1, 0]);
+          expect(Math.acos(Math.min(1, up[1])) / DEG, `pé ${s} rolado em u=${f.u.toFixed(2)}`).toBeLessThan(1);
+        }
     }
   });
 });

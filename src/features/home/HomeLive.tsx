@@ -15,7 +15,7 @@ import { domMax, LazyMotion, m } from 'motion/react';
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { Link } from 'wouter';
 import { evaluateClip } from '@/engine/motion/evaluate';
-import { repAt } from '@/engine/motion/keys';
+import { repAt, repLegs } from '@/engine/motion/keys';
 import { exerciseById, library, muscleById } from '@/features/library/catalog';
 import { lengthCurves, valueAt } from '@/features/library/player/lengths';
 import { compiledClip } from '@/features/library/motion';
@@ -88,11 +88,13 @@ function split(p: number) {
   return { k, s: f - k };
 }
 
-/** Posição no trecho → instante da repetição (desce na primeira metade, sobe na segunda; o tempo do clipe dá a curva). */
+/** Posição no trecho → instante da repetição: o primeiro trecho que move na primeira metade, o segundo na outra (as pausas ficam de fora; o tempo do clipe dá a curva). */
 function repTime(tr: Track, s: number) {
-  const tempo = tr.clip.clip.tempo;
+  const legs = repLegs(tr.clip.clip.tempo);
   const r = Math.min(1, Math.max(0, (s - EDGE) / (1 - 2 * EDGE)));
-  return r < 0.5 ? r * 2 * tempo.out : tempo.out + tempo.hold + (r - 0.5) * 2 * tempo.back;
+  const [a, pause, b] = [legs[0], legs[1], legs[2]];
+  if (!a || !pause || !b) return 0;
+  return r < 0.5 ? r * 2 * a.dur : a.dur + pause.dur + (r - 0.5) * 2 * b.dur;
 }
 
 const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -149,7 +151,7 @@ export function HomeLive() {
       const ang = root.current?.querySelector('[data-angle]');
       if (ang) ang.textContent = valueAt(tk.x, tk.angle, u).toFixed(0);
       // Fase pelo sentido da média dos alvos no sentido do movimento.
-      const dir = phase === 'out' ? 1 : phase === 'back' ? -1 : 0;
+      const dir = phase === 'concentric' ? 1 : phase === 'eccentric' ? -1 : 0;
       const d = dir === 0 ? 0 : (valueAt(tk.x, tk.mean, Math.min(1, u + 0.02)) - valueAt(tk.x, tk.mean, Math.max(0, u - 0.02))) * dir;
       const ph = root.current?.querySelector<HTMLElement>('[data-phase]');
       if (ph) {

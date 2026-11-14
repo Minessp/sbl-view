@@ -110,3 +110,10 @@
     grid-column: 2;
   }
 }
+
+.player__tempo {
+  margin: 0;
+  font-size: var(--fs-1);
+  font-variant-numeric: tabular-nums;
+  color: var(--c-ink-2);
+}

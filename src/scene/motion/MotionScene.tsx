@@ -42,6 +42,7 @@ function clipBox(c: CompiledClip): Box {
       else if (e.kind === 'barbell') for (const k of [-0.72, 0.72]) boxes.push(pt([e.center[0] + e.axis[0] * k, e.center[1] + e.axis[1] * k, e.center[2] + e.axis[2] * k], 0.45));
       else if (e.kind === 'dumbbell') boxes.push(pt(e.center, 0.3));
       else if (e.kind === 'cable') boxes.push(pt(e.pulley, 0.1));
+      else if (e.kind === 'swing') boxes.push(pt(e.pivot, 0.2));
     }
   }
   const m = mergeBoxes(boxes) ?? { center: [0, 0.9, 0], size: [0.6, 1.8, 0.4] };
@@ -103,7 +104,7 @@ export function PlayerBody({ slot }: { slot: HTMLElement }) {
   const [equipment, setEquipment] = useState<EquipmentView | null>(null);
   useEffect(() => {
     if (!clip) return;
-    const e = new EquipmentView(evaluateClip(clip, 0));
+    const e = new EquipmentView([0, 0.25, 0.5, 0.75, 1].map((u) => evaluateClip(clip, u)));
     setEquipment(e);
     lastTime.current = null;
     return () => {

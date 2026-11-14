@@ -4,7 +4,7 @@ import { forwardKinematics, pointToWorld } from '../kinematics/fk';
 import { buildSkeleton, type SkeletonInput } from '../kinematics/skeleton';
 import { distance, dot, normalize, scale, sub, type Vec3 } from '../math/vec';
 import { chainOf, solveTwoBone } from './ik';
-import { evalCurve, makeCurve, repAt } from './keys';
+import { cycleLength, evalCurve, makeCurve, repAt, repLegs, timeAtU } from './keys';
 
 const sk = buildSkeleton(skeletonJson as unknown as SkeletonInput);
 
@@ -25,20 +25,22 @@ describe('quadros-chave', () => {
     expect(evalCurve(c, 1)).toBeCloseTo(10);
   });
 
-  it('relógio: vai e volta, pausa nas pontas', () => {
-    const t = {
-      out: 2,
-      hold: 0.5,
-      back: 1,
-      rest: 0.5,
-      concentric: 'back' as const,
-    };
-    expect(repAt(t, 0).u).toBe(0);
+  it('relógio: parte da ponta pedida, concêntrica sempre de u = 0 (alongado) a 1 (encurtado)', () => {
+    // Agachamento: parte encurtado, desce (excêntrica), pausa alongado, sobe.
+    const t = { eccentric: 2, stretched: 0.5, concentric: 1, shortened: 0.5, start: 'shortened' as const };
+    expect(repAt(t, 0)).toMatchObject({ u: 1, phase: 'eccentric' });
     expect(repAt(t, 1).u).toBeCloseTo(0.5);
-    expect(repAt(t, 2.2)).toMatchObject({ u: 1, phase: 'hold' });
-    expect(repAt(t, 3).concentric).toBe(true);
-    expect(repAt(t, 3.8).u).toBe(0);
+    expect(repAt(t, 2.2)).toMatchObject({ u: 0, phase: 'stretched' });
+    expect(repAt(t, 3).phase).toBe('concentric');
+    expect(repAt(t, 3.8)).toMatchObject({ u: 1, phase: 'shortened' });
     expect(repAt(t, 4 + 1).u).toBeCloseTo(0.5);
+    expect(repLegs(t).map((l) => l.phase)).toEqual(['eccentric', 'stretched', 'concentric', 'shortened']);
+    // Rosca: parte alongada.
+    const c = { ...t, start: 'stretched' as const };
+    expect(repAt(c, 0)).toMatchObject({ u: 0, phase: 'concentric' });
+    expect(repAt(c, timeAtU(c, 0.3)).u).toBeCloseTo(0.3, 6);
+    expect(repAt(c, timeAtU(c, 0.3, 'eccentric')).u).toBeCloseTo(0.3, 6);
+    expect(cycleLength(c)).toBe(4);
   });
 });
 

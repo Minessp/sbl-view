@@ -6,7 +6,7 @@
  */
 import { useMemo, useState } from 'react';
 import { MotionClip as MotionClipSchema, type MotionClip } from '@/data/schema/motion';
-import { cycleLength, repAt } from '@/engine/motion/keys';
+import { cycleLength, repAt, timeAtU } from '@/engine/motion/keys';
 import { clipEntries, compileLoose, expandEntry, motionSkeleton } from '@/features/library/motion';
 import { exerciseById } from '@/features/library/catalog';
 import { Player } from '@/features/library/player/Player';
@@ -20,17 +20,6 @@ const DOFS = [...new Map(motionSkeleton.segments.flatMap((s) => s.dofs.map((d) =
   max: Math.round((d.max * 180) / Math.PI),
 }));
 
-/** Tempo (s) que leva o relógio a u na ida (inversa do suave por bisseção). */
-function timeAt(c: MotionClip, u: number): number {
-  let lo = 0,
-    hi = c.tempo.out;
-  for (let i = 0; i < 30; i++) {
-    const mid = (lo + hi) / 2;
-    if (repAt(c.tempo, mid).u < u) lo = mid;
-    else hi = mid;
-  }
-  return (lo + hi) / 2;
-}
 
 const round = (v: number, k = 10) => Math.round(v * k) / k;
 
@@ -135,7 +124,7 @@ export default function DevClips() {
                 className="chip chip--small"
                 onClick={() => {
                   usePlayer.getState().setPlaying(false);
-                  usePlayer.getState().setTime(timeAt(clip, v));
+                  usePlayer.getState().setTime(timeAtU(clip.tempo, v));
                 }}
               >
                 {`u ${v}`}

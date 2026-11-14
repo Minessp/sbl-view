@@ -1,6 +1,7 @@
 /**
- * Clipe de movimento: uma repetição de um exercício como dado. O motor (`engine/motion/`) avalia o clipe em u ∈ [0, 1]
- * (0 = posição inicial, 1 = a outra ponta) e o tempo da repetição vai e volta: início → fim → início.
+ * Clipe de movimento: uma repetição de um exercício como dado. O motor (`engine/motion/`) avalia o clipe em u ∈ [0, 1]:
+ * u = 0 é a ponta em que os músculos-alvo ficam alongados e u = 1 a ponta encurtada (a concêntrica vai sempre de 0 a 1).
+ * O tempo diz de que ponta a repetição parte e quanto dura cada trecho.
  *
  * Convenções (iguais às do esqueleto): graus; DOF sem sufixo de lado vale para os dois lados; pontos do corpo são dados na
  * pose neutra (mundo, 1,75 m) do lado direito, e o esquerdo sai por espelhamento em X.
@@ -34,6 +35,7 @@ export type Support = z.infer<typeof Support>;
  * - plant: pés no chão (o pé direito fica na transformação neutra; a pose é simétrica, então o esquerdo também).
  * - pin: um ponto do corpo fica preso a um ponto do mundo (assento, banco, degrau) ou segue um caminho em u (barra fixa,
  *   trenó do hack); a raiz gira por `pitch` (graus em X: + = inclina para a frente, −90 = deitado de costas, +90 = de bruços).
+ *   Segmento com lado explícito (`shank_l`: joelho esquerdo no banco) recebe o ponto do próprio lado, sem espelho.
  */
 export const RootSpec = z.discriminatedUnion('mode', [
   z.object({ mode: z.literal('plant') }),
@@ -53,8 +55,10 @@ export type RootSpec = z.infer<typeof RootSpec>;
  * - path: caminho no mundo por quadros-chave (lado direito).
  * - attach: ponto de outro segmento (barra nas costas, barra no quadril).
  * - hang: braço solto na vertical, abaixo do ombro.
+ * - plumb: barra no prumo do meio do pé (+ `ahead`, m), rente às pernas: a pegada desce na vertical sobre o meio do pé
+ *   e, onde a coxa ou a canela estão mais à frente, encosta nelas por fora (terra, terra romeno, stiff).
  * - ball: perna com a cabeça dos metatarsos presa num ponto (ou num caminho: plataforma do leg press) e o pé com inclinação
- *   dada (0 = apoiado, + = calcanhar sobe).
+ *   dada (0 = apoiado, + = calcanhar sobe) e abertura `yaw` (graus, + = ponta para fora; o joelho acompanha a ponta).
  */
 export const ReachTarget = z.discriminatedUnion('kind', [
   z.object({
@@ -63,7 +67,8 @@ export const ReachTarget = z.discriminatedUnion('kind', [
   }),
   z.object({ kind: z.literal('attach'), segment: z.string(), point: Vec3 }),
   z.object({ kind: z.literal('hang') }),
-  z.object({ kind: z.literal('ball'), point: Place, pitch: Angle.optional() }),
+  z.object({ kind: z.literal('plumb'), ahead: z.number().optional() }),
+  z.object({ kind: z.literal('ball'), point: Place, pitch: Angle.optional(), yaw: Angle.optional() }),
 ]);
 export type ReachTarget = z.infer<typeof ReachTarget>;
 
@@ -87,10 +92,14 @@ export const Balance = z.object({
 });
 
 export const Equipment = z.discriminatedUnion('kind', [
-  /** Barra entre as duas pegadas. */
+  /**
+   * Barra entre as duas pegadas. `bar`: olímpica (2,2 m, mangas e anilhas; padrão com anilhas), curta (barra fixa de
+   * rosca, padrão sem anilhas) ou fixa (barra de pegada da estação de barra fixa, com montantes até o chão).
+   */
   z.object({
     kind: z.literal('barbell'),
     plates: z.number().int().min(0).max(4),
+    bar: z.enum(['olympic', 'curl', 'fixed']).optional(),
   }),
   /** Halter em cada mão, ou só na direita (`hands: 'r'`). */
   z.object({ kind: z.literal('dumbbell'), hands: z.enum(['both', 'r']).optional() }),
@@ -116,6 +125,10 @@ export const Equipment = z.discriminatedUnion('kind', [
     pitch: z.number().optional(),
     segment: z.string().optional(),
   }),
+  /** Trilhos da máquina (hack, leg press): dois tubos paralelos de `from` a `to` (mundo), afastados `gauge` (m). */
+  z.object({ kind: z.literal('rail'), from: Vec3, to: Vec3, gauge: z.number().positive() }),
+  /** Braço pendular (pêndulo): tubo do eixo fixo `pivot` até um ponto de segmento (pose neutra), que anda com ele. */
+  z.object({ kind: z.literal('swing'), pivot: Vec3, segment: z.string(), point: Vec3 }),
   /**
    * Rolo preso a um segmento (ponto na pose neutra). `lever`: o braço da máquina gira na articulação proximal do
    * segmento (joelho, no rolo da perna). `both`: um rolo de cada lado (ombreiras).
@@ -154,13 +167,16 @@ export const Load = z.discriminatedUnion('kind', [
 ]);
 export type Load = z.infer<typeof Load>;
 
-/** Segundos: ir até u = 1, pausa, voltar, pausa. `concentric` diz qual perna é a concêntrica. */
+/**
+ * Segundos de cada trecho: excêntrica (u 1 → 0), pausa alongado (u = 0), concêntrica (u 0 → 1), pausa encurtado (u = 1).
+ * `start`: ponta de onde o exercício parte (rosca e puxada partem alongadas; agachamento e supino, encurtadas).
+ */
 export const Tempo = z.object({
-  out: z.number().positive(),
-  hold: z.number().min(0),
-  back: z.number().positive(),
-  rest: z.number().min(0),
-  concentric: z.enum(['out', 'back']),
+  eccentric: z.number().positive(),
+  stretched: z.number().min(0),
+  concentric: z.number().positive(),
+  shortened: z.number().min(0),
+  start: z.enum(['stretched', 'shortened']),
 });
 export type Tempo = z.infer<typeof Tempo>;
 

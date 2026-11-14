@@ -187,3 +187,43 @@ export function solveTwoBone(
     clipped,
   };
 }
+
+/** Matriz (linha a linha) de um quatérnio unitário. */
+function quatToMat3(q: Quat): Mat3 {
+  const [x, y, z, w] = q;
+  return [
+    1 - 2 * (y * y + z * z),
+    2 * (x * y - z * w),
+    2 * (x * z + y * w),
+    2 * (x * y + z * w),
+    1 - 2 * (x * x + z * z),
+    2 * (y * z - x * w),
+    2 * (x * z - y * w),
+    2 * (y * z + x * w),
+    1 - 2 * (x * x + y * y),
+  ];
+}
+
+/**
+ * Rotação local (no frame do pai) → ângulos dos três DOFs do segmento, na ordem X, Z, Y (pé: dorsiflexão, inversão,
+ * adução). Dos dois ramos de Euler fica o que respeita a amplitude; o resultado é preso nela.
+ */
+export function anglesFromRotation(seg: EngineSegment, q: Quat): Record<string, number> {
+  const axes = seg.dofs.map((d) => (d.axis[0] === 1 ? 'x' : d.axis[1] === 1 ? 'y' : 'z')).join('');
+  if (axes !== 'xzy') throw new Error(`Segmento ${seg.id} fora do formato XZY`);
+  const [dx, dz, dy] = seg.dofs as readonly [EngineDof, EngineDof, EngineDof];
+  let best: { a: [number, number, number]; over: number } | null = null;
+  for (const [al, be, ga] of eulerXZY(quatToMat3(q))) {
+    const fx = fit(al / dx.sign, dx),
+      fz = fit(be / dz.sign, dz),
+      fy = fit(ga / dy.sign, dy);
+    const over = fx.over + fz.over + fy.over;
+    if (!best || over < best.over) best = { a: [fx.v, fz.v, fy.v], over };
+  }
+  const a = best?.a ?? [0, 0, 0];
+  return {
+    [dx.id]: clamp(a[0], dx.min, dx.max),
+    [dz.id]: clamp(a[1], dz.min, dz.max),
+    [dy.id]: clamp(a[2], dy.min, dy.max),
+  };
+}

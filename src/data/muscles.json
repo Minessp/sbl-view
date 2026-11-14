@@ -3384,6 +3384,10 @@
    {
     "movement": "ankle_inversion",
     "role": "principal",
+    "rangeDeg": [
+     -15,
+     10
+    ],
     "evidence": {
      "source": [
       {
@@ -3391,7 +3395,8 @@
        "locator": "Cap. 11, tabelas de músculos"
       }
      ],
-     "confidence": "provavel"
+     "confidence": "provavel",
+     "note": "Faixa conferida: com o pé já invertido além de 10°, o tendão atrás do maléolo medial encosta n eixo simplificado da inversão do modelo (ântero-posterior, pelo centro do tornozelo) e o braço de momento cai abaixo de 2 mm."
     }
    },
    {
@@ -3462,6 +3467,10 @@
    {
     "movement": "ankle_eversion",
     "role": "principal",
+    "parts": [
+     "fibularis_longus",
+     "fibularis_tertius"
+    ],
     "evidence": {
      "source": [
       {
@@ -3470,6 +3479,27 @@
       }
      ],
      "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "ankle_eversion",
+    "role": "principal",
+    "parts": [
+     "fibularis_brevis"
+    ],
+    "rangeDeg": [
+     10,
+     30
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Faixa conferida: a linha central do fibular curto contorna o maléolo lateral rente a o eixo simplificado da inversão do modelo (ântero-posterior, pelo centro do tornozelo); só com o pé invertido o braço de momento passa de 2 mm."
     }
    },
    {
@@ -4921,6 +4951,10 @@
    {
     "movement": "ankle_inversion",
     "role": "secundaria",
+    "rangeDeg": [
+     5,
+     30
+    ],
     "evidence": {
      "source": [
       {
@@ -4928,7 +4962,8 @@
        "locator": "Cap. 11, tabelas de músculos"
       }
      ],
-     "confidence": "provavel"
+     "confidence": "provavel",
+     "note": "Faixa conferida: com o pé evertido o tendão passa sobre o eixo simplificado da inversão do modelo (ântero-posterior, pelo centro do tornozelo); o braço de momento cai abaixo de 2 mm."
     }
    }
   ],
@@ -5081,6 +5116,7 @@
    {
     "movement": "ankle_inversion",
     "role": "secundaria",
+    "unmodeled": "O tendão passa atrás do maléolo medial quase sobre o eixo simplificado da inversão do modelo (ântero-posterior, pelo centro do tornozelo): o braço de momento fica abaixo de 2 mm e troca de sinal com o pé invertido.",
     "evidence": {
      "source": [
       {

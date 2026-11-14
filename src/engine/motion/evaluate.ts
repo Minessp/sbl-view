@@ -25,11 +25,12 @@ import {
   rotate,
   scale,
   sub,
+  type Quat,
   type Transform,
   type Vec3,
 } from '../math/vec';
 import { centerOfMass, type PointMass } from '../statics/mass';
-import { chainOf, solveTwoBone, type TwoBoneChain } from './ik';
+import { anglesFromRotation, chainOf, solveTwoBone, type TwoBoneChain } from './ik';
 import { evalCurve, evalPath, makeCurve, makePath, type Curve, type PathCurve } from './keys';
 
 /** Centro da palma na pose neutra (mundo, lado direito): 45% do punho à ponta da mão, um pouco à frente. */
@@ -60,6 +61,7 @@ interface CompiledReach {
   /** Alvo do pé (perna). */
   readonly ball: CompiledPlace | null;
   readonly pitch: Curve | null;
+  readonly yaw: Curve | null;
 }
 
 export interface CompiledClip {
@@ -75,6 +77,8 @@ export interface CompiledClip {
   /** Pegada no frame da mão (por lado). */
   readonly grip: Readonly<Record<'r' | 'l', Vec3>>;
   readonly masses: readonly PointMass[];
+  /** Barra segura pelas duas mãos: pegada supinada (palmas para cima/à frente) ou pronada, por lado. Sem barra: null. */
+  readonly bar: Readonly<Record<'r' | 'l', boolean>> | null;
 }
 
 /** Nome de DOF do dado → ids do esqueleto (sem lado = os dois). */
@@ -114,9 +118,12 @@ export function compileClip(clip: MotionClip, sk: EngineSkeleton, masses: readon
       path: r.target.kind === 'path' ? makePath(r.target.keys) : null,
       ball: r.target.kind === 'ball' ? placeOf(r.target.point) : null,
       pitch: r.target.kind === 'ball' ? curveOf(r.target.pitch ?? 0) : null,
+      yaw: r.target.kind === 'ball' && r.target.yaw !== undefined ? curveOf(r.target.yaw) : null,
     };
   };
   const g = clip.grip ?? defaultGrip(sk);
+  const hasBar = clip.equipment.some((e) => e.kind === 'barbell' || (e.kind === 'cable' && e.handle === 'bar' && !e.mirror));
+  const supinated = (s: 'r' | 'l') => (hold[`forearm_pro_${s}`] ?? 0) < 80;
   return {
     clip,
     sk,
@@ -131,7 +138,47 @@ export function compileClip(clip: MotionClip, sk: EngineSkeleton, masses: readon
       l: localOf(sk, 'hand_r', g, 'l').local,
     },
     masses,
+    bar: hasBar ? { r: supinated('r'), l: supinated('l') } : null,
   };
+}
+
+/**
+ * Pegada na barra: a pronação gira a mão até o eixo da palma (do polegar ao mínimo) ficar ao longo da barra. Supinada:
+ * o mínimo aponta para a outra mão (rosca); pronada: para fora (supino, remada). Flexão e desvio do punho ficam como estão.
+ */
+function alignBarGrip(c: CompiledClip, pose: Pose, rad: Record<string, number>): boolean {
+  if (!c.bar) return false;
+  let changed = false;
+  for (const side of ['r', 'l'] as const) {
+    const hand = must(c.sk.byId, `hand_${side}`, 'segmento');
+    const [pro, flex, dev] = hand.dofs;
+    if (!pro || !flex || !dev) continue;
+    const other = side === 'r' ? 'l' : 'r';
+    const g = (s: 'r' | 'l') => pointToWorld(pose, `hand_${s}`, c.grip[s]);
+    const toOther = normalize(sub(g(other), g(side)));
+    const want = c.bar[side] ? toOther : scale(toOther, -1);
+    const forearm = must(pose.world, `forearm_${side}`, 'segmento');
+    const t = rotate(quatConj(forearm.rotation), want);
+    const rest = quatMul(quatFromAxisAngle(flex.axis, (rad[flex.id] ?? 0) * flex.sign), quatFromAxisAngle(dev.axis, (rad[dev.id] ?? 0) * dev.sign));
+    const w = rotate(rest, [side === 'r' ? 1 : -1, 0, 0]);
+    if (Math.hypot(t[0], t[2]) < 0.2) continue;
+    const phi = Math.atan2(t[0], t[2]) - Math.atan2(w[0], w[2]);
+    // Fora da amplitude, fica a ponta que deixa o eixo mais perto do pedido (não a que só passa menos da faixa).
+    let best = rad[pro.id] ?? 0,
+      miss = Infinity;
+    for (const k of [-2, -1, 0, 1, 2]) {
+      const v = Math.min(pro.max, Math.max(pro.min, (phi + k * 2 * Math.PI) / pro.sign));
+      const d = v * pro.sign - phi;
+      const m = Math.abs(Math.atan2(Math.sin(d), Math.cos(d)));
+      if (m < miss - 1e-9) {
+        miss = m;
+        best = v;
+      }
+    }
+    if (Math.abs(best - (rad[pro.id] ?? 0)) > 1e-6) changed = true;
+    rad[pro.id] = best;
+  }
+  return changed;
 }
 
 export type ResolvedEquipment =
@@ -140,7 +187,10 @@ export type ResolvedEquipment =
       readonly center: Vec3;
       readonly axis: Vec3;
       readonly plates: number;
+      readonly bar: 'olympic' | 'curl' | 'fixed';
     }
+  | { readonly kind: 'rail'; readonly from: Vec3; readonly to: Vec3; readonly gauge: number }
+  | { readonly kind: 'swing'; readonly pivot: Vec3; readonly end: Vec3 }
   | { readonly kind: 'dumbbell'; readonly center: Vec3; readonly axis: Vec3 }
   | {
       readonly kind: 'cable';
@@ -224,6 +274,44 @@ function placeRoot(c: CompiledClip, rad: Readonly<Record<string, number>>, u: nu
   };
 }
 
+/** Raio (m) da frente da coxa e da canela até a linha do osso, perto da ponta proximal e da distal (malha, de perfil). */
+const LEG_FRONT = { thigh: [0.085, 0.06], shank: [0.05, 0.035] } as const;
+/** Raio da barra olímpica + folga até a pele. */
+const BAR_CLEAR = 0.02;
+
+/** Frente da perna (z) na altura y: a linha da coxa ou da canela mais o raio da frente. Fora da perna: −∞. */
+function legFront(pose: Pose, side: 'r' | 'l', y: number): number {
+  let z = -Infinity;
+  for (const seg of ['thigh', 'shank'] as const) {
+    const t = must(pose.world, `${seg}_${side}`, 'segmento');
+    const next = must(pose.world, `${seg === 'thigh' ? 'shank' : 'foot'}_${side}`, 'segmento');
+    const a = t.position,
+      b = next.position;
+    if ((y - a[1]) * (y - b[1]) > 0 || Math.abs(a[1] - b[1]) < 1e-6) continue;
+    const k = (y - a[1]) / (b[1] - a[1]);
+    const [r0, r1] = LEG_FRONT[seg];
+    z = Math.max(z, a[2] + (b[2] - a[2]) * k + r0 + (r1 - r0) * k);
+  }
+  return z;
+}
+
+/**
+ * Pegada no prumo: na vertical sobre o meio do pé, à distância do ombro que o braço tem; se a perna estiver mais à
+ * frente nessa altura, a barra encosta nela.
+ */
+function plumbTarget(c: CompiledClip, pose: Pose, side: 'r' | 'l', shoulder: Vec3, reach: number, ahead: number): Vec3 {
+  const ankle = must(pose.world, `foot_${side}`, 'segmento').position;
+  const z0 = ankle[2] + MIDFOOT_AHEAD_OF_ANKLE * (c.sk.stature / 1.75) + ahead;
+  let z = z0,
+    y = shoulder[1] - reach;
+  for (let i = 0; i < 4; i++) {
+    const dz = z - shoulder[2];
+    y = shoulder[1] - Math.sqrt(Math.max(0, reach * reach - dz * dz));
+    z = Math.max(z0, legFront(pose, side, y) + BAR_CLEAR);
+  }
+  return [shoulder[0], y, z];
+}
+
 function solveFrame(c: CompiledClip, u: number, ankleOffset: number) {
   const sk = c.sk;
   const deg: Record<string, number> = { ...c.hold };
@@ -235,12 +323,14 @@ function solveFrame(c: CompiledClip, u: number, ankleOffset: number) {
   let pose = fk();
   let error = 0;
 
-  // ---- Pernas: cabeça dos metatarsos num ponto, pé com a inclinação pedida ----
-  // O eixo do joelho segue o do pé (X); o resto que o pé erra (ele só tem dorsiflexão) volta ao alvo do tornozelo.
+  // ---- Pernas: cabeça dos metatarsos num ponto, pé com a inclinação e a abertura pedidas ----
+  // O eixo do joelho segue o do pé; o pé (dorsiflexão, inversão, adução) gira até a orientação pedida e o que ele erra
+  // (amplitude) volta ao alvo do tornozelo.
   const feet: {
     side: 'r' | 'l';
     ball: Vec3;
-    q: readonly [number, number, number, number];
+    q: Quat;
+    hinge: Vec3;
     chain: TwoBoneChain;
     ankle: Vec3;
     pole: Vec3;
@@ -248,8 +338,12 @@ function solveFrame(c: CompiledClip, u: number, ankleOffset: number) {
   for (const r of c.legs) {
     const tg = r.spec.target;
     if (tg.kind !== 'ball') throw new Error(`Perna só aceita alvo "ball" (${c.clip.id})`);
-    const q = quatFromAxisAngle([1, 0, 0], (r.pitch ? evalCurve(r.pitch, u) : 0) * DEG);
+    const pitchQ = quatFromAxisAngle([1, 0, 0], (r.pitch ? evalCurve(r.pitch, u) : 0) * DEG);
+    const yaw = (r.yaw ? evalCurve(r.yaw, u) : 0) * DEG;
     for (const side of r.sides) {
+      // Abertura: + = ponta do pé para fora (direito para −X, esquerdo para +X).
+      const yawQ = quatFromAxisAngle([0, 1, 0], side === 'r' ? -yaw : yaw);
+      const q = quatMul(yawQ, pitchQ);
       const foot = must(sk.byId, `foot_${side}`, 'segmento');
       const pt = r.ball ? placeAt(r.ball, u) : [0, 0, 0] as Vec3;
       const ball = side === 'l' ? mirrorX(pt) : pt;
@@ -257,6 +351,7 @@ function solveFrame(c: CompiledClip, u: number, ankleOffset: number) {
         side,
         ball,
         q,
+        hinge: rotate(yawQ, [1, 0, 0]),
         chain: r.chains[side],
         ankle: sub(ball, rotate(q, foot.tip)),
         pole: side === 'l' ? mirrorX(r.spec.pole) : r.spec.pole,
@@ -266,19 +361,31 @@ function solveFrame(c: CompiledClip, u: number, ankleOffset: number) {
   const tipOf = (side: 'r' | 'l') => must(sk.byId, `foot_${side}`, 'segmento').tip;
   for (let it = 0; it < (feet.length ? 4 : 0); it++) {
     for (const f of feet) {
-      const res = solveTwoBone(f.chain, pose, must(sk.byId, `foot_${f.side}`, 'segmento').jointOffset, f.ankle, f.pole, rad, [1, 0, 0]);
+      const res = solveTwoBone(f.chain, pose, must(sk.byId, `foot_${f.side}`, 'segmento').jointOffset, f.ankle, f.pole, rad, f.hinge);
       Object.assign(rad, res.angles);
     }
     pose = fk();
     for (const f of feet) {
       const shank = must(pose.world, `shank_${f.side}`, 'segmento');
-      const dof = must(sk.byId, `foot_${f.side}`, 'segmento').dofs[0];
-      if (dof) rad[dof.id] = xAngle(quatMul(quatConj(shank.rotation), f.q)) / dof.sign;
+      Object.assign(rad, anglesFromRotation(must(sk.byId, `foot_${f.side}`, 'segmento'), quatMul(quatConj(shank.rotation), f.q)));
     }
     pose = fk();
     for (const f of feet) f.ankle = add(f.ankle, sub(f.ball, pointToWorld(pose, `foot_${f.side}`, tipOf(f.side))));
   }
   for (const f of feet) error = Math.max(error, distance(pointToWorld(pose, `foot_${f.side}`, tipOf(f.side)), f.ball));
+
+  // ---- Pés plantados sem alvo: a planta assenta no chão (sem rolar com a abdução), a ponta segue a rotação do quadril ----
+  if (c.clip.root.mode === 'plant') {
+    const free = (['r', 'l'] as const).filter((s) => !feet.some((f) => f.side === s));
+    for (const side of free) {
+      const foot = must(pose.world, `foot_${side}`, 'segmento');
+      const fwd = rotate(foot.rotation, [0, 0, 1]);
+      const flat = quatFromAxisAngle([0, 1, 0], Math.atan2(fwd[0], fwd[2]));
+      const shank = must(pose.world, `shank_${side}`, 'segmento');
+      Object.assign(rad, anglesFromRotation(must(sk.byId, `foot_${side}`, 'segmento'), quatMul(quatConj(shank.rotation), flat)));
+    }
+    if (free.length) pose = fk();
+  }
 
   // ---- Braços: duas passadas (a cintura escapular acompanha a elevação e o IK refaz) ----
   const gripWorld = (p: Pose, side: 'r' | 'l') => pointToWorld(p, `hand_${side}`, c.grip[side]);
@@ -298,6 +405,7 @@ function solveFrame(c: CompiledClip, u: number, ankleOffset: number) {
             const a = localOf(sk, tg.segment, tg.point, side);
             target = pointToWorld(pose, a.segment, a.local);
           } else if (tg.kind === 'hang') target = sub(shoulder, [0, distance(shoulder, gripWorld(pose, side)), 0]);
+          else if (tg.kind === 'plumb') target = plumbTarget(c, pose, side, shoulder, distance(shoulder, gripWorld(pose, side)), tg.ahead ?? 0);
           else throw new Error(`Braço não aceita alvo "${tg.kind}" (${c.clip.id})`);
           const forearm = must(pose.world, `forearm_${side}`, 'segmento');
           const endLocal = rotate(quatConj(forearm.rotation), sub(gripWorld(pose, side), forearm.position));
@@ -318,9 +426,13 @@ function solveFrame(c: CompiledClip, u: number, ankleOffset: number) {
         rad[`scap_uprot_${side}`] = (girdle0[`scap_uprot_${side}`] ?? 0) + extra;
       }
       pose = fk();
+      if (alignBarGrip(c, pose, rad)) pose = fk();
     }
     for (const t of targets) error = Math.max(error, distance(gripWorld(pose, t.side), t.target));
   }
+
+  // Braços só por FK (rosca em pé): a barra segue as mãos, a pegada alinha uma vez.
+  if (!c.arms.length && alignBarGrip(c, pose, rad)) pose = fk();
 
   const grips = { r: gripWorld(pose, 'r'), l: gripWorld(pose, 'l') };
   return { deg: toDeg(rad), rad, pose, grips, error };
@@ -338,8 +450,15 @@ function resolveEquipment(c: CompiledClip, pose: Pose, grips: Readonly<Record<'r
           center: lerp(grips.r, grips.l, 0.5),
           axis: normalize(sub(grips.l, grips.r)),
           plates: eq.plates,
+          bar: eq.bar ?? (eq.plates > 0 ? 'olympic' : 'curl'),
         },
       ];
+    case 'rail':
+      return [{ kind: 'rail', from: eq.from, to: eq.to, gauge: eq.gauge }];
+    case 'swing': {
+      const a = localOf(sk, eq.segment, eq.point, 'r');
+      return [{ kind: 'swing', pivot: eq.pivot, end: pointToWorld(pose, a.segment, a.local) }];
+    }
     case 'dumbbell':
       return (eq.hands === 'r' ? (['r'] as const) : (['r', 'l'] as const)).map((s) => ({
         kind: 'dumbbell',
@@ -511,7 +630,8 @@ function loadOf(c: CompiledClip, u: number, fr: ReturnType<typeof solveFrame>, e
     const next = solveFrame(c, u + du, 0);
     const vel = scale(sub(pointOf(next.pose, next.grips), here), Math.sign(du));
     if (length(vel) < 1e-6) return null;
-    return { point: here, dir: normalize(scale(vel, c.clip.tempo.concentric === 'out' ? -1 : 1)) };
+    // A concêntrica é sempre u crescente: a carga aponta contra.
+    return { point: here, dir: normalize(scale(vel, -1)) };
   }
   // Alavanca: perpendicular ao braço da máquina (no plano sagital), contra a fase concêntrica.
   const pad = eq.find((e) => e.kind === 'pad' && e.pivot);
@@ -526,10 +646,9 @@ function loadOf(c: CompiledClip, u: number, fr: ReturnType<typeof solveFrame>, e
   if (pe && pe.kind === 'pad') {
     const a = localOf(c.sk, pe.segment, pe.point, 'r');
     const vel = scale(sub(pointToWorld(next.pose, a.segment, a.local), center), Math.sign(du));
+    // A concêntrica é u crescente: a resistência vai contra esse sentido.
     const towardOut = vel[0] * dir[0] + vel[1] * dir[1] + vel[2] * dir[2] > 0;
-    // concêntrica em "out": resistência contra o sentido de u crescente.
-    const against = c.clip.tempo.concentric === 'out' ? towardOut : !towardOut;
-    if (against) dir = scale(dir, -1);
+    if (towardOut) dir = scale(dir, -1);
   }
   return length(dir) > 0 ? { point: center, dir } : null;
 }

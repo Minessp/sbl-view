@@ -30,6 +30,13 @@
   --c-body-tendon: #e6ddcc;
   --c-body-bone: #e4dac1;
   --c-body-skin: #caa188;
+  /* Equipamento (WebGL): cromo da barra, aço pintado do quadro, ferro das anilhas, estofado, borracha, cabo. */
+  --c-gear-chrome: #c4cad1;
+  --c-gear-steel: #30363d;
+  --c-gear-iron: #1f2226;
+  --c-gear-pad: #2c2725;
+  --c-gear-rubber: #17181a;
+  --c-gear-cable: #8e949b;
 
   color-scheme: dark;
 }
@@ -54,6 +61,12 @@
   --c-body-tendon: #e6ddcc;
   --c-body-bone: #e8ddc4;
   --c-body-skin: #d1a78e;
+  --c-gear-chrome: #b6bcc4;
+  --c-gear-steel: #3b4149;
+  --c-gear-iron: #2a2d31;
+  --c-gear-pad: #3b3431;
+  --c-gear-rubber: #232528;
+  --c-gear-cable: #6c7279;
 
   color-scheme: light;
 }

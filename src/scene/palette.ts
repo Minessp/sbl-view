@@ -19,6 +19,12 @@ const KEYS = [
   'body-tendon',
   'body-bone',
   'body-skin',
+  'gear-chrome',
+  'gear-steel',
+  'gear-iron',
+  'gear-pad',
+  'gear-rubber',
+  'gear-cable',
 ] as const;
 
 export type PaletteKey = (typeof KEYS)[number];

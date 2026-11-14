@@ -429,8 +429,8 @@ export function squatClip(p: SquatParams, ctx: MoldContext): Base {
     },
   );
   const us = Array.from({ length: 9 }, (_, i) => i / 8);
-  // u é a profundidade (0 em pé, 1 no fundo); o solver usa u como fração da profundidade.
-  const frames = us.map((u) => ({ u, f: solve(u) }));
+  // O solver usa d como fração da profundidade (0 em pé, 1 no fundo); no clipe u = 0 é o fundo (alongado).
+  const frames = us.map((d) => ({ u: 1 - d, f: solve(d) })).reverse();
   const track = (dof: string, key: string) => ({
     dof,
     keys: frames.map(({ u, f }) => ({

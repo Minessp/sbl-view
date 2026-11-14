@@ -97,40 +97,76 @@ export const evalPath = (c: PathCurve, u: number): Vec3 => [evalCurve(c.axes[0],
 
 // ---- Relógio da repetição ----
 
+/**
+ * Tempo da repetição, em segundos. O clipe vai de u = 0 (alvos alongados) a u = 1 (alvos encurtados): a concêntrica é
+ * sempre 0 → 1 e a excêntrica 1 → 0. `start` diz de que ponta o exercício parte (rosca e puxada partem alongadas;
+ * agachamento e supino, encurtadas).
+ */
 export interface TempoSpec {
-  readonly out: number;
-  readonly hold: number;
-  readonly back: number;
-  readonly rest: number;
-  readonly concentric: 'out' | 'back';
+  readonly eccentric: number;
+  readonly stretched: number;
+  readonly concentric: number;
+  readonly shortened: number;
+  readonly start: 'stretched' | 'shortened';
 }
 
-export type RepPhase = 'out' | 'hold' | 'back' | 'rest';
+/** Fase: as duas que movem e as duas pausas, pela ponta em que o corpo para. */
+export type RepPhase = 'concentric' | 'eccentric' | 'stretched' | 'shortened';
 
-export const cycleLength = (t: TempoSpec) => t.out + t.hold + t.back + t.rest;
+export interface RepLeg {
+  readonly phase: RepPhase;
+  readonly dur: number;
+  /** u no começo e no fim do trecho. */
+  readonly from: number;
+  readonly to: number;
+}
+
+/** Trechos da repetição na ordem em que acontecem. */
+export function repLegs(t: TempoSpec): readonly RepLeg[] {
+  const con: RepLeg = { phase: 'concentric', dur: t.concentric, from: 0, to: 1 };
+  const short: RepLeg = { phase: 'shortened', dur: t.shortened, from: 1, to: 1 };
+  const ecc: RepLeg = { phase: 'eccentric', dur: t.eccentric, from: 1, to: 0 };
+  const long: RepLeg = { phase: 'stretched', dur: t.stretched, from: 0, to: 0 };
+  return t.start === 'stretched' ? [con, short, ecc, long] : [ecc, long, con, short];
+}
+
+export const cycleLength = (t: TempoSpec) => t.eccentric + t.stretched + t.concentric + t.shortened;
 
 /** Suave nas pontas (velocidade zero ao parar e ao virar). */
 const ease = (x: number) => x * x * (3 - 2 * x);
 
-/**
- * Tempo (s) dentro da repetição → u e fase. Fora de [0, ciclo) dá a volta.
- * Ordem: sai de u = 0 até 1 (`out`), pausa (`hold`), volta (`back`), pausa (`rest`).
- */
-export function repAt(t: TempoSpec, time: number): { u: number; phase: RepPhase; concentric: boolean } {
+/** Tempo (s) dentro da repetição → u e fase. Fora de [0, ciclo) dá a volta. */
+export function repAt(t: TempoSpec, time: number): { u: number; phase: RepPhase } {
   const T = cycleLength(t);
-  const s = ((time % T) + T) % T;
-  if (s < t.out)
-    return {
-      u: ease(s / t.out),
-      phase: 'out',
-      concentric: t.concentric === 'out',
-    };
-  if (s < t.out + t.hold) return { u: 1, phase: 'hold', concentric: false };
-  if (s < t.out + t.hold + t.back)
-    return {
-      u: 1 - ease((s - t.out - t.hold) / t.back),
-      phase: 'back',
-      concentric: t.concentric === 'back',
-    };
-  return { u: 0, phase: 'rest', concentric: false };
+  let s = ((time % T) + T) % T;
+  const legs = repLegs(t);
+  for (let i = 0; i < legs.length; i++) {
+    const leg = legs[i] as RepLeg;
+    if (s < leg.dur || i === legs.length - 1) {
+      const k = leg.dur > 0 ? Math.min(1, s / leg.dur) : 1;
+      return { u: leg.from + (leg.to - leg.from) * ease(k), phase: leg.phase };
+    }
+    s -= leg.dur;
+  }
+  return { u: 0, phase: 'stretched' };
+}
+
+/** Instante (s) em que o relógio passa por u no trecho dado (inversa do suave por bisseção). */
+export function timeAtU(t: TempoSpec, u: number, phase: 'concentric' | 'eccentric' = 'concentric'): number {
+  let start = 0;
+  for (const leg of repLegs(t)) {
+    if (leg.phase === phase) {
+      const want = phase === 'concentric' ? u : 1 - u;
+      let lo = 0,
+        hi = 1;
+      for (let i = 0; i < 30; i++) {
+        const mid = (lo + hi) / 2;
+        if (ease(mid) < want) lo = mid;
+        else hi = mid;
+      }
+      return start + ((lo + hi) / 2) * leg.dur;
+    }
+    start += leg.dur;
+  }
+  return 0;
 }
