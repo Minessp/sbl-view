@@ -22,10 +22,8 @@ export interface HeroOrbit {
   target: readonly [number, number, number];
 }
 
-/** Ponteiro da lente em coordenadas da janela (px de CSS). `on` = dentro da vista. `scale` multiplica o raio (piloto). */
-export const lens = { x: 0, y: 0, on: false, scale: 1 };
-/** Giro extra da câmera do piloto automático (rad), somado ao do usuário e devolvido a zero quando ele assume. */
-export const auto = { yaw: 0, running: false };
+/** Ponteiro da lente em coordenadas da janela (px de CSS). `on` = dentro da vista. */
+export const lens = { x: 0, y: 0, on: false };
 /** Última órbita desenhada (passa para o Atlas na transição). */
 export const heroCamera: { orbit: HeroOrbit | null } = { orbit: null };
 

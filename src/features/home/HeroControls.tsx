@@ -12,7 +12,6 @@ import { t } from '@/i18n';
 import { useStage } from '@/scene/stageStore';
 import { heroCamera, lens, samePick, useHome, type HomePick } from './store';
 import { explodeAt, LENS_DEPTHS, lensRadius, type LensDepth } from './timeline';
-import { startAutopilot } from './autopilot';
 import { lightTitle } from './titleLight';
 
 const ORBIT_K = 0.0085;
@@ -44,11 +43,10 @@ export default function HeroControls({ slot }: { slot: HTMLElement }) {
   useEffect(() => {
     let raf = 0;
     const g = { id: -1, sx: 0, sy: 0, x: 0, y: 0, moved: false };
-    /** Lente e rótulo no ponto (px da janela); `scale` multiplica o raio do anel (piloto automático). */
-    const place = (x: number, y: number, scale = 1) => {
+    /** Lente e rótulo no ponto (px da janela). */
+    const place = (x: number, y: number) => {
       lens.x = x;
       lens.y = y;
-      if (ring.current) ring.current.style.setProperty('--k', scale.toFixed(3));
       if (ring.current) ring.current.dataset.on = String(lens.on && explodeAt(useStage.getState().progress) < 0.02);
       const tr = `translate(${x.toFixed(0)}px, ${y.toFixed(0)}px)`;
       if (ring.current) ring.current.style.transform = tr;
@@ -86,27 +84,12 @@ export default function HeroControls({ slot }: { slot: HTMLElement }) {
       tip.current?.style.setProperty('--r', r);
     };
 
-    const pilot = startAutopilot({
-      slot,
-      place: (x, y, k) => {
-        sizeRing();
-        place(x, y, k);
-      },
-      showRing: (on) => {
-        if (ring.current) ring.current.dataset.auto = String(on);
-      },
-      pickAt,
-    });
-    const takeOver = () => pilot.yield();
-
     const down = (e: PointerEvent) => {
-      takeOver();
       if (e.pointerType === 'mouse' && e.button !== 0) return;
       slot.setPointerCapture(e.pointerId);
       Object.assign(g, { id: e.pointerId, sx: e.clientX, sy: e.clientY, x: e.clientX, y: e.clientY, moved: false });
     };
     const move = (e: PointerEvent) => {
-      takeOver();
       if (g.id === e.pointerId) {
         if (!g.moved && Math.hypot(e.clientX - g.sx, e.clientY - g.sy) > TAP_PX) {
           g.moved = true;
@@ -167,7 +150,6 @@ export default function HeroControls({ slot }: { slot: HTMLElement }) {
       return { x: r.left + r.width * (r.width > r.height * 1.15 ? 0.66 : 0.5), y: r.top + r.height * 0.45 };
     };
     const focus = () => {
-      takeOver();
       if (!slot.matches(':focus-visible')) return;
       const c = center();
       sizeRing();
@@ -183,7 +165,6 @@ export default function HeroControls({ slot }: { slot: HTMLElement }) {
       useHome.getState().kick();
     };
     const key = (e: KeyboardEvent) => {
-      takeOver();
       const st = useHome.getState();
       const c = center();
       let handled = true;
@@ -204,9 +185,6 @@ export default function HeroControls({ slot }: { slot: HTMLElement }) {
       // A cena precisa de um quadro com a vista nova antes de escolher.
       requestAnimationFrame(() => requestAnimationFrame(() => hoverAt(c.x, c.y)));
     };
-    // Qualquer toque ou tecla na página também assume (botões de profundidade, entradas); ler o texto com o mouse, não.
-    window.addEventListener('pointerdown', takeOver, { passive: true });
-    window.addEventListener('keydown', takeOver);
     slot.addEventListener('pointerdown', down);
     slot.addEventListener('pointermove', move);
     slot.addEventListener('pointerup', up);
@@ -216,9 +194,6 @@ export default function HeroControls({ slot }: { slot: HTMLElement }) {
     slot.addEventListener('blur', blur);
     slot.addEventListener('keydown', key);
     return () => {
-      pilot.dispose();
-      window.removeEventListener('pointerdown', takeOver);
-      window.removeEventListener('keydown', takeOver);
       cancelAnimationFrame(raf);
       lens.on = false;
       slot.removeEventListener('pointerdown', down);
