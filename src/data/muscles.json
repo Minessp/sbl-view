@@ -52,6 +52,7 @@
    {
     "movement": "hip_abduction",
     "role": "secundaria",
+    "unmodeled": "Só as fibras superiores abduzem; a linha central do músculo inteiro passa abaixo do eixo e o modelo dá adução.",
     "evidence": {
      "source": [
       {
@@ -137,6 +138,7 @@
    {
     "movement": "hip_internal_rotation",
     "role": "secundaria",
+    "unmodeled": "Só as fibras anteriores giram para dentro; a linha central do músculo inteiro dá braço de rotação externa.",
     "evidence": {
      "source": [
       {
@@ -719,6 +721,19 @@
     "parts": [
      "biceps_femoris_long"
     ]
+   },
+   {
+    "movement": "knee_external_rotation",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
    }
   ],
   "parts": [
@@ -833,6 +848,19 @@
      ],
      "confidence": "estabelecido"
     }
+   },
+   {
+    "movement": "knee_internal_rotation",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
    }
   ],
   "parts": [
@@ -922,6 +950,19 @@
      0,
      110
     ]
+   },
+   {
+    "movement": "knee_internal_rotation",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
    }
   ],
   "parts": [
@@ -1224,6 +1265,32 @@
      ],
      "confidence": "provavel"
     }
+   },
+   {
+    "movement": "abdominal_compression",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "expiration",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
    }
   ],
   "parts": [
@@ -1255,7 +1322,7 @@
   },
   "actions": [
    {
-    "movement": "trunk_rotation",
+    "movement": "trunk_rotation_opposite",
     "role": "principal",
     "evidence": {
      "source": [
@@ -1265,8 +1332,12 @@
       }
      ],
      "confidence": "provavel",
-     "note": "Gira o tronco para o lado oposto."
-    }
+     "note": "Gira o tronco para o lado oposto. Modelo: com o tronco já girado mais de 10° para o lado oposto a linha central perde o braço."
+    },
+    "rangeDeg": [
+     -30,
+     10
+    ]
    },
    {
     "movement": "trunk_lateral_flexion",
@@ -1283,6 +1354,32 @@
    },
    {
     "movement": "trunk_flexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "abdominal_compression",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "expiration",
     "role": "secundaria",
     "evidence": {
      "source": [
@@ -1343,6 +1440,29 @@
    {
     "movement": "trunk_lateral_flexion",
     "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Modelo: com o tronco inclinado para o outro lado além de 15° a linha do longuíssimo passa sobre o eixo."
+    },
+    "parts": [
+     "iliocostalis",
+     "longissimus"
+    ],
+    "rangeDeg": [
+     -15,
+     25
+    ]
+   },
+   {
+    "movement": "neck_extension",
+    "role": "secundaria",
+    "unmodeled": "O caminho do modelo segue só a porção lombar e torácica (primeira malha da parte); a porção cervical não entra.",
     "evidence": {
      "source": [
       {
@@ -1436,12 +1556,18 @@
        "refId": "holzbaur2005"
       }
      ],
-     "confidence": "estabelecido"
-    }
+     "confidence": "estabelecido",
+     "note": "Modelo: com o braço cruzado à frente do corpo a linha passa sobre o eixo."
+    },
+    "rangeDeg": [
+     0,
+     150
+    ]
    },
    {
     "movement": "shoulder_internal_rotation",
     "role": "secundaria",
+    "unmodeled": "A linha central do modelo passa quase sobre o eixo longo do úmero e dá braço de rotação externa pequeno.",
     "evidence": {
      "source": [
       {
@@ -1539,6 +1665,7 @@
      "trapezius_sup",
      "trapezius_inf"
     ],
+    "unmodeled": "As fibras superiores giram a escápula pela elevação da clavícula, e as inferiores puxam a raiz da espinha: no modelo a rotação superior é só na acromioclavicular, que as duas linhas quase não cruzam.",
     "evidence": {
      "source": [
       {
@@ -1564,6 +1691,43 @@
      ],
      "confidence": "provavel"
     }
+   },
+   {
+    "movement": "neck_lateral_flexion",
+    "role": "secundaria",
+    "parts": [
+     "trapezius_sup"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "neck_rotation_opposite",
+    "role": "secundaria",
+    "parts": [
+     "trapezius_sup"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Modelo: com a cabeça já girada mais de 30° para o lado oposto a linha perde o braço."
+    },
+    "rangeDeg": [
+     -60,
+     30
+    ]
    }
   ],
   "parts": [
@@ -1621,8 +1785,13 @@
        "refId": "holzbaur2005"
       }
      ],
-     "confidence": "estabelecido"
-    }
+     "confidence": "estabelecido",
+     "note": "Modelo: com o braço já cruzado à frente a linha perde o braço."
+    },
+    "rangeDeg": [
+     0,
+     90
+    ]
    },
    {
     "movement": "shoulder_adduction",
@@ -1637,8 +1806,13 @@
        "refId": "holzbaur2005"
       }
      ],
-     "confidence": "estabelecido"
-    }
+     "confidence": "estabelecido",
+     "note": "Modelo: com o braço cruzado à frente do corpo a linha passa sobre o eixo; acima de 90° a parte clavicular vira abdutora (inversão da ação conhecida)."
+    },
+    "rangeDeg": [
+     -10,
+     90
+    ]
    },
    {
     "movement": "shoulder_internal_rotation",
@@ -1653,8 +1827,13 @@
        "refId": "holzbaur2005"
       }
      ],
-     "confidence": "estabelecido"
-    }
+     "confidence": "estabelecido",
+     "note": "Modelo: além de 30° de rotação interna a linha passa sobre o eixo."
+    },
+    "rangeDeg": [
+     -60,
+     30
+    ]
    },
    {
     "movement": "shoulder_flexion",
@@ -1765,8 +1944,12 @@
       }
      ],
      "confidence": "estabelecido",
-     "note": "Parte acromial."
-    }
+     "note": "Parte acromial. Modelo: acima de 90° a linha central passa sobre o centro da cabeça do úmero."
+    },
+    "rangeDeg": [
+     -20,
+     90
+    ]
    },
    {
     "movement": "shoulder_flexion",
@@ -1832,8 +2015,13 @@
        "refId": "holzbaur2005"
       }
      ],
-     "confidence": "provavel"
-    }
+     "confidence": "provavel",
+     "note": "Modelo: com o braço à frente ou cruzado a linha passa sobre o eixo."
+    },
+    "rangeDeg": [
+     20,
+     90
+    ]
    },
    {
     "movement": "shoulder_internal_rotation",
@@ -2306,6 +2494,59 @@
      -20,
      50
     ]
+   },
+   {
+    "movement": "wrist_radial_deviation",
+    "role": "secundaria",
+    "parts": [
+     "flexor_carpi_radialis"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Modelo: com o punho em desvio ulnar além de 5° a linha passa sobre o eixo."
+    },
+    "rangeDeg": [
+     -5,
+     15
+    ]
+   },
+   {
+    "movement": "wrist_ulnar_deviation",
+    "role": "principal",
+    "parts": [
+     "flexor_carpi_ulnaris"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "finger_flexion",
+    "role": "principal",
+    "parts": [
+     "flexor_digitorum_superficialis"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
    }
   ],
   "parts": [
@@ -2377,6 +2618,54 @@
      -40,
      -10
     ]
+   },
+   {
+    "movement": "wrist_radial_deviation",
+    "role": "principal",
+    "parts": [
+     "extensor_carpi_radialis"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "wrist_ulnar_deviation",
+    "role": "principal",
+    "parts": [
+     "extensor_carpi_ulnaris"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "finger_extension",
+    "role": "principal",
+    "parts": [
+     "extensor_digitorum"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
    }
   ],
   "parts": [
@@ -2437,7 +2726,7 @@
     }
    },
    {
-    "movement": "neck_rotation",
+    "movement": "neck_rotation_opposite",
     "role": "principal",
     "evidence": {
      "source": [
@@ -2447,7 +2736,24 @@
       }
      ],
      "confidence": "provavel",
-     "note": "Gira a cabeça para o lado oposto."
+     "note": "Gira a cabeça para o lado oposto. Modelo: com a cabeça já girada mais de 30° para o lado oposto a linha perde o braço."
+    },
+    "rangeDeg": [
+     -60,
+     30
+    ]
+   },
+   {
+    "movement": "neck_lateral_flexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
     }
    }
   ],
@@ -2503,8 +2809,12 @@
       }
      ],
      "confidence": "provavel",
-     "note": "Fibras anteriores."
-    }
+     "note": "Fibras anteriores. Modelo: só com o quadril em rotação externa; de 0° em diante a linha central do músculo inteiro fica atrás do eixo."
+    },
+    "rangeDeg": [
+     -40,
+     -10
+    ]
    }
   ],
   "parts": [
@@ -2571,8 +2881,13 @@
        "locator": "Cap. 11, tabelas de músculos"
       }
      ],
-     "confidence": "provavel"
-    }
+     "confidence": "provavel",
+     "note": "Modelo: a partir de 10° de rotação interna a linha passa sobre o eixo."
+    },
+    "rangeDeg": [
+     -40,
+     0
+    ]
    }
   ],
   "parts": [
@@ -2614,7 +2929,13 @@
       }
      ],
      "confidence": "provavel"
-    }
+    },
+    "parts": [
+     "piriformis",
+     "gemelli",
+     "obturator_internus",
+     "quadratus_femoris"
+    ]
    },
    {
     "movement": "hip_abduction",
@@ -2627,7 +2948,53 @@
       }
      ],
      "confidence": "provavel",
-     "note": "Piriforme, com o quadril fletido."
+     "note": "Piriforme, com o quadril fletido. Modelo: gêmeos só abduzem com o quadril já abduzido; o obturador interno abduz com o quadril fletido, fora da pose do teste."
+    },
+    "parts": [
+     "piriformis",
+     "gemelli"
+    ],
+    "rangeDeg": [
+     10,
+     40
+    ]
+   },
+   {
+    "movement": "hip_adduction",
+    "role": "secundaria",
+    "parts": [
+     "quadratus_femoris",
+     "obturator_externus"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "hip_external_rotation",
+    "role": "principal",
+    "parts": [
+     "obturator_externus"
+    ],
+    "rangeDeg": [
+     -40,
+     10
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Modelo: depois de 10° de rotação externa a linha passa sobre o eixo."
     }
    }
   ],
@@ -2652,6 +3019,35 @@
     "name": "Obturador interno",
     "mesh": [
      "obturator_internus"
+    ],
+    "path": [
+     {
+      "s": "pelvis",
+      "p": [
+       -0.0287,
+       0.8648,
+       0.0245
+      ],
+      "note": "Origem na face interna da membrana obturadora (ponta anterior da linha central da malha)."
+     },
+     {
+      "s": "pelvis",
+      "p": [
+       -0.0833,
+       0.8722,
+       -0.0417
+      ],
+      "note": "Polia na incisura isquiática menor (ponta posterior da linha central)."
+     },
+     {
+      "s": "thigh_r",
+      "p": [
+       -0.125,
+       0.872,
+       -0.007
+      ],
+      "note": "Tendão até a face medial do trocânter maior, junto à inserção dos gêmeos (a malha não tem o tendão)."
+     }
     ]
    },
    {
@@ -2659,6 +3055,13 @@
     "name": "Quadrado femoral",
     "mesh": [
      "quadratus_femoris"
+    ]
+   },
+   {
+    "id": "obturator_externus",
+    "name": "Obturador externo",
+    "mesh": [
+     "obturator_externus"
     ]
    }
   ]
@@ -2735,6 +3138,24 @@
        "locator": "Cap. 11, tabelas de músculos"
       }
      ],
+     "confidence": "provavel",
+     "note": "Modelo: com o quadril já em rotação interna além de 20° a linha passa sobre o eixo."
+    },
+    "rangeDeg": [
+     -20,
+     40
+    ]
+   },
+   {
+    "movement": "knee_internal_rotation",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
      "confidence": "provavel"
     }
    }
@@ -2797,6 +3218,19 @@
      20,
      130
     ]
+   },
+   {
+    "movement": "knee_internal_rotation",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
    }
   ],
   "parts": [
@@ -3049,6 +3483,26 @@
       }
      ],
      "confidence": "provavel"
+    },
+    "parts": [
+     "fibularis_longus",
+     "fibularis_brevis"
+    ]
+   },
+   {
+    "movement": "ankle_dorsiflexion",
+    "role": "secundaria",
+    "parts": [
+     "fibularis_tertius"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
     }
    }
   ],
@@ -3112,6 +3566,13 @@
       ]
      }
     ]
+   },
+   {
+    "id": "fibularis_tertius",
+    "name": "Fibular terceiro",
+    "mesh": [
+     "fibularis_tertius"
+    ]
    }
   ]
  },
@@ -3147,8 +3608,9 @@
     }
    },
    {
-    "movement": "trunk_rotation",
+    "movement": "trunk_rotation_same",
     "role": "principal",
+    "unmodeled": "Lâmina larga: uma linha central só não representa as fibras que fazem esta ação.",
     "evidence": {
      "source": [
       {
@@ -3163,6 +3625,32 @@
    {
     "movement": "trunk_lateral_flexion",
     "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "abdominal_compression",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "expiration",
+    "role": "secundaria",
     "evidence": {
      "source": [
       {
@@ -3272,8 +3760,9 @@
     }
    },
    {
-    "movement": "trunk_rotation",
+    "movement": "trunk_rotation_opposite",
     "role": "secundaria",
+    "unmodeled": "O modelo dá braço quase nulo e do lado errado; a rotação pelo multífido é pequena e discutida.",
     "evidence": {
      "source": [
       {
@@ -3355,6 +3844,7 @@
    {
     "movement": "shoulder_internal_rotation",
     "role": "principal",
+    "unmodeled": "A linha central do modelo passa quase sobre o eixo longo do úmero e dá braço de rotação externa.",
     "evidence": {
      "source": [
       {
@@ -3404,8 +3894,13 @@
        "locator": "Cap. 11, tabelas de músculos"
       }
      ],
-     "confidence": "provavel"
-    }
+     "confidence": "provavel",
+     "note": "Modelo: só da posição neutra à protração; já retraída, a linha passa sobre o eixo."
+    },
+    "rangeDeg": [
+     0,
+     20
+    ]
    },
    {
     "movement": "scapular_downward_rotation",
@@ -3430,8 +3925,13 @@
        "locator": "Cap. 11, tabelas de músculos"
       }
      ],
-     "confidence": "provavel"
-    }
+     "confidence": "provavel",
+     "note": "Modelo: só com a clavícula já elevada; perto do neutro a linha do romboide maior passa sobre o eixo."
+    },
+    "rangeDeg": [
+     20,
+     40
+    ]
    }
   ],
   "parts": [
@@ -3479,8 +3979,13 @@
        "locator": "Cap. 11, tabelas de músculos"
       }
      ],
-     "confidence": "provavel"
-    }
+     "confidence": "provavel",
+     "note": "Modelo: só perto do neutro; com a clavícula elevada a inserção no ângulo superior sobe junto e o caminho cruza o eixo."
+    },
+    "rangeDeg": [
+     -10,
+     0
+    ]
    },
    {
     "movement": "scapular_downward_rotation",
@@ -3505,8 +4010,31 @@
        "locator": "Cap. 11, tabelas de músculos"
       }
      ],
-     "confidence": "provavel"
-    }
+     "confidence": "provavel",
+     "note": "Modelo: o caminho cruza o eixo perto do neutro; só a partir do pescoço inclinado para o outro lado."
+    },
+    "rangeDeg": [
+     -35,
+     5
+    ]
+   },
+   {
+    "movement": "neck_rotation_same",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Modelo: só com a cabeça girada para o lado oposto; girada para o mesmo lado a linha cruza o eixo."
+    },
+    "rangeDeg": [
+     0,
+     60
+    ]
    }
   ],
   "parts": [
@@ -3561,8 +4089,12 @@
       }
      ],
      "confidence": "provavel",
-     "note": "Fibras inferiores."
-    }
+     "note": "Fibras inferiores. Modelo: perto do neutro; além de 10° o caminho de dois pontos atravessa o eixo da acromioclavicular."
+    },
+    "rangeDeg": [
+     -10,
+     10
+    ]
    }
   ],
   "parts": [
@@ -3571,6 +4103,26 @@
     "name": "Serrátil anterior",
     "mesh": [
      "serratus_anterior"
+    ],
+    "path": [
+     {
+      "s": "trunk",
+      "p": [
+       -0.136,
+       1.259,
+       -0.013
+      ],
+      "note": "Origem nas digitações das costelas médias, na linha axilar (ponto da linha central da malha)."
+     },
+     {
+      "s": "scapula_r",
+      "p": [
+       -0.1,
+       1.3,
+       -0.085
+      ],
+      "note": "Inserção na face costal da borda medial, perto do ângulo inferior (origem do redondo maior na malha)."
+     }
     ]
    }
   ]
@@ -3629,8 +4181,13 @@
        "locator": "Cap. 11, tabelas de músculos"
       }
      ],
-     "confidence": "provavel"
-    }
+     "confidence": "provavel",
+     "note": "Modelo: só com a escápula já girada para cima; perto do neutro a linha passa sobre o eixo."
+    },
+    "rangeDeg": [
+     20,
+     35
+    ]
    }
   ],
   "parts": [
@@ -3672,8 +4229,12 @@
       }
      ],
      "confidence": "provavel",
-     "note": "Sobretudo no início do movimento."
-    }
+     "note": "Sobretudo no início do movimento. Modelo: acima de 110° a linha passa sobre o centro da cabeça do úmero."
+    },
+    "rangeDeg": [
+     -20,
+     110
+    ]
    },
    {
     "movement": "shoulder_external_rotation",
@@ -3685,8 +4246,13 @@
        "locator": "Cap. 11, tabelas de músculos"
       }
      ],
-     "confidence": "provavel"
-    }
+     "confidence": "provavel",
+     "note": "Modelo: só com o braço em rotação interna."
+    },
+    "rangeDeg": [
+     -60,
+     0
+    ]
    }
   ],
   "parts": [
@@ -3795,8 +4361,13 @@
        "locator": "Cap. 11, tabelas de músculos"
       }
      ],
-     "confidence": "provavel"
-    }
+     "confidence": "provavel",
+     "note": "Modelo: acima de 50° de abdução a linha passa sobre o eixo."
+    },
+    "rangeDeg": [
+     -20,
+     50
+    ]
    }
   ],
   "parts": [
@@ -3850,8 +4421,13 @@
        "locator": "Cap. 11, tabelas de músculos"
       }
      ],
-     "confidence": "provavel"
-    }
+     "confidence": "provavel",
+     "note": "Modelo: com o braço junto ao corpo a linha passa sobre o centro da cabeça do úmero."
+    },
+    "rangeDeg": [
+     50,
+     140
+    ]
    }
   ],
   "parts": [
@@ -3894,6 +4470,20 @@
      ],
      "confidence": "provavel",
      "note": "Mais forte com o antebraço em posição neutra."
+    }
+   },
+   {
+    "movement": "forearm_pronation",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Leva o antebraço à posição neutra, de supinado ou pronado."
     }
    }
   ],
@@ -4046,7 +4636,7 @@
     }
    },
    {
-    "movement": "neck_rotation",
+    "movement": "neck_rotation_same",
     "role": "principal",
     "evidence": {
      "source": [
@@ -4056,8 +4646,12 @@
       }
      ],
      "confidence": "provavel",
-     "note": "Para o mesmo lado."
-    }
+     "note": "Para o mesmo lado. Modelo: com a cabeça já girada mais de 30° para o mesmo lado a linha perde o braço."
+    },
+    "rangeDeg": [
+     -30,
+     60
+    ]
    },
    {
     "movement": "neck_lateral_flexion",
@@ -4069,8 +4663,13 @@
        "locator": "Cap. 11, tabelas de músculos"
       }
      ],
-     "confidence": "provavel"
-    }
+     "confidence": "provavel",
+     "note": "Modelo: com o pescoço inclinado para o outro lado além de 25° a linha do esplênio da cabeça passa sobre o eixo."
+    },
+    "rangeDeg": [
+     -25,
+     35
+    ]
    }
   ],
   "parts": [
@@ -4086,6 +4685,4381 @@
     "name": "Esplênio do pescoço",
     "mesh": [
      "splenius_cervicis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "plantaris",
+  "latin": "Plantaris",
+  "name": "Plantar",
+  "group": "triceps_surae",
+  "origin": "Linha supracondilar lateral do fêmur",
+  "insertion": "Tuberosidade do calcâneo, pelo tendão calcâneo",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "ankle_plantarflexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "knee_flexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "plantaris",
+    "name": "Plantar",
+    "mesh": [
+     "plantaris"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "popliteus",
+  "latin": "Popliteus",
+  "name": "Poplíteo",
+  "group": "triceps_surae",
+  "origin": "Côndilo lateral do fêmur e menisco lateral",
+  "insertion": "Face posterior da tíbia, acima da linha do sóleo",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "knee_internal_rotation",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Destrava o joelho estendido."
+    }
+   },
+   {
+    "movement": "knee_flexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Modelo: além de 40° de flexão a linha central passa à frente do eixo."
+    },
+    "rangeDeg": [
+     0,
+     40
+    ]
+   }
+  ],
+  "parts": [
+   {
+    "id": "popliteus",
+    "name": "Poplíteo",
+    "mesh": [
+     "popliteus"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "extensor_digitorum_longus",
+  "latin": "Extensor digitorum longus",
+  "name": "Extensor longo dos dedos",
+  "group": "shin",
+  "origin": "Côndilo lateral da tíbia, fíbula e membrana interóssea",
+  "insertion": "Falanges média e distal do 2º ao 5º dedo do pé",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "toe_extension",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "ankle_dorsiflexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "ankle_eversion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "extensor_digitorum_longus",
+    "name": "Extensor longo dos dedos",
+    "mesh": [
+     "extensor_digitorum_longus"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "extensor_hallucis_longus",
+  "latin": "Extensor hallucis longus",
+  "name": "Extensor longo do hálux",
+  "group": "shin",
+  "origin": "Face medial da fíbula e membrana interóssea",
+  "insertion": "Falange distal do hálux",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "toe_extension",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Hálux."
+    }
+   },
+   {
+    "movement": "ankle_dorsiflexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "ankle_inversion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "extensor_hallucis_longus",
+    "name": "Extensor longo do hálux",
+    "mesh": [
+     "extensor_hallucis_longus"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "flexor_digitorum_longus",
+  "latin": "Flexor digitorum longus",
+  "name": "Flexor longo dos dedos",
+  "group": "triceps_surae",
+  "origin": "Face posterior da tíbia",
+  "insertion": "Falanges distais do 2º ao 5º dedo do pé",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "toe_flexion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "ankle_plantarflexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "ankle_inversion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "flexor_digitorum_longus",
+    "name": "Flexor longo dos dedos",
+    "mesh": [
+     "flexor_digitorum_longus"
+    ],
+    "path": [
+     {
+      "mesh": "flexor_digitorum_longus",
+      "only": [
+       "shank_r"
+      ]
+     },
+     {
+      "s": "shank_r",
+      "p": [
+       -0.058,
+       0.052,
+       -0.068
+      ],
+      "note": "Sulco atrás do maléolo medial (o do flexor do hálux fica atrás do tálus), abaixo do eixo do tornozelo: o tendão contorna essa polia antes de ir ao pé."
+     },
+     {
+      "mesh": "flexor_digitorum_longus",
+      "only": [
+       "foot_r"
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "flexor_hallucis_longus",
+  "latin": "Flexor hallucis longus",
+  "name": "Flexor longo do hálux",
+  "group": "triceps_surae",
+  "origin": "Dois terços inferiores da face posterior da fíbula",
+  "insertion": "Falange distal do hálux",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "toe_flexion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Hálux."
+    }
+   },
+   {
+    "movement": "ankle_plantarflexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "ankle_inversion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "flexor_hallucis_longus",
+    "name": "Flexor longo do hálux",
+    "mesh": [
+     "flexor_hallucis_longus"
+    ],
+    "path": [
+     {
+      "mesh": "flexor_hallucis_longus",
+      "only": [
+       "shank_r"
+      ]
+     },
+     {
+      "s": "shank_r",
+      "p": [
+       -0.068,
+       0.05,
+       -0.078
+      ],
+      "note": "Sulco atrás do maléolo medial (o do flexor do hálux fica atrás do tálus), abaixo do eixo do tornozelo: o tendão contorna essa polia antes de ir ao pé."
+     },
+     {
+      "mesh": "flexor_hallucis_longus",
+      "only": [
+       "foot_r"
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "abductor_hallucis",
+  "latin": "Abductor hallucis",
+  "name": "Abdutor do hálux",
+  "group": "foot",
+  "origin": "Tuberosidade do calcâneo e aponeurose plantar",
+  "insertion": "Base da falange proximal do hálux, lado medial",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "toe_abduction",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Hálux."
+    }
+   },
+   {
+    "movement": "toe_flexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Hálux."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "abductor_hallucis",
+    "name": "Abdutor do hálux",
+    "mesh": [
+     "abductor_hallucis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "flexor_hallucis_brevis",
+  "latin": "Flexor hallucis brevis",
+  "name": "Flexor curto do hálux",
+  "group": "foot",
+  "origin": "Cuboide e cuneiforme lateral",
+  "insertion": "Base da falange proximal do hálux, pelos dois sesamoides",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "toe_flexion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Hálux."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "flexor_hallucis_brevis_medial",
+    "name": "Cabeça medial",
+    "mesh": [
+     "medial_head_flexor_hallucis_brevis"
+    ]
+   },
+   {
+    "id": "flexor_hallucis_brevis_lateral",
+    "name": "Cabeça lateral",
+    "mesh": [
+     "lateral_head_flexor_hallucis_brevis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "adductor_hallucis",
+  "latin": "Adductor hallucis",
+  "name": "Adutor do hálux",
+  "group": "foot",
+  "origin": "Cabeça oblíqua: bases do 2º ao 4º metatarso; cabeça transversa: ligamentos das articulações metatarsofalângicas do 3º ao 5º dedo",
+  "insertion": "Base da falange proximal do hálux, lado lateral",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "toe_adduction",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Hálux."
+    }
+   },
+   {
+    "movement": "toe_flexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Hálux."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "adductor_hallucis_oblique",
+    "name": "Cabeça oblíqua",
+    "mesh": [
+     "oblique_head_adductor_hallucis"
+    ]
+   },
+   {
+    "id": "adductor_hallucis_transverse",
+    "name": "Cabeça transversa",
+    "mesh": [
+     "transverse_head_adductor_hallucis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "abductor_digiti_minimi_foot",
+  "latin": "Abductor digiti minimi pedis",
+  "name": "Abdutor do dedo mínimo do pé",
+  "group": "foot",
+  "origin": "Tuberosidade do calcâneo e aponeurose plantar",
+  "insertion": "Base da falange proximal do 5º dedo",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "toe_abduction",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "5º dedo."
+    }
+   },
+   {
+    "movement": "toe_flexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "5º dedo."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "abductor_digiti_minimi_foot",
+    "name": "Abdutor do dedo mínimo do pé",
+    "mesh": [
+     "abductor_digiti_minimi_foot"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "flexor_digiti_minimi_foot",
+  "latin": "Flexor digiti minimi brevis pedis",
+  "name": "Flexor curto do dedo mínimo do pé",
+  "group": "foot",
+  "origin": "Base do 5º metatarso",
+  "insertion": "Base da falange proximal do 5º dedo",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "toe_flexion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "5º dedo."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "flexor_digiti_minimi_foot",
+    "name": "Flexor curto do dedo mínimo",
+    "mesh": [
+     "flexor_digiti_minimi_foot"
+    ]
+   },
+   {
+    "id": "opponens_digiti_minimi_foot",
+    "name": "Oponente do dedo mínimo (inconstante)",
+    "mesh": [
+     "opponens_digiti_minimi_foot"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "flexor_digitorum_brevis",
+  "latin": "Flexor digitorum brevis",
+  "name": "Flexor curto dos dedos",
+  "group": "foot",
+  "origin": "Tuberosidade do calcâneo e aponeurose plantar",
+  "insertion": "Falanges médias do 2º ao 5º dedo do pé",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "toe_flexion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "flexor_digitorum_brevis",
+    "name": "Flexor curto dos dedos",
+    "mesh": [
+     "flexor_digitorum_brevis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "quadratus_plantae",
+  "latin": "Quadratus plantae",
+  "name": "Quadrado plantar",
+  "group": "foot",
+  "origin": "Faces medial e lateral do calcâneo",
+  "insertion": "Tendão do flexor longo dos dedos",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "toe_flexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Alinha a tração do flexor longo dos dedos."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "quadratus_plantae",
+    "name": "Quadrado plantar",
+    "mesh": [
+     "quadratus_plantae"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "lumbricals_foot",
+  "latin": "Musculi lumbricales pedis",
+  "name": "Lumbricais do pé",
+  "group": "foot",
+  "origin": "Tendões do flexor longo dos dedos",
+  "insertion": "Expansões extensoras do 2º ao 5º dedo",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "toe_flexion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Articulações metatarsofalângicas."
+    }
+   },
+   {
+    "movement": "toe_extension",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Articulações interfalângicas."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "lumbrical_foot",
+    "name": "Lumbricais do pé",
+    "mesh": [
+     "lumbrical_foot"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "interossei_foot",
+  "latin": "Musculi interossei pedis",
+  "name": "Interósseos do pé",
+  "group": "foot",
+  "origin": "Faces dos metatarsos",
+  "insertion": "Bases das falanges proximais e expansões extensoras",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "toe_abduction",
+    "role": "principal",
+    "parts": [
+     "dorsal_interossei_foot"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Afastam do 2º dedo."
+    }
+   },
+   {
+    "movement": "toe_adduction",
+    "role": "principal",
+    "parts": [
+     "plantar_interossei"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Aproximam do 2º dedo."
+    }
+   },
+   {
+    "movement": "toe_flexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Articulações metatarsofalângicas."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "dorsal_interossei_foot",
+    "name": "Interósseos dorsais",
+    "mesh": [
+     "dorsal_interossei_foot"
+    ]
+   },
+   {
+    "id": "plantar_interossei",
+    "name": "Interósseos plantares",
+    "mesh": [
+     "plantar_interossei"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "extensor_digitorum_brevis",
+  "latin": "Extensor digitorum brevis",
+  "name": "Extensor curto dos dedos",
+  "group": "foot",
+  "origin": "Face dorsolateral do calcâneo",
+  "insertion": "Tendões do extensor longo do 2º ao 4º dedo e falange proximal do hálux",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "toe_extension",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "extensor_digitorum_brevis",
+    "name": "Extensor curto dos dedos",
+    "mesh": [
+     "extensor_digitorum_brevis"
+    ]
+   },
+   {
+    "id": "extensor_hallucis_brevis",
+    "name": "Extensor curto do hálux",
+    "mesh": [
+     "extensor_hallucis_brevis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "pyramidalis",
+  "latin": "Pyramidalis",
+  "name": "Piramidal",
+  "group": "abdominals",
+  "origin": "Púbis, à frente do reto do abdome",
+  "insertion": "Linha alba",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "abdominal_compression",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Tensiona a linha alba."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "pyramidalis",
+    "name": "Piramidal",
+    "mesh": [
+     "pyramidalis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "transversus_abdominis",
+  "latin": "Transversus abdominis",
+  "name": "Transverso do abdome",
+  "group": "abdominals",
+  "origin": "Cartilagens das seis costelas inferiores, fáscia toracolombar, crista ilíaca e ligamento inguinal",
+  "insertion": "Linha alba, pela bainha do reto, e púbis",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "abdominal_compression",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "expiration",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "transversus_abdominis",
+    "name": "Transverso do abdome",
+    "mesh": [
+     "transversus_abdominis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "semispinalis",
+  "latin": "Semispinalis",
+  "name": "Semiespinal",
+  "group": "spinal_erectors",
+  "origin": "Processos transversos das vértebras torácicas",
+  "insertion": "Processos espinhosos das vértebras torácicas superiores e cervicais",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "neck_extension",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "trunk_extension",
+    "role": "principal",
+    "unmodeled": "A parte torácica fica toda acima de T12, e o tórax do modelo é rígido.",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "neck_rotation_opposite",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Modelo: só com a cabeça girada para o mesmo lado; perto do neutro a linha passa sobre o eixo de rotação."
+    },
+    "rangeDeg": [
+     -60,
+     -10
+    ]
+   }
+  ],
+  "parts": [
+   {
+    "id": "semispinalis",
+    "name": "Semiespinal do tórax e do pescoço",
+    "mesh": [
+     "semispinalis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "rotatores",
+  "latin": "Musculi rotatores",
+  "name": "Rotadores",
+  "group": "spinal_erectors",
+  "origin": "Processo transverso de cada vértebra",
+  "insertion": "Lâmina e processo espinhoso de uma ou duas vértebras acima",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "trunk_rotation_opposite",
+    "role": "principal",
+    "unmodeled": "Feixes curtos entre vértebras vizinhas: a linha central única cruza o eixo e o braço do modelo troca de sinal.",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "trunk_extension",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "rotatores",
+    "name": "Rotadores",
+    "mesh": [
+     "rotatores"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "interspinales",
+  "latin": "Musculi interspinales",
+  "name": "Interespinais",
+  "group": "spinal_erectors",
+  "origin": "Processo espinhoso de cada vértebra",
+  "insertion": "Processo espinhoso da vértebra de cima",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "trunk_extension",
+    "role": "principal",
+    "parts": [
+     "interspinales_lumborum",
+     "interspinales_thoracis"
+    ],
+    "unmodeled": "O modelo dobra a coluna lombar inteira em L5-S1 e o tórax é rígido: músculo curto entre vértebras vizinhas não muda de comprimento.",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "neck_extension",
+    "role": "principal",
+    "parts": [
+     "interspinales_colli"
+    ],
+    "unmodeled": "O modelo dobra a coluna lombar inteira em L5-S1 e o tórax é rígido: músculo curto entre vértebras vizinhas não muda de comprimento.",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "interspinales_colli",
+    "name": "Interespinais do pescoço",
+    "mesh": [
+     "interspinales_colli"
+    ]
+   },
+   {
+    "id": "interspinales_thoracis",
+    "name": "Interespinais do tórax",
+    "mesh": [
+     "interspinales_thoracis"
+    ]
+   },
+   {
+    "id": "interspinales_lumborum",
+    "name": "Interespinais lombares",
+    "mesh": [
+     "interspinales_lumborum"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "intertransversarii",
+  "latin": "Musculi intertransversarii lumborum",
+  "name": "Intertransversários lombares",
+  "group": "spinal_erectors",
+  "origin": "Processo transverso de cada vértebra lombar",
+  "insertion": "Processo transverso da vértebra de cima",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "trunk_lateral_flexion",
+    "role": "principal",
+    "unmodeled": "O modelo dobra a coluna lombar inteira em L5-S1 e o tórax é rígido: músculo curto entre vértebras vizinhas não muda de comprimento.",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "intertransversarii_dorsal",
+    "name": "Partes dorsais",
+    "mesh": [
+     "dorsal_parts_lateral_intertransversarii_lumborum"
+    ]
+   },
+   {
+    "id": "intertransversarii_ventral",
+    "name": "Partes ventrais",
+    "mesh": [
+     "ventral_parts_lateral_intertransversarii_lumborum"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "serratus_posterior",
+  "latin": "Serratus posterior",
+  "name": "Serrátil posterior",
+  "group": "thorax",
+  "origin": "Superior: processos espinhosos de C7 a T3; inferior: processos espinhosos de T11 a L2",
+  "insertion": "Superior: 2ª a 5ª costela; inferior: 9ª a 12ª costela",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "inspiration",
+    "role": "secundaria",
+    "parts": [
+     "serratus_posterior_superior"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Papel respiratório discutido."
+    }
+   },
+   {
+    "movement": "expiration",
+    "role": "secundaria",
+    "parts": [
+     "serratus_posterior_inferior"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Papel respiratório discutido."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "serratus_posterior_superior",
+    "name": "Serrátil posterior superior",
+    "mesh": [
+     "serratus_posterior_superior"
+    ]
+   },
+   {
+    "id": "serratus_posterior_inferior",
+    "name": "Serrátil posterior inferior",
+    "mesh": [
+     "serratus_posterior_inferior"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "levatores_costarum",
+  "latin": "Musculi levatores costarum",
+  "name": "Levantadores das costelas",
+  "group": "thorax",
+  "origin": "Processos transversos de C7 a T11",
+  "insertion": "Costela abaixo (curtos) ou duas abaixo (longos)",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "inspiration",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "levatores_breves_costarum",
+    "name": "Levantadores curtos",
+    "mesh": [
+     "levatores_breves_costarum"
+    ]
+   },
+   {
+    "id": "levatores_longi_costarum",
+    "name": "Levantadores longos",
+    "mesh": [
+     "levatores_longi_costarum"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "external_intercostals",
+  "latin": "Musculi intercostales externi",
+  "name": "Intercostais externos",
+  "group": "thorax",
+  "origin": "Borda inferior de cada costela",
+  "insertion": "Borda superior da costela de baixo",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "inspiration",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "external_intercostals",
+    "name": "Intercostais externos",
+    "mesh": [
+     "external_intercostals"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "internal_intercostals",
+  "latin": "Musculi intercostales interni",
+  "name": "Intercostais internos",
+  "group": "thorax",
+  "origin": "Borda superior de cada costela e cartilagem costal",
+  "insertion": "Borda inferior da costela de cima",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "expiration",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "internal_intercostals",
+    "name": "Intercostais internos",
+    "mesh": [
+     "internal_intercostals"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "subclavius",
+  "latin": "Subclavius",
+  "name": "Subclávio",
+  "group": "scapular",
+  "origin": "Primeira costela e sua cartilagem",
+  "insertion": "Face inferior da clavícula",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "scapular_depression",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Abaixa e estabiliza a clavícula."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "subclavius",
+    "name": "Subclávio",
+    "mesh": [
+     "subclavius"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "scalenes",
+  "latin": "Musculi scaleni",
+  "name": "Escalenos",
+  "group": "neck",
+  "origin": "Processos transversos das vértebras cervicais",
+  "insertion": "Anterior e médio: 1ª costela; posterior: 2ª costela",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "neck_lateral_flexion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "inspiration",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Elevam as duas primeiras costelas."
+    }
+   },
+   {
+    "movement": "neck_flexion",
+    "role": "secundaria",
+    "parts": [
+     "scalenus_anterior"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "scalenus_anterior",
+    "name": "Escaleno anterior",
+    "mesh": [
+     "scalenus_anterior"
+    ]
+   },
+   {
+    "id": "scalenus_medius",
+    "name": "Escaleno médio",
+    "mesh": [
+     "scalenus_medius"
+    ]
+   },
+   {
+    "id": "scalenus_posterior",
+    "name": "Escaleno posterior",
+    "mesh": [
+     "scalenus_posterior"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "longus_colli",
+  "latin": "Longus colli",
+  "name": "Longo do pescoço",
+  "group": "neck",
+  "origin": "Corpos e processos transversos de C3 a T3",
+  "insertion": "Atlas e corpos e processos transversos das cervicais superiores",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "neck_flexion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Modelo: com o pescoço estendido além de 10° a linha passa sobre o eixo."
+    },
+    "rangeDeg": [
+     -10,
+     35
+    ]
+   },
+   {
+    "movement": "neck_lateral_flexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Modelo: com o pescoço inclinado para o outro lado além de 15° a linha passa sobre o eixo."
+    },
+    "rangeDeg": [
+     -15,
+     35
+    ]
+   }
+  ],
+  "parts": [
+   {
+    "id": "longus_colli",
+    "name": "Longo do pescoço",
+    "mesh": [
+     "longus_colli"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "longus_capitis",
+  "latin": "Longus capitis",
+  "name": "Longo da cabeça",
+  "group": "neck",
+  "origin": "Processos transversos de C3 a C6",
+  "insertion": "Parte basilar do occipital",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "head_flexion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "neck_flexion",
+    "role": "secundaria",
+    "unmodeled": "O pescoço do modelo é rígido de C7 a C1 e dobra só em C7-T1: o caminho não cruza essa junta.",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "longus_capitis",
+    "name": "Longo da cabeça",
+    "mesh": [
+     "longus_capitis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "rectus_capitis_anterior",
+  "latin": "Rectus capitis anterior",
+  "name": "Reto anterior da cabeça",
+  "group": "neck",
+  "origin": "Massa lateral do atlas",
+  "insertion": "Parte basilar do occipital",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "head_flexion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "rectus_anterior_capitis",
+    "name": "Reto anterior da cabeça",
+    "mesh": [
+     "rectus_anterior_capitis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "rectus_capitis_lateralis",
+  "latin": "Rectus capitis lateralis",
+  "name": "Reto lateral da cabeça",
+  "group": "neck",
+  "origin": "Processo transverso do atlas",
+  "insertion": "Processo jugular do occipital",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "head_lateral_flexion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "rectus_lateralis_capitis",
+    "name": "Reto lateral da cabeça",
+    "mesh": [
+     "rectus_lateralis_capitis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "suboccipitals",
+  "latin": "Musculi suboccipitales",
+  "name": "Suboccipitais",
+  "group": "neck",
+  "origin": "Processo espinhoso do áxis (reto posterior maior, oblíquo inferior), tubérculo posterior do atlas (reto posterior menor) e processo transverso do atlas (oblíquo superior)",
+  "insertion": "Linha nucal inferior do occipital; o oblíquo inferior vai ao processo transverso do atlas",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "head_extension",
+    "role": "principal",
+    "parts": [
+     "rectus_capitis_posterior_major",
+     "rectus_capitis_posterior_minor"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "head_rotation",
+    "role": "principal",
+    "parts": [
+     "rectus_capitis_posterior_major",
+     "obliquus_capitis_inferior"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Para o mesmo lado."
+    }
+   },
+   {
+    "movement": "head_lateral_flexion",
+    "role": "secundaria",
+    "parts": [
+     "obliquus_capitis_superior"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "head_extension",
+    "role": "secundaria",
+    "parts": [
+     "obliquus_capitis_superior"
+    ],
+    "unmodeled": "Músculo de 2 cm junto ao eixo: no modelo o braço de momento fica abaixo de 2 mm.",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "rectus_capitis_posterior_major",
+    "name": "Reto posterior maior da cabeça",
+    "mesh": [
+     "rectus_posterior_major_capitis"
+    ]
+   },
+   {
+    "id": "rectus_capitis_posterior_minor",
+    "name": "Reto posterior menor da cabeça",
+    "mesh": [
+     "rectus_posterior_minor_capitis"
+    ]
+   },
+   {
+    "id": "obliquus_capitis_superior",
+    "name": "Oblíquo superior da cabeça",
+    "mesh": [
+     "obliquus_superior_capitis"
+    ]
+   },
+   {
+    "id": "obliquus_capitis_inferior",
+    "name": "Oblíquo inferior da cabeça",
+    "mesh": [
+     "obliquus_inferior_capitis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "digastric",
+  "latin": "Digastricus",
+  "name": "Digástrico",
+  "group": "hyoid",
+  "origin": "Ventre posterior: incisura mastóidea do temporal; ventre anterior: fossa digástrica da mandíbula",
+  "insertion": "Tendão intermédio preso ao hioide",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "jaw_depression",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "hyoid_elevation",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "digastric_anterior",
+    "name": "Ventre anterior",
+    "mesh": [
+     "anterior_belly_digastric"
+    ]
+   },
+   {
+    "id": "digastric_posterior",
+    "name": "Ventre posterior",
+    "mesh": [
+     "posterior_belly_digastric"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "mylohyoid",
+  "latin": "Mylohyoideus",
+  "name": "Milo-hióideo",
+  "group": "hyoid",
+  "origin": "Linha milo-hióidea da mandíbula",
+  "insertion": "Rafe mediana e corpo do hioide",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "hyoid_elevation",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "jaw_depression",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "mylohyoid",
+    "name": "Milo-hióideo",
+    "mesh": [
+     "mylohyoid"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "stylohyoid",
+  "latin": "Stylohyoideus",
+  "name": "Estilo-hióideo",
+  "group": "hyoid",
+  "origin": "Processo estiloide do temporal",
+  "insertion": "Corpo do hioide",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "hyoid_elevation",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Eleva e puxa o hioide para trás."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "stylohyoid",
+    "name": "Estilo-hióideo",
+    "mesh": [
+     "stylohyoid"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "geniohyoid",
+  "latin": "Geniohyoideus",
+  "name": "Gênio-hióideo",
+  "group": "hyoid",
+  "origin": "Espinha mentual inferior da mandíbula",
+  "insertion": "Corpo do hioide",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "hyoid_elevation",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "jaw_depression",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "geniohyoid",
+    "name": "Gênio-hióideo",
+    "mesh": [
+     "geniohyoid"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "omohyoid",
+  "latin": "Omohyoideus",
+  "name": "Omo-hióideo",
+  "group": "hyoid",
+  "origin": "Borda superior da escápula",
+  "insertion": "Corpo do hioide",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "hyoid_depression",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "omohyoid",
+    "name": "Omo-hióideo",
+    "mesh": [
+     "omohyoid"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "sternohyoid",
+  "latin": "Sternohyoideus",
+  "name": "Esterno-hióideo",
+  "group": "hyoid",
+  "origin": "Manúbrio do esterno e extremidade medial da clavícula",
+  "insertion": "Corpo do hioide",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "hyoid_depression",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "sternohyoid",
+    "name": "Esterno-hióideo",
+    "mesh": [
+     "sternohyoid"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "sternothyroid",
+  "latin": "Sternothyroideus",
+  "name": "Esternotireóideo",
+  "group": "hyoid",
+  "origin": "Face posterior do manúbrio do esterno",
+  "insertion": "Cartilagem tireóidea",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "hyoid_depression",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Abaixa a laringe."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "sternothyroid",
+    "name": "Esternotireóideo",
+    "mesh": [
+     "sternothyroid"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "thyrohyoid",
+  "latin": "Thyrohyoideus",
+  "name": "Tíreo-hióideo",
+  "group": "hyoid",
+  "origin": "Cartilagem tireóidea",
+  "insertion": "Corno maior e corpo do hioide",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "hyoid_depression",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Abaixa o hioide ou eleva a laringe."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "thyrohyoid",
+    "name": "Tíreo-hióideo",
+    "mesh": [
+     "thyrohyoid"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "masseter",
+  "latin": "Masseter",
+  "name": "Masseter",
+  "group": "jaw",
+  "origin": "Arco zigomático",
+  "insertion": "Ramo e ângulo da mandíbula",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "jaw_elevation",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "jaw_protrusion",
+    "role": "secundaria",
+    "parts": [
+     "masseter_superficial"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "masseter_superficial",
+    "name": "Parte superficial",
+    "mesh": [
+     "superficial_part_masseter"
+    ]
+   },
+   {
+    "id": "masseter_deep",
+    "name": "Parte profunda",
+    "mesh": [
+     "deep_part_masseter"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "temporalis",
+  "latin": "Temporalis",
+  "name": "Temporal",
+  "group": "jaw",
+  "origin": "Fossa temporal e fáscia temporal",
+  "insertion": "Processo coronoide e ramo da mandíbula",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "jaw_elevation",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "jaw_retrusion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Fibras posteriores."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "temporalis",
+    "name": "Temporal",
+    "mesh": [
+     "temporalis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "medial_pterygoid",
+  "latin": "Pterygoideus medialis",
+  "name": "Pterigóideo medial",
+  "group": "jaw",
+  "origin": "Face medial da lâmina lateral do processo pterigoide",
+  "insertion": "Face medial do ramo e do ângulo da mandíbula",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "jaw_elevation",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "jaw_protrusion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "jaw_lateral",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "medial_pterygoid",
+    "name": "Pterigóideo medial",
+    "mesh": [
+     "medial_pterygoid"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "lateral_pterygoid",
+  "latin": "Pterygoideus lateralis",
+  "name": "Pterigóideo lateral",
+  "group": "jaw",
+  "origin": "Cabeça superior: asa maior do esfenoide; cabeça inferior: lâmina lateral do processo pterigoide",
+  "insertion": "Colo da mandíbula, cápsula e disco da articulação temporomandibular",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "jaw_protrusion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "jaw_lateral",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "jaw_depression",
+    "role": "secundaria",
+    "parts": [
+     "lateral_pterygoid_inferior"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "lateral_pterygoid_superior",
+    "name": "Cabeça superior",
+    "mesh": [
+     "superior_head_lateral_pterygoid"
+    ]
+   },
+   {
+    "id": "lateral_pterygoid_inferior",
+    "name": "Cabeça inferior",
+    "mesh": [
+     "inferior_head_lateral_pterygoid"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "occipitofrontalis",
+  "latin": "Occipitofrontalis",
+  "name": "Occipitofrontal",
+  "group": "face",
+  "origin": "Ventre frontal: aponeurose epicrânica; ventre occipital: linha nucal superior do occipital",
+  "insertion": "Ventre frontal: pele da sobrancelha; ventre occipital: aponeurose epicrânica",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "brow_raise",
+    "role": "principal",
+    "parts": [
+     "frontalis"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "scalp_back",
+    "role": "principal",
+    "parts": [
+     "occipitalis"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "frontalis",
+    "name": "Ventre frontal",
+    "mesh": [
+     "frontalis"
+    ]
+   },
+   {
+    "id": "occipitalis",
+    "name": "Ventre occipital",
+    "mesh": [
+     "occipitalis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "temporoparietalis",
+  "latin": "Temporoparietalis",
+  "name": "Temporoparietal",
+  "group": "face",
+  "origin": "Fáscia temporal, acima da orelha",
+  "insertion": "Aponeurose epicrânica",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "scalp_back",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Tensiona o couro cabeludo."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "temporoparietalis",
+    "name": "Temporoparietal",
+    "mesh": [
+     "temporoparietalis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "orbicularis_oculi",
+  "latin": "Orbicularis oculi",
+  "name": "Orbicular do olho",
+  "group": "face",
+  "origin": "Parte nasal do frontal, processo frontal da maxila e ligamento palpebral medial",
+  "insertion": "Pele em volta da órbita e das pálpebras",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "eye_close",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "orbicularis_oculi_orbital",
+    "name": "Parte orbital",
+    "mesh": [
+     "orbital_part_orbicularis_oculi"
+    ]
+   },
+   {
+    "id": "orbicularis_oculi_palpebral",
+    "name": "Parte palpebral",
+    "mesh": [
+     "palpebral_part_orbicularis_oculi"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "corrugator_supercilii",
+  "latin": "Corrugator supercilii",
+  "name": "Corrugador do supercílio",
+  "group": "face",
+  "origin": "Arco superciliar do frontal",
+  "insertion": "Pele da sobrancelha",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "brow_lower",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "corrugator_supercilii",
+    "name": "Corrugador do supercílio",
+    "mesh": [
+     "corrugator_supercilii"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "procerus",
+  "latin": "Procerus",
+  "name": "Prócero",
+  "group": "face",
+  "origin": "Osso nasal e cartilagem nasal lateral",
+  "insertion": "Pele entre as sobrancelhas",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "brow_lower",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "procerus",
+    "name": "Prócero",
+    "mesh": [
+     "procerus"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "nasalis",
+  "latin": "Nasalis",
+  "name": "Nasal",
+  "group": "face",
+  "origin": "Maxila, acima dos incisivos e do canino",
+  "insertion": "Cartilagens do nariz",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "nose_flare",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "nasalis",
+    "name": "Nasal",
+    "mesh": [
+     "nasalis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "depressor_septi_nasi",
+  "latin": "Depressor septi nasi",
+  "name": "Abaixador do septo nasal",
+  "group": "face",
+  "origin": "Maxila, acima do incisivo central",
+  "insertion": "Septo e asa do nariz",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "nose_flare",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "depressor_septi_nasi",
+    "name": "Abaixador do septo nasal",
+    "mesh": [
+     "depressor_septi_nasi"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "levator_labii_superioris_alaeque_nasi",
+  "latin": "Levator labii superioris alaeque nasi",
+  "name": "Levantador do lábio superior e da asa do nariz",
+  "group": "face",
+  "origin": "Processo frontal da maxila",
+  "insertion": "Asa do nariz e lábio superior",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "upper_lip_raise",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "nose_flare",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "levator_nasolabialis",
+    "name": "Levantador do lábio superior e da asa do nariz",
+    "mesh": [
+     "levator_nasolabialis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "levator_labii_superioris",
+  "latin": "Levator labii superioris",
+  "name": "Levantador do lábio superior",
+  "group": "face",
+  "origin": "Margem infraorbital da maxila",
+  "insertion": "Pele do lábio superior",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "upper_lip_raise",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "levator_labii_superioris",
+    "name": "Levantador do lábio superior",
+    "mesh": [
+     "levator_labii_superioris"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "zygomaticus_major",
+  "latin": "Zygomaticus major",
+  "name": "Zigomático maior",
+  "group": "face",
+  "origin": "Face lateral do osso zigomático",
+  "insertion": "Canto da boca",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "mouth_corner_up",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "zygomaticus_major",
+    "name": "Zigomático maior",
+    "mesh": [
+     "zygomaticus_major"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "zygomaticus_minor",
+  "latin": "Zygomaticus minor",
+  "name": "Zigomático menor",
+  "group": "face",
+  "origin": "Osso zigomático",
+  "insertion": "Lábio superior, lateral ao levantador",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "upper_lip_raise",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "zygomaticus_minor",
+    "name": "Zigomático menor",
+    "mesh": [
+     "zygomaticus_minor"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "levator_anguli_oris",
+  "latin": "Levator anguli oris",
+  "name": "Levantador do ângulo da boca",
+  "group": "face",
+  "origin": "Fossa canina da maxila",
+  "insertion": "Canto da boca",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "mouth_corner_up",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "levator_anguli_oris",
+    "name": "Levantador do ângulo da boca",
+    "mesh": [
+     "levator_anguli_oris"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "risorius",
+  "latin": "Risorius",
+  "name": "Risório",
+  "group": "face",
+  "origin": "Fáscia sobre o masseter e a parótida",
+  "insertion": "Canto da boca",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "mouth_corner_lateral",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "risorius",
+    "name": "Risório",
+    "mesh": [
+     "risorius"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "buccinator",
+  "latin": "Buccinator",
+  "name": "Bucinador",
+  "group": "face",
+  "origin": "Processos alveolares da maxila e da mandíbula e rafe pterigomandibular",
+  "insertion": "Canto da boca e orbicular da boca",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "cheek_compress",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "bucinator",
+    "name": "Bucinador",
+    "mesh": [
+     "bucinator"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "orbicularis_oris",
+  "latin": "Orbicularis oris",
+  "name": "Orbicular da boca",
+  "group": "face",
+  "origin": "Músculos vizinhos da boca e maxila e mandíbula perto da linha média",
+  "insertion": "Pele e mucosa dos lábios",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "lip_close",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "orbicularis_oris",
+    "name": "Orbicular da boca",
+    "mesh": [
+     "orbicularis_oris"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "depressor_anguli_oris",
+  "latin": "Depressor anguli oris",
+  "name": "Abaixador do ângulo da boca",
+  "group": "face",
+  "origin": "Linha oblíqua da mandíbula",
+  "insertion": "Canto da boca",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "mouth_corner_down",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "depressor_anguli_oris",
+    "name": "Abaixador do ângulo da boca",
+    "mesh": [
+     "depressor_anguli_oris"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "depressor_labii_inferioris",
+  "latin": "Depressor labii inferioris",
+  "name": "Abaixador do lábio inferior",
+  "group": "face",
+  "origin": "Linha oblíqua da mandíbula",
+  "insertion": "Pele do lábio inferior",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "lower_lip_lower",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "depressor_labii_inferioris",
+    "name": "Abaixador do lábio inferior",
+    "mesh": [
+     "depressor_labii_inferioris"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "mentalis",
+  "latin": "Mentalis",
+  "name": "Mentual",
+  "group": "face",
+  "origin": "Fossa incisiva da mandíbula",
+  "insertion": "Pele do queixo",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "chin_raise",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "mentalis",
+    "name": "Mentual",
+    "mesh": [
+     "mentalis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "platysma",
+  "latin": "Platysma",
+  "name": "Platisma",
+  "group": "face",
+  "origin": "Fáscia sobre o peitoral maior e o deltoide",
+  "insertion": "Base da mandíbula e pele da parte inferior do rosto",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "neck_skin_tense",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "mouth_corner_down",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "jaw_depression",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "platysma",
+    "name": "Platisma",
+    "mesh": [
+     "platysma"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "coracobrachialis",
+  "latin": "Coracobrachialis",
+  "name": "Coracobraquial",
+  "group": "shoulder",
+  "origin": "Processo coracoide da escápula",
+  "insertion": "Face medial do úmero, no terço médio",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "shoulder_flexion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Modelo: acima de 90° a linha passa sobre o centro da cabeça do úmero."
+    },
+    "rangeDeg": [
+     -20,
+     90
+    ]
+   },
+   {
+    "movement": "shoulder_adduction",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Modelo: acima de 70° de abdução a linha passa sobre o eixo."
+    },
+    "rangeDeg": [
+     -20,
+     70
+    ]
+   },
+   {
+    "movement": "shoulder_horizontal_adduction",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "coracobrachialis",
+    "name": "Coracobraquial",
+    "mesh": [
+     "coracobrachialis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "flexor_digitorum_profundus",
+  "latin": "Flexor digitorum profundus",
+  "name": "Flexor profundo dos dedos",
+  "group": "forearm",
+  "origin": "Faces anterior e medial da ulna e membrana interóssea",
+  "insertion": "Falanges distais do 2º ao 5º dedo",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "finger_flexion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "wrist_flexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Modelo: com o punho estendido além de 10° a linha passa sobre o eixo."
+    },
+    "rangeDeg": [
+     -10,
+     50
+    ]
+   }
+  ],
+  "parts": [
+   {
+    "id": "flexor_digitorum_profundus",
+    "name": "Flexor profundo dos dedos",
+    "mesh": [
+     "flexor_digitorum_profundus"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "flexor_pollicis_longus",
+  "latin": "Flexor pollicis longus",
+  "name": "Flexor longo do polegar",
+  "group": "forearm",
+  "origin": "Face anterior do rádio e membrana interóssea",
+  "insertion": "Falange distal do polegar",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "thumb_flexion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "wrist_flexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Modelo: com o punho estendido além de 20° a linha passa sobre o eixo."
+    },
+    "rangeDeg": [
+     -20,
+     50
+    ]
+   }
+  ],
+  "parts": [
+   {
+    "id": "flexor_pollicis_longus",
+    "name": "Flexor longo do polegar",
+    "mesh": [
+     "flexor_pollicis_longus"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "pronator_quadratus",
+  "latin": "Pronator quadratus",
+  "name": "Pronador quadrado",
+  "group": "forearm",
+  "origin": "Quarto distal da face anterior da ulna",
+  "insertion": "Quarto distal da face anterior do rádio",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "forearm_pronation",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "pronator_quadratus",
+    "name": "Pronador quadrado",
+    "mesh": [
+     "pronator_quadratus"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "supinator",
+  "latin": "Supinator",
+  "name": "Supinador",
+  "group": "forearm",
+  "origin": "Epicôndilo lateral do úmero, ligamentos do cotovelo e crista do supinador da ulna",
+  "insertion": "Face lateral do terço proximal do rádio",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "forearm_supination",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "supinator",
+    "name": "Supinador",
+    "mesh": [
+     "supinator"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "abductor_pollicis_longus",
+  "latin": "Abductor pollicis longus",
+  "name": "Abdutor longo do polegar",
+  "group": "forearm",
+  "origin": "Faces posteriores da ulna e do rádio e membrana interóssea",
+  "insertion": "Base do 1º metacarpo",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "thumb_abduction",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "wrist_radial_deviation",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "abductor_pollicis_longus",
+    "name": "Abdutor longo do polegar",
+    "mesh": [
+     "abductor_pollicis_longus"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "extensor_pollicis_brevis",
+  "latin": "Extensor pollicis brevis",
+  "name": "Extensor curto do polegar",
+  "group": "forearm",
+  "origin": "Face posterior do rádio e membrana interóssea",
+  "insertion": "Base da falange proximal do polegar",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "thumb_extension",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "thumb_abduction",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "extensor_pollicis_brevis",
+    "name": "Extensor curto do polegar",
+    "mesh": [
+     "extensor_pollicis_brevis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "extensor_pollicis_longus",
+  "latin": "Extensor pollicis longus",
+  "name": "Extensor longo do polegar",
+  "group": "forearm",
+  "origin": "Terço médio da face posterior da ulna e membrana interóssea",
+  "insertion": "Base da falange distal do polegar",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "thumb_extension",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "extensor_pollicis_longus",
+    "name": "Extensor longo do polegar",
+    "mesh": [
+     "extensor_pollicis_longus"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "extensor_indicis",
+  "latin": "Extensor indicis",
+  "name": "Extensor do indicador",
+  "group": "forearm",
+  "origin": "Face posterior da ulna, no terço distal",
+  "insertion": "Expansão extensora do indicador",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "finger_extension",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Indicador."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "extensor_indicis",
+    "name": "Extensor do indicador",
+    "mesh": [
+     "extensor_indicis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "thenar",
+  "latin": "Musculi thenaris",
+  "name": "Músculos tenares",
+  "group": "hand",
+  "origin": "Retináculo dos flexores, escafoide e trapézio",
+  "insertion": "Falange proximal e 1º metacarpo do polegar",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "thumb_abduction",
+    "role": "principal",
+    "parts": [
+     "abductor_pollicis_brevis"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "thumb_flexion",
+    "role": "principal",
+    "parts": [
+     "flexor_pollicis_brevis"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   },
+   {
+    "movement": "thumb_opposition",
+    "role": "principal",
+    "parts": [
+     "opponens_pollicis"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "abductor_pollicis_brevis",
+    "name": "Abdutor curto do polegar",
+    "mesh": [
+     "abductor_pollicis_brevis"
+    ]
+   },
+   {
+    "id": "flexor_pollicis_brevis",
+    "name": "Flexor curto do polegar",
+    "mesh": [
+     "superficial_head_flexor_pollicis_brevis",
+     "deep_head_flexor_pollicis_brevis"
+    ]
+   },
+   {
+    "id": "opponens_pollicis",
+    "name": "Oponente do polegar",
+    "mesh": [
+     "opponens_pollicis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "adductor_pollicis",
+  "latin": "Adductor pollicis",
+  "name": "Adutor do polegar",
+  "group": "hand",
+  "origin": "Cabeça oblíqua: capitato e bases do 2º e 3º metacarpos; cabeça transversa: 3º metacarpo",
+  "insertion": "Base da falange proximal do polegar",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "thumb_adduction",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "adductor_pollicis_oblique",
+    "name": "Cabeça oblíqua",
+    "mesh": [
+     "oblique_head_adductor_pollicis"
+    ]
+   },
+   {
+    "id": "adductor_pollicis_transverse",
+    "name": "Cabeça transversa",
+    "mesh": [
+     "transverse_head_adductor_pollicis"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "hypothenar",
+  "latin": "Musculi hypothenaris",
+  "name": "Músculos hipotenares",
+  "group": "hand",
+  "origin": "Pisiforme, hâmulo do hamato e retináculo dos flexores",
+  "insertion": "Falange proximal e 5º metacarpo do dedo mínimo",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "finger_abduction",
+    "role": "principal",
+    "parts": [
+     "abductor_digiti_minimi_hand"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Dedo mínimo."
+    }
+   },
+   {
+    "movement": "finger_flexion",
+    "role": "principal",
+    "parts": [
+     "flexor_digiti_minimi_hand"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Dedo mínimo."
+    }
+   },
+   {
+    "movement": "little_finger_opposition",
+    "role": "principal",
+    "parts": [
+     "opponens_digiti_minimi_hand"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel"
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "abductor_digiti_minimi_hand",
+    "name": "Abdutor do dedo mínimo",
+    "mesh": [
+     "abductor_digiti_minimi_hand"
+    ]
+   },
+   {
+    "id": "flexor_digiti_minimi_hand",
+    "name": "Flexor curto do dedo mínimo",
+    "mesh": [
+     "flexor_digiti_minimi_hand"
+    ]
+   },
+   {
+    "id": "opponens_digiti_minimi_hand",
+    "name": "Oponente do dedo mínimo",
+    "mesh": [
+     "opponens_digiti_minimi_hand"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "lumbricals_hand",
+  "latin": "Musculi lumbricales manus",
+  "name": "Lumbricais da mão",
+  "group": "hand",
+  "origin": "Tendões do flexor profundo dos dedos",
+  "insertion": "Expansões extensoras do 2º ao 5º dedo",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "finger_flexion",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Articulações metacarpofalângicas."
+    }
+   },
+   {
+    "movement": "finger_extension",
+    "role": "principal",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Articulações interfalângicas."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "lumbrical_hand",
+    "name": "Lumbricais da mão",
+    "mesh": [
+     "lumbrical_hand"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "interossei_hand",
+  "latin": "Musculi interossei manus",
+  "name": "Interósseos da mão",
+  "group": "hand",
+  "origin": "Faces dos metacarpos",
+  "insertion": "Bases das falanges proximais e expansões extensoras",
+  "anatomy": {
+   "source": [
+    {
+     "refId": "openstax_ap2e",
+     "locator": "Cap. 11, tabelas de músculos"
+    }
+   ],
+   "confidence": "provavel",
+   "note": "Descrição clássica de livro-texto; tabela da fonte ainda não conferida."
+  },
+  "actions": [
+   {
+    "movement": "finger_abduction",
+    "role": "principal",
+    "parts": [
+     "dorsal_interossei_hand"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Afastam do dedo médio."
+    }
+   },
+   {
+    "movement": "finger_adduction",
+    "role": "principal",
+    "parts": [
+     "palmar_interossei"
+    ],
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Aproximam do dedo médio."
+    }
+   },
+   {
+    "movement": "finger_flexion",
+    "role": "secundaria",
+    "evidence": {
+     "source": [
+      {
+       "refId": "openstax_ap2e",
+       "locator": "Cap. 11, tabelas de músculos"
+      }
+     ],
+     "confidence": "provavel",
+     "note": "Articulações metacarpofalângicas."
+    }
+   }
+  ],
+  "parts": [
+   {
+    "id": "dorsal_interossei_hand",
+    "name": "Interósseos dorsais",
+    "mesh": [
+     "dorsal_interossei_hand"
+    ]
+   },
+   {
+    "id": "palmar_interossei",
+    "name": "Interósseos palmares",
+    "mesh": [
+     "palmar_interossei"
     ]
    }
   ]

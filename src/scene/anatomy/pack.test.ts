@@ -171,6 +171,13 @@ describe('linhas centrais do motor (muscle-paths.json) = as do pacote', () => {
       c.line.forEach((q, k) => q.forEach((x, i) => expect(p?.centerline?.[k]?.[i], `${id}[${k}]`).toBeCloseTo(x, 4)));
     }
   });
+
+  // Fase 19: nenhuma malha muscular do pacote fica sem músculo (seleção, nome, ações e fonte vêm do muscles.json).
+  it('toda malha muscular do pacote pertence a uma parte do muscles.json', () => {
+    const owned = new Set(musclesJson.flatMap((m) => m.parts.flatMap((p) => p.mesh)));
+    const orphans = packs.lo.pack.parts.filter((p) => p.kind === 'muscle' && !owned.has(p.id)).map((p) => p.id);
+    expect(orphans).toEqual([]);
+  });
 });
 
 // mid: malhas originais simplificadas; ultra: densificadas, com pesos interpolados.

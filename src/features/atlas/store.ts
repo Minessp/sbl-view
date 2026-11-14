@@ -15,7 +15,7 @@ export type CutAxis = 'none' | 'transverse' | 'frontal' | 'sagittal';
 
 /** Vista que mostra melhor cada grupo (o lado de onde o músculo é visto sem cortes). */
 const BACK: ReadonlySet<MuscleGroup> = new Set(['gluteals', 'hamstrings', 'triceps_surae', 'spinal_erectors', 'lats', 'traps', 'elbow_extensors', 'rotator_cuff', 'scapular']);
-const SIDE: ReadonlySet<MuscleGroup> = new Set(['delts', 'neck']);
+const SIDE: ReadonlySet<MuscleGroup> = new Set(['delts', 'neck', 'jaw', 'hyoid', 'thorax']);
 export const defaultView = (g: MuscleGroup): AtlasView => (BACK.has(g) ? 'back' : SIDE.has(g) ? 'side' : 'front');
 
 /** Estrutura selecionável: músculo do Atlas (as duas cópias) ou parte do pacote sem página. */

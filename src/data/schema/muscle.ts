@@ -26,6 +26,13 @@ export const MuscleGroup = z.enum([
   'neck',
   'rotator_cuff',
   'scapular',
+  'thorax',
+  'shoulder',
+  'hand',
+  'foot',
+  'face',
+  'jaw',
+  'hyoid',
 ]);
 export type MuscleGroup = z.infer<typeof MuscleGroup>;
 
@@ -70,14 +77,35 @@ export const MusclePartDef = z.object({
 });
 export type MusclePartDef = z.infer<typeof MusclePartDef>;
 
-export const Joint = z.enum(['hip', 'knee', 'ankle', 'trunk', 'neck', 'scapula', 'shoulder', 'elbow', 'forearm', 'wrist']);
+export const Joint = z.enum([
+  'hip',
+  'knee',
+  'ankle',
+  'toes',
+  'trunk',
+  'ribs',
+  'neck',
+  'head',
+  'jaw',
+  'hyoid',
+  'face',
+  'scapula',
+  'shoulder',
+  'elbow',
+  'forearm',
+  'wrist',
+  'fingers',
+  'thumb',
+]);
 export type Joint = z.infer<typeof Joint>;
 
 const DegRange = z.tuple([z.number(), z.number()]).refine(([a, b]) => a < b, 'faixa invertida');
 
 /**
- * Movimento articular nomeado. Só os do plano sagital têm `dof`: é onde o modelo geométrico
- * (contornos com eixo transversal) dá braço de momento utilizável.
+ * Movimento articular nomeado. Com `dof`, o modelo mede comprimento e braço de momento nele (qualquer plano).
+ * Sem `dof`: articulação que o esqueleto não tem (dedos, mandíbula, face, costelas) ou que o modelo ainda não
+ * move do jeito certo (pronação no rádio, inversão do pé) — a ação aparece no texto, sem curva nem demonstração.
+ * Lado: DOF e sinal valem para o músculo do lado direito (rotação "para o mesmo lado" = para a direita).
  */
 export const Movement = z
   .object({
@@ -94,9 +122,16 @@ export const Movement = z
      * e onde o Atlas desenha as curvas. Fora dela o modelo não é mostrado.
      */
     rangeDeg: DegRange.optional(),
+    /**
+     * Outros DOFs fixos durante o movimento (graus, sem sufixo de lado): a adução horizontal acontece com o
+     * ombro fletido a 90°; a rotação do ombro se lê com o cotovelo a 90°.
+     */
+    base: z.record(z.string(), z.number()).optional(),
+    /** Por que o movimento não tem `dof` (aparece só como texto). */
+    note: z.string().optional(),
   })
   .refine((m) => (m.dof === undefined) === (m.sign === undefined) && (m.dof === undefined) === (m.rangeDeg === undefined), 'dof, sign e rangeDeg andam juntos')
-  .refine((m) => m.dof === undefined || m.plane === 'sagital', 'só movimento sagital tem dof');
+  .refine((m) => m.base === undefined || m.dof !== undefined, 'base só com dof');
 export type Movement = z.infer<typeof Movement>;
 
 export const MuscleAction = z.object({
@@ -106,6 +141,11 @@ export const MuscleAction = z.object({
   parts: z.array(z.string()).optional(),
   /** Estreita a faixa do movimento (ação que inverte com o ângulo, ou limite do modelo). */
   rangeDeg: DegRange.optional(),
+  /**
+   * A ação é da anatomia, mas o caminho do modelo não a reproduz (linha central de uma lâmina larga, junta que o
+   * esqueleto não tem). Sem curva, sem demonstração e fora do teste de sinal; o texto diz por quê.
+   */
+  unmodeled: z.string().min(20).optional(),
   evidence: Evidence,
 });
 export type MuscleAction = z.infer<typeof MuscleAction>;

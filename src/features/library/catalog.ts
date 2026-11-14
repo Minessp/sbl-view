@@ -21,10 +21,11 @@ export const movementById = (id: string): Movement | undefined => mvIndex.get(id
 
 /** Ordem de leitura do Atlas: de cima para baixo, de dentro para fora. */
 export const REGIONS: { id: string; groups: MuscleGroup[] }[] = [
-  { id: 'trunk', groups: ['neck', 'abdominals', 'spinal_erectors'] },
-  { id: 'upper', groups: ['traps', 'scapular', 'lats', 'chest', 'delts', 'rotator_cuff', 'elbow_flexors', 'elbow_extensors', 'forearm'] },
+  { id: 'head', groups: ['face', 'jaw', 'hyoid'] },
+  { id: 'trunk', groups: ['neck', 'thorax', 'abdominals', 'spinal_erectors'] },
+  { id: 'upper', groups: ['traps', 'scapular', 'lats', 'chest', 'delts', 'rotator_cuff', 'shoulder', 'elbow_flexors', 'elbow_extensors', 'forearm', 'hand'] },
   { id: 'hip', groups: ['gluteals', 'hip_flexors', 'adductors', 'quadriceps', 'hamstrings'] },
-  { id: 'leg', groups: ['triceps_surae', 'shin'] },
+  { id: 'leg', groups: ['triceps_surae', 'shin', 'foot'] },
 ];
 
 export const musclesInGroup = (g: MuscleGroup): MuscleDef[] => muscleDefs.filter((m) => m.group === g);
@@ -49,7 +50,7 @@ export function exerciseRegion(e: LibraryExercise): ExerciseRegion {
   const first = e.targets.find((t) => t.role === 'alvo');
   const g = first ? muIndex.get(first.muscle)?.group : undefined;
   const r = g ? groupRegion.get(g) : undefined;
-  return r === 'upper' ? 'upper' : r === 'trunk' ? 'trunk' : 'lower';
+  return r === 'upper' ? 'upper' : r === 'trunk' || r === 'head' ? 'trunk' : 'lower';
 }
 
 /** Texto para busca: minúsculo e sem acento. */

@@ -11,13 +11,13 @@ import capacityJson from './capacity.json';
 import squatJson from './exercises/squat.json';
 import libraryJson from './exercises/library.json';
 import movementsJson from './movements.json';
+import { baseAngles, sidedDof } from './movement';
 import musclesJson from './muscles.json';
 import referencesJson from './references.json';
 import skeletonJson from './skeleton.json';
 import trainingJson from './training.json';
 import planningJson from './planning.json';
 import musclePathsJson from './muscle-paths.json';
-import anatomyJson from './anatomy.json';
 import clipsJson from './exercises/clips.json';
 import { ClipFile, MotionClip } from './schema/motion';
 import { compileClip, evaluateClip } from '@/engine/motion/evaluate';
@@ -164,13 +164,14 @@ describe('ações articulares', () => {
     for (const mu of muscles) {
       for (const a of mu.actions) {
         const mv = byId.get(a.movement);
-        if (!mv?.dof || !mv.sign) continue;
+        if (!mv?.dof || !mv.sign || a.unmodeled) continue;
         const range = a.rangeDeg ?? mv.rangeDeg;
         if (!range) continue;
-        const dof = dofIds.has(`${mv.dof}_r`) ? `${mv.dof}_r` : mv.dof;
+        const dof = sidedDof(mv.dof, dofIds);
+        const base = baseAngles(mv, dofIds);
         for (const p of paths.filter((q) => q.muscleId === mu.id && (!a.parts || a.parts.includes(q.partId)))) {
           for (let d = range[0]; d <= range[1] + 1e-9; d += 10) {
-            const r = momentArm(sk, p, {}, dof, d) * mv.sign;
+            const r = momentArm(sk, p, base, dof, d) * mv.sign;
             if (r < 0.002) failures.push(`${p.partId} ${a.movement} @${d}°: ${(r * 100).toFixed(1)} cm`);
           }
         }
@@ -193,12 +194,10 @@ describe('planejador e malha anatômica', () => {
 
   it('malhas: toda parte aponta para malhas do pacote; nenhuma malha em duas partes', () => {
     const lines = MusclePathsFile.parse(musclePathsJson).parts;
-    const known = new Set([...Object.keys(anatomyJson.muscles), ...Object.keys(anatomyJson.tendons)]);
     const owner = new Map<string, string>();
     for (const m of MuscleFile.parse(musclesJson)) {
       for (const p of m.parts) {
         for (const id of p.mesh) {
-          expect(known, `${p.id}: ${id}`).toContain(id);
           expect(owner.get(id), `${id} em ${owner.get(id)} e ${p.id}`).toBeUndefined();
           owner.set(id, p.id);
           expect(lines[id], `${id} sem linha central`).toBeDefined();
