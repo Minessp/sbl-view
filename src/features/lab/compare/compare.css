@@ -1,0 +1,149 @@
+/* ---------- Lab de comparação (o resto vem de lab.css) ---------- */
+
+.compare-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+  padding: var(--s-2) 0;
+}
+
+.compare-bar__views {
+  display: flex;
+  gap: 4px;
+}
+
+.compare-slot__cap {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  row-gap: 0;
+  white-space: normal;
+}
+
+.compare-slot__cap .view-slot__name {
+  flex: 1 1 8ch;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.compare-slot__actions {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+@media (max-width: 699px) {
+  .lab--compare .lab__views[data-count='2'] .compare-slot__read dd,
+  .lab--compare .lab__views[data-count='3'] .compare-slot__read dd {
+    font-size: var(--fs-2);
+  }
+}
+
+.compare-act {
+  min-height: 32px;
+  padding: 0 var(--s-2);
+  border: 0;
+  border-radius: var(--r-pill);
+  background: none;
+  font: inherit;
+  font-size: var(--fs-1);
+  font-weight: 500;
+  color: var(--c-ink-2);
+  cursor: pointer;
+  transition: background-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+
+.compare-act:hover {
+  color: var(--c-ink);
+  background: var(--c-hover);
+}
+
+.lab--compare .view-slot {
+  grid-template-rows: auto auto auto auto;
+  align-content: start;
+}
+
+.lab--compare .view-slot__stage {
+  height: 30svh;
+  min-height: 200px;
+}
+
+.compare-slot__read {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--s-4);
+  row-gap: 0;
+  margin: 0;
+  padding: 4px 2px 0;
+}
+
+.compare-slot__read div {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.compare-slot__read dt {
+  font-size: var(--fs-1);
+  font-stretch: var(--wd-cond);
+  color: var(--c-ink-2);
+}
+
+.compare-slot__read dd {
+  margin: 0;
+  font-size: var(--fs-3);
+  font-weight: 420;
+  font-stretch: var(--wd-max);
+  font-variant-numeric: tabular-nums;
+  color: var(--c-accent);
+}
+
+.compare-vars {
+  display: grid;
+  gap: 4px;
+  padding-top: var(--s-1);
+}
+
+.compare-vars__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.compare-vars__label {
+  min-width: 4.5ch;
+  font-size: var(--fs-1);
+  font-stretch: var(--wd-cond);
+  color: var(--c-ink-2);
+}
+
+.compare-vars .chip--small {
+  min-height: 32px;
+  font-size: var(--fs-1);
+}
+
+.compare-pick {
+  display: grid;
+  gap: 0;
+  padding-top: var(--s-4);
+}
+
+.compare-target {
+  max-width: 28rem;
+}
+
+.compare-note {
+  font-size: var(--fs-1);
+  line-height: 1.5;
+  color: var(--c-ink-2);
+}
+
+@media (min-width: 1000px) {
+  .lab--compare .view-slot__stage {
+    height: min(46svh, calc(100svh - var(--header-h) - var(--scrub-h) - 260px));
+  }
+}

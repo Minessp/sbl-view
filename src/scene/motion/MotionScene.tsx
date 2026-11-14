@@ -28,7 +28,7 @@ const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)')
 const DIM = 0.12;
 
 /** Caixa que contém o corpo e o equipamento ao longo da repetição (a câmera não persegue o movimento). */
-function clipBox(c: CompiledClip): Box {
+export function clipBox(c: CompiledClip): Box {
   const boxes: Box[] = [];
   const pt = (p: Vec3, s = 0.12): Box => ({ center: p, size: [s, s, s] });
   for (let i = 0; i <= 8; i++) {

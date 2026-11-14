@@ -19,6 +19,7 @@ const ROUTES = [
   '/exercicios/squat',
   '/exercicios/incline_dumbbell_curl',
   '/lab',
+  '/lab/comparar',
   '/treino',
   '/treino/plano',
   '/treino/historico',

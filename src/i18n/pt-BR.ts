@@ -47,7 +47,7 @@ export const ptBR = {
     doors: {
       atlas: { name: 'Atlas', body: 'Cada músculo, camada por camada: origem, inserção e ação' },
       library: { name: 'Exercícios', body: 'Animados, com o comprimento de cada alvo na repetição' },
-      lab: { name: 'Lab', body: 'Carga, ângulo e torque no agachamento' },
+      lab: { name: 'Lab', body: 'Comprimento, carga e torque, exercício contra exercício' },
       training: { name: 'Treino', body: 'Divisão, sessão ao vivo, recordes e análise' },
     },
     cue: 'Role para abrir as camadas',

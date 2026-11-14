@@ -10,6 +10,7 @@ import { useStage } from '@/scene/stageStore';
 import { EvidenceSeal } from '@/ui/EvidenceSeal';
 import { effortRefs, rawEffort, sampleAt } from './derive';
 import { getLabBody, seriesFor, squat, TRACKED_MUSCLES, variantById, type VariantSeries } from './model';
+import { LabTabs } from './LabTabs';
 import { LabSettingsPanel } from './Settings';
 import { PATTERNS, useLab, useLabSlots } from './store';
 import { Scrubber } from './Scrubber';
@@ -388,7 +389,10 @@ export default function Lab() {
     <main id="conteudo" className="lab">
       <header className="lab__head">
         <Title text={t.lab.title} className="lab__title page-title" />
-        <p className="lab__lead prose">{t.lab.lead}</p>
+        <div className="lab__intro">
+          <p className="lab__lead prose">{t.lab.lead}</p>
+          <LabTabs />
+        </div>
       </header>
 
       {/* O bloco 3D fica fixo só dentro da análise; registro e notas vêm depois, sem ele por cima. */}

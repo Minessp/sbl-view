@@ -19,6 +19,9 @@ import trainingJson from './training.json';
 import planningJson from './planning.json';
 import musclePathsJson from './muscle-paths.json';
 import clipsJson from './exercises/clips.json';
+import variationsJson from './exercises/variations.json';
+import { LabVariationFile } from './schema/lab';
+import { applyPatches } from '@/engine/motion/patch';
 import { ClipFile, MotionClip } from './schema/motion';
 import { compileClip, evaluateClip } from '@/engine/motion/evaluate';
 import { angleBetween, DEG, normalize, rotate, scale, sub } from '@/engine/math/vec';
@@ -51,7 +54,7 @@ function collectEvidence(node: unknown, out: Evidence[] = []): Evidence[] {
 }
 
 const allEvidence = () =>
-  [skeletonJson, musclesJson, anthropometryJson, capacityJson, squatJson, libraryJson, trainingJson, planningJson, clipsJson].flatMap((j) => collectEvidence(j));
+  [skeletonJson, musclesJson, anthropometryJson, capacityJson, squatJson, libraryJson, trainingJson, planningJson, clipsJson, variationsJson].flatMap((j) => collectEvidence(j));
 
 describe('banco de dados', () => {
   it('referências: ids únicos', () => {
@@ -317,8 +320,8 @@ describe('clipes de movimento', () => {
     expect(wrong).toEqual([]);
   });
 
-  it.each(entries.map((e) => [e.id, e] as const))('%s: molde gera clipe válido; DOFs na amplitude, restrições fechadas, sem NaN', (_, entry) => {
-    const clip = MotionClip.parse(expandEntry(entry));
+  /** Regras de todo clipe: DOFs na amplitude, restrições fechadas, sem NaN, nada no chão, limites por plano. */
+  function expectValidClip(clip: MotionClip) {
     const c = compileClip(clip, sk, motionMasses);
     for (let i = 0; i <= SAMPLES; i++) {
       const f = evaluateClip(c, i / SAMPLES);
@@ -344,5 +347,32 @@ describe('clipes de movimento', () => {
           expect(Math.acos(Math.min(1, up[1])) / DEG, `pé ${s} rolado em u=${f.u.toFixed(2)}`).toBeLessThan(1);
         }
     }
+  }
+
+  it.each(entries.map((e) => [e.id, e] as const))('%s: molde gera clipe válido; DOFs na amplitude, restrições fechadas, sem NaN', (_, entry) => {
+    expectValidClip(MotionClip.parse(expandEntry(entry)));
+  });
+
+  const variations = LabVariationFile.parse(variationsJson);
+  it('variações do Lab: exercício existe, uma opção base sem remendo, ids únicos', () => {
+    const keys = new Set<string>();
+    for (const v of variations) {
+      expect(lib.map((e) => e.id), v.exercise).toContain(v.exercise);
+      const k = `${v.exercise}/${v.id}`;
+      expect(keys.has(k), k).toBe(false);
+      keys.add(k);
+      const base = v.options.filter((o) => o.base);
+      expect(base, k).toHaveLength(1);
+      expect(base[0]?.patches, k).toEqual([]);
+      expect(new Set(v.options.map((o) => o.id)).size, k).toBe(v.options.length);
+    }
+  });
+
+  it.each(variations.flatMap((v) => v.options.filter((o) => !o.base).map((o) => [`${v.exercise} ${v.id}=${o.id}`, v, o] as const)))('variação %s: clipe válido', (_, v, o) => {
+    const entry = entries.find((e) => e.id === v.exercise);
+    if (!entry) throw new Error(v.exercise);
+    const patched = applyPatches(entry, o.patches);
+    expect(JSON.stringify(patched)).not.toBe(JSON.stringify(entry));
+    expectValidClip(MotionClip.parse(expandEntry(patched)));
   });
 });

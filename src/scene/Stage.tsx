@@ -8,6 +8,7 @@ import { AtlasScene } from './atlas/AtlasScene';
 import { LightRig } from './body/LightRig';
 import { HeatScene } from './heat/HeatScene';
 import { HomeScene } from './home/HomeScene';
+import { CompareScene } from './lab/CompareScene';
 import { LabScene } from './lab/LabScene';
 import { MotionScene } from './motion/MotionScene';
 import { useStage } from './stageStore';
@@ -30,6 +31,7 @@ export default function Stage() {
       <LightRig />
       {scene === 'home' && <HomeScene />}
       {scene === 'lab' && <LabScene />}
+      {scene === 'compare' && <CompareScene />}
       {scene === 'atlas' && <AtlasScene />}
       {scene === 'heat' && <HeatScene />}
       {scene === 'motion' && <MotionScene />}

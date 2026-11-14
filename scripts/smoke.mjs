@@ -87,6 +87,22 @@ await step('alternar variação troca a vista', async () => {
   await page.waitForFunction(() => document.querySelectorAll('.view-slot').length === 3);
 });
 
+await step('lab: comparar abre pela aba, troca alvo, duplica e muda a variação', async () => {
+  await page.getByRole('link', { name: 'Comparar exercícios' }).click();
+  await page.getByRole('heading', { level: 1, name: 'Comparar exercícios' }).waitFor();
+  await page.waitForSelector('.stage[data-ready="true"]', { timeout: 20000 });
+  if ((await page.locator('.compare-slot').count()) !== 3) throw new Error('rosca: esperava três vistas');
+  await page.locator('.compare-target select').selectOption('pectoralis_major');
+  await page.waitForFunction(() => new URLSearchParams(location.search).get('alvo') === 'pectoralis_major');
+  // Variação contra variação: o crucifixo duplicado, com a polia alta numa das vistas.
+  await page.goto(`${base}/lab/comparar?alvo=pectoralis_major&ex=cable_fly`, { waitUntil: 'networkidle' });
+  await page.getByRole('button', { name: /Duplicar Crucifixo na polia/ }).click();
+  await page.locator('.compare-slot').nth(1).getByRole('button', { name: 'alta' }).click();
+  await page.waitForFunction(() => /pulley%3Dhigh/.test(location.search));
+  const lines = await page.locator('section:has(#cmp-load) .chart__line').count();
+  if (lines < 2) throw new Error(`só ${lines} curvas de carga`);
+});
+
 await step('atlas: índice lista músculos e a página desenha corpo e curvas', async () => {
   await page.goto(`${base}/atlas`, { waitUntil: 'networkidle' });
   await page.getByRole('link', { name: /Semimembranáceo/ }).click();
@@ -146,10 +162,10 @@ await step('atlas: parte pela busca e pela URL; demonstração no plano frontal 
   if (a === b) throw new Error(`demonstração parada em ${a}`);
 });
 
-await step('biblioteca: busca + comprimento longo + hipótese deixa um exercício', async () => {
+await step('biblioteca: busca + comprimento longo + consolidado deixa um exercício', async () => {
   await page.goto(`${base}/exercicios`, { waitUntil: 'networkidle' });
   await page.getByText('Só carga no músculo alongado').click();
-  await page.getByRole('button', { name: 'Hipótese' }).click();
+  await page.getByRole('button', { name: 'Consolidado' }).click();
   await page.getByRole('status').filter({ hasText: /^\s*\d{2} exercícios/ }).waitFor();
   await page.getByLabel('Buscar').fill('extensora');
   await page.getByRole('status').filter({ hasText: '1 exercício' }).waitFor();

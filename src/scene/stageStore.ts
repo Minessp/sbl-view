@@ -4,7 +4,7 @@
  */
 import { create } from 'zustand';
 
-export type SceneId = 'none' | 'home' | 'lab' | 'atlas' | 'heat' | 'motion';
+export type SceneId = 'none' | 'home' | 'lab' | 'compare' | 'atlas' | 'heat' | 'motion';
 
 interface StageState {
   scene: SceneId;

@@ -98,3 +98,10 @@
   font-size: var(--fs-1);
   color: var(--c-ink-2);
 }
+
+/* Ponta alongada da série (XYChart): anel vazado. */
+.chart__start {
+  fill: var(--c-bg-2);
+  stroke: var(--c-ink-2);
+  stroke-width: 1;
+}

@@ -1,0 +1,323 @@
+[
+  {
+    "exercise": "incline_dumbbell_curl",
+    "id": "bench",
+    "kind": "incline",
+    "label": "Banco",
+    "options": [
+      {
+        "id": "b65",
+        "label": "65°",
+        "patches": [
+          {
+            "path": "params.recline",
+            "op": "set",
+            "value": 25
+          }
+        ]
+      },
+      {
+        "id": "b50",
+        "label": "50°",
+        "base": true,
+        "patches": []
+      },
+      {
+        "id": "b35",
+        "label": "35°",
+        "patches": [
+          {
+            "path": "params.recline",
+            "op": "set",
+            "value": 55
+          }
+        ]
+      }
+    ],
+    "text": "Quanto mais o banco deita, mais o braço pendurado fica atrás do tronco: o ombro estende e a cabeça longa do bíceps começa mais comprida. O braço continua na vertical, então o pico da carga fica perto de 90° de cotovelo em todas.",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_reasoning"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Hipótese mecânica pelo modelo; ângulo do banco medido do chão."
+    }
+  },
+  {
+    "exercise": "bayesian_curl",
+    "id": "pulley",
+    "kind": "pulley",
+    "label": "Polia",
+    "options": [
+      {
+        "id": "low",
+        "label": "baixa",
+        "patches": [
+          {
+            "path": "params.implement.pulley.1",
+            "op": "set",
+            "value": 0.45
+          }
+        ]
+      },
+      {
+        "id": "mid",
+        "label": "na altura do quadril",
+        "base": true,
+        "patches": []
+      },
+      {
+        "id": "high",
+        "label": "no ombro",
+        "patches": [
+          {
+            "path": "params.implement.pulley.1",
+            "op": "set",
+            "value": 1.4
+          }
+        ]
+      }
+    ],
+    "text": "A altura da roldana muda a direção do cabo, e com ela o ângulo de cotovelo em que o cabo fica perpendicular ao antebraço: polia mais baixa leva o pico para o meio da subida, polia mais alta para o começo, com o bíceps comprido.",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_reasoning"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Hipótese mecânica pelo modelo (força do cabo constante, sem atrito)."
+    }
+  },
+  {
+    "exercise": "cable_fly",
+    "id": "pulley",
+    "kind": "pulley",
+    "label": "Polia",
+    "options": [
+      {
+        "id": "chest",
+        "label": "no peito",
+        "patches": [
+          {
+            "path": "equipment.kind=cable.pulley.1",
+            "op": "set",
+            "value": 1.2
+          }
+        ]
+      },
+      {
+        "id": "shoulder",
+        "label": "no ombro",
+        "base": true,
+        "patches": []
+      },
+      {
+        "id": "high",
+        "label": "alta",
+        "patches": [
+          {
+            "path": "equipment.kind=cable.pulley.1",
+            "op": "set",
+            "value": 2
+          }
+        ]
+      }
+    ],
+    "text": "O cabo puxa o braço para a roldana. Com a polia na altura do caminho das mãos, quase toda a força gira o ombro na adução horizontal; acima ou abaixo, parte dela só puxa o braço para cima ou para baixo.",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_reasoning"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Hipótese mecânica pelo modelo."
+    }
+  },
+  {
+    "exercise": "behind_back_cable_lateral_raise",
+    "id": "pulley",
+    "kind": "pulley",
+    "label": "Polia",
+    "options": [
+      {
+        "id": "floor",
+        "label": "no chão",
+        "base": true,
+        "patches": []
+      },
+      {
+        "id": "hip",
+        "label": "no quadril",
+        "patches": [
+          {
+            "path": "equipment.kind=cable.pulley.1",
+            "op": "set",
+            "value": 0.85
+          }
+        ]
+      }
+    ],
+    "text": "Com a roldana no chão, o cabo cruza por trás do corpo e já puxa o braço para baixo e para dentro no começo, com o deltoide lateral comprido. Na altura do quadril o cabo sai quase horizontal e a carga no começo cai.",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_reasoning"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Hipótese mecânica pelo modelo."
+    }
+  },
+  {
+    "exercise": "bench_press",
+    "id": "grip",
+    "kind": "grip",
+    "label": "Pegada",
+    "options": [
+      {
+        "id": "close",
+        "label": "fechada",
+        "patches": [
+          {
+            "path": "params.halfWidth",
+            "op": "set",
+            "value": 0.2
+          }
+        ]
+      },
+      {
+        "id": "mid",
+        "label": "média",
+        "base": true,
+        "patches": []
+      },
+      {
+        "id": "wide",
+        "label": "aberta",
+        "patches": [
+          {
+            "path": "params.halfWidth",
+            "op": "set",
+            "value": 0.38
+          }
+        ]
+      }
+    ],
+    "text": "Pegada mais aberta abre o cotovelo para o lado e põe mais adução horizontal no ombro; mais fechada aproxima o cotovelo do tronco e passa trabalho para a extensão do cotovelo.",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_reasoning"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Hipótese mecânica pelo modelo."
+    }
+  },
+  {
+    "exercise": "lat_pulldown",
+    "id": "grip",
+    "kind": "grip",
+    "label": "Pegada",
+    "options": [
+      {
+        "id": "close",
+        "label": "fechada",
+        "patches": [
+          {
+            "path": "params.halfWidth",
+            "op": "set",
+            "value": 0.22
+          }
+        ]
+      },
+      {
+        "id": "mid",
+        "label": "média",
+        "patches": [
+          {
+            "path": "params.halfWidth",
+            "op": "set",
+            "value": 0.31
+          }
+        ]
+      },
+      {
+        "id": "wide",
+        "label": "aberta",
+        "base": true,
+        "patches": []
+      }
+    ],
+    "text": "A largura da pegada troca o plano do ombro: fechada, o braço desce mais pela frente (extensão do ombro); aberta, mais pelo lado (adução).",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_reasoning"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Hipótese mecânica pelo modelo."
+    }
+  },
+  {
+    "exercise": "leg_press",
+    "id": "feet",
+    "kind": "feet",
+    "label": "Pés",
+    "options": [
+      {
+        "id": "low",
+        "label": "baixos",
+        "patches": [
+          {
+            "path": "reach.limb=leg.target.point.*.p.1",
+            "op": "add",
+            "value": -0.03
+          },
+          {
+            "path": "reach.limb=leg.target.point.*.p.2",
+            "op": "add",
+            "value": 0.03
+          }
+        ]
+      },
+      {
+        "id": "mid",
+        "label": "no meio",
+        "base": true,
+        "patches": []
+      },
+      {
+        "id": "high",
+        "label": "altos",
+        "patches": [
+          {
+            "path": "reach.limb=leg.target.point.*.p.1",
+            "op": "add",
+            "value": 0.06
+          },
+          {
+            "path": "reach.limb=leg.target.point.*.p.2",
+            "op": "add",
+            "value": -0.06
+          }
+        ]
+      }
+    ],
+    "text": "Pés mais baixos na plataforma dobram mais o joelho no fundo e alongam mais os vastos; mais altos dobram mais o quadril e passam a carga para o glúteo máximo.",
+    "evidence": {
+      "source": [
+        {
+          "refId": "sbl_reasoning"
+        }
+      ],
+      "confidence": "especulativo",
+      "note": "Hipótese mecânica pelo modelo; 4,2 cm (baixos) e 8,5 cm (altos) ao longo da plataforma."
+    }
+  }
+]

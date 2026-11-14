@@ -10,6 +10,7 @@ import { Shell } from './Shell';
 // Rotas além da página inicial carregam sob demanda. O carregador fica à parte: a troca de rota espera o chunk (abaixo).
 const load = {
   lab: () => import('@/features/lab/Lab'),
+  compare: () => import('@/features/lab/compare/Compare'),
   atlas: () => import('@/features/atlas/AtlasIndex'),
   muscle: () => import('@/features/atlas/MusclePage'),
   library: () => import('@/features/library/Library'),
@@ -22,6 +23,7 @@ const load = {
   analise: () => import('@/features/treino/Analise'),
 };
 const Lab = lazy(load.lab);
+const Compare = lazy(load.compare);
 const AtlasIndex = lazy(load.atlas);
 const MusclePage = lazy(load.muscle);
 const Library = lazy(load.library);
@@ -44,7 +46,7 @@ const TREINO: Record<string, () => Promise<unknown>> = {
 /** Chunk da rota (caminho sem a base). Página inicial e desconhecidas: nada a carregar. */
 function routeChunk(path: string): (() => Promise<unknown>) | null {
   const [a, b] = path.split(/[?#]/)[0]?.split('/').filter(Boolean) ?? [];
-  if (a === 'lab') return load.lab;
+  if (a === 'lab') return b === 'comparar' ? load.compare : load.lab;
   if (a === 'atlas') return b ? load.muscle : load.atlas;
   if (a === 'exercicios') return b ? load.exercise : load.library;
   if (a === 'treino') return b ? (TREINO[b] ?? null) : load.treino;
@@ -186,6 +188,7 @@ export function App() {
             <Switch>
               <Route path="/" component={Home} />
               <Route path="/lab/agachamento" component={Lab} />
+              <Route path="/lab/comparar" component={Compare} />
               <Route path="/lab" component={Lab} />
               <Route path="/atlas" component={AtlasIndex} />
               <Route path="/atlas/:id">{(p) => <MusclePage id={p.id} />}</Route>

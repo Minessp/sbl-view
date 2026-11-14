@@ -4,13 +4,18 @@ import { getReference } from '@/data';
 import { t } from '@/i18n/app';
 import { EvidenceSeal } from '@/ui/EvidenceSeal';
 import { Sources } from '@/ui/Sources';
-import { exerciseById, muscleById } from './catalog';
+import { exerciseById, library, muscleById } from './catalog';
+import type { LibraryExercise } from '@/data/schema/exercise';
 import { EmphasisMark } from './EmphasisMark';
 import { compiledClip } from './motion';
 import { Player } from './player/Player';
 import '@/features/atlas/explorer/explorer.css';
 import './library.css';
 import { Title } from '@/ui/Title';
+
+/** Algum alvo do exercício é alvo de outro exercício também: dá para comparar no Lab. */
+const comparable = (e: LibraryExercise): boolean =>
+  e.targets.some((t) => t.role === 'alvo' && library.some((x) => x.id !== e.id && x.targets.some((y) => y.muscle === t.muscle && y.role === 'alvo')));
 
 export default function ExercisePage({ id }: { id: string }) {
   const e = exerciseById(id);
@@ -62,6 +67,11 @@ export default function ExercisePage({ id }: { id: string }) {
           {e.labId && (
             <Link href="/lab/agachamento" className="btn-secondary">
               {E.lab}
+            </Link>
+          )}
+          {comparable(e) && (
+            <Link href={`/lab/comparar?ex=${e.id}`} className="btn-secondary">
+              {E.compare}
             </Link>
           )}
         </div>

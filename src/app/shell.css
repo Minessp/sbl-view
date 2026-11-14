@@ -361,6 +361,7 @@ html.menu-open {
 /* Lab, Atlas, calor: o canvas cobre a viewport e desenha só nos retângulos das vistas, acima do conteúdo. */
 .stage[data-scene='home'],
 .stage[data-scene='lab'],
+.stage[data-scene='compare'],
 .stage[data-scene='atlas'],
 .stage[data-scene='heat'],
 .stage[data-scene='motion'] {
@@ -371,6 +372,7 @@ html.menu-open {
 }
 
 .stage[data-scene='lab'] .stage__loading,
+.stage[data-scene='compare'] .stage__loading,
 .stage[data-scene='atlas'] .stage__loading,
 .stage[data-scene='heat'] .stage__loading,
 .stage[data-scene='motion'] .stage__loading {
