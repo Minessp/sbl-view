@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
-import { Link, useRoute } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { t } from '@/i18n';
 import { StageHost } from '@/scene/StageHost';
 import { ThemeSwitch } from '@/ui/ThemeSwitch';
@@ -10,19 +10,24 @@ import './shell.css';
 const loadMenu = () => import('./MenuPanel');
 const MenuPanel = lazy(loadMenu);
 
+const SECTIONS = [
+  ['/atlas', t.nav.atlas],
+  ['/exercicios', t.nav.library],
+  ['/lab', t.nav.lab],
+  ['/treino', t.nav.training],
+] as const;
+
 /**
- * Ativo na rota e nas filhas (`/atlas` acende em `/atlas/soleus`). O filamento aceso mora só no link ativo;
- * com View Transition ele desliza do link antigo ao novo (motion.css).
+ * Seção atual ao lado da marca (a navegação mora no menu). Na View Transition o nome troca pela penumbra
+ * (motion.css → site-where). Leitor de tela já tem o h1; aqui é só orientação visual.
  */
-function NavLink({ href, children, className }: { href: string; children: ReactNode; className?: string }) {
-  const [exact] = useRoute(href);
-  const [nested] = useRoute(`${href}/*`);
-  const active = exact || nested;
+function Where() {
+  const [loc] = useLocation();
+  const name = SECTIONS.find(([href]) => loc === href || loc.startsWith(`${href}/`))?.[1];
   return (
-    <Link href={href} aria-current={active ? 'page' : undefined} className={className}>
-      {children}
-      {active && <span className="site-nav__indicator" aria-hidden="true" />}
-    </Link>
+    <span className="site-where" aria-hidden="true" data-on={name !== undefined}>
+      {name}
+    </span>
   );
 }
 
@@ -63,12 +68,7 @@ export function Shell({ children }: { children: ReactNode }) {
           <span className="wordmark__sbl">SBL</span>
           <span className="wordmark__view">View</span>
         </Link>
-        <nav className="site-nav" aria-label={t.nav.label}>
-          <NavLink href="/atlas">{t.nav.atlas}</NavLink>
-          <NavLink href="/exercicios">{t.nav.library}</NavLink>
-          <NavLink href="/lab">{t.nav.lab}</NavLink>
-          <NavLink href="/treino">{t.nav.training}</NavLink>
-        </nav>
+        <Where />
         <ThemeSwitch />
         <button
           type="button"
@@ -89,6 +89,7 @@ export function Shell({ children }: { children: ReactNode }) {
           <MenuPanel onClosed={() => setMenu(false)} />
         </Suspense>
       )}
+      <span className="vt-beam" aria-hidden="true" />
       <StageHost />
       {children}
       <UpdateNotice />

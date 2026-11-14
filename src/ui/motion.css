@@ -1,7 +1,7 @@
 /*
  * Linguagem de movimento.
  * - Troca de rota: a luz baixa na página que sai (desfoca e escurece) e a nova é revelada de cima para baixo por uma
- *   borda de luz macia (máscara). O cabeçalho fica parado, o filamento da navegação desliza e o título da página
+ *   borda de luz macia (máscara). O cabeçalho fica parado, o nome da seção troca pela penumbra e o título da página
  *   (`view-transition-name: page-title`) viaja de um lugar ao outro: da entrada da home ao h1, de h1 a h1.
  * - Troca de tema: a luz nova se espalha em círculo a partir do interruptor (ThemeSwitch.tsx).
  * - Sem suporte: entrada por CSS (só `backwards`, para não deixar transform no elemento: viraria bloco de contenção e
@@ -13,8 +13,8 @@
   view-transition-name: site-header;
 }
 
-.site-nav__indicator {
-  view-transition-name: nav-indicator;
+.site-where {
+  view-transition-name: site-where;
 }
 
 .page-title {
@@ -39,9 +39,12 @@
   mask-repeat: no-repeat;
 }
 
-::view-transition-group(nav-indicator) {
-  animation-duration: 460ms;
-  animation-timing-function: var(--ease);
+::view-transition-old(site-where) {
+  animation: vt-title-out var(--t-exit) var(--ease-in) both;
+}
+
+::view-transition-new(site-where) {
+  animation: vt-title-in 420ms var(--ease) 60ms both;
 }
 
 /* Título: o grupo leva posição e tamanho; as duas imagens trocam pela penumbra. */
@@ -56,6 +59,46 @@
 
 ::view-transition-new(page-title) {
   animation: vt-title-in 520ms var(--ease) 80ms both;
+}
+
+/* Feixe da troca de rota: só existe no estado novo (html.vt-nav) e desce com a borda da máscara, mesma curva e tempo.
+   A borda vai de −15% a 115% da altura (máscara de 230%, transição em 44–56%). */
+.vt-beam {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  display: none;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--c-glow) 30%, var(--c-light-key) 50%, var(--c-glow) 70%, transparent);
+  box-shadow: 0 0 22px 4px color-mix(in oklch, var(--c-glow) 45%, transparent);
+  view-transition-name: vt-beam;
+}
+
+html.vt-nav .vt-beam {
+  display: block;
+}
+
+::view-transition-new(vt-beam) {
+  animation: vt-beam 640ms var(--ease) 70ms both;
+}
+
+@keyframes vt-beam {
+  from {
+    transform: translateY(-15vh);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  to {
+    transform: translateY(115vh);
+    opacity: 0;
+  }
 }
 
 @keyframes vt-out {

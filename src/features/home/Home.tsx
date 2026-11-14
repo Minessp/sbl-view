@@ -19,6 +19,7 @@ import './home.css';
 const HeroControls = lazy(() => import('./HeroControls'));
 const HomeMore = lazy(() => import('./HomeMore'));
 const HomeRail = lazy(() => import('./HomeRail'));
+const Atmosphere = lazy(() => import('./Atmosphere'));
 
 const H = t.home;
 const DOORS = [
@@ -178,6 +179,9 @@ export default function Home() {
     <main id="conteudo" ref={root} className="home" data-ready={ready}>
       <div ref={wrap} className="home-hero">
         <div className="home-hero__pin">
+          <Suspense fallback={null}>
+            <Atmosphere />
+          </Suspense>
           <div
             ref={setSlotEl}
             className="home-hero__view"

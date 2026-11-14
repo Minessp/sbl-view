@@ -3,7 +3,7 @@
  * ou botão direito arrastam a vista, roda e pinça aproximam, toque seleciona. Teclado: setas, Shift+setas, + e −,
  * Enter e Esc. Nada aqui importa three.js.
  */
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { t } from '@/i18n/app';
 import { useStage } from '@/scene/stageStore';
@@ -37,6 +37,9 @@ export function Viewport({ label, onTap, hoverText, className = '' }: Props) {
   /** Mira no centro enquanto o foco é de teclado (Enter seleciona o que está sob ela). */
   const [aim, setAim] = useState<{ x: number; y: number } | null>(null);
   const overlay = typeof document === 'undefined' ? null : document.getElementById('stage-overlay');
+  /** Largura do rótulo, medida depois de desenhar: nome longo perto da borda vira para o lado de dentro (não corta). */
+  const tipLabel = useRef<HTMLSpanElement>(null);
+  const [tipW, setTipW] = useState(0);
   const aimAt = (el: HTMLElement) => {
     const r = el.getBoundingClientRect();
     setAim({ x: r.left + r.width / 2, y: r.top + r.height / 2 });
@@ -79,6 +82,19 @@ export function Viewport({ label, onTap, hoverText, className = '' }: Props) {
 
   const hoverName = hover ? describe(hover, structures)?.name : null;
   const text = hover && hoverName && !samePick(hover, selection) ? (hoverText ? hoverText(hoverName, hover) : t.atlas.ex.hover(hoverName)) : null;
+  useLayoutEffect(() => {
+    const w = tipLabel.current?.offsetWidth ?? 0;
+    if (w !== tipW) setTipW(w);
+  }, [text, tipW]);
+  const tipBounds = overlay?.getBoundingClientRect();
+  const tipLeft = (() => {
+    if (!tip) return 0;
+    const lo = (tipBounds?.left ?? 0) + 8;
+    const hi = (tipBounds?.right ?? window.innerWidth) - 8;
+    const right = tip.x + 16;
+    if (right + tipW <= hi) return right;
+    return Math.max(lo, Math.min(hi - tipW, tip.x - 16 - tipW));
+  })();
 
   return (
     <div
@@ -236,8 +252,10 @@ export function Viewport({ label, onTap, hoverText, className = '' }: Props) {
         createPortal(
           <>
             {text && tip && (
-              <span className="explorer-tip" aria-hidden="true" style={{ transform: `translate(${tip.x.toFixed(0)}px, ${tip.y.toFixed(0)}px)` }}>
-                <span className="explorer-tip__label">{text}</span>
+              <span className="explorer-tip" aria-hidden="true" style={{ transform: `translate(${tipLeft.toFixed(0)}px, ${tip.y.toFixed(0)}px)` }}>
+                <span ref={tipLabel} className="explorer-tip__label">
+                  {text}
+                </span>
               </span>
             )}
             {aim && <span className="explorer-aim" aria-hidden="true" style={{ transform: `translate(${aim.x.toFixed(0)}px, ${aim.y.toFixed(0)}px)` }} />}

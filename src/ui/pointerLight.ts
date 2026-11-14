@@ -2,7 +2,7 @@
  * Lâmpada sob o ponteiro: o elemento apertável sob o mouse recebe --mx/--my (px, relativo a ele) e o CSS desenha um
  * brilho macio ali (`--lamp` em tokens.css). Só com ponteiro fino; um ouvinte delegado para a página toda.
  */
-const SEL = '.btn-primary, .btn-secondary, .chip, .site-nav a, .menu-btn, .lamp';
+const SEL = '.btn-primary, .btn-secondary, .chip, .menu-btn, .lamp';
 
 export function startPointerLight() {
   if (typeof window === 'undefined' || !window.matchMedia('(pointer: fine)').matches) return;

@@ -68,7 +68,7 @@
    passa por cima do conteúdo numa pílula com véu. */
 .home-rail__name {
   position: absolute;
-  right: calc(100% - var(--s-1));
+  right: calc(100% + var(--s-2));
   padding: 3px var(--s-2);
   border-radius: var(--r-pill);
   background: var(--c-scrim);

@@ -12,6 +12,7 @@ import { t } from '@/i18n';
 import { useStage } from '@/scene/stageStore';
 import { heroCamera, lens, samePick, useHome, type HomePick } from './store';
 import { explodeAt, LENS_DEPTHS, lensRadius, type LensDepth } from './timeline';
+import { lightTitle } from './titleLight';
 
 const ORBIT_K = 0.0085;
 const TAP_PX = 6;
@@ -20,6 +21,11 @@ const FLIGHT_MS = 720;
 const reduce = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export default function HeroControls({ slot }: { slot: HTMLElement }) {
+  // Título sob a luz do cursor.
+  useEffect(() => {
+    const h1 = document.getElementById('home-title');
+    return h1 ? lightTitle(h1) : undefined;
+  }, []);
   const [, navigate] = useLocation();
   const depth = useHome((s) => s.depth);
   const hover = useHome((s) => s.hover);
@@ -44,7 +50,11 @@ export default function HeroControls({ slot }: { slot: HTMLElement }) {
       if (ring.current) ring.current.dataset.on = String(lens.on && explodeAt(useStage.getState().progress) < 0.02);
       const tr = `translate(${x.toFixed(0)}px, ${y.toFixed(0)}px)`;
       if (ring.current) ring.current.style.transform = tr;
-      if (tip.current) tip.current.style.transform = tr;
+      if (tip.current) {
+        tip.current.style.transform = tr;
+        // Perto da borda direita o rótulo vai para a esquerda da lente (nome longo não sai da tela).
+        tip.current.dataset.flip = String(x > window.innerWidth - 380);
+      }
     };
     const pickAt = (x: number, y: number): HomePick | null => {
       const r = slot.getBoundingClientRect();

@@ -115,7 +115,7 @@
 
 .menu__link {
   display: grid;
-  grid-template-columns: 2.5rem minmax(0, auto) minmax(0, 1fr);
+  grid-template-columns: 4rem minmax(0, auto) minmax(0, 1fr);
   align-items: baseline;
   gap: var(--s-4);
   padding: var(--s-4) var(--s-3);
@@ -184,7 +184,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--s-2);
-  padding: 0 var(--s-3) var(--s-4) calc(2.5rem + var(--s-4) + var(--s-3));
+  padding: 0 var(--s-3) var(--s-4) calc(4rem + var(--s-4) + var(--s-3));
   animation: menu-fade var(--t-enter) var(--ease) calc(var(--d) + 200ms) backwards;
 }
 
@@ -216,7 +216,7 @@
     padding: var(--s-4) var(--s-2);
   }
   .menu__link {
-    grid-template-columns: 2rem minmax(0, 1fr);
+    grid-template-columns: 3.5rem minmax(0, 1fr);
     gap: var(--s-1) var(--s-3);
     padding: var(--s-3) var(--s-2);
   }
@@ -230,7 +230,7 @@
     font-size: var(--fs-2);
   }
   .menu__sub {
-    padding-left: calc(2rem + var(--s-3) + var(--s-2));
+    padding-left: calc(3.5rem + var(--s-3) + var(--s-2));
   }
   .menu__foot {
     padding: 0 var(--s-4);
@@ -246,4 +246,44 @@
   .menu__foot {
     animation: none;
   }
+}
+
+/* Placa acesa que desliza até a linha sob o ponteiro (Motion, layoutId); repousa na seção atual. */
+.menu__link {
+  position: relative;
+  isolation: isolate;
+}
+
+.menu__plate {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: var(--r-2);
+  background: linear-gradient(90deg, color-mix(in oklch, var(--c-accent) 11%, transparent), transparent 70%);
+  box-shadow: inset 2px 0 0 var(--c-accent);
+}
+
+.menu__num {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.menu__icon {
+  flex: none;
+  opacity: 0.7;
+  transition:
+    opacity var(--t-mid) var(--ease),
+    transform var(--t-mid) var(--ease);
+}
+
+.menu__link:hover .menu__icon,
+.menu__link[aria-current='page'] .menu__icon {
+  opacity: 1;
+  color: var(--c-accent);
+  transform: rotate(-8deg) scale(1.08);
+}
+
+.menu__bar .wordmark {
+  margin-right: auto;
 }

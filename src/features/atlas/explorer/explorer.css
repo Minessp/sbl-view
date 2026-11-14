@@ -79,11 +79,11 @@
   will-change: transform;
 }
 
+/* O x do contêiner já é a borda esquerda do rótulo (Viewport.tsx vira o lado perto da borda). */
 .explorer-tip__label {
   position: absolute;
-  left: 16px;
+  left: 0;
   bottom: 10px;
-  max-width: 260px;
   padding: 6px 12px;
   border-radius: var(--r-pill);
   background: color-mix(in oklch, var(--c-bg) 82%, transparent);

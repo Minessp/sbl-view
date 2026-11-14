@@ -478,3 +478,9 @@
     text-shadow: 0 0 10px color-mix(in oklch, var(--c-glow) 80%, transparent);
   }
 }
+
+@media (min-width: 1360px) and (min-height: 561px) and (pointer: fine) {
+  .home-gates {
+    padding-right: 112px;
+  }
+}

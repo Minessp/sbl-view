@@ -3,7 +3,9 @@
  * A cortina desce do cabeçalho, os nomes das seções entram letra a letra em cascata e o fio de cada linha se acende.
  * A barra de cima repete o cabeçalho no mesmo lugar (marca, tema, e "Fechar" onde estava "Menu").
  */
-import { useEffect, useRef, type CSSProperties } from 'react';
+import { Dumbbell, FlaskConical, Layers, NotebookPen, type LucideIcon } from 'lucide-react';
+import { domMax, LazyMotion, m } from 'motion/react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { Link, useLocation } from 'wouter';
 import { t as tShell } from '@/i18n';
 import { t } from '@/i18n/app';
@@ -13,13 +15,14 @@ import './menu.css';
 
 const D = tShell.home.doors;
 const TR = t.training.tabs;
-const SECTIONS = [
-  { href: '/atlas', ...D.atlas },
-  { href: '/exercicios', ...D.library },
-  { href: '/lab', ...D.lab },
+const SECTIONS: readonly { href: string; name: string; body: string; icon: LucideIcon; sub?: readonly (readonly [string, string])[] }[] = [
+  { href: '/atlas', ...D.atlas, icon: Layers },
+  { href: '/exercicios', ...D.library, icon: Dumbbell },
+  { href: '/lab', ...D.lab, icon: FlaskConical },
   {
     href: '/treino',
     ...D.training,
+    icon: NotebookPen,
     sub: [
       ['/treino', TR.log],
       ['/treino/plano', TR.plan],
@@ -27,9 +30,9 @@ const SECTIONS = [
       ['/treino/progresso', TR.progress],
       ['/treino/analise', TR.analysis],
       ['/treino/dados', TR.data],
-    ] as const,
+    ],
   },
-] as const;
+];
 
 /** Duração da saída (motion.css: --t-exit); com redução de movimento, fecha na hora. */
 const EXIT_MS = 220;
@@ -66,6 +69,10 @@ export default function MenuPanel({ onClosed }: { onClosed: () => void }) {
   };
 
   const here = (href: string) => loc === href || loc.startsWith(`${href}/`);
+  const current = SECTIONS.findIndex((s) => here(s.href));
+  /** Linha sob o ponteiro ou o foco; sem nenhuma, a placa repousa na seção atual. */
+  const [hover, setHover] = useState<number | null>(null);
+  const lit = hover ?? (current >= 0 ? current : null);
 
   return (
     <dialog
@@ -90,11 +97,22 @@ export default function MenuPanel({ onClosed }: { onClosed: () => void }) {
         </button>
       </div>
       <nav className="menu__nav" aria-label={t.menu.sections}>
-        <ol className="menu__list">
+        <LazyMotion features={domMax}>
+        <ol className="menu__list" onPointerLeave={() => setHover(null)}>
           {SECTIONS.map((s, k) => (
             <li key={s.href} className="menu__item" style={{ '--k': k, '--d': `${140 + k * 70}ms` } as CSSProperties}>
-              <Link href={s.href} className="menu__link lamp" aria-current={here(s.href) ? 'page' : undefined} onClick={() => shut(false)}>
+              <Link
+                href={s.href}
+                className="menu__link lamp"
+                aria-current={here(s.href) ? 'page' : undefined}
+                onClick={() => shut(false)}
+                onPointerEnter={() => setHover(k)}
+                onFocus={() => setHover(k)}
+                onBlur={() => setHover(null)}
+              >
+                {lit === k && <m.span layoutId="menu-plate" className="menu__plate" aria-hidden="true" transition={{ type: 'spring', stiffness: 380, damping: 36 }} />}
                 <span className="menu__num" aria-hidden="true">
+                  <s.icon size={18} strokeWidth={1.4} className="menu__icon" />
                   {String(k + 1).padStart(2, '0')}
                 </span>
                 <span className="menu__name">
@@ -102,7 +120,7 @@ export default function MenuPanel({ onClosed }: { onClosed: () => void }) {
                 </span>
                 <span className="menu__body">{s.body}</span>
               </Link>
-              {'sub' in s && (
+              {s.sub && (
                 <ul className="menu__sub" aria-label={t.menu.training}>
                   {s.sub.map(([href, label]) => (
                     <li key={href}>
@@ -116,6 +134,7 @@ export default function MenuPanel({ onClosed }: { onClosed: () => void }) {
             </li>
           ))}
         </ol>
+        </LazyMotion>
       </nav>
       <p className="menu__foot">{t.menu.foot}</p>
     </dialog>

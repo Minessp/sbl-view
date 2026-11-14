@@ -110,7 +110,7 @@ function RouteChange() {
   return null;
 }
 
-type VTDocument = Document & { startViewTransition?: (update: () => void | Promise<void>) => unknown };
+type VTDocument = Document & { startViewTransition?: (update: () => void | Promise<void>) => { finished: Promise<void> } };
 
 /**
  * Espera a página nova montar (h1 visível) antes da foto do "depois", até 600 ms. O lazy do React suspende uma vez mesmo
@@ -141,11 +141,17 @@ const aroundNav: AroundNavHandler = (navigate, to, options) => {
     navigate(to, options);
     return;
   }
-  const go = () =>
-    doc.startViewTransition?.(async () => {
+  // `vt-nav` só no estado novo: o feixe (Shell → .vt-beam) existe na foto do "depois" e desce com a borda da revelação.
+  const root = document.documentElement;
+  const go = () => {
+    const vt = doc.startViewTransition?.(async () => {
+      root.classList.add('vt-nav');
       flushSync(() => navigate(to, options));
       await pageReady();
     });
+    const done = () => root.classList.remove('vt-nav');
+    vt?.finished.then(done, done);
+  };
   const chunk = routeChunk(to);
   if (!chunk) {
     go();

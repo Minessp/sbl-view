@@ -30,7 +30,6 @@
   display: inline-flex;
   align-items: baseline;
   gap: 0.22em;
-  margin-right: auto;
   text-decoration: none;
   font-size: var(--fs-4);
   font-stretch: var(--wd-max);
@@ -47,46 +46,30 @@
   color: var(--c-ink-2);
 }
 
-.site-nav {
-  display: flex;
-  gap: 2px;
-}
-
-.site-nav a {
-  position: relative;
+/* Seção atual: fio fino entre a marca e o nome, que troca pela penumbra na mudança de rota. */
+.site-where {
   display: inline-flex;
   align-items: center;
-  min-height: var(--touch);
-  padding: 0 var(--s-3);
-  border-radius: var(--r-pill);
+  gap: var(--s-3);
+  margin-right: auto;
   font-size: var(--fs-2);
   font-weight: 500;
   font-stretch: var(--wd-cond);
-  letter-spacing: 0.01em;
-  text-decoration: none;
+  letter-spacing: 0.02em;
   color: var(--c-ink-2);
-  transition: color var(--t-fast) var(--ease), background-color var(--t-fast) var(--ease);
+  white-space: nowrap;
 }
 
-.site-nav a:hover {
-  color: var(--c-ink);
-  background: var(--lamp), var(--c-hover);
-}
-
-.site-nav a[aria-current='page'] {
-  color: var(--c-ink);
-}
-
-/* Filamento aceso sob o link da página atual. */
-.site-nav__indicator {
-  position: absolute;
-  left: var(--s-3);
-  right: var(--s-3);
-  bottom: 7px;
-  height: 2px;
-  border-radius: 2px;
+.site-where::before {
+  content: '';
+  width: 18px;
+  height: 1px;
   background: var(--c-accent);
   box-shadow: var(--glow-line);
+}
+
+.site-where[data-on='false'] {
+  visibility: hidden;
 }
 
 /* Botão do menu: pílula com dois fios; ao passar, os fios se igualam; no painel (fechar), viram um X. */
@@ -172,12 +155,6 @@
 
 html.menu-open {
   overflow: hidden;
-}
-
-@media (max-width: 719px) {
-  .site-nav {
-    display: none;
-  }
 }
 
 /* Tema: um botão, lua (escuro) ou sol (claro). */

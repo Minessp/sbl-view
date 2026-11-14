@@ -815,6 +815,19 @@ export const ptBRApp = {
       /** Palavras entre asteriscos acendem em tungstênio. */
       text: 'Cada músculo tem *origem*, *inserção* e uma curva de *comprimento*. Cada número traz a *fonte* e o grau de *confiança*. O que ainda é *hipótese* aparece como hipótese.',
     },
+    live: {
+      title: 'Role, e o corpo executa',
+      body: 'A rolagem comanda a repetição. Cada alvo mostra o comprimento em relação à posição em pé: tungstênio encurta, aço alonga.',
+      hint: 'Role para executar',
+      scrub: 'Posição na repetição',
+      lengthening: 'Alongando',
+      shortening: 'Encurtando',
+      still: 'Parado',
+      vsStand: 'em relação a em pé',
+      curve: 'Comprimento dos alvos ao longo da repetição',
+      rep: (k: number, n: number) => `${k} de ${n}`,
+      joints: { knee: 'Joelho', elbow: 'Cotovelo', hip: 'Quadril', shoulder: 'Ombro' },
+    },
     show: {
       eyebrow: 'Ao vivo',
       title: 'O exercício, músculo por músculo',
