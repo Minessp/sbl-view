@@ -1,0 +1,249 @@
+/*
+ * Menu em tela cheia (MenuPanel.tsx). Estúdio apagado com uma poça de tungstênio; a cortina desce do cabeçalho
+ * (clip-path), os nomes entram letra a letra (`.split`, atraso por linha em --d), o fio de cada linha se acende da
+ * esquerda. Saída: a cortina sobe em --t-exit.
+ */
+.menu {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0 0 var(--s-6);
+  border: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: grid;
+  grid-template-rows: var(--header-h) 1fr auto;
+  color: var(--c-ink);
+  background:
+    radial-gradient(ellipse 60% 50% at 78% 18%, color-mix(in oklch, var(--c-light-key) 7%, transparent), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 10% 100%, color-mix(in oklch, var(--c-light-rim) 5%, transparent), transparent 70%),
+    var(--c-bg);
+  animation: menu-in var(--t-slow) var(--ease) both;
+}
+
+.menu:not([open]) {
+  display: none;
+}
+
+.menu::backdrop {
+  background: transparent;
+}
+
+.menu[data-state='closing'] {
+  animation: menu-out var(--t-exit) var(--ease-in) both;
+}
+
+@keyframes menu-in {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+
+@keyframes menu-out {
+  from {
+    clip-path: inset(0);
+  }
+  to {
+    clip-path: inset(0 0 100% 0);
+  }
+}
+
+/* Barra: mesmo desenho do cabeçalho, para o botão não sair do lugar. */
+.menu__bar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  height: var(--header-h);
+  padding: 0 var(--s-3) 0 var(--s-5);
+  background: var(--c-scrim);
+  border-bottom: var(--lw-hair) solid var(--c-edge);
+}
+
+.menu__nav {
+  align-self: center;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: var(--s-6) var(--s-5) var(--s-5);
+}
+
+.menu__item {
+  position: relative;
+  border-bottom: var(--lw-hair) solid var(--c-edge);
+}
+
+/* Fio aceso que corre da esquerda na entrada e volta a apagar: a linha "liga". */
+.menu__item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--c-accent), color-mix(in oklch, var(--c-accent) 0%, transparent) 70%);
+  transform-origin: left center;
+  transform: scaleX(0);
+  opacity: 0;
+  animation: menu-rule 900ms var(--ease) var(--d) backwards;
+  pointer-events: none;
+}
+
+@keyframes menu-rule {
+  from {
+    transform: scaleX(0);
+    opacity: 1;
+  }
+  55% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+
+.menu__link {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, auto) minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--s-4);
+  padding: var(--s-4) var(--s-3);
+  border-radius: var(--r-2);
+  text-decoration: none;
+  transition: background-color var(--t-mid) var(--ease);
+}
+
+.menu__link:hover {
+  background: var(--lamp);
+}
+
+.menu__num {
+  font-size: var(--fs-2);
+  font-stretch: var(--wd-cond);
+  color: var(--c-ink-2);
+  transition: color var(--t-mid) var(--ease);
+}
+
+.menu__name {
+  font-size: var(--fs-9);
+  font-weight: 260;
+  font-stretch: var(--display-stretch);
+  letter-spacing: -0.025em;
+  line-height: 1;
+  transition:
+    color var(--t-mid) var(--ease),
+    font-weight var(--t-slow) var(--ease);
+}
+
+.menu__body {
+  justify-self: end;
+  max-width: 30ch;
+  font-size: var(--fs-3);
+  line-height: 1.45;
+  text-align: right;
+  color: var(--c-ink-2);
+  animation: menu-fade var(--t-enter) var(--ease) calc(var(--d) + 120ms) backwards;
+  transition: color var(--t-mid) var(--ease);
+}
+
+@keyframes menu-fade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.menu__link:hover .menu__name,
+.menu__link:focus-visible .menu__name {
+  font-weight: 400;
+}
+
+.menu__link:hover .menu__num,
+.menu__link:hover .menu__body {
+  color: var(--c-ink);
+}
+
+/* Seção atual: número e nome em tungstênio. */
+.menu__link[aria-current='page'] .menu__num,
+.menu__link[aria-current='page'] .menu__name {
+  color: var(--c-accent);
+}
+
+.menu__sub {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  padding: 0 var(--s-3) var(--s-4) calc(2.5rem + var(--s-4) + var(--s-3));
+  animation: menu-fade var(--t-enter) var(--ease) calc(var(--d) + 200ms) backwards;
+}
+
+.menu__sub .chip {
+  text-decoration: none;
+}
+
+.menu__sub .chip[aria-current='page'] {
+  border-color: color-mix(in oklch, var(--c-accent) 70%, transparent);
+  color: var(--c-ink);
+}
+
+.menu__foot {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 var(--s-5);
+  font-size: var(--fs-2);
+  color: var(--c-ink-2);
+  animation: menu-fade var(--t-enter) var(--ease) 480ms backwards;
+}
+
+@media (max-width: 719px) {
+  .menu__bar {
+    padding: 0 var(--s-2) 0 var(--s-4);
+  }
+  .menu__nav {
+    align-self: start;
+    padding: var(--s-4) var(--s-2);
+  }
+  .menu__link {
+    grid-template-columns: 2rem minmax(0, 1fr);
+    gap: var(--s-1) var(--s-3);
+    padding: var(--s-3) var(--s-2);
+  }
+  .menu__name {
+    font-size: var(--fs-8);
+  }
+  .menu__body {
+    grid-column: 2;
+    justify-self: start;
+    text-align: left;
+    font-size: var(--fs-2);
+  }
+  .menu__sub {
+    padding-left: calc(2rem + var(--s-3) + var(--s-2));
+  }
+  .menu__foot {
+    padding: 0 var(--s-4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu,
+  .menu[data-state='closing'],
+  .menu__item::after,
+  .menu__body,
+  .menu__sub,
+  .menu__foot {
+    animation: none;
+  }
+}

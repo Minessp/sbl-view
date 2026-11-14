@@ -74,3 +74,6 @@ export const useHome = create<HomeState>((set) => ({
     set({ hover: null, yaw: 0, leaving: null, live: false });
   },
 }));
+
+/** Rolagem da página: com o Lenis ativo, rolar por ele (rolagem nativa brigaria com a suavização). */
+export const homeScroll: { to: ((y: number) => void) | null } = { to: null };

@@ -797,7 +797,24 @@ export const ptBRApp = {
     front: 'Corpo anatômico de frente, músculos superficiais à mostra.',
     back: 'Corpo anatômico de costas, músculos superficiais à mostra.',
   },
+  menu: {
+    label: 'Menu do site',
+    close: 'Fechar',
+    closeLabel: 'Fechar o menu',
+    sections: 'Seções',
+    training: 'Partes do treino',
+    foot: 'Gratuito e aberto, sem conta e sem servidor. Os dados ficam no aparelho.',
+  },
   homeMore: {
+    rail: {
+      label: 'Capítulos da página',
+      items: ['Lente', 'Camadas', 'Evidência', 'Ao vivo', 'Entradas'],
+    },
+    say: {
+      label: 'Como o SBL View trata a evidência',
+      /** Palavras entre asteriscos acendem em tungstênio. */
+      text: 'Cada músculo tem *origem*, *inserção* e uma curva de *comprimento*. Cada número traz a *fonte* e o grau de *confiança*. O que ainda é *hipótese* aparece como hipótese.',
+    },
     show: {
       eyebrow: 'Ao vivo',
       title: 'O exercício, músculo por músculo',

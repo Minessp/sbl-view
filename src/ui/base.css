@@ -16,6 +16,8 @@ html {
   background: var(--c-bg);
   color: var(--c-ink);
   scrollbar-color: var(--c-rule) transparent;
+  /* O menu trava a rolagem: o vão da barra fica, para o cabeçalho e o painel não pularem de lado. */
+  scrollbar-gutter: stable;
 }
 
 body {

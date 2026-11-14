@@ -12,6 +12,7 @@ import { repository } from '@/storage/db';
 import { SET_KINDS, type SetEntry, type SetKind, type Unit } from '@/storage/types';
 import { fmtLoad, fromKg, toKg, useUnit } from './units';
 import './treino.css';
+import { Title } from '@/ui/Title';
 
 export const dayFmt = new Intl.DateTimeFormat(locale, { weekday: 'long', day: '2-digit', month: 'long' });
 export const timeFmt = new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' });
@@ -51,7 +52,7 @@ export function TreinoHeader({ title, lead }: { title: string; lead: string }) {
   return (
     <header className="sheet__head">
       <p className="sheet__plate">{L.plate}</p>
-      <h1 className="sheet__title">{title}</h1>
+      <Title text={title} />
       <p className="sheet__lead prose">{lead}</p>
       <nav className="tabs" aria-label={L.tabs.label}>
         <Tab href="/treino">{L.tabs.log}</Tab>

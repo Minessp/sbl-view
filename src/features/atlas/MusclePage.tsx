@@ -16,6 +16,7 @@ import { defaultView, useAtlas, type Pick } from './store';
 import './explorer/explorer.css';
 import '@/features/heat/heat.css';
 import './atlas.css';
+import { Title } from '@/ui/Title';
 
 const PATTERNS: LinePattern[] = ['solid', 'dashed', 'dotted'];
 
@@ -180,7 +181,7 @@ function MuscleBody({ m }: { m: MuscleDef }) {
         <Link href="/atlas" className="sheet__plate sheet__plate--link">
           {A.back}
         </Link>
-        <h1 className="sheet__title">{m.name}</h1>
+        <Title text={m.name} />
         <p className="atlas-page__latin latin">{m.latin}</p>
         <p className="atlas-page__group">{t.groups[m.group]}</p>
       </header>

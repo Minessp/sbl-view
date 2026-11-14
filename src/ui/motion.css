@@ -1,9 +1,12 @@
 /*
  * Linguagem de movimento.
- * - Troca de rota: View Transition (o conteúdo sai desfocando, o novo sobe da penumbra); o cabeçalho fica parado
- *   e o indicador da navegação desliza até o link novo. Sem suporte: entrada por CSS (só `backwards`, para não
- *   deixar transform no elemento: viraria bloco de contenção e mexeria nas vistas 3D).
- * - Redução de movimento zera as durações nos tokens e desliga a transição de rota (App.tsx).
+ * - Troca de rota: a luz baixa na página que sai (desfoca e escurece) e a nova é revelada de cima para baixo por uma
+ *   borda de luz macia (máscara). O cabeçalho fica parado, o filamento da navegação desliza e o título da página
+ *   (`view-transition-name: page-title`) viaja de um lugar ao outro: da entrada da home ao h1, de h1 a h1.
+ * - Troca de tema: a luz nova se espalha em círculo a partir do interruptor (ThemeSwitch.tsx).
+ * - Sem suporte: entrada por CSS (só `backwards`, para não deixar transform no elemento: viraria bloco de contenção e
+ *   mexeria nas vistas 3D).
+ * - Redução de movimento zera as durações nos tokens e desliga as duas transições (App.tsx, ThemeSwitch.tsx).
  */
 
 .site-header {
@@ -14,35 +17,100 @@
   view-transition-name: nav-indicator;
 }
 
+.page-title {
+  view-transition-name: page-title;
+}
+
 ::view-transition-group(site-header) {
   animation: none;
 }
 
 ::view-transition-old(root) {
-  animation: vt-out 200ms var(--ease-in) both;
+  animation: vt-out var(--t-exit) var(--ease-in) both;
 }
 
 ::view-transition-new(root) {
-  animation: vt-in 460ms var(--ease) 60ms both;
+  animation: vt-in 640ms var(--ease) 70ms both;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0 44%, transparent 56%);
+  mask-image: linear-gradient(to bottom, #000 0 44%, transparent 56%);
+  -webkit-mask-size: 100% 230%;
+  mask-size: 100% 230%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
 }
 
 ::view-transition-group(nav-indicator) {
-  animation-duration: 420ms;
+  animation-duration: 460ms;
   animation-timing-function: var(--ease);
+}
+
+/* Título: o grupo leva posição e tamanho; as duas imagens trocam pela penumbra. */
+::view-transition-group(page-title) {
+  animation-duration: 560ms;
+  animation-timing-function: var(--ease);
+}
+
+::view-transition-old(page-title) {
+  animation: vt-title-out 260ms var(--ease-in) both;
+}
+
+::view-transition-new(page-title) {
+  animation: vt-title-in 520ms var(--ease) 80ms both;
 }
 
 @keyframes vt-out {
   to {
     opacity: 0;
-    filter: blur(6px) brightness(0.6);
+    transform: scale(0.992);
+    filter: blur(6px) brightness(0.55);
   }
 }
 
 @keyframes vt-in {
   from {
+    -webkit-mask-position: 0 100%;
+    mask-position: 0 100%;
+    transform: translateY(14px);
+    filter: brightness(0.65);
+  }
+  to {
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
+  }
+}
+
+@keyframes vt-title-out {
+  to {
     opacity: 0;
-    transform: translateY(10px);
-    filter: blur(4px) brightness(0.7);
+    filter: blur(4px);
+  }
+}
+
+@keyframes vt-title-in {
+  from {
+    opacity: 0;
+    filter: blur(6px) brightness(1.6);
+  }
+}
+
+/* Tema: só a imagem nova anima, recortada num círculo que cresce do interruptor (--vt-x, --vt-y, --vt-r). */
+html.theme-vt::view-transition-old(*) {
+  animation: none;
+}
+
+html.theme-vt::view-transition-new(*) {
+  animation: theme-reveal 680ms var(--ease-in-out) both;
+  -webkit-mask-image: none;
+  mask-image: none;
+  mix-blend-mode: normal;
+}
+
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0 at var(--vt-x, 100%) var(--vt-y, 0));
+  }
+  to {
+    clip-path: circle(var(--vt-r, 150vmax) at var(--vt-x, 100%) var(--vt-y, 0));
   }
 }
 
@@ -78,14 +146,46 @@ html:not(.vt) main.page > :nth-child(n + 3) {
   }
 }
 
+/*
+ * Título animado (ui/Title.tsx): cada letra entra da penumbra condensada e desfocada e abre até a largura da cartela.
+ * Escala em X, não o eixo wdth: animar a largura real reflui a linha e o `text-wrap: balance` trocava palavras de linha
+ * no meio da entrada. Escalonamento por letra (--i) com teto; palavras não quebram.
+ */
+.split {
+  display: inline;
+}
+
+.split__word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.split__char {
+  display: inline-block;
+  animation: split-in var(--t-enter) var(--ease) backwards;
+  animation-delay: calc(min(var(--i, 0), 24) * var(--stagger) + var(--d, 60ms));
+}
+
+@keyframes split-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.16em) scaleX(0.55);
+    filter: blur(5px);
+  }
+  60% {
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html:not(.vt) main.sheet > *,
-  html:not(.vt) main.page > * {
+  html:not(.vt) main.page > *,
+  .split__char {
     animation: none;
   }
-  ::view-transition-old(root),
-  ::view-transition-new(root),
-  ::view-transition-group(nav-indicator) {
-    animation: none;
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation: none !important;
   }
 }

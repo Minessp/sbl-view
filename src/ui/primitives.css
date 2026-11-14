@@ -481,3 +481,78 @@
     grid-column: 1 / -1;
   }
 }
+
+/* ---------- Microinterações (Fase 20) ----------
+ * Luz como resposta: a lâmpada segue o ponteiro sobre o que se aperta (--lamp, ui/pointerLight.ts), a seleção acende um
+ * anel, o foco "puxa" o contorno para perto e o polegar do interruptor estica no caminho. Tudo em --t-fast/--t-mid. */
+.chip:hover {
+  background: var(--lamp), var(--c-hover);
+}
+
+.chip[aria-pressed='true'] {
+  box-shadow: 0 0 12px -4px color-mix(in oklch, var(--c-glow) 60%, transparent);
+}
+
+.chip,
+.btn-primary,
+.btn-secondary,
+.btn-danger {
+  transition-property: background-color, border-color, color, transform, box-shadow;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--lamp), color-mix(in oklch, var(--c-accent) 86%, var(--c-ink));
+  box-shadow: 0 0 22px -8px color-mix(in oklch, var(--c-glow) 80%, transparent);
+}
+
+.btn-secondary:hover {
+  background: var(--lamp), var(--c-bg-3);
+}
+
+.field input:focus-visible,
+.field select:focus-visible,
+.field textarea:focus-visible {
+  box-shadow: 0 0 16px -6px color-mix(in oklch, var(--c-glow) 70%, transparent);
+}
+
+.toggle__track::after {
+  transition:
+    transform var(--t-mid) var(--ease),
+    width var(--t-fast) var(--ease),
+    background-color var(--t-fast) var(--ease);
+}
+
+.toggle:active .toggle__track::after {
+  width: 23px;
+}
+
+.toggle input:checked + .toggle__track {
+  box-shadow: 0 0 14px -4px color-mix(in oklch, var(--c-glow) 70%, transparent);
+}
+
+.toggle:active input:checked + .toggle__track::after {
+  transform: translateX(13px);
+}
+
+/* O que é pílula segue pílula no foco (a regra base arredonda em 6 px, pensada para links de texto). */
+.chip:focus-visible,
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.btn-danger:focus-visible,
+.menu-btn:focus-visible,
+.theme-toggle:focus-visible,
+.home-rail__mark:focus-visible {
+  border-radius: var(--r-pill);
+}
+
+/* Foco por teclado: o anel nasce afastado e encosta. */
+:focus-visible {
+  animation: focus-pull var(--t-mid) var(--ease);
+}
+
+@keyframes focus-pull {
+  from {
+    outline-offset: 7px;
+    outline-color: transparent;
+  }
+}

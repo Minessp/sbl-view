@@ -8,6 +8,7 @@ import { Viewport } from './explorer/Viewport';
 import { defaultView, useAtlas } from './store';
 import './atlas.css';
 import './explorer/explorer.css';
+import { Title } from '@/ui/Title';
 
 function Explorer() {
   return (
@@ -47,7 +48,7 @@ export default function AtlasIndex() {
   return (
     <main id="conteudo" className="sheet atlas-explorer">
       <header className="sheet__head">
-        <h1 className="sheet__title">{A.title}</h1>
+        <Title text={A.title} />
         <p className="sheet__lead prose">{A.lead2}</p>
         <p className="sheet__count">
           {muscleDefs.length} {A.count}

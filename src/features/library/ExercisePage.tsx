@@ -10,6 +10,7 @@ import { compiledClip } from './motion';
 import { Player } from './player/Player';
 import '@/features/atlas/explorer/explorer.css';
 import './library.css';
+import { Title } from '@/ui/Title';
 
 export default function ExercisePage({ id }: { id: string }) {
   const e = exerciseById(id);
@@ -38,7 +39,7 @@ export default function ExercisePage({ id }: { id: string }) {
         <Link href="/exercicios" className="sheet__plate sheet__plate--link">
           {E.back}
         </Link>
-        <h1 className="sheet__title">{e.name}</h1>
+        <Title text={e.name} />
         <p className="sheet__lead prose">{e.summary}</p>
         <dl className="facts">
           <div>

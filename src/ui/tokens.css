@@ -128,18 +128,29 @@
   --lw-curve: 2px;
   --lw-active: 3px;
 
-  /* Movimento: saída exponencial; a luz do palco tem tempo próprio. */
-  --t-fast: 120ms;
-  --t-mid: 220ms;
-  --t-slow: 520ms;
-  --t-light: 1600ms;
-  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Movimento (Fase 20). Quatro tempos de interface, um de entrada, um de luz. Saída sempre exponencial; quem sai
+     é mais rápido que quem entra (~70%). Escalonamento curto: lista inteira entra em menos de meio segundo. */
+  --t-fast: 120ms;   /* toque, cor, pressão */
+  --t-mid: 220ms;    /* estado: hover, aba, interruptor */
+  --t-slow: 520ms;   /* troca de bloco, painel */
+  --t-enter: 760ms;  /* entrada de título e de página */
+  --t-exit: 200ms;   /* o que sai de cena */
+  --t-light: 1600ms; /* a luz do palco */
+  --stagger: 26ms;   /* por letra; por item de lista use 2× */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);             /* expo: decidido */
+  --ease-quart: cubic-bezier(0.25, 1, 0.5, 1);       /* quart: macio, para o que acompanha o ponteiro */
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  /* Luz como estado: anel aceso (seleção, foco forte) e filamento (indicador). */
+  --glow-ring: 0 0 0 1px color-mix(in oklch, var(--c-accent) 70%, transparent), 0 0 14px -2px color-mix(in oklch, var(--c-glow) 55%, transparent);
+  --glow-line: 0 0 8px color-mix(in oklch, var(--c-glow) 70%, transparent);
+  /* Lâmpada sob o ponteiro (botões, chips, linhas de menu): --mx/--my vêm do ponteiro (ui/pointerLight.ts). */
+  --lamp: radial-gradient(120px circle at var(--mx, 50%) var(--my, 50%), color-mix(in oklch, var(--c-light-key) 13%, transparent), transparent 70%);
 
   /* Camadas */
   --z-content: 1;
   --z-stage-front: 15;
+  --z-over-stage: 16;
   --z-header: 20;
   --z-toast: 30;
   --z-skip: 100;
@@ -152,6 +163,9 @@
     --t-fast: 0ms;
     --t-mid: 0ms;
     --t-slow: 0ms;
+    --t-enter: 0ms;
+    --t-exit: 0ms;
     --t-light: 0ms;
+    --stagger: 0ms;
   }
 }

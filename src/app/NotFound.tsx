@@ -12,7 +12,7 @@ export function NotFound() {
   return (
     <main id="conteudo" className="page page--message">
       <p className="page__eyebrow">404</p>
-      <h1>{t.page.notFound}</h1>
+      <h1 className="page-title">{t.page.notFound}</h1>
       <p className="page__lead">{t.page.notFoundLead}</p>
       <ul className="page__links">
         <li>

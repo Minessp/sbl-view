@@ -80,8 +80,16 @@
   line-height: 0.96;
   letter-spacing: -0.025em;
   text-wrap: balance;
-  animation: home-rise 1.1s var(--ease) both;
-  animation-fill-mode: backwards;
+  --d: 120ms;
+}
+
+/* As letras entram uma a uma (.split, motion.css) e, quando as camadas começam a abrir, sobem condensando e desfocam,
+   em cascata pela ordem (--i). */
+.home-hero__title .split__char {
+  --out: clamp(0, calc(var(--ex) * 4 - var(--i) * 0.02), 1);
+  transform: translateY(calc(var(--out) * -0.45em)) scaleX(calc(1 - var(--out) * 0.4));
+  filter: blur(calc(var(--out) * 6px));
+  transform-origin: 50% 100%;
 }
 
 .home-hero__lead {
@@ -507,5 +515,10 @@
   .home-hero__cue-rule::after {
     animation: none;
     opacity: 0.5;
+  }
+
+  .home-hero__title .split__char {
+    transform: none;
+    filter: none;
   }
 }

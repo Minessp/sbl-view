@@ -10,6 +10,7 @@ import { compiledClip } from '@/features/library/motion';
 import { usePlayer } from '@/features/library/player/store';
 import { t as tShell } from '@/i18n';
 import { t } from '@/i18n/app';
+import { claimTitle } from '@/ui/Title';
 import './home-more.css';
 
 /** Um de cada canto do corpo, todos com ênfase no comprimento longo. */
@@ -23,6 +24,63 @@ function targetsOf(id: string) {
     primary: e?.targets.filter((x) => x.role === 'alvo').map((x) => x.muscle) ?? [],
     synergist: e?.targets.filter((x) => x.role === 'sinergista').map((x) => x.muscle) ?? [],
   };
+}
+
+/**
+ * Frase que acende palavra a palavra conforme a rolagem: o bloco é alto e o texto fica preso no meio da tela; o
+ * progresso (0..1, --p) acende cada palavra pela ordem (--i de --n). Com redução de movimento, já vem acesa e sem
+ * prender. Palavras entre asteriscos acendem em tungstênio.
+ */
+function Statement() {
+  const S = t.homeMore.say;
+  const ref = useRef<HTMLElement>(null);
+  const words = S.text.split(' ');
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      el.style.setProperty('--p', '1');
+      return;
+    }
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const r = el.getBoundingClientRect();
+      const run = r.height - window.innerHeight;
+      const p = run > 0 ? Math.min(1, Math.max(0, -r.top / run)) : 1;
+      el.style.setProperty('--p', p.toFixed(3));
+    };
+    const on = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener('scroll', on, { passive: true });
+    window.addEventListener('resize', on);
+    return () => {
+      window.removeEventListener('scroll', on);
+      window.removeEventListener('resize', on);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+  return (
+    <section id="home-say" ref={ref} className="home-say" aria-label={S.label} style={{ '--n': words.length } as CSSProperties}>
+      <div className="home-say__pin">
+        <p className="home-say__text">
+          {words.map((w, i) => {
+            const key = w.startsWith('*');
+            return (
+              <span key={i}>
+                <span className={key ? 'home-say__w home-say__w--key' : 'home-say__w'} style={{ '--i': i } as CSSProperties}>
+                  {w.replaceAll('*', '')}
+                </span>{' '}
+              </span>
+            );
+          })}
+        </p>
+        <span className="home-say__rule" aria-hidden="true" />
+      </div>
+    </section>
+  );
 }
 
 function Showcase() {
@@ -74,7 +132,7 @@ function Showcase() {
   }, []);
 
   return (
-    <section className="home-show" aria-labelledby="home-show-title">
+    <section id="home-show" className="home-show" aria-labelledby="home-show-title">
       <header className="home-show__head">
         <p className="home-eyebrow">{S.eyebrow}</p>
         <h2 id="home-show-title" className="home-show__title">
@@ -172,18 +230,20 @@ function Doors() {
     { href: '/treino', name: H.training.name, body: H.training.body, stat: D.training },
   ];
   return (
-    <section className="home-gates" aria-labelledby="home-gates-title">
+    <section id="home-gates" className="home-gates" aria-labelledby="home-gates-title">
       <h2 id="home-gates-title" className="home-gates__title">
         {D.title}
       </h2>
       <ol className="home-gates__list">
         {rows.map((r, k) => (
           <li key={r.href} style={{ '--i': k } as CSSProperties}>
-            <Link href={r.href} className="home-gates__link">
+            <Link href={r.href} className="home-gates__link lamp" onClick={claimTitle}>
               <span className="home-gates__num" aria-hidden="true">
                 {String(k + 1).padStart(2, '0')}
               </span>
-              <span className="home-gates__name">{r.name}</span>
+              <span className="home-gates__name" data-title="">
+                {r.name}
+              </span>
               <span className="home-gates__body">{r.body}</span>
               <span className="home-gates__stat">{r.stat}</span>
             </Link>
@@ -198,6 +258,7 @@ function Doors() {
 export default function HomeMore() {
   return (
     <>
+      <Statement />
       <Showcase />
       <Doors />
     </>

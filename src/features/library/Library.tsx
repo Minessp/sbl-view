@@ -7,6 +7,7 @@ import { EvidenceSeal } from '@/ui/EvidenceSeal';
 import { EXERCISE_REGIONS, filterExercises, library, muscleById, NO_FILTERS, targetGroups, type ExerciseFilters } from './catalog';
 import { EmphasisMark } from './EmphasisMark';
 import './library.css';
+import { Title } from '@/ui/Title';
 
 const PATTERNS = Object.keys(t.patterns) as MovementPattern[];
 const EQUIPMENT = (Object.keys(t.equipment) as Equipment[]).filter((q) => library.some((e) => e.equipment.includes(q)));
@@ -51,7 +52,7 @@ export default function Library() {
   return (
     <main id="conteudo" className="sheet">
       <header className="sheet__head">
-        <h1 className="sheet__title">{L.title}</h1>
+        <Title text={L.title} />
         <p className="sheet__lead prose">{L.lead}</p>
       </header>
 

@@ -13,6 +13,17 @@
   -webkit-backdrop-filter: blur(12px) saturate(1.2);
   backdrop-filter: blur(12px) saturate(1.2);
   border-bottom: var(--lw-hair) solid var(--c-edge);
+  transition:
+    background-color var(--t-slow) var(--ease),
+    border-color var(--t-slow) var(--ease);
+}
+
+/* No topo nada passa por baixo: sem véu, o corpo do herói chega até a borda da tela. */
+.site-header[data-scrolled='false'] {
+  background-color: transparent;
+  border-bottom-color: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 .wordmark {
@@ -59,7 +70,7 @@
 
 .site-nav a:hover {
   color: var(--c-ink);
-  background: var(--c-hover);
+  background: var(--lamp), var(--c-hover);
 }
 
 .site-nav a[aria-current='page'] {
@@ -75,7 +86,98 @@
   height: 2px;
   border-radius: 2px;
   background: var(--c-accent);
-  box-shadow: 0 0 8px color-mix(in oklch, var(--c-glow) 70%, transparent);
+  box-shadow: var(--glow-line);
+}
+
+/* Botão do menu: pílula com dois fios; ao passar, os fios se igualam; no painel (fechar), viram um X. */
+.menu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+  min-width: 96px;
+  flex: none;
+  min-height: 44px;
+  padding: 0 var(--s-3) 0 var(--s-4);
+  border: var(--lw-hair) solid var(--c-edge);
+  border-radius: var(--r-pill);
+  background: transparent;
+  font-size: var(--fs-2);
+  font-weight: 560;
+  font-stretch: var(--wd-cond);
+  letter-spacing: 0.01em;
+  color: var(--c-ink);
+  transition:
+    border-color var(--t-fast) var(--ease),
+    background-color var(--t-fast) var(--ease),
+    transform var(--t-fast) var(--ease);
+}
+
+.menu-btn:hover {
+  border-color: var(--c-rule);
+  background: var(--lamp), var(--c-hover);
+}
+
+.menu-btn:active {
+  transform: scale(0.96);
+}
+
+.menu-btn__icon {
+  position: relative;
+  width: 16px;
+  height: 10px;
+}
+
+.menu-btn__icon::before,
+.menu-btn__icon::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  width: 16px;
+  height: 1.5px;
+  border-radius: 1px;
+  background: currentColor;
+  transform-origin: right center;
+  transition: transform var(--t-mid) var(--ease), top var(--t-mid) var(--ease);
+}
+
+.menu-btn__icon::before {
+  top: 1px;
+}
+
+.menu-btn__icon::after {
+  top: 7.5px;
+  transform: scaleX(0.6);
+}
+
+.menu-btn:hover .menu-btn__icon::after {
+  transform: none;
+}
+
+.menu-btn--close .menu-btn__icon::before,
+.menu-btn--close .menu-btn__icon::after {
+  top: 4.25px;
+  transform-origin: center;
+}
+
+.menu-btn--close .menu-btn__icon::before,
+.menu-btn--close:hover .menu-btn__icon::before {
+  transform: rotate(45deg) scaleX(0.85);
+}
+
+.menu-btn--close .menu-btn__icon::after,
+.menu-btn--close:hover .menu-btn__icon::after {
+  transform: rotate(-45deg) scaleX(0.85);
+}
+
+html.menu-open {
+  overflow: hidden;
+}
+
+@media (max-width: 719px) {
+  .site-nav {
+    display: none;
+  }
 }
 
 /* Tema: um botão, lua (escuro) ou sol (claro). */
@@ -149,20 +251,7 @@
 @media (max-width: 560px) {
   .site-header {
     gap: var(--s-1);
-    padding: 0 var(--s-1) 0 var(--s-3);
-  }
-  .site-nav {
-    gap: 0;
-  }
-  .site-nav a {
-    padding: 0 7px;
-  }
-  .site-nav__indicator {
-    left: 7px;
-    right: 7px;
-  }
-  .wordmark__view {
-    display: none;
+    padding: 0 var(--s-2) 0 var(--s-4);
   }
 }
 

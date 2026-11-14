@@ -15,6 +15,7 @@ import { PATTERNS, useLab, useLabSlots } from './store';
 import { Scrubber } from './Scrubber';
 import './lab.css';
 import { TableWrap } from '@/ui/TableWrap';
+import { Title } from '@/ui/Title';
 
 const N = 49;
 const X = Array.from({ length: N }, (_, i) => i / (N - 1));
@@ -386,7 +387,7 @@ export default function Lab() {
   return (
     <main id="conteudo" className="lab">
       <header className="lab__head">
-        <h1 className="lab__title">{t.lab.title}</h1>
+        <Title text={t.lab.title} className="lab__title page-title" />
         <p className="lab__lead prose">{t.lab.lead}</p>
       </header>
 

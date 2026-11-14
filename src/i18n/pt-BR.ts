@@ -15,6 +15,8 @@ export const ptBR = {
     lab: 'Lab',
     training: 'Treino',
     skip: 'Pular para o conteúdo',
+    menu: 'Menu',
+    menuOpen: 'Abrir o menu',
   },
   page: {
     notFound: 'Página não encontrada',

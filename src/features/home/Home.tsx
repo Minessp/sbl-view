@@ -11,12 +11,14 @@ import { Link } from 'wouter';
 import { t } from '@/i18n';
 import { bindAnchor } from '@/scene/annotations';
 import { useStage } from '@/scene/stageStore';
-import { useHome } from './store';
+import { claimTitle, SplitText } from '@/ui/Title';
+import { homeScroll, useHome } from './store';
 import { explodeAt, LAYER_IDS, type LayerId } from './timeline';
 import './home.css';
 
 const HeroControls = lazy(() => import('./HeroControls'));
 const HomeMore = lazy(() => import('./HomeMore'));
+const HomeRail = lazy(() => import('./HomeRail'));
 
 const H = t.home;
 const DOORS = [
@@ -69,7 +71,11 @@ function useSmoothScroll() {
     void import('lenis').then(({ default: Lenis }) => {
       if (cancelled) return;
       const lenis = new Lenis({ autoRaf: true, lerp: 0.12 });
-      destroy = () => lenis.destroy();
+      homeScroll.to = (y) => lenis.scrollTo(y, { duration: 1.4 });
+      destroy = () => {
+        homeScroll.to = null;
+        lenis.destroy();
+      };
     });
     return () => {
       cancelled = true;
@@ -114,11 +120,13 @@ function Doors({ className }: { className: string }) {
       <ol>
         {DOORS.map((d, i) => (
           <li key={d.href} style={{ '--i': i } as CSSProperties}>
-            <Link href={d.href} className="home-doors__link">
+            <Link href={d.href} className="home-doors__link" onClick={claimTitle}>
               <span className="home-doors__num" aria-hidden="true">
                 {String(i + 1).padStart(2, '0')}
               </span>
-              <span className="home-doors__name">{d.name}</span>
+              <span className="home-doors__name" data-title="">
+                {d.name}
+              </span>
               <span className="home-doors__body">{d.body}</span>
             </Link>
           </li>
@@ -184,8 +192,8 @@ export default function Home() {
             </p>
           </div>
           <section className="home-hero__copy" aria-labelledby="home-title">
-            <h1 id="home-title" className="home-hero__title">
-              {H.title}
+            <h1 id="home-title" className="home-hero__title" data-text={H.title}>
+              <SplitText text={H.title} />
             </h1>
             <p className="home-hero__lead home-pin-only">{H.lead}</p>
             <p className="home-hero__hint">{coarse ? H.hintCoarse : H.hintFine}</p>
@@ -212,7 +220,7 @@ export default function Home() {
         <p className="home-hero__lead">{H.lead}</p>
         <Doors className="" />
       </div>
-      <div ref={more} className="home-more">
+      <div ref={more} id="home-more" className="home-more">
         {near && (
           <Suspense fallback={null}>
             <HomeMore />
@@ -220,6 +228,11 @@ export default function Home() {
         )}
       </div>
       <LayerTags />
+      {!coarse && (
+        <Suspense fallback={null}>
+          <HomeRail hero={wrap} />
+        </Suspense>
+      )}
     </main>
   );
 }
