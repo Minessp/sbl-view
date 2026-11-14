@@ -29,7 +29,7 @@ describe('catálogo de exercícios', () => {
 
   it('ênfase em comprimento longo + status combinam', () => {
     const r = ids({ longOnly: true, status: 'hipotese' });
-    expect(r).toEqual(expect.arrayContaining(['reclined_leg_extension', 'bayesian_curl']));
+    expect(r).toEqual(expect.arrayContaining(['sissy_squat', 'bayesian_curl']));
     for (const id of r) {
       const e = byId(id);
       expect(e.status).toBe('hipotese');

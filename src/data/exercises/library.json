@@ -19,10 +19,10 @@
     ],
     "length": {
       "emphasis": "alongado",
-      "text": "No fundo, vastos, glúteo máximo e adutor magno estão perto do maior comprimento do movimento, e é ali que o torque extensor pedido é alto. Quanto mais fundo, mais a carga pega esses músculos alongados.",
-      "source": [{ "refId": "sbl_reasoning" }],
-      "confidence": "especulativo",
-      "note": "Sai do modelo do Lab. Não há aqui estudo de hipertrofia comparando profundidades."
+      "text": "No fundo, vastos, glúteo máximo e adutor magno estão perto do maior comprimento do movimento, e é ali que o torque extensor pedido é alto. Em 10 semanas, o agachamento completo aumentou mais o glúteo máximo (+6,7% contra +2,2%) e os adutores (+6,2% contra +2,7%) que o meio agachamento, com o quadríceps igual nos dois. Em outro estudo, descer até 120° de joelho aumentou mais a coxa anterior que parar em 60°.",
+      "source": [{ "refId": "kubo2019_squat_depth" }, { "refId": "bloomquist2013" }],
+      "confidence": "provavel",
+      "note": "Dois estudos com 17 homens não treinados cada. No agachamento completo o reto femoral e os isquiotibiais não cresceram (Kubo 2019)."
     }
   },
   {
@@ -61,9 +61,10 @@
     ],
     "length": {
       "emphasis": "encurtado",
-      "text": "A barra pesa na vertical; o maior braço de momento aparece perto do quadril estendido, quando o glúteo máximo está curto. No fundo, glúteo alongado, a exigência é menor.",
-      "source": [{ "refId": "sbl_reasoning" }],
-      "confidence": "especulativo"
+      "text": "A barra pesa na vertical; o maior braço de momento aparece perto do quadril estendido, quando o glúteo máximo está curto. Com o mesmo número de séries, elevação pélvica e agachamento deram hipertrofia parecida do glúteo em 9 semanas, e o agachamento cresceu mais quadríceps e adutores. Em mulheres treinadas, o agachamento cresceu mais também o glúteo (+9,4% contra +3,7%).",
+      "source": [{ "refId": "plotkin2023_hip_thrust" }, { "refId": "barbalho2020" }],
+      "confidence": "provavel",
+      "note": "Plotkin 2023: 34 não treinados, ressonância. Barbalho 2020: 22 mulheres treinadas, ultrassom. Encurtado aqui não quer dizer ruim: só não supera o agachamento."
     }
   },
   {
@@ -81,10 +82,10 @@
     ],
     "length": {
       "emphasis": "intermediario",
-      "text": "Os vastos ficam alongados no começo, com o joelho fletido. Em mulheres não treinadas, repetições parciais só nessa faixa alongada deram adaptações iguais ou melhores que na faixa curta. O reto femoral fica encurtado no quadril pelo encosto.",
-      "source": [{ "refId": "pedrosa2022" }],
+      "text": "Os vastos ficam alongados no começo, com o joelho fletido. Em mulheres não treinadas, parciais só na faixa alongada (100° a 65° de joelho) cresceram mais em parte das regiões medidas que a amplitude completa e que a parcial curta. Com o encosto ereto o reto femoral fica encurtado no quadril: com o quadril a 40° em vez de 90°, ele cresceu mais, e os vastos igual.",
+      "source": [{ "refId": "pedrosa2022" }, { "refId": "larsen2025_leg_extension" }],
       "confidence": "provavel",
-      "note": "Um estudo, amostra pequena e não treinada."
+      "note": "Pedrosa 2022: 45 mulheres não treinadas. Larsen 2025: 22 homens não treinados, uma perna em cada posição."
     }
   },
   {
@@ -92,7 +93,7 @@
     "name": "Cadeira extensora reclinada",
     "pattern": "isolado",
     "equipment": ["maquina"],
-    "status": "hipotese",
+    "status": "consolidado",
     "summary": "A mesma cadeira com o encosto bem inclinado para trás, quadril perto de 40°. Muda o comprimento do reto femoral, não o dos vastos.",
     "targets": [
       { "muscle": "rectus_femoris", "role": "alvo" },
@@ -102,10 +103,10 @@
     ],
     "length": {
       "emphasis": "alongado",
-      "text": "Com o quadril menos fletido, o reto femoral (biarticular) trabalha mais alongado. Um preprint relata mais hipertrofia do reto femoral na posição reclinada que na sentada.",
-      "source": [{ "refId": "larsen2024_preprint" }],
-      "confidence": "especulativo",
-      "note": "Preprint sem revisão por pares."
+      "text": "Com o quadril menos fletido, o reto femoral (biarticular) trabalha mais alongado. Em 10 semanas, a extensora com o quadril a 40° cresceu mais o reto femoral que a 90°, e o vasto lateral cresceu igual nas duas.",
+      "source": [{ "refId": "larsen2025_leg_extension" }],
+      "confidence": "provavel",
+      "note": "Um estudo com 22 homens não treinados, uma perna em cada posição, espessura por ultrassom."
     }
   },
   {
@@ -162,10 +163,10 @@
     ],
     "length": {
       "emphasis": "alongado",
-      "text": "Com o joelho estendido o gastrocnêmio pode ser alongado no tornozelo. Repetições parciais só na faixa de baixo (calcanhar abaixo do degrau) cresceram mais o gastrocnêmio medial que a amplitude completa, e esta mais que a parcial de cima (+15,2%, +6,7%, +3,4%).",
-      "source": [{ "refId": "kassiano2023" }],
+      "text": "Com o joelho estendido o gastrocnêmio fica alongado também no joelho. Em 12 semanas, a panturrilha em pé cresceu muito mais o gastrocnêmio que a sentada (lateral +12,4% contra +1,7%; medial +9,2% contra +0,6%), com o sóleo igual nas duas. Descer o calcanhar abaixo do degrau usa a faixa alongada, que no leg press cresceu mais o gastrocnêmio que a amplitude completa.",
+      "source": [{ "refId": "kinoshita2023_calf" }, { "refId": "kassiano2023" }],
       "confidence": "provavel",
-      "note": "Um estudo com 42 mulheres jovens, 8 semanas."
+      "note": "Kinoshita 2023: 14 não treinados, uma perna em cada condição. Kassiano 2023 foi no leg press horizontal; aqui vale por analogia."
     }
   },
   {
@@ -181,9 +182,10 @@
     ],
     "length": {
       "emphasis": "intermediario",
-      "text": "O joelho fletido encurta o gastrocnêmio, que cruza o joelho. O sóleo, que só cruza o tornozelo, não muda e fica com mais da carga.",
-      "source": [{ "refId": "sbl_reasoning" }],
-      "confidence": "especulativo"
+      "text": "O joelho fletido encurta o gastrocnêmio, que cruza o joelho. O sóleo, que só cruza o tornozelo, não cresceu mais sentado: no estudo que comparou as duas, ele cresceu parecido (+2,9% sentado, +2,1% em pé), e o gastrocnêmio quase não cresceu sentado.",
+      "source": [{ "refId": "kinoshita2023_calf" }],
+      "confidence": "provavel",
+      "note": "Um estudo com 14 adultos não treinados, 12 semanas. A panturrilha em pé cobre o sóleo igual e o gastrocnêmio muito mais."
     }
   },
   {
@@ -239,7 +241,7 @@
     ],
     "length": {
       "emphasis": "alongado",
-      "text": "Com os braços estendidos acima da cabeça, o latíssimo está no maior comprimento, e a polia mantém a tensão ali, ao contrário de uma barra fixa na parada em cima.",
+      "text": "Com os braços estendidos acima da cabeça, o latíssimo está no maior comprimento do movimento. A polia deixa ajustar a carga e pausar ali, o que na barra fixa depende do peso do corpo.",
       "source": [{ "refId": "sbl_reasoning" }],
       "confidence": "especulativo"
     }
@@ -277,9 +279,10 @@
     ],
     "length": {
       "emphasis": "alongado",
-      "text": "O ombro estendido alonga o bíceps, que cruza o ombro, e o halter pesa mais com o cotovelo pouco fletido. O braquial, que só cruza o cotovelo, não muda.",
-      "source": [{ "refId": "sbl_reasoning" }],
-      "confidence": "especulativo"
+      "text": "O ombro estendido alonga o bíceps, que cruza o ombro; o braquial, que só cruza o cotovelo, não muda. O braço fica na vertical, então o torque do halter é máximo com o antebraço na horizontal, como na rosca em pé. Num estudo com mulheres treinadas, 9 semanas de rosca inclinada não aumentaram a espessura do braço, e a Scott aumentou a região distal.",
+      "source": [{ "refId": "sbl_reasoning" }, { "refId": "zabaleta2023_curl" }],
+      "confidence": "provavel",
+      "note": "Um estudo só (38 mulheres treinadas recreativamente, ultrassom), contra a ideia do exercício. O comprimento maior do bíceps segue valendo; o ganho, não está demonstrado."
     }
   },
   {
@@ -480,10 +483,10 @@
     ],
     "length": {
       "emphasis": "alongado",
-      "text": "Joelho bem fletido com o quadril estendido é a posição mais longa do reto femoral (biarticular), que no agachamento comum muda pouco de comprimento.",
-      "source": [{ "refId": "sbl_reasoning" }],
+      "text": "Joelho bem fletido com o quadril estendido é a posição mais longa do reto femoral (biarticular). No agachamento ele quase não muda de comprimento e não cresceu; na extensora, cresceu mais com o quadril menos fletido. O sissy leva essa lógica ao extremo.",
+      "source": [{ "refId": "sbl_reasoning" }, { "refId": "kubo2019_squat_depth" }, { "refId": "larsen2025_leg_extension" }],
       "confidence": "especulativo",
-      "note": "Hipótese mecânica (comprimento e braço de momento); sem estudo de hipertrofia comparando este exercício."
+      "note": "Hipótese mecânica apoiada em estudos de outros exercícios (agachamento, extensora); sem estudo de hipertrofia com o sissy."
     }
   },
   {
@@ -501,10 +504,10 @@
     ],
     "length": {
       "emphasis": "alongado",
-      "text": "Joelho fletido e quadril estendido de novo: reto femoral no maior comprimento, com o torque do peso do corpo crescendo conforme inclina.",
-      "source": [{ "refId": "sbl_reasoning" }],
+      "text": "Joelho fletido e quadril estendido de novo: reto femoral no maior comprimento, com o torque do peso do corpo crescendo conforme o tronco inclina para trás. É a lógica da extensora com o quadril menos fletido, que cresceu mais o reto femoral.",
+      "source": [{ "refId": "sbl_reasoning" }, { "refId": "larsen2025_leg_extension" }],
       "confidence": "especulativo",
-      "note": "Hipótese mecânica (comprimento e braço de momento); sem estudo de hipertrofia comparando este exercício."
+      "note": "Hipótese mecânica apoiada num estudo da extensora; sem estudo de hipertrofia com a nórdica reversa."
     }
   },
   {
@@ -524,9 +527,10 @@
     ],
     "length": {
       "emphasis": "alongado",
-      "text": "Com o joelho estendido, os isquiotibiais (biarticulares) ficam mais longos que no terra romeno para o mesmo quadril; o pico de torque no quadril vem no fundo.",
-      "source": [{ "refId": "sbl_reasoning" }],
-      "confidence": "especulativo"
+      "text": "Com o joelho estendido, os isquiotibiais (biarticulares) ficam mais longos que no terra romeno para o mesmo quadril; o pico de torque no quadril vem no fundo. Em 9 semanas o stiff cresceu os isquiotibiais (+7%), mais no semimembranoso (+11%), e a flexão nórdica mais no semitendíneo.",
+      "source": [{ "refId": "sbl_reasoning" }, { "refId": "morin2025_hamstrings" }],
+      "confidence": "provavel",
+      "note": "Um estudo com 36 não treinados (ultrassom 3D); não comparou com o terra romeno."
     }
   },
   {
@@ -590,9 +594,10 @@
     ],
     "length": {
       "emphasis": "alongado",
-      "text": "No fundo o quadril está bem fletido com o joelho estendido e o tronco perto da horizontal: torque alto com glúteo e isquiotibiais longos.",
-      "source": [{ "refId": "sbl_reasoning" }],
-      "confidence": "especulativo"
+      "text": "O torque do peso do tronco é máximo com o tronco na horizontal, no meio da descida, e ainda alto embaixo, com o quadril bem fletido, o joelho estendido e glúteo e isquiotibiais longos. Em 10 semanas, a extensão de quadril cresceu mais a cabeça longa do bíceps femoral que a flexão nórdica; o semitendíneo cresceu igual nas duas.",
+      "source": [{ "refId": "sbl_reasoning" }, { "refId": "bourne2017" }],
+      "confidence": "provavel",
+      "note": "30 atletas recreativos, ressonância. O resumo chama o exercício só de extensão de quadril; a equivalência com a versão a 45° é do site."
     }
   },
   {
@@ -608,10 +613,11 @@
       { "muscle": "biceps_femoris", "role": "alvo" }
     ],
     "length": {
-      "emphasis": "alongado",
-      "text": "A fase excêntrica termina com o joelho quase estendido, que é onde o torque do peso do corpo é maior: isquiotibiais carregados longos.",
-      "source": [{ "refId": "sbl_reasoning" }],
-      "confidence": "especulativo"
+      "emphasis": "intermediario",
+      "text": "A descida termina com o joelho quase estendido, onde o torque do peso do corpo é maior; mas o quadril fica estendido, então os biarticulares não chegam ao comprimento da mesa sentada ou do stiff. A nórdica cresceu sobretudo o semitendíneo (+24% em 9 semanas) e menos a cabeça longa do bíceps femoral que a extensão de quadril.",
+      "source": [{ "refId": "morin2025_hamstrings" }, { "refId": "bourne2017" }],
+      "confidence": "provavel",
+      "note": "Dois estudos (36 não treinados; 30 atletas recreativos). Excêntrica pura: carga alta perto da extensão do joelho."
     }
   },
   {
@@ -708,10 +714,10 @@
     ],
     "length": {
       "emphasis": "alongado",
-      "text": "Joelho estendido mantém o gastrocnêmio longo; a dorsiflexão no fim da descida é a parte mais longa do movimento.",
+      "text": "Joelho estendido mantém o gastrocnêmio longo; a dorsiflexão no fim da descida é a parte mais longa do movimento. No leg press, parciais só na faixa alongada (de 25° de dorsiflexão ao pé neutro) cresceram mais o gastrocnêmio medial que a amplitude completa e que a parcial de cima (+15,2%, +6,7%, +3,4%).",
       "source": [{ "refId": "kassiano2023" }],
       "confidence": "provavel",
-      "note": "O estudo é na panturrilha em pé; a mesma lógica de joelho estendido vale aqui por analogia."
+      "note": "Um estudo com 42 mulheres jovens, 8 semanas, leg press horizontal."
     }
   },
   {
@@ -859,9 +865,10 @@
     ],
     "length": {
       "emphasis": "intermediario",
-      "text": "A inclinação puxa o trabalho para a porção clavicular; o braço de momento é maior com a barra perto do peito.",
-      "source": [{ "refId": "sbl_reasoning" }],
-      "confidence": "especulativo"
+      "text": "A inclinação puxa o trabalho para a porção clavicular; o braço de momento é maior com a barra perto do peito. Em 8 semanas, o supino inclinado aumentou mais a espessura da parte alta do peitoral (2º espaço intercostal) que o reto; nas outras regiões medidas a diferença não apareceu.",
+      "source": [{ "refId": "sbl_reasoning" }, { "refId": "chaves2020_incline" }],
+      "confidence": "provavel",
+      "note": "Um estudo com 47 homens não treinados, uma sessão por semana, ultrassom."
     }
   },
   {
@@ -897,8 +904,8 @@
     ],
     "length": {
       "emphasis": "alongado",
-      "text": "Junta a inclinação (porção clavicular) com a descida mais funda dos halteres.",
-      "source": [{ "refId": "sbl_reasoning" }],
+      "text": "Junta a inclinação (porção clavicular) com a descida mais funda dos halteres. Com barra, o supino inclinado cresceu mais a parte alta do peitoral que o reto; com halteres vale por analogia.",
+      "source": [{ "refId": "sbl_reasoning" }, { "refId": "chaves2020_incline" }],
       "confidence": "especulativo"
     }
   },
@@ -1030,9 +1037,10 @@
     ],
     "length": {
       "emphasis": "intermediario",
-      "text": "Como um supino com uns dois terços do peso do corpo; o serrátil trabalha mais porque a escápula anda livre.",
-      "source": [{ "refId": "sbl_reasoning" }],
-      "confidence": "especulativo"
+      "text": "Como um supino com uns dois terços do peso do corpo; o serrátil trabalha mais porque a escápula anda livre. Com a carga ajustada à de 40% de 1RM do supino (de joelhos se preciso), flexão e supino deram ganho parecido de espessura do peitoral e do tríceps em 8 semanas.",
+      "source": [{ "refId": "sbl_reasoning" }, { "refId": "kikuchi2017_pushup" }],
+      "confidence": "provavel",
+      "note": "Um estudo com 18 homens jovens. A fração do peso do corpo é estimativa do site."
     }
   },
   {
@@ -1126,7 +1134,7 @@
     "pattern": "puxar_horizontal",
     "equipment": ["barra"],
     "status": "consolidado",
-    "summary": "Tronco inclinado perto da horizontal, puxar a barra até a barriga e descer.",
+    "summary": "Tronco inclinado à frente uns 50° ou mais, puxar a barra até a barriga e descer até os braços estenderem.",
     "targets": [
       { "muscle": "latissimus_dorsi", "role": "alvo" },
       { "muscle": "trapezius", "role": "alvo", "parts": ["trapezius_mid"] },
@@ -1414,9 +1422,10 @@
     ],
     "length": {
       "emphasis": "alongado",
-      "text": "Com o braço à frente, o torque da barra é máximo com o cotovelo quase estendido, quando os flexores estão longos.",
-      "source": [{ "refId": "sbl_reasoning" }],
-      "confidence": "especulativo"
+      "text": "Com o braço apoiado à frente, o torque é máximo com o cotovelo perto de 45°, na metade alongada. Treinar só a faixa estendida (0° a 50°) cresceu mais bíceps e braquial que a faixa fletida (80° a 130°); na Scott, parciais de 0° a 68° cresceram mais a região distal do bíceps que de 68° a 135°; e a Scott cresceu a região distal onde a rosca inclinada não cresceu.",
+      "source": [{ "refId": "sato2021_elbow" }, { "refId": "pedrosa2023_curl" }, { "refId": "zabaleta2023_curl" }],
+      "confidence": "provavel",
+      "note": "Três estudos pequenos, de 5 a 9 semanas, com não treinados e treinadas. O ganho a mais aparece sobretudo na região distal."
     }
   },
   {
@@ -1469,9 +1478,9 @@
       { "muscle": "brachialis", "role": "alvo" }
     ],
     "length": {
-      "emphasis": "encurtado",
-      "text": "Com o braço na vertical e o tronco inclinado, o torque é maior no topo, quando o bíceps está curto.",
-      "source": [{ "refId": "sbl_reasoning" }],
+      "emphasis": "intermediario",
+      "text": "Com o braço na vertical o torque é máximo com o antebraço na horizontal, no meio da amplitude; o ombro fletido (braço à frente do tronco) deixa a cabeça longa do bíceps mais curta que na rosca em pé. Os estudos de amplitude favorecem a faixa alongada, que este exercício não carrega mais que a rosca direta.",
+      "source": [{ "refId": "sbl_reasoning" }, { "refId": "sato2021_elbow" }, { "refId": "pedrosa2023_curl" }],
       "confidence": "especulativo"
     }
   },
@@ -1505,7 +1514,7 @@
     "targets": [{ "muscle": "triceps_brachii", "role": "alvo" }],
     "length": {
       "emphasis": "alongado",
-      "text": "Com o ombro fletido a cabeça longa já está longa, e o torque é alto com o cotovelo dobrado no fundo.",
+      "text": "Com o ombro fletido a cabeça longa já está longa. Com o braço inclinado para trás, o torque da barra é máximo com o cotovelo perto de 70° e ainda grande no fundo.",
       "source": [{ "refId": "sbl_reasoning" }],
       "confidence": "especulativo"
     }
@@ -1523,7 +1532,7 @@
       "text": "Braço acima da cabeça alonga a cabeça longa; no estudo citado, extensão de cotovelo acima da cabeça deu mais hipertrofia do tríceps que com o braço ao lado do corpo.",
       "source": [{ "refId": "maeo2023_triceps" }],
       "confidence": "provavel",
-      "note": "O estudo usou cabo; aqui é halter, com o torque maior no fundo."
+      "note": "O estudo usou cabo. Com halter e braço na vertical, o torque é máximo com o antebraço na horizontal e cai no fundo, quando o antebraço desce atrás da cabeça."
     }
   },
   {

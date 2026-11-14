@@ -128,6 +128,7 @@
   {
     "id": "maeo2021_hamstrings",
     "citation": "Maeo S, et al. Greater Hamstrings Muscle Hypertrophy but Similar Damage Protection after Training at Long versus Short Muscle Lengths. Medicine & Science in Sports & Exercise. 2021;53(4):825-837.",
+    "doi": "10.1249/MSS.0000000000002523",
     "url": "https://pubmed.ncbi.nlm.nih.gov/33009197/",
     "verified": true,
     "note": "Resumo conferido: mesa flexora sentada > deitada em volume dos isquiotibiais (+14% vs +9%), 12 semanas, 20 adultos não treinados, desenho intrapessoal."
@@ -135,6 +136,7 @@
   {
     "id": "maeo2023_triceps",
     "citation": "Maeo S, et al. Triceps brachii hypertrophy is substantially greater after elbow extension training performed in the overhead versus neutral arm position. European Journal of Sport Science. 2023;23(7):1240-1250.",
+    "doi": "10.1080/17461391.2022.2100279",
     "url": "https://pubmed.ncbi.nlm.nih.gov/35819335/",
     "verified": true,
     "note": "Resumo conferido: braço acima da cabeça > neutro; tríceps inteiro +19,9% vs +13,9%; cabeça longa +28,5% vs +19,6%. 21 adultos."
@@ -153,13 +155,6 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/37015016/",
     "verified": true,
     "note": "Resumo conferido: parcial inicial (alongado) > completo > parcial final no gastrocnêmio medial (+15,2% vs +6,7% vs +3,4%). 42 mulheres jovens, 8 semanas."
-  },
-  {
-    "id": "larsen2024_preprint",
-    "citation": "Larsen S, et al. The effects of hip flexion angle on quadriceps femoris muscle hypertrophy in the leg extension exercise. SportRxiv (preprint), 2024.",
-    "doi": "10.51224/SRXIV.407",
-    "verified": false,
-    "note": "Preprint sem revisão por pares; relata mais hipertrofia do reto femoral reclinado (40° de quadril) que sentado (90°). Autores a conferir."
   },
   {
     "id": "thelen2003",
@@ -212,5 +207,117 @@
     "doi": "10.1519/JSC.0000000000002200",
     "verified": true,
     "note": "Bibliografia e resumo conferidos (PubMed 28834797). Séries até a falha: cargas baixas (≤60% 1RM) e altas deram hipertrofia parecida; força máxima favoreceu carga alta."
+  },
+  {
+    "id": "kubo2019_squat_depth",
+    "citation": "Kubo K, Ikebukuro T, Yata H. Effects of squat training with different depths on lower limb muscle volumes. European Journal of Applied Physiology. 2019;119(9):1933-1942.",
+    "doi": "10.1007/s00421-019-04181-y",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/31230110/",
+    "verified": true,
+    "note": "Resumo conferido: 17 homens, 10 semanas, ressonância. Agachamento completo > meio agachamento em adutores (+6,2% vs +2,7%) e glúteo máximo (+6,7% vs +2,2%); extensores do joelho iguais (+4,9% vs +4,6%); reto femoral e isquiotibiais sem mudança."
+  },
+  {
+    "id": "bloomquist2013",
+    "citation": "Bloomquist K, Langberg H, Karlsen S, Madsgaard S, Boesen M, Raastad T. Effect of range of motion in heavy load squatting on muscle and tendon adaptations. European Journal of Applied Physiology. 2013;113(8):2133-2142.",
+    "doi": "10.1007/s00421-013-2642-7",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/23604798/",
+    "verified": true,
+    "note": "Resumo conferido: 17 homens, 12 semanas. Agachamento fundo (0-120° de joelho) > raso (0-60°) em área da coxa anterior (4-7%)."
+  },
+  {
+    "id": "plotkin2023_hip_thrust",
+    "citation": "Plotkin DL, Rodas MA, Vigotsky AD, et al. Hip thrust and back squat training elicit similar gluteus muscle hypertrophy and transfer similarly to the deadlift. Frontiers in Physiology. 2023;14:1279170.",
+    "doi": "10.3389/fphys.2023.1279170",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37877099/",
+    "verified": true,
+    "note": "Resumo conferido: 34 não treinados, 9 semanas, séries igualadas, ressonância. Glúteo parecido nos dois; quadríceps e adutores cresceram mais no agachamento."
+  },
+  {
+    "id": "barbalho2020",
+    "citation": "Barbalho M, Coswig V, Souza D, Serrão JC, Hebling Campos M, Gentil P. Back Squat vs. Hip Thrust Resistance-training Programs in Well-trained Women. International Journal of Sports Medicine. 2020;41(5):306-310.",
+    "doi": "10.1055/a-1082-1126",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/31975359/",
+    "verified": true,
+    "note": "Resumo conferido: 22 mulheres treinadas, 12 semanas, ultrassom. Agachamento > elevação pélvica em espessura do quadríceps (12,2% vs 2%) e do glúteo máximo (9,4% vs 3,7%)."
+  },
+  {
+    "id": "kinoshita2023_calf",
+    "citation": "Kinoshita M, Maeo S, Kobayashi Y, et al. Triceps surae muscle hypertrophy is greater after standing versus seated calf-raise training. Frontiers in Physiology. 2023;14:1272106.",
+    "doi": "10.3389/fphys.2023.1272106",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38156065/",
+    "verified": true,
+    "note": "Resumo conferido: 14 não treinados, uma perna em pé e a outra sentada, 12 semanas, ressonância. Gastrocnêmio lateral +12,4% vs +1,7%, medial +9,2% vs +0,6%; sóleo parecido (+2,1% vs +2,9%)."
+  },
+  {
+    "id": "bourne2017",
+    "citation": "Bourne MN, Duhig SJ, Timmins RG, et al. Impact of the Nordic hamstring and hip extension exercises on hamstring architecture and morphology: implications for injury prevention. British Journal of Sports Medicine. 2017;51(5):469-477.",
+    "doi": "10.1136/bjsports-2016-096130",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/27660368/",
+    "verified": true,
+    "note": "Resumo conferido: 30 atletas recreativos, 10 semanas, ressonância. Extensão de quadril > flexão nórdica em volume da cabeça longa do bíceps femoral; semitendíneo cresceu nos dois, sem diferença. O resumo não descreve o banco do exercício de extensão de quadril."
+  },
+  {
+    "id": "morin2025_hamstrings",
+    "citation": "Morin T, Doguet V, Nordez A, Caillet A, Lacourpaille L. Minimal Role of Hamstring Hypertrophy in Strength Transfer Between Nordic Hamstring and Stiff-Leg Deadlift: A Blinded Randomized Controlled Trial. Journal of Strength and Conditioning Research. 2025;39(9):924-932.",
+    "doi": "10.1519/JSC.0000000000005159",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/40644669/",
+    "verified": true,
+    "note": "Resumo conferido: 36 não treinados, 9 semanas, ultrassom 3D. Isquiotibiais cresceram nos dois (nórdica 11,4%, stiff 7,0%); a nórdica cresceu mais o semitendíneo (24,3%) e o stiff o semimembranoso (11,2%)."
+  },
+  {
+    "id": "larsen2025_leg_extension",
+    "citation": "Larsen S, Sandvik Kristiansen B, Swinton PA, et al. The effects of hip flexion angle on quadriceps femoris muscle hypertrophy in the leg extension exercise. Journal of Sports Sciences. 2025;43(2):210-221.",
+    "doi": "10.1080/02640414.2024.2444713",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/39699974/",
+    "verified": true,
+    "note": "Resumo conferido (versão publicada do preprint SportRxiv 10.51224/SRXIV.407): 22 homens não treinados, 10 semanas, uma perna em cada condição, ultrassom. Quadril a 40° > 90° no reto femoral; vasto lateral igual."
+  },
+  {
+    "id": "ema2013",
+    "citation": "Ema R, Wakahara T, Miyamoto N, Kanehisa H, Kawakami Y. Inhomogeneous architectural changes of the quadriceps femoris induced by resistance training. European Journal of Applied Physiology. 2013;113(11):2691-2703.",
+    "doi": "10.1007/s00421-013-2700-1",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/23949789/",
+    "verified": true,
+    "note": "Resumo conferido: 11 homens, 12 semanas de extensão de joelho. Aumento relativo de área do reto femoral maior que o dos vastos."
+  },
+  {
+    "id": "sato2021_elbow",
+    "citation": "Sato S, Yoshida R, Kiyono R, et al. Elbow Joint Angles in Elbow Flexor Unilateral Resistance Exercise Training Determine Its Effects on Muscle Strength and Thickness of Trained and Non-trained Arms. Frontiers in Physiology. 2021;12:734509.",
+    "doi": "10.3389/fphys.2021.734509",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/34616309/",
+    "verified": true,
+    "note": "Resumo conferido: 32 não treinados, 5 semanas. Rosca só na faixa estendida (0-50°) > faixa fletida (80-130°) em espessura de bíceps e braquial (8,9% vs 3,4%)."
+  },
+  {
+    "id": "pedrosa2023_curl",
+    "citation": "Pedrosa GF, Simões MG, Figueiredo MOC, et al. Training in the Initial Range of Motion Promotes Greater Muscle Adaptations Than at Final in the Arm Curl. Sports (Basel). 2023;11(2):39.",
+    "doi": "10.3390/sports11020039",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/36828324/",
+    "verified": true,
+    "note": "Resumo conferido: 19 mulheres jovens, Scott com halter, um braço em cada faixa, 8 semanas. Faixa 0-68° > 68-135° na área do bíceps a 70% do úmero (distal); a 50% e na soma, sem diferença."
+  },
+  {
+    "id": "zabaleta2023_curl",
+    "citation": "Zabaleta-Korta A, Fernández-Peña E, Torres-Unda J, Francés M, Zubillaga A, Santos-Concejero J. Regional Hypertrophy: The Effect of Exercises at Long and Short Muscle Lengths in Recreationally Trained Women. Journal of Human Kinetics. 2023;87:259-270.",
+    "doi": "10.5114/jhk/163561",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37559762/",
+    "verified": true,
+    "note": "Resumo conferido: 38 mulheres treinadas recreativamente, 9 semanas, ultrassom. Rosca inclinada: nenhuma região cresceu; Scott: a região distal (70%) cresceu."
+  },
+  {
+    "id": "chaves2020_incline",
+    "citation": "Chaves SFN, Rocha-Júnior VA, Encarnação IGA, et al. Effects of Horizontal and Incline Bench Press on Neuromuscular Adaptations in Untrained Young Men. International Journal of Exercise Science. 2020;13(6):859-872.",
+    "doi": "10.70252/FDNB1158",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/32922646/",
+    "verified": true,
+    "note": "Resumo conferido: 47 homens não treinados, 8 semanas, uma sessão por semana. Espessura do peitoral no 2º espaço intercostal cresceu mais no supino inclinado; nas outras duas regiões, sem diferença."
+  },
+  {
+    "id": "kikuchi2017_pushup",
+    "citation": "Kikuchi N, Nakazato K. Low-load bench press and push-up induce similar muscle hypertrophy and strength gain. Journal of Exercise Science & Fitness. 2017;15(1):37-42.",
+    "doi": "10.1016/j.jesf.2017.06.003",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/29541130/",
+    "verified": true,
+    "note": "Resumo conferido: 18 homens, 8 semanas. Flexão ajustada à carga de 40% de 1RM do supino e supino a 40% deram ganho parecido de espessura do peitoral e do tríceps."
   }
 ]
