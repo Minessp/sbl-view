@@ -558,7 +558,7 @@
   },
   {
     "id": "good_morning",
-    "name": "Bom-dia",
+    "name": "Good morning",
     "pattern": "dobradica",
     "equipment": ["barra"],
     "status": "consolidado",
