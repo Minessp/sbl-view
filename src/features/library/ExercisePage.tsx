@@ -11,6 +11,7 @@ import { compiledClip } from './motion';
 import { Player } from './player/Player';
 import '@/features/atlas/explorer/explorer.css';
 import './library.css';
+import '@/ui/target-list.css';
 import { Title } from '@/ui/Title';
 
 /** Algum alvo do exercício é alvo de outro exercício também: dá para comparar no Lab. */

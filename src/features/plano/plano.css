@@ -27,8 +27,7 @@
   gap: var(--s-3) var(--s-6);
 }
 
-.chip-row,
-.segmented {
+.chip-row {
   display: flex;
   flex-wrap: wrap;
   gap: var(--s-1);
@@ -174,13 +173,6 @@
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
     align-items: start;
   }
-}
-
-.plan-status[data-status='abaixo'],
-.plan-status[data-status='acima'] {
-  font-weight: 600;
-  text-decoration: underline dotted;
-  text-underline-offset: 3px;
 }
 
 .data-table tr.is-current th,

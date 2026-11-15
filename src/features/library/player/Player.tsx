@@ -12,6 +12,7 @@ import { muscleById } from '../catalog';
 import { lengthCurves, valueAt } from './lengths';
 import { PLAYER_SPEEDS, PLAYER_VIEWS, usePlayer, type PlayerTargets } from './store';
 import './player.css';
+import { LengthLegend } from '@/ui/LengthLegend';
 
 const PATTERNS: LinePattern[] = ['solid', 'dashed', 'dotted'];
 const ORBIT_K = 0.0085;
@@ -300,10 +301,7 @@ export function Player({ name, clip, targets }: { name: string; clip: CompiledCl
       <Slot label={P.figure(name)} />
       <figcaption className="player__caption">
         <span>{P.hint}</span>
-        <span className="demo__legend" aria-hidden="true">
-          <span data-dir="short">{t.atlas.ex.legendShort}</span>
-          <span data-dir="long">{t.atlas.ex.legendLong}</span>
-        </span>
+        <LengthLegend />
       </figcaption>
       <div className="demo player__controls" role="group" aria-label={P.controls}>
         <Transport clip={clip} />

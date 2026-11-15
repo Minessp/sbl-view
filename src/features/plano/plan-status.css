@@ -1,0 +1,7 @@
+/* Situação do volume contra a faixa (Plano e Análise). */
+.plan-status[data-status='abaixo'],
+.plan-status[data-status='acima'] {
+  font-weight: 600;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}

@@ -1,0 +1,150 @@
+/*
+ * Rodapé (Footer.tsx). Sem cartão: um fio aceso no topo (acende da esquerda ao entrar na tela), letra pequena
+ * condensada. Fica acima do palco que só desenha nas vistas, abaixo do cabeçalho.
+ */
+.site-footer {
+  position: relative;
+  z-index: var(--z-over-stage);
+  margin-top: var(--s-8);
+  padding: var(--s-7) var(--s-4) calc(var(--s-6) + var(--rest-h, 0px) + env(safe-area-inset-bottom));
+  background: var(--c-bg);
+  font-size: var(--fs-2);
+  font-stretch: var(--wd-cond);
+  color: var(--c-ink-2);
+}
+
+.site-footer::before,
+.site-footer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+}
+
+.site-footer::before {
+  background: var(--c-edge);
+}
+
+.site-footer::after {
+  background: linear-gradient(90deg, var(--c-accent), color-mix(in oklch, var(--c-accent) 40%, transparent) 45%, transparent 85%);
+  box-shadow: var(--glow-line);
+  transform-origin: left center;
+  transform: scaleX(0);
+  opacity: 0;
+  transition:
+    transform 1100ms var(--ease-quart),
+    opacity var(--t-slow) var(--ease);
+}
+
+.site-footer[data-lit='true']::after {
+  transform: none;
+  opacity: 1;
+}
+
+.site-footer__inner {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-6) var(--s-5);
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.site-footer__brand {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: var(--s-2);
+  align-content: start;
+}
+
+.site-footer__brand p {
+  margin: 0;
+  max-width: 26ch;
+}
+
+.site-footer h2 {
+  margin: 0 0 var(--s-2);
+  font-size: var(--fs-1);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-ink);
+}
+
+.site-footer ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.site-footer__col a,
+.site-footer__btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--c-ink-2);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--t-fast) var(--ease);
+}
+
+.site-footer__col a:hover,
+.site-footer__btn:hover {
+  color: var(--c-ink);
+}
+
+.site-footer__fine {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: var(--s-1);
+  padding-top: var(--s-4);
+  border-top: var(--lw-hair) solid var(--c-edge);
+  font-size: var(--fs-1);
+  line-height: 1.5;
+}
+
+.site-footer__fine p {
+  margin: 0;
+  max-width: 90ch;
+}
+
+.site-footer__warn {
+  color: var(--c-ink);
+}
+
+.site-footer__ver {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (pointer: coarse) {
+  .site-footer__col a,
+  .site-footer__btn {
+    min-height: 44px;
+  }
+}
+
+@media (min-width: 720px) {
+  .site-footer {
+    padding-left: var(--s-6);
+    padding-right: var(--s-6);
+  }
+
+  .site-footer__inner {
+    grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
+  }
+
+  .site-footer__brand {
+    grid-column: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-footer::after {
+    transition: none;
+  }
+}

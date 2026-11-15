@@ -1,0 +1,35 @@
+/* Legenda da cor do comprimento (LengthLegend.tsx). */
+.length-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-1) var(--s-4);
+  margin: 0;
+  font-size: var(--fs-1);
+  font-stretch: var(--wd-cond);
+  letter-spacing: 0.01em;
+  color: var(--c-ink-2);
+}
+
+.length-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.length-legend__swatch {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.length-legend__item[data-dir='short'] .length-legend__swatch {
+  background: var(--c-glow);
+  box-shadow: 0 0 6px color-mix(in oklch, var(--c-glow) 55%, transparent);
+}
+
+.length-legend__item[data-dir='long'] .length-legend__swatch {
+  background: var(--c-stretch);
+  box-shadow: 0 0 6px color-mix(in oklch, var(--c-stretch) 55%, transparent);
+}

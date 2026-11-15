@@ -1,0 +1,34 @@
+/* Lista de músculos (ficha do exercício) e de exercícios (página do músculo). */
+.target-list li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px var(--s-3);
+  align-items: baseline;
+  padding: var(--s-3) 0;
+  border-bottom: var(--lw-hair) solid var(--c-edge);
+}
+
+.target-list__name {
+  font-size: var(--fs-4);
+  font-weight: 540;
+}
+
+.target-list li[data-role='sinergista'] .target-list__name {
+  font-weight: 450;
+}
+
+.target-list__role {
+  grid-column: 2;
+  grid-row: 1;
+  font-size: var(--fs-1);
+  font-stretch: var(--wd-cond);
+  color: var(--c-ink-2);
+}
+
+.target-list__parts {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--fs-2);
+  color: var(--c-ink-2);
+}

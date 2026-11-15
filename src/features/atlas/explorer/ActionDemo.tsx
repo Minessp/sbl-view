@@ -7,6 +7,7 @@ import { fmt, t } from '@/i18n/app';
 import type { ActionCurve } from '../model';
 import { DEMO_SPEEDS, useAtlas } from '../store';
 import { demoAngle, demoPhaseOf, demoStage } from './demo';
+import { LengthLegend } from '@/ui/LengthLegend';
 
 /** Fração do eixo x do gráfico onde está o ângulo da demonstração (ou a posição em pé, se ela não toca esta curva). */
 export function useDemoMarker(c: ActionCurve): number {
@@ -125,10 +126,7 @@ export function DemoControls({ c }: { c: ActionCurve }) {
           );
         })}
       </ul>
-      <p className="demo__legend" aria-hidden="true">
-        <span data-dir="short">{E.legendShort}</span>
-        <span data-dir="long">{E.legendLong}</span>
-      </p>
+      <LengthLegend />
     </div>
   );
 }

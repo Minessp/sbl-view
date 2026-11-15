@@ -4,7 +4,7 @@
  * o músculo e as curvas; na biblioteca, filtra; no Treino, registra uma série, recarrega e confere
  * que ela persistiu no IndexedDB, edita no histórico, vê recordes e anota medida, monta um plano, faz uma
  * série na sessão ao vivo, vê a análise,
- * troca o Atlas para a malha anatômica, exporta e reimporta o backup.
+ * troca o Atlas para a malha anatômica, exporta e reimporta o backup. Rodapé, páginas legais e Ajustes.
  * No build (com sw.js), confere que o site abre sem rede.
  *   node scripts/smoke.mjs [base-url]
  */
@@ -162,6 +162,35 @@ await step('atlas: parte pela busca e pela URL; demonstração no plano frontal 
   if (a === b) throw new Error(`demonstração parada em ${a}`);
 });
 
+// Página aberta direto, sem mover o ponteiro: nenhum chunk de outra rota pedido de antemão (o CSS da lista morava no da biblioteca).
+await step('página de músculo: lista de exercícios nasce estilizada', async () => {
+  await page.goto(`${base}/atlas/latissimus_dorsi`, { waitUntil: 'networkidle' });
+  const li = page.locator('.target-list li').first();
+  await li.waitFor();
+  const display = await li.evaluate((el) => getComputedStyle(el).display);
+  if (display !== 'grid') throw new Error(`.target-list li com display ${display}`);
+});
+
+await step('rodapé leva aos termos; Ajustes troca a qualidade e grava sbl-lod', async () => {
+  await page.goto(`${base}/exercicios`, { waitUntil: 'networkidle' });
+  const foot = page.getByRole('contentinfo');
+  await foot.scrollIntoViewIfNeeded();
+  await foot.getByRole('link', { name: 'Termos de uso' }).click();
+  await page.waitForURL(/\/termos$/);
+  await page.getByRole('heading', { level: 1, name: 'Termos de uso' }).waitFor();
+  await page.waitForFunction(() => document.title.startsWith('Termos de uso'), null, { timeout: 8000 });
+  await foot.getByRole('button', { name: 'Ajustes' }).click();
+  const dlg = page.getByRole('dialog', { name: 'Ajustes' });
+  await dlg.waitFor();
+  await dlg.getByRole('radio', { name: /^Leve/ }).check();
+  if ((await page.evaluate(() => localStorage.getItem('sbl-lod'))) !== 'lo') throw new Error('sbl-lod não gravado');
+  await dlg.getByRole('button', { name: 'Recarregar agora' }).waitFor();
+  await dlg.getByRole('radio', { name: /^Automático/ }).check();
+  if ((await page.evaluate(() => localStorage.getItem('sbl-lod'))) !== null) throw new Error('automático não limpou sbl-lod');
+  await page.keyboard.press('Escape');
+  await dlg.waitFor({ state: 'hidden' });
+});
+
 await step('biblioteca: busca + comprimento longo + consolidado deixa um exercício', async () => {
   await page.goto(`${base}/exercicios`, { waitUntil: 'networkidle' });
   await page.getByText('Só carga no músculo alongado').click();
@@ -297,7 +326,7 @@ await step('dados: exportar e reimportar o backup não duplica', async () => {
 await step('celular 320 px: nenhuma rota transborda na horizontal', async () => {
   await page.setViewportSize({ width: 320, height: 700 });
   const wide = [];
-  for (const r of ['/', '/atlas', '/atlas/biceps_brachii', '/exercicios', '/exercicios/bayesian_curl', '/lab', '/lab/comparar', '/treino', '/treino/plano', '/treino/historico', '/treino/progresso', '/treino/analise', '/treino/dados']) {
+  for (const r of ['/', '/atlas', '/atlas/biceps_brachii', '/exercicios', '/exercicios/bayesian_curl', '/lab', '/lab/comparar', '/treino', '/treino/plano', '/treino/historico', '/treino/progresso', '/treino/analise', '/treino/dados', '/sobre', '/termos', '/privacidade', '/licencas']) {
     await page.goto(base + r, { waitUntil: 'networkidle' });
     await page.locator('main h1').first().waitFor();
     const over = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);

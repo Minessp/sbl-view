@@ -1,4 +1,5 @@
 import type { LengthEmphasis } from '@/data/schema/exercise';
+import './emphasis-mark.css';
 
 /**
  * Régua de comprimento: curto à esquerda, longo à direita; o traço grosso marca onde a carga pega.

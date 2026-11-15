@@ -641,35 +641,6 @@ fieldset.panel-block > legend + * {
   color: var(--c-cool);
 }
 
-.demo__legend {
-  display: flex;
-  gap: var(--s-4);
-  margin: 0;
-  font-size: var(--fs-1);
-  color: var(--c-ink-2);
-}
-
-.demo__legend span {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.demo__legend span::before {
-  content: '';
-  width: 14px;
-  height: 6px;
-  border-radius: var(--r-pill);
-}
-
-.demo__legend [data-dir='short']::before {
-  background: var(--c-glow);
-}
-
-.demo__legend [data-dir='long']::before {
-  background: var(--c-stretch);
-}
-
 /* ---------- Página do músculo ---------- */
 .atlas-stage__more {
   display: grid;

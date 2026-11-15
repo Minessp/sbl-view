@@ -4,6 +4,7 @@ import { backupFileName, parseBackup, type ParseError } from '@/storage/backup';
 import { repository, requestPersistence, storageStatus, type StorageStatus } from '@/storage/db';
 import { TreinoHeader } from './shared';
 import { reloadPrefs, setUnit, useUnit } from './units';
+import '@/ui/segmented.css';
 
 type Msg = { kind: 'ok' | 'error'; text: string } | null;
 

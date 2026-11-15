@@ -17,6 +17,7 @@ import { analyze, chosenOptions, clipView, comparableTargets, exercisesTargeting
 import { COMPARE_VIEWS, decodeQuery, encodeQuery, MAX_EXERCISES, uAtPhase, useCompare, useCompareSlots, type Slot } from './store';
 import '../lab.css';
 import './compare.css';
+import { LengthLegend } from '@/ui/LengthLegend';
 
 const C = t.labCompare;
 const PERIOD_S = 3.2;
@@ -542,6 +543,7 @@ export default function Compare() {
               <ViewSlot key={slot.key} slot={slot} index={i} analysis={a} u={u} />
             ))}
           </div>
+          <LengthLegend className="compare-legend" />
         </div>
         <div className="lab__body">
           <div className="compare-pick">

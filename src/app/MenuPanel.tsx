@@ -3,7 +3,7 @@
  * A cortina desce do cabeçalho, os nomes das seções entram letra a letra em cascata e o fio de cada linha se acende.
  * A barra de cima repete o cabeçalho no mesmo lugar (marca, tema, e "Fechar" onde estava "Menu").
  */
-import { Dumbbell, FlaskConical, Layers, NotebookPen, type LucideIcon } from 'lucide-react';
+import { Dumbbell, FlaskConical, Layers, NotebookPen, X, type LucideIcon } from 'lucide-react';
 import { domMax, LazyMotion, m } from 'motion/react';
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { Link, useLocation } from 'wouter';
@@ -37,7 +37,7 @@ const SECTIONS: readonly { href: string; name: string; body: string; icon: Lucid
 /** Duração da saída (motion.css: --t-exit); com redução de movimento, fecha na hora. */
 const EXIT_MS = 220;
 
-export default function MenuPanel({ onClosed }: { onClosed: () => void }) {
+export default function MenuPanel({ onClosed, onSettings }: { onClosed: () => void; onSettings: () => void }) {
   const ref = useRef<HTMLDialogElement>(null);
   const close = useRef<HTMLButtonElement>(null);
   const [loc] = useLocation();
@@ -93,7 +93,7 @@ export default function MenuPanel({ onClosed }: { onClosed: () => void }) {
         <ThemeSwitch />
         <button ref={close} type="button" className="menu-btn menu-btn--close" aria-label={t.menu.closeLabel} onClick={() => shut(true)}>
           <span className="menu-btn__label">{t.menu.close}</span>
-          <span className="menu-btn__icon" aria-hidden="true" />
+          <X className="menu-btn__icon" size={18} strokeWidth={1.75} aria-hidden="true" />
         </button>
       </div>
       <nav className="menu__nav" aria-label={t.menu.sections}>
@@ -136,7 +136,20 @@ export default function MenuPanel({ onClosed }: { onClosed: () => void }) {
         </ol>
         </LazyMotion>
       </nav>
-      <p className="menu__foot">{t.menu.foot}</p>
+      <div className="menu__foot">
+        <p>{t.menu.foot}</p>
+        <button
+          type="button"
+          className="chip chip--small"
+          aria-haspopup="dialog"
+          onClick={() => {
+            shut(false);
+            onSettings();
+          }}
+        >
+          {t.footer.settings}
+        </button>
+      </div>
     </dialog>
   );
 }

@@ -24,6 +24,7 @@ import { t } from '@/i18n/app';
 import { SplitText } from '@/ui/Title';
 import { homeScroll } from './store';
 import './home-live.css';
+import { LengthLegend } from '@/ui/LengthLegend';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -233,6 +234,7 @@ export function HomeLive() {
               <SplitText text={L.title} />
             </h2>
             <p className="live__body">{L.body}</p>
+            <LengthLegend />
             <ol className="live__picks" aria-label={S.list}>
               {SHOW.map((x, i) => (
                 <li key={x.id}>

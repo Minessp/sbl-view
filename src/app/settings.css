@@ -1,0 +1,269 @@
+/*
+ * Ajustes (Settings.tsx). Painel à direita, de cima a baixo, que entra deslizando; fundo escurecido. Celular: ocupa a tela.
+ */
+.site-settings {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: color-mix(in oklch, var(--c-bg) 55%, transparent);
+  color: var(--c-ink);
+  overflow: hidden;
+  animation: site-settings-fade var(--t-mid) var(--ease) both;
+}
+
+.site-settings:not([open]) {
+  display: none;
+}
+
+.site-settings::backdrop {
+  background: transparent;
+}
+
+.site-settings__panel {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: min(440px, 100%);
+  display: grid;
+  align-content: start;
+  gap: var(--s-5);
+  padding: 0 var(--s-5) var(--s-6);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background:
+    radial-gradient(ellipse 90% 40% at 100% 0%, color-mix(in oklch, var(--c-light-key) 7%, transparent), transparent 70%),
+    var(--c-bg-2);
+  border-left: var(--lw-hair) solid var(--c-edge);
+  box-shadow: var(--shadow-pop);
+  animation: site-settings-in var(--t-slow) var(--ease-quart) both;
+}
+
+.site-settings[data-state='closing'] {
+  animation: site-settings-fade var(--t-exit) var(--ease-in) reverse both;
+}
+
+.site-settings[data-state='closing'] .site-settings__panel {
+  animation: site-settings-out var(--t-exit) var(--ease-in) both;
+}
+
+@keyframes site-settings-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes site-settings-in {
+  from {
+    transform: translateX(32px);
+    opacity: 0;
+  }
+}
+
+@keyframes site-settings-out {
+  to {
+    transform: translateX(32px);
+    opacity: 0;
+  }
+}
+
+.site-settings__head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  height: var(--header-h);
+  margin: 0 calc(var(--s-5) * -1);
+  padding: 0 var(--s-3) 0 var(--s-5);
+  background: var(--c-bg-2);
+  border-bottom: var(--lw-hair) solid var(--c-edge);
+}
+
+.site-settings__title {
+  margin: 0;
+  font-size: var(--fs-5);
+  font-weight: 320;
+  font-stretch: var(--wd-wide);
+  letter-spacing: -0.01em;
+}
+
+.site-settings__close {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-height: 44px;
+  padding: 0 var(--s-3) 0 var(--s-4);
+  border: var(--lw-hair) solid var(--c-edge);
+  border-radius: var(--r-pill);
+  background: transparent;
+  font-size: var(--fs-2);
+  font-weight: 560;
+  font-stretch: var(--wd-cond);
+  color: var(--c-ink);
+  transition: border-color var(--t-fast) var(--ease), background-color var(--t-fast) var(--ease);
+}
+
+.site-settings__close:hover {
+  border-color: var(--c-rule);
+  background: var(--c-hover);
+}
+
+.site-settings__row {
+  display: grid;
+  gap: var(--s-2);
+  margin: 0;
+  padding: 0 0 var(--s-5);
+  border: 0;
+  border-bottom: var(--lw-hair) solid var(--c-edge);
+  min-inline-size: 0;
+}
+
+.site-settings__row h3,
+.site-settings__row legend {
+  margin: 0;
+  padding: 0;
+  font-size: var(--fs-1);
+  font-weight: 600;
+  font-stretch: var(--wd-cond);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-ink-2);
+}
+
+/* legend não entra no grid do fieldset: o espaço vem da nota logo abaixo. */
+.site-settings__quality .site-settings__note {
+  margin-top: var(--s-2);
+}
+
+.site-settings__theme {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+
+.site-settings__now {
+  font-size: var(--fs-4);
+}
+
+.site-settings__note {
+  margin: 0;
+  font-size: var(--fs-2);
+  line-height: 1.5;
+  color: var(--c-ink-2);
+}
+
+.site-settings__options {
+  display: grid;
+  gap: 2px;
+  margin-top: var(--s-1);
+}
+
+.site-settings__opt {
+  position: relative;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s-3);
+  min-height: 48px;
+  padding: 0 var(--s-3);
+  border-radius: var(--r-1);
+  cursor: pointer;
+  transition: background-color var(--t-fast) var(--ease);
+}
+
+.site-settings__opt:hover {
+  background: var(--c-hover);
+}
+
+.site-settings__opt:has(input:checked) {
+  background: linear-gradient(90deg, color-mix(in oklch, var(--c-accent) 12%, transparent), transparent 80%);
+  box-shadow: inset 2px 0 0 var(--c-accent);
+}
+
+.site-settings__opt input {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  border: 1.5px solid var(--c-rule);
+  border-radius: 50%;
+  transition: border-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+}
+
+.site-settings__opt input:checked {
+  border-color: var(--c-accent);
+  box-shadow: inset 0 0 0 3px var(--c-bg-2), inset 0 0 0 8px var(--c-accent);
+}
+
+.site-settings__opt input:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 3px;
+}
+
+.site-settings__opt-name {
+  font-size: var(--fs-3);
+  font-weight: 520;
+}
+
+.site-settings__opt-meta {
+  font-size: var(--fs-2);
+  font-stretch: var(--wd-cond);
+  font-variant-numeric: tabular-nums;
+  color: var(--c-ink-2);
+}
+
+.site-settings__pending {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2) var(--s-3);
+}
+
+.site-settings__pending p {
+  margin: 0;
+  font-size: var(--fs-2);
+  color: var(--c-ink);
+}
+
+.site-settings__reload {
+  min-height: 44px;
+  padding: 0 var(--s-4);
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--c-accent);
+  color: var(--c-on-accent);
+  font-size: var(--fs-2);
+  font-weight: 620;
+  font-stretch: var(--wd-cond);
+}
+
+.site-settings__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: var(--fs-3);
+  color: var(--c-ink);
+  text-underline-offset: 4px;
+  text-decoration-color: var(--c-rule);
+}
+
+.site-settings__link:hover {
+  text-decoration-color: var(--c-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-settings,
+  .site-settings__panel,
+  .site-settings[data-state='closing'],
+  .site-settings[data-state='closing'] .site-settings__panel {
+    animation: none;
+  }
+}

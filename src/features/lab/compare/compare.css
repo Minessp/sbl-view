@@ -153,3 +153,8 @@
     min-height: 44px;
   }
 }
+
+/* Legenda da cor sob as vistas. */
+.compare-legend {
+  margin-top: var(--s-2);
+}

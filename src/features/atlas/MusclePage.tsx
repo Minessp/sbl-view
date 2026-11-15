@@ -16,6 +16,7 @@ import { defaultView, useAtlas, type Pick } from './store';
 import './explorer/explorer.css';
 import '@/features/heat/heat.css';
 import './atlas.css';
+import '@/ui/target-list.css';
 import { Title } from '@/ui/Title';
 
 const PATTERNS: LinePattern[] = ['solid', 'dashed', 'dotted'];

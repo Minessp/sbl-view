@@ -8,6 +8,7 @@ import { LiveSession } from './live/LiveSession';
 import { RestTimer } from './live/RestTimer';
 import { KindSelect, loadValid, parseLoad, repsValid, RirSelect, SetRow, timeFmt, TreinoHeader, variantsOf } from './shared';
 import { setUnit, toKg, useUnit } from './units';
+import '@/ui/segmented.css';
 
 export default function Treino() {
   const L = t.training;

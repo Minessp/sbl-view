@@ -10,6 +10,8 @@ export default defineConfig({
   // (Caminho relativo './' quebraria assets em rotas aninhadas.)
   base: process.env.BASE_PATH ?? '/',
   plugins: [react(), fontPreload(), pwa()],
+  // Data do build (rodapé).
+  define: { __BUILD__: JSON.stringify(new Date().toISOString().slice(0, 10)) },
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },

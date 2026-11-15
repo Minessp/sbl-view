@@ -1,0 +1,20 @@
+/* Régua de comprimento (EmphasisMark.tsx): vai com o componente, usado na biblioteca, no exercício e no Atlas. */
+.emph {
+  flex: none;
+  overflow: visible;
+}
+
+.emph__rule {
+  stroke: var(--c-ink-2);
+  stroke-width: 1;
+}
+
+.emph__mark {
+  fill: var(--c-ink);
+}
+
+/* Alongado: a marca acende (a posição na régua continua sendo a informação). */
+.emph[data-emphasis='alongado'] .emph__mark {
+  fill: var(--c-accent);
+  filter: drop-shadow(0 0 2px var(--c-glow));
+}

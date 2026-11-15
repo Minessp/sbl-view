@@ -21,6 +21,7 @@ const load = {
   progresso: () => import('@/features/treino/Progresso'),
   dados: () => import('@/features/treino/Dados'),
   analise: () => import('@/features/treino/Analise'),
+  legal: () => import('@/features/legal/Legal'),
 };
 const Lab = lazy(load.lab);
 const Compare = lazy(load.compare);
@@ -34,6 +35,7 @@ const Historico = lazy(load.historico);
 const Progresso = lazy(load.progresso);
 const Dados = lazy(load.dados);
 const Analise = lazy(load.analise);
+const Legal = lazy(load.legal);
 
 const TREINO: Record<string, () => Promise<unknown>> = {
   plano: load.plano,
@@ -43,6 +45,8 @@ const TREINO: Record<string, () => Promise<unknown>> = {
   dados: load.dados,
 };
 
+const LEGAL = new Set(['sobre', 'termos', 'privacidade', 'licencas']);
+
 /** Chunk da rota (caminho sem a base). Página inicial e desconhecidas: nada a carregar. */
 function routeChunk(path: string): (() => Promise<unknown>) | null {
   const [a, b] = path.split(/[?#]/)[0]?.split('/').filter(Boolean) ?? [];
@@ -50,6 +54,7 @@ function routeChunk(path: string): (() => Promise<unknown>) | null {
   if (a === 'atlas') return b ? load.muscle : load.atlas;
   if (a === 'exercicios') return b ? load.exercise : load.library;
   if (a === 'treino') return b ? (TREINO[b] ?? null) : load.treino;
+  if (a && LEGAL.has(a)) return load.legal;
   return null;
 }
 
@@ -209,6 +214,10 @@ export function App() {
               <Route path="/treino/progresso" component={Progresso} />
               <Route path="/treino/analise" component={Analise} />
               <Route path="/treino/dados" component={Dados} />
+              <Route path="/sobre">{() => <Legal page="about" />}</Route>
+              <Route path="/termos">{() => <Legal page="terms" />}</Route>
+              <Route path="/privacidade">{() => <Legal page="privacy" />}</Route>
+              <Route path="/licencas">{() => <Legal page="licenses" />}</Route>
               {DevBody && <Route path="/dev/corpo" component={DevBody} />}
               {DevClips && <Route path="/dev/clipes" component={DevClips} />}
               <Route component={NotFound} />

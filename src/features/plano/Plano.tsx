@@ -35,6 +35,8 @@ import {
   weekStart,
 } from './model';
 import './plano.css';
+import './plan-status.css';
+import '@/ui/segmented.css';
 import { TableWrap } from '@/ui/TableWrap';
 
 const DAY_LABELS = 'ABCDEF';

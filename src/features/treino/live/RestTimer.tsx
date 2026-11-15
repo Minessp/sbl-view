@@ -29,6 +29,21 @@ function beep() {
 
 export const clock = (sec: number) => `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
 
+/**
+ * O cronômetro fica preso ao pé da tela: publica a altura dele em `--rest-h` (o rodapé do site reserva esse espaço para
+ * não ficar escondido embaixo) e limpa ao sair.
+ */
+function reserve(el: HTMLElement | null): (() => void) | undefined {
+  if (!el || typeof ResizeObserver === 'undefined') return undefined;
+  const root = document.documentElement;
+  const ro = new ResizeObserver(() => root.style.setProperty('--rest-h', `${Math.ceil(el.getBoundingClientRect().height + 16)}px`));
+  ro.observe(el);
+  return () => {
+    ro.disconnect();
+    root.style.removeProperty('--rest-h');
+  };
+}
+
 export function RestTimer() {
   const T = t.training.timer;
   const { endAt, total, label, add, stop } = useRestTimer();
@@ -55,7 +70,7 @@ export function RestTimer() {
   if (endAt === null) return null;
   const frac = total > 0 ? left / total : 0;
   return (
-    <section className="rest" data-over={over || undefined} aria-label={T.region}>
+    <section ref={reserve} className="rest" data-over={over || undefined} aria-label={T.region}>
       <svg className="rest__ring" viewBox="0 0 60 60" aria-hidden="true">
         <circle className="rest__track" cx="30" cy="30" r={R} />
         <circle className="rest__arc" cx="30" cy="30" r={R} strokeDasharray={C} strokeDashoffset={C * (1 - frac)} />

@@ -21,6 +21,7 @@ import { Sources } from '@/ui/Sources';
 import { TableWrap } from '@/ui/TableWrap';
 import { exerciseName, NothingLogged, shortDateFmt, StoreError, StoreLoading, TreinoHeader } from './shared';
 import { fmtLoad, useUnit } from './units';
+import '@/features/plano/plan-status.css';
 
 const training = trainingJson as unknown as TrainingFile;
 const STAG = training.stagnation;

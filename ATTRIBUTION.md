@@ -64,7 +64,7 @@ Braços de momento e comprimentos musculares saem do modelo geométrico do próp
 | Motion | MIT |
 | Zod | MIT |
 | d3-scale, d3-shape | ISC |
-| lucide-react | ISC |
+| lucide-react (ícones; o ícone `menu` do cabeçalho é copiado em linha, © Lucide Contributors) | ISC |
 | wouter | Unlicense |
 | GSAP (com ScrollTrigger) | Standard "No Charge" License, https://gsap.com/standard-license |
 

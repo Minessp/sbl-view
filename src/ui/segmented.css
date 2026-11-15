@@ -1,0 +1,6 @@
+/* Grupo de botões lado a lado (unidade no Treino e em Dados, prioridade no Plano). */
+.segmented {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+}

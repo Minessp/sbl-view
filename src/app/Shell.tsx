@@ -9,6 +9,10 @@ import './shell.css';
 /** Painel do menu em tela cheia: chunk à parte, pedido quando o ponteiro chega no botão (ou no clique). */
 const loadMenu = () => import('./MenuPanel');
 const MenuPanel = lazy(loadMenu);
+/** Ajustes (rodapé e pé do menu) e rodapé: chunks à parte, fora da primeira pintura. */
+const loadSettings = () => import('./Settings');
+const Settings = lazy(loadSettings);
+const Footer = lazy(() => import('./Footer'));
 
 const SECTIONS = [
   ['/atlas', t.nav.atlas],
@@ -57,6 +61,7 @@ function usePreloadMenu() {
 export function Shell({ children }: { children: ReactNode }) {
   const scrolled = useScrolled();
   const [menu, setMenu] = useState(false);
+  const [settings, setSettings] = useState(false);
   usePreloadMenu();
   return (
     <>
@@ -81,17 +86,30 @@ export function Shell({ children }: { children: ReactNode }) {
           onClick={() => setMenu(true)}
         >
           <span className="menu-btn__label">{t.nav.menu}</span>
-          <span className="menu-btn__icon" aria-hidden="true" />
+          {/* Ícone `menu` do Lucide (ISC), em linha: a shell não importa lucide-react. */}
+          <svg className="menu-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" aria-hidden="true">
+            <path className="menu-btn__line menu-btn__line--top" d="M4 5h16" />
+            <path className="menu-btn__line menu-btn__line--mid" d="M4 12h16" />
+            <path className="menu-btn__line menu-btn__line--low" d="M4 19h16" />
+          </svg>
         </button>
       </header>
       {menu && (
         <Suspense fallback={null}>
-          <MenuPanel onClosed={() => setMenu(false)} />
+          <MenuPanel onClosed={() => setMenu(false)} onSettings={() => setSettings(true)} />
+        </Suspense>
+      )}
+      {settings && (
+        <Suspense fallback={null}>
+          <Settings onClosed={() => setSettings(false)} />
         </Suspense>
       )}
       <span className="vt-beam" aria-hidden="true" />
       <StageHost />
       {children}
+      <Suspense fallback={null}>
+        <Footer onSettings={() => setSettings(true)} />
+      </Suspense>
       <UpdateNotice />
     </>
   );

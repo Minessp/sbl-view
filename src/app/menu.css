@@ -198,6 +198,11 @@
 }
 
 .menu__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2) var(--s-4);
   width: 100%;
   max-width: 1180px;
   margin: 0 auto;
@@ -205,6 +210,10 @@
   font-size: var(--fs-2);
   color: var(--c-ink-2);
   animation: menu-fade var(--t-enter) var(--ease) 480ms backwards;
+}
+
+.menu__foot p {
+  margin: 0;
 }
 
 @media (max-width: 719px) {

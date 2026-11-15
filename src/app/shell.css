@@ -106,51 +106,20 @@
 }
 
 .menu-btn__icon {
-  position: relative;
-  width: 16px;
-  height: 10px;
+  flex: none;
+  width: 18px;
+  height: 18px;
 }
 
-.menu-btn__icon::before,
-.menu-btn__icon::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  width: 16px;
-  height: 1.5px;
-  border-radius: 1px;
-  background: currentColor;
+/* No hover o traço do meio encurta pela direita; o layout não mexe. */
+.menu-btn__line--mid {
+  transform-box: fill-box;
   transform-origin: right center;
-  transition: transform var(--t-mid) var(--ease), top var(--t-mid) var(--ease);
+  transition: transform var(--t-mid) var(--ease);
 }
 
-.menu-btn__icon::before {
-  top: 1px;
-}
-
-.menu-btn__icon::after {
-  top: 7.5px;
-  transform: scaleX(0.6);
-}
-
-.menu-btn:hover .menu-btn__icon::after {
-  transform: none;
-}
-
-.menu-btn--close .menu-btn__icon::before,
-.menu-btn--close .menu-btn__icon::after {
-  top: 4.25px;
-  transform-origin: center;
-}
-
-.menu-btn--close .menu-btn__icon::before,
-.menu-btn--close:hover .menu-btn__icon::before {
-  transform: rotate(45deg) scaleX(0.85);
-}
-
-.menu-btn--close .menu-btn__icon::after,
-.menu-btn--close:hover .menu-btn__icon::after {
-  transform: rotate(-45deg) scaleX(0.85);
+.menu-btn:hover .menu-btn__line--mid {
+  transform: scaleX(0.7);
 }
 
 html.menu-open {

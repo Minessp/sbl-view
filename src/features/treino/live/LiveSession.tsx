@@ -391,7 +391,7 @@ export function LiveSession({ open, onLogged, onContext }: Props) {
   }
 
   return (
-    <section className="section live" aria-labelledby="live-title">
+    <section className="section live-session" aria-labelledby="live-title">
       <header className="section__head">
         <h2 id="live-title">{L.title}</h2>
         <p>{overdue ? L.overdue : `${L.lead(week, plan.weeks)} ${presc?.deload ? L.deload : presc ? L.rirWeek(presc.rir) : ''}`}</p>

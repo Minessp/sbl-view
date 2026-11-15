@@ -1,6 +1,6 @@
 /**
- * Auditoria de acessibilidade com axe-core (WCAG 2.2 A/AA) em todas as rotas: desktop vazio nos temas claro e escuro,
- * celular com redução de movimento e dados registrados.
+ * Auditoria de acessibilidade com axe-core (WCAG 2.2 A/AA) em todas as rotas e no painel de Ajustes aberto: desktop
+ * vazio nos temas claro e escuro, celular com redução de movimento e dados registrados.
  *   node scripts/a11y.mjs [url-base]
  * Sai com código 1 se houver violação. Roda no CI contra o build (`vite preview`).
  */
@@ -27,6 +27,10 @@ const ROUTES = [
   '/treino/progresso',
   '/treino/analise',
   '/treino/dados',
+  '/sobre',
+  '/termos',
+  '/privacidade',
+  '/licencas',
   '/rota-que-nao-existe',
 ];
 
@@ -34,10 +38,17 @@ const channel = process.env.PW_CHANNEL ?? (process.platform === 'win32' ? 'msedg
 const browser = await chromium.launch(channel ? { channel } : {});
 let failures = 0;
 
+/** Painel de Ajustes aberto pelo rodapé (rota `/termos`, que não tem palco). */
+async function openSettings(page) {
+  await page.getByRole('contentinfo').getByRole('button', { name: 'Ajustes' }).click();
+  await page.getByRole('dialog', { name: 'Ajustes' }).waitFor();
+}
+
 async function audit(page, label) {
-  for (const route of ROUTES) {
-    await page.goto(base + route, { waitUntil: 'networkidle' });
+  for (const route of [...ROUTES, '/termos#ajustes']) {
+    await page.goto(base + route.replace('#ajustes', ''), { waitUntil: 'networkidle' });
     await page.waitForSelector('main', { timeout: 15000 });
+    if (route.endsWith('#ajustes')) await openSettings(page);
     await page.waitForTimeout(400);
     await page.addScriptTag({ content: axeSource });
     const res = await page.evaluate(async () => {
