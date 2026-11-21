@@ -1,8 +1,19 @@
-/* Página inicial: herói com o corpo manipulável, camadas abertas no scroll. */
+/* Página inicial: herói com o corpo manipulável, camadas abertas no scroll.
+   Sem z-index próprio: o texto do herói sobe acima do palco (o cenário 3D ocupa a tela inteira, atrás das letras),
+   o resto da página fica no fluxo normal. */
 .home {
   position: relative;
-  z-index: 1;
   --ex: 0;
+}
+
+.home-hero__copy,
+.home-hero__open,
+.home-tag {
+  z-index: var(--z-over-stage);
+}
+
+.home-hero__copy {
+  text-shadow: 0 1px 18px color-mix(in oklch, var(--c-bg) 70%, transparent);
 }
 
 .home-hero {

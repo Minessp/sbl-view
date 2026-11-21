@@ -68,6 +68,7 @@ export class BodyInstance {
   private readonly picking: Record<BodyLayer, ShaderMaterial>;
   private readonly bind: Map<string, readonly [number, number, number]>;
   private target: WebGLRenderTarget | null = null;
+  private lockDetail = false;
   /** Matrizes da última pose (12 por junta), para medir caixas posadas. */
   private matrices: Float64Array | null = null;
   /** Comprimento da linha central de cada vaga na última pose (m; 0 sem linha). */
@@ -153,7 +154,8 @@ export class BodyInstance {
    * quadro (a lista deste já foi montada), por isso o aviso.
    */
   private checkDetail(renderer: WebGLRenderer, camera: Camera) {
-    if (this.model.base === this.model.geometry || renderer.getRenderTarget() !== null) return;
+    // Seleção (alvo 1 × 1), sombra e reflexo não decidem o nível; o alvo HDR do pipeline de cinema decide (tamanho da tela).
+    if (this.model.base === this.model.geometry || this.lockDetail || (renderer.getRenderTarget() !== null && renderer.getRenderTarget() === this.target)) return;
     renderer.getCurrentViewport(VIEWPORT);
     this.group.getWorldPosition(CENTER);
     CENTER.y += BODY_HEIGHT / 2;
@@ -309,6 +311,32 @@ export class BodyInstance {
       boxes.push({ center: [tmp[0], tmp[1], tmp[2]], size: s.box.size });
     }
     return mergeBoxes(boxes);
+  }
+
+  /** Silhueta do corpo (material de seleção, sem lente) no alvo atual: mapa de sombra. */
+  renderSilhouette(gl: WebGLRenderer, camera: Camera) {
+    for (const l of LAYERS) this.meshes[l].material = this.picking[l];
+    const r = this.lens.value.z;
+    this.lens.value.z = 0;
+    this.lockDetail = true;
+    gl.render(this.group, camera);
+    this.lockDetail = false;
+    this.lens.value.z = r;
+    for (const l of LAYERS) this.meshes[l].material = this.display[l];
+  }
+
+  /** Reflexo no chão (plano y = 0): o grupo espelhado em Y, desenhado com os materiais normais no alvo atual. */
+  renderMirror(gl: WebGLRenderer, camera: Camera) {
+    const r = this.lens.value.z;
+    this.lens.value.z = 0;
+    const sy = this.group.scale.y;
+    this.group.scale.y = -sy;
+    this.lockDetail = true;
+    gl.render(this.group, camera);
+    this.lockDetail = false;
+    this.group.scale.y = sy;
+    this.group.updateMatrixWorld();
+    this.lens.value.z = r;
   }
 
   /**

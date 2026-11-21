@@ -24,6 +24,8 @@ import { usePlayer } from '@/features/library/player/store';
 import { anchors } from '../annotations';
 import { structuresOf } from '../atlas/AtlasScene';
 import { ContactShadow } from '../body/ContactShadow';
+import { claimMain, releaseMain } from '../cinema/state';
+import { Studio } from '../set/Studio';
 import type { BodyInstance } from '../body/instance';
 import type { Box, BodyModel } from '../body/model';
 import { footContacts, STANDING } from '../body/poses';
@@ -97,6 +99,11 @@ function HeroBody({ slot }: { slot: HTMLElement }) {
     useStage.getState().setReady(true);
     invalidate();
   }, [body, model, invalidate, slot]);
+
+  useEffect(() => {
+    const cam = camRef.current;
+    return () => releaseMain(cam);
+  }, []);
 
   // Seleção pelo slot (o canvas fixo não recebe ponteiro).
   useEffect(() => {
@@ -261,6 +268,7 @@ function HeroBody({ slot }: { slot: HTMLElement }) {
     cam.far = c.dist + 14;
     cam.updateProjectionMatrix();
     cam.updateMatrixWorld();
+    claimMain(cam, slot, gl.domElement, c.dist, 0.35);
 
     // ---- Camadas lado a lado no eixo lateral da câmera ----
     const ax = screenAxes(c).right;
@@ -292,6 +300,7 @@ function HeroBody({ slot }: { slot: HTMLElement }) {
   return (
     <>
       <PerspectiveCamera ref={camRef} makeDefault manual fov={FOV_DEG} near={0.05} far={30} position={[0, 1, 4]} />
+      <Studio body={body} />
       {body && <ContactShadow feet={getFeet} />}
       {body && <primitive object={body.group} />}
     </>

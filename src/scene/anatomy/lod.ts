@@ -35,6 +35,16 @@ const STRONG = /\b(rtx|gtx 1[06-9]\d0|quadro|radeon rx ?[5-9]\d{3}|radeon pro|ar
 /** GPU dedicada de entrada ou Apple M base: nível hi. */
 const DEDICATED = /\b(nvidia|geforce|radeon rx|radeon pro|arc a\d|apple m\d|apple gpu)\b/i;
 
+export type GpuClass = 'software' | 'strong' | 'dedicated' | 'integrated';
+
+/** Classe da GPU pelo nome do renderizador (sem nome: integrada, o caso mais comum). */
+export function gpuClass(renderer = ''): GpuClass {
+  if (SOFTWARE.test(renderer)) return 'software';
+  if (STRONG.test(renderer)) return 'strong';
+  if (DEDICATED.test(renderer)) return 'dedicated';
+  return 'integrated';
+}
+
 /** Nível pelo aparelho: celular sempre leve; o resto pela GPU, memória e tela. */
 export function chooseLod(c: DeviceCaps): AnatomyLod {
   if (c.override) return c.override;

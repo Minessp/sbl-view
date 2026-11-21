@@ -2,10 +2,11 @@
  * Palco WebGL (chunk lazy: é aqui que three.js entra).
  * frameloop="demand": só desenha quando algo muda. DPR limitado no celular e ajustado pelo orçamento de quadro
  * (perf/FrameGovernor.tsx): cai até 0,75 se o aparelho não acompanha a animação.
- * `flat`: o tom (ACES) e a conversão para sRGB ficam nos materiais (body/material.ts).
+ * `flat`: o tom e a conversão para sRGB ficam no pipeline de cinema (cinema/), ou nos materiais quando ele está desligado.
  */
 import { Canvas } from '@react-three/fiber';
 import { AtlasScene } from './atlas/AtlasScene';
+import { Cinema } from './cinema/Cinema';
 import { LightRig } from './body/LightRig';
 import { HeatScene } from './heat/HeatScene';
 import { HomeScene } from './home/HomeScene';
@@ -33,6 +34,7 @@ export default function Stage() {
     >
       <FrameGovernor min={MIN_DPR} max={MAX_DPR} />
       <LightRig />
+      <Cinema />
       {scene === 'home' && <HomeScene />}
       {scene === 'lab' && <LabScene />}
       {scene === 'compare' && <CompareScene />}

@@ -169,7 +169,6 @@ html.menu-open {
 }
 
 .theme-toggle__shade {
-  fill: var(--c-scrim);
   transition: transform var(--t-slow) var(--ease), opacity var(--t-mid) var(--ease);
 }
 
@@ -184,7 +183,6 @@ html.menu-open {
 }
 
 .theme-toggle svg[data-mode='dark'] .theme-toggle__shade {
-  fill: var(--c-bg);
   transform: translate(0, 0);
 }
 

@@ -6,7 +6,7 @@
 import { PerspectiveCamera, View } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { PerspectiveCamera as PerspCam } from 'three';
+import type { Camera, PerspectiveCamera as PerspCam, WebGLRenderer } from 'three';
 import { forwardKinematics, pointToWorld } from '@/engine/kinematics/fk';
 import { evaluateClip, type CompiledClip, type MotionFrame } from '@/engine/motion/evaluate';
 import { cycleLength, repAt } from '@/engine/motion/keys';
@@ -20,6 +20,8 @@ import type { BodyInstance } from '../body/instance';
 import { mergeBoxes, type Box, type BodyModel } from '../body/model';
 import { STANDING } from '../body/poses';
 import { useBodyInstance, useBodyModel } from '../body/useBody';
+import { claimMain, releaseMain } from '../cinema/state';
+import { Studio } from '../set/Studio';
 import { useStage } from '../stageStore';
 import { EquipmentView } from './equipment';
 
@@ -83,8 +85,10 @@ function applyLook(body: BodyInstance, model: BodyModel) {
   body.commit();
 }
 
-export function PlayerBody({ slot }: { slot: HTMLElement }) {
+/** `main`: vista principal do pipeline de cinema (foco, oclusão); a vitrine da home não é. */
+export function PlayerBody({ slot, main = false }: { slot: HTMLElement; main?: boolean }) {
   const invalidate = useThree((s) => s.invalidate);
+  const gl = useThree((s) => s.gl);
   const camRef = useRef<PerspCam>(null);
   const { model } = useBodyModel();
   const body = useBodyInstance(model);
@@ -208,11 +212,20 @@ export function PlayerBody({ slot }: { slot: HTMLElement }) {
     cam.near = Math.max(0.05, cur.current.dist * 0.05);
     cam.far = cur.current.dist + 12;
     cam.updateProjectionMatrix();
+    if (main) claimMain(cam, slot, gl.domElement, cur.current.dist, 0.3);
   });
+
+  useEffect(() => {
+    const cam = camRef.current;
+    return () => releaseMain(cam);
+  }, []);
+
+  const casters = useMemo(() => () => (equipment ? [{ render: (r: WebGLRenderer, c: Camera) => r.render(equipment.group, c) }] : []), [equipment]);
 
   return (
     <>
       <PerspectiveCamera ref={camRef} makeDefault manual fov={FOV_DEG} near={0.05} far={30} position={[0, 1, 4]} />
+      <Studio body={body} cx={box?.center[0] ?? 0} cz={box?.center[2] ?? 0} shadowCasters={casters} />
       {body && <ContactShadow feet={getFeet} />}
       {body && <primitive object={body.group} />}
       {equipment && <primitive object={equipment.group} />}
@@ -245,7 +258,7 @@ export function MotionScene() {
   if (!slot) return null;
   return (
     <View track={ref as React.RefObject<HTMLElement>} index={1}>
-      <PlayerBody slot={slot} />
+      <PlayerBody slot={slot} main />
     </View>
   );
 }

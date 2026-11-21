@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import { flushSync } from 'react-dom';
 import { t } from '@/i18n';
 import { useTheme, type ThemeMode } from './theme';
@@ -33,16 +34,21 @@ export function ThemeSwitch() {
   const mode = useTheme((s) => s.mode);
   const setMode = useTheme((s) => s.setMode);
   const light = mode === 'light';
+  // A lua é o disco recortado por máscara: pintar a sombra na cor do fundo virava mancha sobre a cena 3D.
+  const mask = `moon-${useId().replace(/:/g, '')}`;
   return (
     <button type="button" className="theme-toggle" aria-pressed={light} onClick={(e) => switchTheme(light ? 'dark' : 'light', e.currentTarget, setMode)}>
       <svg viewBox="0 0 20 20" aria-hidden="true" data-mode={mode}>
-        <circle className="theme-toggle__core" cx="10" cy="10" r="4.2" />
+        <mask id={mask}>
+          <rect x="-4" y="-4" width="28" height="28" fill="#fff" />
+          <circle className="theme-toggle__shade" cx="13.4" cy="7.2" r="4.2" fill="#000" />
+        </mask>
+        <circle className="theme-toggle__core" cx="10" cy="10" r="4.2" mask={`url(#${mask})`} />
         <g className="theme-toggle__rays">
           {[0, 45, 90, 135, 180, 225, 270, 315].map((a) => (
             <line key={a} x1="10" y1="1.8" x2="10" y2="3.6" transform={`rotate(${a} 10 10)`} />
           ))}
         </g>
-        <circle className="theme-toggle__shade" cx="13.4" cy="7.2" r="4.2" />
       </svg>
       <span className="visually-hidden">{t.theme.label}</span>
     </button>

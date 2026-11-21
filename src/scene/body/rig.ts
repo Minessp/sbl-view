@@ -33,6 +33,8 @@ export const rig = {
   uExposure: { value: 1 },
   /** Luz de ambiente (hemisfério): menor no claro, onde o céu já é claro. */
   uAmbient: { value: 0.7 },
+  /** 1 = pipeline de cinema ligado: os materiais saem em HDR linear (scene/cinema). */
+  uHdr: { value: 0 },
 };
 
 export type Rig = typeof rig;

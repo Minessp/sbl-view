@@ -62,6 +62,7 @@ export const LIGHT_GLSL = /* glsl */ `
   uniform float uLight;
   uniform float uExposure;
   uniform float uAmbient;
+  uniform float uHdr;
 
   vec3 toLinear(vec3 c) { return pow(max(c, 0.0), vec3(2.2)); }
   vec3 toSrgb(vec3 c) { return pow(max(c, 0.0), vec3(1.0 / 2.2)); }
@@ -72,7 +73,9 @@ export const LIGHT_GLSL = /* glsl */ `
   // Contraluz: atrás, à direita e acima da câmera (espaço da vista).
   const vec3 RIM_DIR = vec3(0.6, 0.42, -0.68);
 
+  // Com o pipeline de cinema (scene/cinema), sai linear e sem teto: o tom, o bloom e o grão vêm depois.
   vec3 finish(vec3 linearColor) {
+    if (uHdr > 0.5) return linearColor * uExposure;
     vec3 c = toSrgb(aces(linearColor * uExposure));
     return c + (ign(gl_FragCoord.xy) - 0.5) / 255.0;
   }
