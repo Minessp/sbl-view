@@ -35,6 +35,11 @@ export const rig = {
   uAmbient: { value: 0.7 },
   /** 1 = pipeline de cinema ligado: os materiais saem em HDR linear (scene/cinema). */
   uHdr: { value: 0 },
+  /**
+   * Tema claro (high-key): 0 = contraluz soma luz fria (escuro); 1 = a borda escurece por Fresnel e recorta a silhueta
+   * contra o ciclorama, e destaque/deformação pesam no pigmento em vez de acender (brilho aditivo some no fundo claro).
+   */
+  uRimMode: { value: 0 },
 };
 
 export type Rig = typeof rig;
@@ -51,11 +56,15 @@ export function refreshPalette() {
   rig.uStretch.value.copy(palette.stretch);
   rig.uTendon.value.copy(palette['body-tendon']);
   rig.uSky.value.copy(palette['bg-2']).lerp(palette['light-rim'], 0.35);
-  rig.uGround.value.copy(palette.floor).lerp(palette['light-key'], 0.08);
   const light = palette.bg.x + palette.bg.y + palette.bg.z > 1.5;
-  rig.uShadow.value.copy(palette.bg).multiplyScalar(light ? 0.35 : 0);
-  rig.uExposure.value = light ? 0.9 : 1.0;
-  rig.uAmbient.value = light ? 0.42 : 0.7;
+  // Claro: rebote quente do chão (o ciclorama devolve a key).
+  rig.uGround.value.copy(palette.floor).lerp(light ? palette.glow : palette['light-key'], light ? 0.22 : 0.08);
+  // Sombra de contato: escura quente no claro (cinza médio virava véu claro depois do tom do pipeline).
+  if (light) rig.uShadow.value.set(0.09, 0.06, 0.045);
+  else rig.uShadow.value.set(0, 0, 0);
+  rig.uExposure.value = light ? 0.95 : 1.0;
+  rig.uAmbient.value = light ? 0.5 : 0.7;
+  rig.uRimMode.value = light ? 1 : 0;
 }
 
 /** Marca um destaque novo: o brilho volta a percorrer o músculo. */

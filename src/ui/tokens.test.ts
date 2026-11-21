@@ -2,7 +2,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { contrast } from './color';
+import { contrast, hueOklch } from './color';
 
 const css = readFileSync(fileURLToPath(new URL('./tokens.css', import.meta.url)), 'utf8');
 
@@ -28,9 +28,11 @@ const PAIRS: [string, string, number, string][] = [
   ['c-ink-2', 'c-bg-3', 4.5, 'legendas em superfície elevada'],
   ['c-accent', 'c-bg', 4.5, 'acento usado como texto'],
   ['c-accent', 'c-bg-2', 4.5, 'acento em painel'],
-  ['c-on-accent', 'c-accent', 4.5, 'texto sobre acento (botão principal)'],
+  ['c-on-accent', 'c-gel-fill', 4.5, 'texto sobre o preenchimento de acento (botão principal)'],
   ['c-cool', 'c-bg', 4.5, 'aço usado como texto'],
   ['c-ink-2', 'c-rule', 1.8, 'fio deve sumir perto da legenda, não competir'],
+  ['c-glow', 'c-body-muscle', 3, 'encurtar se destaca do músculo em repouso'],
+  ['c-stretch', 'c-body-muscle', 3, 'alongar se destaca do músculo em repouso'],
 ];
 
 describe.each([
@@ -42,6 +44,11 @@ describe.each([
     expect(a, fg).toBeDefined();
     expect(b, bg).toBeDefined();
     expect(contrast(a ?? '', b ?? '')).toBeGreaterThanOrEqual(min);
+  });
+
+  it('laranja e azul a pelo menos 90° de matiz (OKLCH)', () => {
+    const d = Math.abs(hueOklch(theme['c-glow'] ?? '') - hueOklch(theme['c-stretch'] ?? ''));
+    expect(Math.min(d, 360 - d)).toBeGreaterThanOrEqual(90);
   });
 });
 

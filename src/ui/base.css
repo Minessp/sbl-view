@@ -99,7 +99,7 @@ canvas {
 }
 
 ::selection {
-  background: var(--c-accent);
+  background: var(--c-gel-fill);
   color: var(--c-on-accent);
 }
 
@@ -148,7 +148,7 @@ canvas {
   z-index: var(--z-skip);
   padding: var(--s-2) var(--s-4);
   border-radius: var(--r-pill);
-  background: var(--c-accent);
+  background: var(--c-gel-fill);
   color: var(--c-on-accent);
   font-weight: 600;
 }

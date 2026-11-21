@@ -134,13 +134,13 @@
   grid-column: 1 / -1;
   min-height: 52px;
   border: 0;
-  background: var(--c-accent);
+  background: var(--c-gel-fill);
   color: var(--c-on-accent);
   font-size: var(--fs-3);
 }
 
 .btn-primary:hover {
-  background: color-mix(in oklch, var(--c-accent) 86%, var(--c-ink));
+  background: color-mix(in oklch, var(--c-gel-fill) 86%, var(--c-ink));
 }
 
 .btn-primary:disabled {
@@ -386,6 +386,10 @@
   box-shadow: inset 0 0 0 var(--lw-hair) var(--c-edge);
 }
 
+:root[data-theme='light'] .viewport {
+  background: var(--cyclorama);
+}
+
 /* Corpo ainda baixando (StageHost põe html[data-stage]): um filamento varre o meio da vista; quando o palco fica
    pronto ele some e a luz do estúdio acende sobre o corpo. */
 html[data-stage='loading'] .viewport::after {
@@ -493,7 +497,7 @@ html[data-stage='loading'] .viewport::after {
 }
 
 .toggle input:checked + .toggle__track {
-  background: var(--c-accent);
+  background: var(--c-gel-fill);
   box-shadow: none;
 }
 
@@ -535,7 +539,7 @@ html[data-stage='loading'] .viewport::after {
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--lamp), color-mix(in oklch, var(--c-accent) 86%, var(--c-ink));
+  background: var(--lamp), color-mix(in oklch, var(--c-gel-fill) 86%, var(--c-ink));
   box-shadow: 0 0 22px -8px color-mix(in oklch, var(--c-glow) 80%, transparent);
 }
 

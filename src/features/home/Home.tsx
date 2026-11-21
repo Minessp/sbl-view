@@ -178,10 +178,12 @@ export default function Home() {
   return (
     <main id="conteudo" ref={root} className="home" data-ready={ready}>
       <div ref={wrap} className="home-hero">
-        <div className="home-hero__pin">
+        <div className="home-hero__back" aria-hidden="true">
           <Suspense fallback={null}>
             <Atmosphere />
           </Suspense>
+        </div>
+        <div className="home-hero__pin">
           <div
             ref={setSlotEl}
             className="home-hero__view"

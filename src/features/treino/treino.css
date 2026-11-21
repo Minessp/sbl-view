@@ -256,7 +256,7 @@
 }
 
 .btn-danger:hover {
-  background: var(--c-accent);
+  background: var(--c-gel-fill);
   color: var(--c-on-accent);
 }
 

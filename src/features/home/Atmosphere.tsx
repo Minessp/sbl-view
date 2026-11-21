@@ -64,9 +64,18 @@ void main() {
     vec3 col = clamp(uKey * beam * (0.12 + 0.18 * smoke), 0.0, 1.0) * fade;
     gl_FragColor = vec4(col, max(max(col.r, col.g), col.b));
   } else {
-    /* Ciclorama: o feixe clareia o fundo. */
-    float sh = clamp(beam * (0.35 + 0.4 * smoke), 0.0, 1.0) * 0.55 * fade;
-    gl_FragColor = vec4(vec3(sh), sh);
+    /* Ciclorama: gobo. Três lâminas largas em diagonal sobre o corpo, borda nítida (penumbra de ~4 px), alfa ≤ 0,05,
+       deslizando devagar através de uma janela parada (entram e saem pelas bordas suaves). */
+    vec2 d = normalize(vec2(0.82, 0.57));
+    float s0 = dot(p - body, d);
+    float period = 0.46;
+    float f = fract((s0 - t * 0.012) / period) * period;
+    float blade = smoothstep(0.0, 0.004, f) * (1.0 - smoothstep(period * 0.3, period * 0.3 + 0.004, f));
+    float win = smoothstep(-0.75, -0.45, s0) * (1.0 - smoothstep(0.35, 0.65, s0));
+    float along = dot(p - body, vec2(-d.y, d.x));
+    float len = 1.0 - smoothstep(0.35, 0.8, abs(along + 0.05));
+    float a = blade * win * len * 0.05 * fade;
+    gl_FragColor = vec4(vec3(0.0), a);
   }
 }`;
 

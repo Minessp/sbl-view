@@ -1,13 +1,13 @@
 /* Página inicial: herói com o corpo manipulável, camadas abertas no scroll.
-   Sem z-index próprio: o texto do herói sobe acima do palco (o cenário 3D ocupa a tela inteira, atrás das letras),
-   o resto da página fica no fluxo normal. */
+   Três planos presos à tela: fundo (poça de luz, ciclorama, atmosfera) atrás do palco; o palco (canvas fixo, z 15);
+   e o bloco do herói (texto, controles, slot do ponteiro) acima dele. `position: sticky` cria contexto de empilhamento,
+   então o z-index vai no bloco inteiro: dado aos filhos, o texto ficava preso abaixo do palco (chão, bloom e softboxes
+   cobriam "Quatro camadas" e os botões da lente). */
 .home {
   position: relative;
   --ex: 0;
 }
 
-.home-hero__copy,
-.home-hero__open,
 .home-tag {
   z-index: var(--z-over-stage);
 }
@@ -21,6 +21,7 @@
   height: 250svh;
 }
 
+.home-hero__back,
 .home-hero__pin {
   position: sticky;
   top: 0;
@@ -28,16 +29,29 @@
   overflow: hidden;
 }
 
-/* Poça de luz atrás do corpo; acompanha o corpo do lado direito até o centro quando as camadas abrem. Mora no bloco fixo
-   (atrás do texto), não no palco: o palco fica acima do conteúdo e a poça do chão cobria o texto das camadas abertas. */
 .home-hero__pin {
+  margin-top: -100svh;
+  z-index: var(--z-over-stage);
+}
+
+/* Poça de luz atrás do corpo; acompanha o corpo do lado direito até o centro quando as camadas abrem. */
+.home-hero__back {
   background:
     radial-gradient(ellipse 34% 58% at calc(66% - 16% * var(--home-ex, 0)) 40%, color-mix(in oklch, var(--c-light-key) 8%, transparent), transparent 72%),
     radial-gradient(ellipse calc(26% + 30% * var(--home-ex, 0)) 8% at calc(66% - 16% * var(--home-ex, 0)) 92%, color-mix(in oklch, var(--c-floor) 92%, transparent), transparent 80%);
 }
 
+/* Claro: ciclorama high-key com o lavado do gel sobre o corpo (o gobo da atmosfera desliza por cima). */
+:root[data-theme='light'] .home-hero__back {
+  --cyc-x: calc(66% - 16% * var(--home-ex, 0));
+  background: var(--cyclorama);
+}
+
 @media (max-width: 899px) {
-  .home-hero__pin {
+  :root[data-theme='light'] .home-hero__back {
+    --cyc-x: 50%;
+  }
+  .home-hero__back {
     background:
       radial-gradient(ellipse 70% 40% at 50% 62%, color-mix(in oklch, var(--c-light-key) 8%, transparent), transparent 72%),
       radial-gradient(ellipse 60% 6% at 50% 95%, color-mix(in oklch, var(--c-floor) 92%, transparent), transparent 80%);

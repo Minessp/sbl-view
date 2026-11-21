@@ -15,7 +15,10 @@
   --c-ink: #f1eee9;
   --c-ink-2: #a3acb5;
   --c-rule: #313942;
+  /* Acento em dois papéis: --c-accent é tinta (texto e traço); --c-gel-fill é preenchimento (botão, polegar, seleção),
+     sempre com --c-on-accent por cima. No escuro coincidem; no claro o preenchimento é laranja vivo com letra escura. */
   --c-accent: #f8b65d;
+  --c-gel-fill: #f8b65d;
   --c-on-accent: #180f09;
   --c-cool: #7ec1e5;
   /* Luz do 3D: brilho do destaque, luz principal, contraluz, poça de luz no chão. */
@@ -49,15 +52,16 @@
   --c-ink: #11161d;
   --c-ink-2: #4d535b;
   --c-rule: #babec3;
-  --c-accent: #92500b;
-  --c-on-accent: #faf8f5;
+  --c-accent: #9a4700;
+  --c-gel-fill: #f59a23;
+  --c-on-accent: #1a0f05;
   --c-cool: #1d5e85;
   --c-glow: #f2a03c;
-  --c-stretch: #3d9fd8;
+  --c-stretch: #4aaee6;
   --c-light-key: #fff6ea;
   --c-light-rim: #c4dcef;
   --c-floor: #c9ced4;
-  --c-body-muscle: #93403d;
+  --c-body-muscle: #8e2f2b;
   --c-body-tendon: #e6ddcc;
   --c-body-bone: #e8ddc4;
   --c-body-skin: #d1a78e;
@@ -169,6 +173,25 @@
   --z-skip: 100;
 
   --header-h: 56px;
+}
+
+/* Claro = estúdio high-key: a luz vira papel iluminado (reflexo branco, sombra colorida curta), não brilho aditivo. */
+:root[data-theme='light'] {
+  --glow-ring: 0 0 0 1px var(--c-accent), 0 3px 8px -3px color-mix(in oklch, var(--c-gel-fill) 75%, transparent);
+  --glow-line: 0 2px 5px -1px color-mix(in oklch, var(--c-gel-fill) 80%, transparent);
+  --lamp: radial-gradient(120px circle at var(--mx, 50%) var(--my, 50%), color-mix(in oklch, #ffffff 75%, transparent), transparent 70%);
+  /* Vidro: branco a 60% com desfoque (quem usa põe o backdrop-filter) e fio escuro a 8%. */
+  --c-scrim: color-mix(in oklch, #ffffff 60%, transparent);
+  --c-edge: color-mix(in oklch, var(--c-ink) 8%, transparent);
+  --c-shadow: #2b1d14;
+  --shadow-pop: 0 8px 8px -6px color-mix(in oklch, var(--c-shadow) 30%, transparent);
+  /* Ciclorama sem costura (o chão 3D só põe sombra e reflexo por cima): poça clara da key atrás do assunto (--cyc-x),
+     lavado do gel a 12% no alto, parede que escurece de leve para cima e para o pé, vinheta. */
+  --cyclorama:
+    radial-gradient(ellipse 120% 95% at 50% 45%, transparent 55%, color-mix(in oklch, var(--c-ink) 8%, transparent)),
+    radial-gradient(ellipse 34% 52% at var(--cyc-x, 50%) 48%, color-mix(in oklch, #ffffff 80%, transparent), transparent 72%),
+    radial-gradient(ellipse 50% 40% at var(--cyc-x, 50%) 14%, color-mix(in oklch, var(--c-gel-fill) 12%, transparent), transparent 72%),
+    linear-gradient(180deg, #e6e8eb 0%, var(--c-bg) 45%, var(--c-bg) 70%, #e1e4e7 100%);
 }
 
 @media (prefers-reduced-motion: reduce) {

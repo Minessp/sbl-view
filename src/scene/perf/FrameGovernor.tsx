@@ -13,11 +13,14 @@ import { createGovernor } from './governor';
 
 const WARMUP_MS = 4000;
 
-export function FrameGovernor({ min, max }: { min: number; max: number }) {
+/** `shed`: chamado no lugar de baixar o DPR enquanto houver efeito do cinema para tirar (shortcut: efeito tirado não volta na sessão). */
+export function FrameGovernor({ min, max, shed }: { min: number; max: number; shed?: (() => void) | undefined }) {
   const setDpr = useThree((s) => s.setDpr);
   const get = useThree((s) => s.get);
   const gl = useThree((s) => s.gl);
   const rendered = useRef(false);
+  const shedRef = useRef(shed);
+  shedRef.current = shed;
 
   useFrame(() => {
     rendered.current = true;
@@ -25,7 +28,7 @@ export function FrameGovernor({ min, max }: { min: number; max: number }) {
 
   useEffect(() => {
     const top = Math.max(min, Math.min(window.devicePixelRatio || 1, max));
-    const gov = createGovernor({ min, max: top }, top);
+    let gov = createGovernor({ min, max: top }, top);
     gl.domElement.dataset.dpr = String(gov.dpr);
     let hold = performance.now() + WARMUP_MS;
     let last = 0;
@@ -42,8 +45,15 @@ export function FrameGovernor({ min, max }: { min: number; max: number }) {
       const ms = last ? t - last : 0;
       last = t;
       if (!was || t < hold) return;
+      const prev = gov.dpr;
       const next = gov.sample(ms, t);
-      if (next !== null) {
+      const shedNow = shedRef.current;
+      if (next !== null && next < prev && shedNow) {
+        // Tira um efeito em vez de borrar; governador recomeça no DPR atual e espera a recompilação.
+        shedNow();
+        gov = createGovernor({ min, max: top }, prev);
+        hold = t + WARMUP_MS;
+      } else if (next !== null) {
         setDpr(next);
         gl.domElement.dataset.dpr = String(next);
       }

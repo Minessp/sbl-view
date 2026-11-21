@@ -244,6 +244,14 @@
   padding-block: var(--s-2);
 }
 
+/* Claro: papel iluminado pelo gel (o cinza da superfície elevada deixava a série da vez barrenta). */
+:root[data-theme='light'] .live-set--active {
+  background: color-mix(in oklab, var(--c-gel-fill) 14%, #ffffff);
+  box-shadow:
+    inset 0 0 0 var(--lw-hair) var(--c-accent),
+    0 4px 10px -6px color-mix(in oklab, var(--c-gel-fill) 70%, transparent);
+}
+
 .live-set--active .live-set__n {
   color: var(--c-accent);
 }
@@ -312,7 +320,7 @@
   padding: 0 var(--s-4);
   border: 0;
   border-radius: var(--r-pill);
-  background: var(--c-accent);
+  background: var(--c-gel-fill);
   color: var(--c-on-accent);
   font: inherit;
   font-weight: 600;
@@ -368,7 +376,7 @@
   height: var(--h);
   padding: 0 3px;
   border-radius: 3px;
-  background: linear-gradient(90deg, color-mix(in oklab, var(--c-accent) 70%, var(--c-bg)), var(--c-accent));
+  background: linear-gradient(90deg, color-mix(in oklab, var(--c-gel-fill) 70%, var(--c-bg)), var(--c-gel-fill));
   color: var(--c-on-accent);
   font-size: var(--fs-1);
   font-weight: 600;
@@ -488,7 +496,7 @@
 }
 
 .rest__btn--skip {
-  background: var(--c-accent);
+  background: var(--c-gel-fill);
   box-shadow: none;
   color: var(--c-on-accent);
   font-weight: 600;

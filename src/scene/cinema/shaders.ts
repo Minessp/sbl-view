@@ -319,7 +319,8 @@ export const COMPOSITE_FS = /* glsl */ `
     rgb = pow(rgb, vec3(1.0 / 2.2));
     // Grão de película só sobre o que a cena desenhou (o resto da tela tem a película do CSS).
     float g = hash(gl_FragCoord.xy + fract(uTime) * 917.0) - 0.5;
-    rgb += g * uGrain * a;
+    // Claro: grão em multiplicação a ~5% (somado, clareava o papel como poeira).
+    rgb = uLightTheme > 0.5 ? rgb * (1.0 + g * 0.05 * a) : rgb + g * uGrain * a;
     rgb += (ign(gl_FragCoord.xy) - 0.5) / 255.0;
     gl_FragColor = vec4(max(rgb, 0.0), a);
   }

@@ -127,6 +127,9 @@ const FLOOR_FS = /* glsl */ `
       col += refl.rgb * uReflectK * mix(0.35, 1.0, fres) * sh * exp(-gap * 2.6);
     }
     gl_FragColor = vec4(finish(col) * fade, fade);
+    // Claro (high-key): o chão é o próprio ciclorama (CSS atrás do canvas); aqui só a sombra projetada. Chão opaco ficava
+    // cinza com borda, um segundo horizonte sobre o fundo.
+    if (uRimMode > 0.5) gl_FragColor = vec4(finish(vec3(0.09, 0.06, 0.045)), (1.0 - sh) * uShadowK * fade);
   }
 `;
 
@@ -268,12 +271,14 @@ export function Studio({ body, cx = 0, cz = 0, shadowCasters }: { body: BodyInst
     const light = document.documentElement.dataset.theme === 'light';
     uni.color.value.copy(palette.floor);
     BOXES.forEach((b, i) => res.tints[i]?.value.copy(b.warm ? palette['light-key'] : palette['light-rim']));
-    for (const m of res.boxes) m.visible = !light;
+    // Celular: o quadro estreito põe as softboxes atrás do texto do herói e lava a letra.
+    for (const m of res.boxes) m.visible = !light && size.width >= 900;
     const shadowOn = !!body && (force.shadow ?? fx?.shadow ?? false);
     const reflectOn = !!body && !light && (force.reflect ?? fx?.reflect ?? false);
     uni.useShadow.value = shadowOn ? 1 : 0;
     uni.useReflect.value = reflectOn ? 1 : 0;
-    uni.shadowK.value = light ? 0.55 : 0.82;
+    // Claro: sombra projetada mais leve (alfa 0,42) e mais longa (key mais baixa), como num ciclorama high-key.
+    uni.shadowK.value = light ? 0.42 : 0.82;
     // Claro: ciclorama de estúdio, chão quase da cor do fundo.
     uni.floorK.value = light ? 1.9 : 0.5;
     if (!body || (!shadowOn && !reflectOn)) return;
@@ -287,6 +292,7 @@ export function Studio({ body, cx = 0, cz = 0, shadowCasters }: { body: BodyInst
       // Key no mundo: a direção mora no espaço da câmera.
       camera.updateMatrixWorld();
       tmp.dir.copy(rig.uKeyDir.value).normalize().transformDirection(camera.matrixWorld);
+      if (light) tmp.dir.setY(tmp.dir.y * 0.72).normalize();
       tmp.at.set(cx, 0.9, cz);
       res.lightCam.position.copy(tmp.at).addScaledVector(tmp.dir, 4.5);
       res.lightCam.up.set(0, 1, 0);

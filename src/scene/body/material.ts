@@ -63,6 +63,7 @@ export const LIGHT_GLSL = /* glsl */ `
   uniform float uExposure;
   uniform float uAmbient;
   uniform float uHdr;
+  uniform float uRimMode;
 
   vec3 toLinear(vec3 c) { return pow(max(c, 0.0), vec3(2.2)); }
   vec3 toSrgb(vec3 c) { return pow(max(c, 0.0), vec3(1.0 / 2.2)); }
@@ -94,7 +95,9 @@ export const LIGHT_GLSL = /* glsl */ `
     float fres = pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 3.0);
     float rimL = max(dot(n, normalize(RIM_DIR)), 0.0);
     vec3 rim = toLinear(uRimColor) * rimOn * (rimL * 1.2 + fres * 0.8) * (0.45 + 0.55 * rimL);
-    return albedo * (key * (max(ndl, 0.0) + sss * scatter) + amb) + rim * mix(vec3(1.0), albedo * 2.0, rimTint);
+    vec3 base = albedo * (key * (max(ndl, 0.0) + sss * scatter) + amb);
+    // Claro (uRimMode 1): a contraluz vira borda escura por Fresnel; recorta a silhueta contra o ciclorama claro.
+    return mix(base + rim * mix(vec3(1.0), albedo * 2.0, rimTint), base * (1.0 - 0.55 * fres * rimOn), uRimMode);
   }
   vec3 studio(vec3 albedo, vec3 n, vec3 v, float wrap, vec3 sss, out float ndl) { return studioRim(albedo, n, v, wrap, sss, 0.35, ndl); }
 `;
@@ -280,13 +283,14 @@ const fragment = /* glsl */ `
         n = relief(n, 0.0002 * a1 * dRidge);
         albedo *= 1.0 - 0.18 * a1 * (1.0 - ridge);
         albedo = mix(albedo, toLinear(uTendon) * 0.8, tendon * 0.6);
-        albedo = mix(albedo, glow * 0.7, lit * 0.45);
+        // No claro destaque e deformação pesam no pigmento (o brilho aditivo some no fundo claro).
+        albedo = mix(albedo, glow * 0.7, lit * mix(0.45, 0.7, uRimMode));
         // Deformação: encurtar = tungstênio, alongar = aço (pouco no tendão, que quase não muda).
         float sh = max(vS1.z, 0.0) * (1.0 - tendon * 0.7);
         float st = max(-vS1.z, 0.0) * (1.0 - tendon * 0.7);
         vec3 cool = toLinear(uStretch);
-        albedo = mix(albedo, glow * 0.75, sh * 0.8);
-        albedo = mix(albedo, cool * 0.7, st * 0.85);
+        albedo = mix(albedo, glow * 0.75, sh * mix(0.8, 0.95, uRimMode));
+        albedo = mix(albedo, cool * mix(0.7, 0.8, uRimMode), st * mix(0.85, 0.95, uRimMode));
         // Direção da fibra: atributo por vértice (linha central projetada na superfície), posado; suave entre triângulos.
         // O brilho estreito da fibra usa a normal geométrica (com o relevo ele cintilava); o relevo vai no difuso.
         vec3 T = vT - ng * dot(ng, vT);
@@ -324,7 +328,8 @@ const fragment = /* glsl */ `
       #endif
 
       // Incandescência: o que está em foco ou trabalhando acende.
-      emit += glow * lit * (0.1 + 0.22 * lit);
+      float add = mix(1.0, 0.35, uRimMode);
+      emit += glow * lit * (0.1 + 0.22 * lit) * add;
       // Borda da lente: a camada acende onde foi cortada.
       if (peel > 0.0) emit += glow * exp(-pow((lensD - peel) / max(2.0, uLens.z * 0.025), 2.0)) * 1.4;
       #ifdef MUSCLE
@@ -332,7 +337,9 @@ const fragment = /* glsl */ `
         if (uGrow < 2.0) emit += glow * exp(-pow((grow - t) * 16.0, 2.0)) * 2.2;
       #endif
       #ifdef MUSCLE
-        emit += glow * sh * 0.6 + cool * st * 0.95;
+        emit += (glow * sh * 0.6 + cool * st * 0.95) * add;
+        // Halo de pigmento (claro): a silhueta do que está aceso puxa para laranja escuro em vez de brilhar.
+        col = mix(col, glow * 0.3, pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 2.0) * lit * uRimMode * 0.6);
       #endif
       col += emit;
 
@@ -340,7 +347,7 @@ const fragment = /* glsl */ `
         float fres = pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 2.0);
         // Translúcida (vulto, mais opaca na silhueta) até a metade; dali até 1 vai junto para opaca. Antes o alfa pulava
         // de ~0,4 para 1 no fim da entrada da pele (uAlpha 0,998 → 1).
-        float alpha = mix(clamp(uAlpha * (0.4 + 1.6 * fres), 0.0, 1.0), 1.0, smoothstep(0.5, 1.0, uAlpha));
+        float alpha = mix(clamp(uAlpha * (mix(0.4, 0.55, uRimMode) + 1.6 * fres), 0.0, 1.0), 1.0, smoothstep(0.5, 1.0, uAlpha));
         gl_FragColor = vec4(finish(col), alpha * a);
       #else
         gl_FragColor = vec4(finish(col), 1.0);

@@ -305,7 +305,7 @@ fieldset.panel-block > legend + * {
 }
 
 .layer-ctl__row[data-mode='on'] .layer-ctl__depth {
-  background: var(--c-accent);
+  background: var(--c-gel-fill);
   color: var(--c-on-accent);
 }
 
@@ -547,7 +547,7 @@ fieldset.panel-block > legend + * {
   height: 44px;
   border: 0;
   border-radius: var(--r-pill);
-  background: var(--c-accent);
+  background: var(--c-gel-fill);
   color: var(--c-on-accent);
   transition: transform var(--t-fast) var(--ease);
 }

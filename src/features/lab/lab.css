@@ -453,7 +453,7 @@
   height: 52px;
   border: 0;
   border-radius: var(--r-thumb);
-  background: var(--c-accent);
+  background: var(--c-gel-fill);
   transition: transform var(--t-fast) var(--ease), box-shadow var(--t-mid) var(--ease);
 }
 

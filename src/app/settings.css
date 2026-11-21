@@ -238,7 +238,7 @@
   padding: 0 var(--s-4);
   border: 0;
   border-radius: var(--r-pill);
-  background: var(--c-accent);
+  background: var(--c-gel-fill);
   color: var(--c-on-accent);
   font-size: var(--fs-2);
   font-weight: 620;

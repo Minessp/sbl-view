@@ -250,7 +250,8 @@ export class CinemaPipeline {
     d.tDepth.value = scene.depthTexture;
     d.uFull.value.set(this.w, this.h);
     const k = 1 - Math.exp(-p.dt * 7);
-    cinema.focus += (cinema.focusGoal - cinema.focus) * k;
+    // Foco preso à distância da câmera ao assunto, sem atraso: perseguindo a meta, o corpo borrava a cada arrasto e zoom.
+    cinema.focus = cinema.focusGoal;
     cinema.aperture += (cinema.apertureGoal - cinema.aperture) * k;
     const main = performance.now() - cinema.seen < 500 ? cinema.main : null;
     const ph = this.h;

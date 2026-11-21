@@ -436,7 +436,7 @@ html.menu-open {
 }
 
 .update-notice__go {
-  background: var(--c-accent) !important;
+  background: var(--c-gel-fill) !important;
   color: var(--c-on-accent) !important;
 }
 
@@ -497,7 +497,7 @@ html.menu-open {
   min-height: var(--touch);
   border: 0;
   border-radius: var(--r-pill);
-  background: var(--c-accent);
+  background: var(--c-gel-fill);
   color: var(--c-on-accent);
   cursor: pointer;
 }
