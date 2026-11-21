@@ -9,6 +9,7 @@ import { EmphasisMark } from './EmphasisMark';
 import './library.css';
 import { Title } from '@/ui/Title';
 import { EmptyState } from '@/ui/States';
+import { exerciseHref } from '@/app/routes';
 
 const PATTERNS = Object.keys(t.patterns) as MovementPattern[];
 const EQUIPMENT = (Object.keys(t.equipment) as Equipment[]).filter((q) => library.some((e) => e.equipment.includes(q)));
@@ -17,7 +18,7 @@ function ExerciseCard({ e, i }: { e: LibraryExercise; i: number }) {
   const targets = e.targets.filter((x) => x.role === 'alvo').map((x) => muscleById(x.muscle)?.name ?? x.muscle);
   return (
     <li className="ex-card rise lamp" style={{ '--i': i } as CSSProperties}>
-      <Link href={`/exercicios/${e.id}`} className="ex-card__link">
+      <Link href={exerciseHref(e.id)} className="ex-card__link">
         <span className="ex-card__name">{e.name}</span>
         <span className="ex-card__pattern">{t.patterns[e.pattern]}</span>
       </Link>

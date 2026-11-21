@@ -15,6 +15,7 @@ import { Link } from 'wouter';
 import { RouteTabs } from '@/ui/RouteTabs';
 import { EmptyState, Loading } from '@/ui/States';
 import { Title } from '@/ui/Title';
+import { R } from '@/app/routes';
 
 export const dayFmt = new Intl.DateTimeFormat(locale, { weekday: 'long', day: '2-digit', month: 'long' });
 export const timeFmt = new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' });
@@ -51,12 +52,12 @@ export function TreinoHeader({ title, lead }: { title: string; lead: string }) {
         className="treino-tabs"
         label={L.tabs.label}
         tabs={[
-          { href: '/treino', label: L.tabs.log },
-          { href: '/treino/plano', label: L.tabs.plan },
-          { href: '/treino/historico', label: L.tabs.history },
-          { href: '/treino/progresso', label: L.tabs.progress },
-          { href: '/treino/analise', label: L.tabs.analysis },
-          { href: '/treino/dados', label: L.tabs.data },
+          { href: R.training, label: L.tabs.log },
+          { href: R.plan, label: L.tabs.plan },
+          { href: R.history, label: L.tabs.history },
+          { href: R.progress, label: L.tabs.progress },
+          { href: R.analysis, label: L.tabs.analysis },
+          { href: R.data, label: L.tabs.data },
         ]}
       />
     </header>
@@ -236,10 +237,10 @@ export function NothingLogged({ title, body }: { title: string; body: string }) 
       title={title}
       actions={
         <>
-          <Link href="/treino" className="btn-primary">
+          <Link href={R.training} className="btn-primary">
             {S.log}
           </Link>
-          <Link href="/treino/plano" className="btn-secondary">
+          <Link href={R.plan} className="btn-secondary">
             {S.plan}
           </Link>
         </>

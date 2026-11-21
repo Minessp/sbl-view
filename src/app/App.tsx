@@ -1,10 +1,12 @@
-import { lazy, Suspense, useEffect, useRef, type ReactNode } from 'react';
+import { lazy, Suspense, useEffect, useRef, type ComponentType, type ReactNode } from 'react';
 import { flushSync } from 'react-dom';
-import { Route, Router, Switch, useLocation, type AroundNavHandler } from 'wouter';
+import { Redirect, Route, Router, Switch, useLocation, useSearch, type AroundNavHandler } from 'wouter';
 import Home from '@/features/home/Home';
 import { t } from '@/i18n';
+import { PREFIX } from '@/i18n/locale';
 import { ErrorBoundary } from './ErrorBoundary';
 import { NotFound } from './NotFound';
+import { exerciseHref, muscleHref, R, unslug } from './routes';
 import { Shell } from './Shell';
 
 // Rotas além da página inicial carregam sob demanda. O carregador fica à parte: a troca de rota espera o chunk (abaixo).
@@ -37,25 +39,31 @@ const Dados = lazy(load.dados);
 const Analise = lazy(load.analise);
 const Legal = lazy(load.legal);
 
-const TREINO: Record<string, () => Promise<unknown>> = {
-  plano: load.plano,
-  historico: load.historico,
-  progresso: load.progresso,
-  analise: load.analise,
-  dados: load.dados,
-};
-
-const LEGAL = new Set(['sobre', 'termos', 'privacidade', 'licencas']);
+/** Rota → chunk. Termina em `/` = prefixo (página com id); senão, caminho exato. A mais específica vem antes. */
+const CHUNKS: readonly (readonly [string, () => Promise<unknown>])[] = [
+  [R.labCompare, load.compare],
+  [R.labSquat, load.lab],
+  [R.lab, load.lab],
+  [`${R.atlas}/`, load.muscle],
+  [R.atlas, load.atlas],
+  [`${R.library}/`, load.exercise],
+  [R.library, load.library],
+  [R.plan, load.plano],
+  [R.history, load.historico],
+  [R.progress, load.progresso],
+  [R.analysis, load.analise],
+  [R.data, load.dados],
+  [R.training, load.treino],
+  [R.about, load.legal],
+  [R.terms, load.legal],
+  [R.privacy, load.legal],
+  [R.licenses, load.legal],
+];
 
 /** Chunk da rota (caminho sem a base). Página inicial e desconhecidas: nada a carregar. */
 function routeChunk(path: string): (() => Promise<unknown>) | null {
-  const [a, b] = path.split(/[?#]/)[0]?.split('/').filter(Boolean) ?? [];
-  if (a === 'lab') return b === 'comparar' ? load.compare : load.lab;
-  if (a === 'atlas') return b ? load.muscle : load.atlas;
-  if (a === 'exercicios') return b ? load.exercise : load.library;
-  if (a === 'treino') return b ? (TREINO[b] ?? null) : load.treino;
-  if (a && LEGAL.has(a)) return load.legal;
-  return null;
+  const p = path.split(/[?#]/)[0] ?? '';
+  return CHUNKS.find(([r]) => (r.endsWith('/') ? p.startsWith(r) && p.length > r.length : p === r))?.[1] ?? null;
 }
 
 /** Pede o chunk da rota de um link na intenção (ponteiro em cima, foco). Delegado: vale para todo link interno. */
@@ -81,7 +89,8 @@ function usePrefetchOnIntent() {
 const DevBody = import.meta.env.DEV ? lazy(() => import('@/features/dev/DevBody')) : null;
 const DevClips = import.meta.env.DEV ? lazy(() => import('@/features/dev/DevClips')) : null;
 
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+/** Base do roteador: a do site mais o prefixo do idioma (`/en`). */
+const base = import.meta.env.BASE_URL.replace(/\/$/, '') + PREFIX;
 
 /**
  * Troca de rota: volta ao topo, põe o título da aba a partir do h1 da página e, depois da
@@ -185,6 +194,13 @@ function RouteWait() {
   );
 }
 
+/** Página com id na URL: o endereço antigo com sublinhado troca para o slug com hífen (mantém a busca). */
+function Slugged({ id, href, page: Page }: { id: string; href: (id: string) => string; page: ComponentType<{ id: string }> }) {
+  const search = useSearch();
+  if (id.includes('_')) return <Redirect to={href(id) + (search ? `?${search}` : '')} replace />;
+  return <Page id={unslug(id)} />;
+}
+
 function RouteBoundary({ children }: { children: ReactNode }) {
   const [loc] = useLocation();
   return <ErrorBoundary resetKey={loc}>{children}</ErrorBoundary>;
@@ -201,23 +217,23 @@ export function App() {
           <Suspense fallback={<RouteWait />}>
             <Switch>
               <Route path="/" component={Home} />
-              <Route path="/lab/agachamento" component={Lab} />
-              <Route path="/lab/comparar" component={Compare} />
-              <Route path="/lab" component={Lab} />
-              <Route path="/atlas" component={AtlasIndex} />
-              <Route path="/atlas/:id">{(p) => <MusclePage id={p.id} />}</Route>
-              <Route path="/exercicios" component={Library} />
-              <Route path="/exercicios/:id">{(p) => <ExercisePage id={p.id} />}</Route>
-              <Route path="/treino" component={Treino} />
-              <Route path="/treino/plano" component={Plano} />
-              <Route path="/treino/historico" component={Historico} />
-              <Route path="/treino/progresso" component={Progresso} />
-              <Route path="/treino/analise" component={Analise} />
-              <Route path="/treino/dados" component={Dados} />
-              <Route path="/sobre">{() => <Legal page="about" />}</Route>
-              <Route path="/termos">{() => <Legal page="terms" />}</Route>
-              <Route path="/privacidade">{() => <Legal page="privacy" />}</Route>
-              <Route path="/licencas">{() => <Legal page="licenses" />}</Route>
+              <Route path={R.labSquat} component={Lab} />
+              <Route path={R.labCompare} component={Compare} />
+              <Route path={R.lab} component={Lab} />
+              <Route path={R.atlas} component={AtlasIndex} />
+              <Route path={`${R.atlas}/:id`}>{(p) => <Slugged id={p.id} href={muscleHref} page={MusclePage} />}</Route>
+              <Route path={R.library} component={Library} />
+              <Route path={`${R.library}/:id`}>{(p) => <Slugged id={p.id} href={exerciseHref} page={ExercisePage} />}</Route>
+              <Route path={R.training} component={Treino} />
+              <Route path={R.plan} component={Plano} />
+              <Route path={R.history} component={Historico} />
+              <Route path={R.progress} component={Progresso} />
+              <Route path={R.analysis} component={Analise} />
+              <Route path={R.data} component={Dados} />
+              <Route path={R.about}>{() => <Legal page="about" />}</Route>
+              <Route path={R.terms}>{() => <Legal page="terms" />}</Route>
+              <Route path={R.privacy}>{() => <Legal page="privacy" />}</Route>
+              <Route path={R.licenses}>{() => <Legal page="licenses" />}</Route>
               {DevBody && <Route path="/dev/corpo" component={DevBody} />}
               {DevClips && <Route path="/dev/clipes" component={DevClips} />}
               <Route component={NotFound} />

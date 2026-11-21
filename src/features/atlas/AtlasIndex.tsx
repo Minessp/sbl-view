@@ -9,6 +9,7 @@ import { defaultView, useAtlas } from './store';
 import './atlas.css';
 import './explorer/explorer.css';
 import { Title } from '@/ui/Title';
+import { muscleHref } from '@/app/routes';
 
 function Explorer() {
   return (
@@ -77,7 +78,7 @@ export default function AtlasIndex() {
                     <ul className="atlas-group__list">
                       {list.map((m) => (
                         <li key={m.id} className="atlas-row">
-                          <Link href={`/atlas/${m.id}`} className="atlas-entry">
+                          <Link href={muscleHref(m.id)} className="atlas-entry">
                             <span className="atlas-entry__name">{m.name}</span>
                             <span className="atlas-entry__latin latin">{m.latin}</span>
                           </Link>

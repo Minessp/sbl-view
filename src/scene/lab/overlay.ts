@@ -5,7 +5,6 @@
  */
 import type { SquatFrame } from '@/engine/exercises/squat';
 import type { Vec3 } from '@/engine/math/vec';
-import { fmt } from '@/i18n/app';
 
 type Project = (v: Vec3) => readonly [number, number];
 
@@ -35,6 +34,7 @@ function arc(c: readonly [number, number], a0: number, a1: number, r: number): s
   return `M${x0.toFixed(1)},${y0.toFixed(1)} A${r},${r} 0 0 ${d > 0 ? 1 : 0} ${x1.toFixed(1)},${y1.toFixed(1)}`;
 }
 
+/** Números inteiros abaixo de mil: iguais em todo idioma (sem `fmt`, o palco 3D não carrega texto de idioma). */
 export function writeOverlay(slot: HTMLElement, f: SquatFrame, project: Project) {
   const x = 0; // perfil: X do mundo some na projeção
   const { hip, knee, ankle } = f.joints;
@@ -58,7 +58,7 @@ export function writeOverlay(slot: HTMLElement, f: SquatFrame, project: Project)
     set(el(slot, `${key}-tick`), { x1: q[0], y1: q[1] - 6, x2: q[0], y2: q[1] + 6 });
     const label = el(slot, `${key}-label`);
     set(label, { x: (p[0] + q[0]) / 2, y: p[1] - 8 });
-    if (label) label.textContent = `${fmt.n0(Math.abs(armM) * 100)} cm`;
+    if (label) label.textContent = `${Math.round(Math.abs(armM) * 100)} cm`;
   };
   arm(hip, f.demand.hip.lineZ, 'hip', f.demand.hip.arm);
   arm(knee, f.demand.knee.lineZ, 'knee', f.demand.knee.arm);
@@ -71,7 +71,7 @@ export function writeOverlay(slot: HTMLElement, f: SquatFrame, project: Project)
   const km = (aH + aA) / 2;
   const kneeText = el(slot, 'knee-angle');
   set(kneeText, { x: K[0] + 34 * Math.cos(km + Math.PI), y: K[1] + 34 * Math.sin(km + Math.PI) + 4 });
-  if (kneeText) kneeText.textContent = `${fmt.n0(f.angles.knee)}°`;
+  if (kneeText) kneeText.textContent = `${Math.round(f.angles.knee)}°`;
 
   // Inclinação do tronco: vertical de referência a partir do quadril.
   const up: Vec3 = [x, hip[1] + 0.28, hip[2]];
@@ -83,7 +83,7 @@ export function writeOverlay(slot: HTMLElement, f: SquatFrame, project: Project)
   set(el(slot, 'trunk-arc'), { d: arc(H, a0, a1, 44) });
   const tt = el(slot, 'trunk-angle');
   set(tt, { x: H[0] + 54 * Math.cos((a0 + a1) / 2), y: H[1] + 54 * Math.sin((a0 + a1) / 2) });
-  if (tt) tt.textContent = `${fmt.n0(f.angles.trunk)}°`;
+  if (tt) tt.textContent = `${Math.round(f.angles.trunk)}°`;
 
   slot.dataset.balanced = String(f.balanced);
 }

@@ -96,6 +96,8 @@ export const ptBRApp = {
     noModel: 'O modelo não mede nenhuma ação deste músculo: a articulação não existe no esqueleto (dedos, mandíbula, face, costelas) ou o caminho não reproduz a ação. A nota de cada ação diz por quê.',
     unmodeled: 'Sem curva no modelo:',
     actionsOfPart: (name: string) => `Ações: ${name.toLowerCase()}`,
+    axis: (name: string) => `eixo: ${name.toLowerCase()}, em graus`,
+    layersTools: 'Camadas e ferramentas',
     exercises: 'Exercícios na biblioteca',
     noExercises: 'Nenhum exercício da biblioteca usa este músculo como alvo ou sinergista ainda.',
     sources: 'Fontes',
@@ -803,6 +805,33 @@ export const ptBRApp = {
       play: 'Reproduzir',
       pause: 'Pausar',
     },
+    depthEnds: ['Em pé', 'Fundo'] as const,
+    units: { deg: 'graus', nmLeg: 'N·m por perna', index: 'índice', biarticular: 'biarticular', pctStanding: '% do comprimento em pé' },
+    tableHead: {
+      variant: 'Variação',
+      knee: 'Joelho',
+      hip: 'Quadril',
+      trunk: 'Tronco',
+      lumbar: 'Lombar',
+      hipM: 'M quadril',
+      hipArm: 'Braço quadril',
+      kneeM: 'M joelho',
+      kneeArm: 'Braço joelho',
+    },
+  },
+  /** Descrições de gráfico e valores para leitor de tela. */
+  sr: {
+    goes: (label: string, a: string, b: string, unit: string) => `${label} vai de ${a} a ${b} ${unit}`,
+    max: (v: string) => `máximo ${v}`,
+    range: (axis: string, a: number, b: number) => `${axis} de ${a} a ${b} graus`,
+    deg: 'graus',
+    pct: 'por cento',
+    pctPeak: 'por cento do pico',
+    cm: 'centímetros',
+    angleNow: (axis: string, deg: string) => `${axis} ${deg} graus`,
+    kneeNow: (deg: string, phase: string) => `${deg} graus de flexão de joelho, ${phase}`,
+    timeNow: (a: string, b: string, phase: string) => `${a} de ${b} segundos, ${phase}`,
+    loadAtLongest: (label: string, pct: string) => `${label}, carga ${pct}% do pico no ponto mais alongado`,
   },
   labTabs: {
     label: 'Seções do Lab',
@@ -862,6 +891,7 @@ export const ptBRApp = {
       range: 'Amplitude',
       length: 'Comprimento',
       atLongest: 'Carga no alongado',
+      rangeOf: (lo: string, hi: string) => `${lo} a ${hi}`,
       peakAt: 'Pico da carga em',
     },
     model: {
@@ -924,6 +954,7 @@ export const ptBRApp = {
     training: 'Treino',
     units: 'Unidade e perfis de equipamento',
     unitsNote: 'Quilo ou libra, barras e anilhas disponíveis: em Treino, aba Dados.',
+    language: 'Idioma',
   },
   menu: {
     label: 'Menu do site',
@@ -984,3 +1015,5 @@ export const ptBRApp = {
 
 import type { Widen } from './pt-BR';
 export type AppStrings = Widen<typeof ptBRApp>;
+
+export default ptBRApp;

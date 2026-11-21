@@ -14,6 +14,7 @@ const PRECACHE = __PRECACHE__;
 const CACHE = `sbl-view-${VERSION}`;
 const scope = self.registration.scope;
 const SHELL = scope; // "/" serve o index.html; evita redirecionamento de /index.html
+const SHELL_EN = `${scope}en/`; // navegação em /en/ cai no index.html do inglês, nunca no do PT-BR
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((c) => c.addAll(PRECACHE.map((u) => new URL(u, scope).href))));
@@ -45,7 +46,8 @@ self.addEventListener('fetch', (event) => {
         try {
           return await fetch(req);
         } catch {
-          const hit = await caches.match(SHELL, { cacheName: CACHE, ignoreVary: true });
+          const shell = url.href === SHELL_EN.slice(0, -1) || url.href.startsWith(SHELL_EN) ? SHELL_EN : SHELL;
+          const hit = await caches.match(shell, { cacheName: CACHE, ignoreVary: true });
           return hit ?? Response.error();
         }
       })(),

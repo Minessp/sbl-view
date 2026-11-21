@@ -10,7 +10,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev:en": "vite --mode en",
+    "build": "tsc -b && node scripts/build.mjs",
     "preview": "vite preview",
     "typecheck": "tsc -b",
     "lint": "eslint .",

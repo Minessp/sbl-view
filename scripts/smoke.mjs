@@ -5,6 +5,7 @@
  * que ela persistiu no IndexedDB, edita no histórico, vê recordes e anota medida, monta um plano, faz uma
  * série na sessão ao vivo, vê a análise,
  * troca o Atlas para a malha anatômica, exporta e reimporta o backup. Rodapé, páginas legais e Ajustes.
+ * Inglês em /en/ (lang, menu, exercícios, troca de idioma) e o endereço antigo com sublinhado.
  * No build (com sw.js), confere que o site abre sem rede.
  *   node scripts/smoke.mjs [base-url]
  */
@@ -52,7 +53,7 @@ await step('página inicial: lente escolhe profundidade, acende o músculo e o c
     await page.waitForTimeout(400);
     if (/abrir no Atlas/.test((await page.locator('.home-tip__label').textContent()) ?? '')) {
       await page.mouse.click(x, y);
-      await page.waitForURL(/\/atlas\/[a-z_]+$/, { timeout: 8000 });
+      await page.waitForURL(/\/atlas\/[a-z-]+$/, { timeout: 8000 });
       await page.waitForSelector('.stage[data-ready="true"]', { timeout: 20000 });
       return;
     }
@@ -164,7 +165,7 @@ await step('atlas: parte pela busca e pela URL; demonstração no plano frontal 
 
 // Página aberta direto, sem mover o ponteiro: nenhum chunk de outra rota pedido de antemão (o CSS da lista morava no da biblioteca).
 await step('página de músculo: lista de exercícios nasce estilizada', async () => {
-  await page.goto(`${base}/atlas/latissimus_dorsi`, { waitUntil: 'networkidle' });
+  await page.goto(`${base}/atlas/latissimus-dorsi`, { waitUntil: 'networkidle' });
   const li = page.locator('.target-list li').first();
   await li.waitFor();
   const display = await li.evaluate((el) => getComputedStyle(el).display);
@@ -291,7 +292,7 @@ await step('análise: volume contra a faixa, aderência e contagem semanal', asy
 });
 
 await step('atlas: corpo anatômico desenha; tocar em outro músculo abre a página dele', async () => {
-  await page.goto(`${base}/atlas/vastus_lateralis`, { waitUntil: 'networkidle' });
+  await page.goto(`${base}/atlas/vastus-lateralis`, { waitUntil: 'networkidle' });
   await page.waitForSelector('.stage[data-ready="true"]', { timeout: 20000 });
   await page.getByText('Z-Anatomy', { exact: false }).first().waitFor({ timeout: 15000 });
   const slot = page.locator('.atlas-stage__slot');
@@ -309,7 +310,7 @@ await step('atlas: corpo anatômico desenha; tocar em outro músculo abre a pág
   }
   if (!hit) throw new Error('seleção não achou nenhum músculo');
   await page.mouse.click(hit.x, hit.y);
-  await page.waitForURL((u) => /\/atlas\/(?!vastus_lateralis)[a-z_]+$/.test(u.pathname), { timeout: 10000 });
+  await page.waitForURL((u) => /\/atlas\/(?!vastus-lateralis)[a-z-]+$/.test(u.pathname), { timeout: 10000 });
 });
 
 await step('dados: exportar e reimportar o backup não duplica', async () => {
@@ -326,7 +327,7 @@ await step('dados: exportar e reimportar o backup não duplica', async () => {
 await step('celular 320 px: nenhuma rota transborda na horizontal', async () => {
   await page.setViewportSize({ width: 320, height: 700 });
   const wide = [];
-  for (const r of ['/', '/atlas', '/atlas/biceps_brachii', '/exercicios', '/exercicios/bayesian_curl', '/lab', '/lab/comparar', '/treino', '/treino/plano', '/treino/historico', '/treino/progresso', '/treino/analise', '/treino/dados', '/sobre', '/termos', '/privacidade', '/licencas']) {
+  for (const r of ['/', '/atlas', '/atlas/biceps-brachii', '/exercicios', '/exercicios/bayesian-curl', '/lab', '/lab/comparar', '/treino', '/treino/plano', '/treino/historico', '/treino/progresso', '/treino/analise', '/treino/dados', '/sobre', '/termos', '/privacidade', '/licencas']) {
     await page.goto(base + r, { waitUntil: 'networkidle' });
     await page.locator('main h1').first().waitFor();
     const over = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
@@ -334,6 +335,30 @@ await step('celular 320 px: nenhuma rota transborda na horizontal', async () => 
   }
   await page.setViewportSize({ width: 390, height: 844 });
   if (wide.length) throw new Error(`transborda: ${wide.join(', ')}`);
+});
+
+await step('endereço antigo com sublinhado troca para o slug com hífen e mantém a busca', async () => {
+  await page.goto(`${base}/atlas/biceps_femoris?parte=biceps_femoris_long`, { waitUntil: 'networkidle' });
+  await page.waitForURL((u) => u.pathname === '/atlas/biceps-femoris' && u.search === '?parte=biceps_femoris_long', { timeout: 8000 });
+  await page.locator('main h1').first().waitFor();
+});
+
+await step('inglês: /en/ com lang, menu, exercícios e troca de idioma para a mesma página', async () => {
+  await page.goto(`${base}/en/`, { waitUntil: 'networkidle' });
+  if ((await page.getAttribute('html', 'lang')) !== 'en') throw new Error('html sem lang="en"');
+  await page.getByRole('heading', { level: 1, name: 'Watch the muscle work' }).waitFor();
+  await page.getByRole('button', { name: 'Open the menu' }).click();
+  await page.getByRole('dialog').getByRole('link', { name: /^Exercises/ }).click();
+  await page.waitForURL((u) => u.pathname === '/en/exercises');
+  await page.getByRole('heading', { level: 1, name: 'Exercises' }).waitFor();
+  await page.locator('.ex-card__link').first().click();
+  await page.waitForURL(/\/en\/exercises\/[a-z-]+$/);
+  const path = new URL(page.url()).pathname;
+  await page.getByRole('button', { name: 'Log a set' }).or(page.getByRole('link', { name: 'Log a set' })).first().waitFor();
+  await page.getByRole('contentinfo').getByRole('link', { name: 'Ver esta página em português' }).click();
+  await page.waitForURL((u) => u.pathname === path.replace('/en/exercises/', '/exercicios/'), { timeout: 10000 });
+  if ((await page.getAttribute('html', 'lang')) !== 'pt-BR') throw new Error('volta sem lang="pt-BR"');
+  await page.getByRole('link', { name: 'Registrar série' }).first().waitFor();
 });
 
 const hasSw = await page.request

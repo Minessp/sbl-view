@@ -65,7 +65,7 @@ export function Scrubber({ series }: { series: VariantSeries[] }) {
             setPlaying(false);
             setT(Number(e.target.value) / 1000);
           }}
-          aria-valuetext={`${fmt.n0(knee)} graus de flexão de joelho, ${tt < 0.5 ? t.lab.readouts.phaseDown : t.lab.readouts.phaseUp}`}
+          aria-valuetext={t.sr.kneeNow(fmt.n0(knee), tt < 0.5 ? t.lab.readouts.phaseDown : t.lab.readouts.phaseUp)}
         />
         <div className="scrubber__ruler" aria-hidden="true">
           {ticks.map((x) => (

@@ -8,6 +8,9 @@
 /manifest.webmanifest
   Cache-Control: no-cache
   Content-Type: application/manifest+json
+/en/manifest.webmanifest
+  Cache-Control: no-cache
+  Content-Type: application/manifest+json
 
 # Malha anatômica: nome fixo, muda raramente; revalida por dia.
 /models/*

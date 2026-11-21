@@ -38,6 +38,7 @@ import './plano.css';
 import './plan-status.css';
 import '@/ui/segmented.css';
 import { TableWrap } from '@/ui/TableWrap';
+import { exerciseHref, R } from '@/app/routes';
 
 const DAY_LABELS = 'ABCDEF';
 const WEEK_OPTIONS = [3, 4, 5, 6, 7, 8];
@@ -361,7 +362,7 @@ function ItemRow({
       <span className="plan-item__n" aria-hidden="true">
         {i + 1}
       </span>
-      <Link href={`/exercicios/${it.exerciseId}`} className="plan-item__name">
+      <Link href={exerciseHref(it.exerciseId)} className="plan-item__name">
         {name}
       </Link>
       <span className="plan-item__reps">
@@ -748,7 +749,7 @@ export default function Plano() {
                     {P.start}
                   </button>
                 ) : (
-                  <Link href="/treino" className="btn-primary">
+                  <Link href={R.training} className="btn-primary">
                     {P.goLog}
                   </Link>
                 )}

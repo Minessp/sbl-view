@@ -1,19 +1,19 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="%SBL_LANG%">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="description" content="Atlas 3D de biomecânica para quem treina: como o comprimento do músculo, o ângulo da articulação e a carga se encontram em cada exercício." />
+    <meta name="description" content="%SBL_DESCRIPTION%" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="SBL View" />
-    <meta property="og:title" content="SBL View: atlas de biomecânica para quem treina" />
-    <meta property="og:description" content="Corpo 3D em camadas, Lab do agachamento, atlas dos músculos e registro de treino. Gratuito, aberto e sem conta: os dados ficam no seu aparelho." />
-    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:title" content="%SBL_OG_TITLE%" />
+    <meta property="og:description" content="%SBL_OG_DESCRIPTION%" />
+    <meta property="og:locale" content="%SBL_OG_LOCALE%" />
     <meta name="twitter:card" content="summary" />
     <meta name="color-scheme" content="dark light" />
     <meta name="theme-color" content="#0A0F15" />
     <link rel="icon" href="%BASE_URL%favicon.svg" type="image/svg+xml" />
-    <link rel="manifest" href="%BASE_URL%manifest.webmanifest" />
+    <link rel="manifest" href="%BASE_URL%%SBL_MANIFEST%" />
     <link rel="apple-touch-icon" href="%BASE_URL%icon-192.png" />
     <title>SBL View</title>
     <script>
@@ -28,7 +28,7 @@
   </head>
   <body>
     <div id="root"></div>
-    <noscript>O SBL View precisa de JavaScript para desenhar o corpo e os gráficos.</noscript>
+    <noscript>%SBL_NOSCRIPT%</noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

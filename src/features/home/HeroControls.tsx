@@ -13,6 +13,7 @@ import { useStage } from '@/scene/stageStore';
 import { heroCamera, lens, samePick, useHome, type HomePick } from './store';
 import { explodeAt, LENS_DEPTHS, lensRadius, type LensDepth } from './timeline';
 import { lightTitle } from './titleLight';
+import { muscleHref, R } from '@/app/routes';
 
 const ORBIT_K = 0.0085;
 const TAP_PX = 6;
@@ -73,7 +74,7 @@ export default function HeroControls({ slot }: { slot: HTMLElement }) {
         () => {
           const o = heroCamera.orbit;
           if (o) useAtlas.getState().setHandoff({ orbit: { yaw: o.yaw, pitch: o.pitch, dist: o.dist, target: [o.target[0], o.target[1], o.target[2]] }, selection: p });
-          navigate(p.kind === 'muscle' ? `/atlas/${p.id}` : '/atlas');
+          navigate(p.kind === 'muscle' ? muscleHref(p.id) : R.atlas);
         },
         reduce() ? 0 : FLIGHT_MS,
       );

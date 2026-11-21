@@ -11,6 +11,8 @@ import { t } from '@/i18n/app';
 import { useTheme } from '@/ui/theme';
 import { ThemeSwitch } from '@/ui/ThemeSwitch';
 import './settings.css';
+import { LangLink } from './LangLink';
+import { R } from './routes';
 
 const S = t.settings;
 const KEY = 'sbl-lod';
@@ -158,10 +160,15 @@ export default function Settings({ onClosed }: { onClosed: () => void }) {
 
         <section className="site-settings__row" aria-labelledby="site-settings-training">
           <h3 id="site-settings-training">{S.training}</h3>
-          <Link href="/treino/dados" className="site-settings__link" onClick={() => shut(false)}>
+          <Link href={R.data} className="site-settings__link" onClick={() => shut(false)}>
             {S.units}
           </Link>
           <p className="site-settings__note">{S.unitsNote}</p>
+        </section>
+
+        <section className="site-settings__row" aria-labelledby="site-settings-lang">
+          <h3 id="site-settings-lang">{S.language}</h3>
+          <LangLink className="site-settings__link" />
         </section>
       </div>
     </dialog>

@@ -9,6 +9,7 @@ import { RestTimer } from './live/RestTimer';
 import { KindSelect, loadValid, parseLoad, repsValid, RirSelect, SetRow, timeFmt, TreinoHeader, variantsOf } from './shared';
 import { setUnit, toKg, useUnit } from './units';
 import '@/ui/segmented.css';
+import { exerciseHref } from '@/app/routes';
 
 export default function Treino() {
   const L = t.training;
@@ -172,7 +173,7 @@ export default function Treino() {
           </p>
         </form>
         {ex && (
-          <Link href={`/exercicios/${ex.id}`} className="link-btn">
+          <Link href={exerciseHref(ex.id)} className="link-btn">
             {L.seeExercise}: {ex.name}
           </Link>
         )}

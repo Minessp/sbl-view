@@ -1,12 +1,12 @@
 /**
- * PWA sem dependência: no build, grava `sw.js` (de `src/pwa/sw.js`) com a lista de precache e
- * `manifest.webmanifest` com as cores lidas de `src/ui/tokens.css` (cor só mora lá).
- * Em dev não faz nada: o registro do SW só acontece no build de produção.
+ * PWA sem dependência. `writePwa(dist)` roda depois da junção dos dois idiomas (`scripts/build.mjs`): grava `sw.js`
+ * (de `src/pwa/sw.js`) com a lista de precache dos dois e um `manifest.webmanifest` por idioma (`en/` para o inglês),
+ * com as cores lidas de `src/ui/tokens.css` (cor só mora lá). Em dev só os manifestos: o SW só registra no build.
  */
 import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
-import type { Plugin, ResolvedConfig } from 'vite';
+import type { Plugin } from 'vite';
 
 const root = new URL('..', import.meta.url);
 const read = (p: string) => readFileSync(new URL(p, root), 'utf8');
@@ -26,15 +26,37 @@ function listFiles(dir: string): string[] {
   });
 }
 
-export function manifest(): string {
+type Locale = 'pt-BR' | 'en';
+
+const TEXT: Record<Locale, { description: string; shortcuts: [string, string][] }> = {
+  'pt-BR': {
+    description: 'Atlas 3D de biomecânica e registro de treino. Funciona sem internet; os dados ficam no aparelho.',
+    shortcuts: [
+      ['Registrar série', './treino'],
+      ['Atlas', './atlas'],
+    ],
+  },
+  en: {
+    description: '3D biomechanics atlas and training log. Works offline; your data stays on the device.',
+    shortcuts: [
+      ['Log a set', './training'],
+      ['Atlas', './atlas'],
+    ],
+  },
+};
+
+/** Manifesto do idioma. O inglês mora em `en/`: escopo e início relativos ficam em `/en/`, ícones sobem um nível. */
+export function manifest(locale: Locale = 'pt-BR'): string {
   const css = read('src/ui/tokens.css');
   const bg = token(css, 'c-bg');
+  const up = locale === 'en' ? '../' : '';
+  const x = TEXT[locale];
   return JSON.stringify(
     {
       name: 'SBL View',
       short_name: 'SBL View',
-      description: 'Atlas 3D de biomecânica e registro de treino. Funciona sem internet; os dados ficam no aparelho.',
-      lang: 'pt-BR',
+      description: x.description,
+      lang: locale,
       dir: 'ltr',
       start_url: './',
       scope: './',
@@ -43,58 +65,64 @@ export function manifest(): string {
       background_color: bg,
       theme_color: bg,
       icons: [
-        { src: 'icon.svg', sizes: 'any', type: 'image/svg+xml' },
-        { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
-        { src: 'icon-512.png', sizes: '512x512', type: 'image/png' },
-        { src: 'icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+        { src: `${up}icon.svg`, sizes: 'any', type: 'image/svg+xml' },
+        { src: `${up}icon-192.png`, sizes: '192x192', type: 'image/png' },
+        { src: `${up}icon-512.png`, sizes: '512x512', type: 'image/png' },
+        { src: `${up}icon-maskable-512.png`, sizes: '512x512', type: 'image/png', purpose: 'maskable' },
       ],
-      shortcuts: [
-        { name: 'Registrar série', url: './treino' },
-        { name: 'Atlas', url: './atlas' },
-      ],
+      shortcuts: x.shortcuts.map(([name, url]) => ({ name, url })),
     },
     null,
     2,
   );
 }
 
+/** Dev: serve os dois manifestos (o SW não registra fora do build). */
 export function pwa(): Plugin {
-  let config: ResolvedConfig;
   return {
     name: 'sbl-pwa',
-    configResolved(c) {
-      config = c;
-    },
-    // Em dev só o manifesto (o SW não registra fora do build).
     configureServer(server) {
-      server.middlewares.use('/manifest.webmanifest', (_req, res) => {
-        res.setHeader('Content-Type', 'application/manifest+json');
-        res.end(manifest());
-      });
-    },
-    generateBundle() {
-      if (config.command !== 'build') return;
-      this.emitFile({ type: 'asset', fileName: 'manifest.webmanifest', source: manifest() });
-    },
-    writeBundle(options, bundle) {
-      const outDir = options.dir ?? config.build.outDir;
-      // Subconjuntos de fonte que o PT-BR não usa: o navegador só baixa se aparecer o caractere.
-      // Malha anatômica (models/) é grande e opcional: entra no cache só quando alguém a pede.
-      // Imagens sem WebGL (fallback/) só servem a quem não tem 3D.
-      const skip = (f: string) =>
-        f.endsWith('.map') ||
-        f.startsWith('models/') || f.startsWith('fallback/') || /-(vietnamese|latin-ext)-/.test(f) || ['sw.js', '_headers', '_redirects', 'index.html'].includes(f);
-      const fromBundle = Object.keys(bundle);
-      const fromPublic = config.publicDir ? listFiles(config.publicDir).map((p) => relative(config.publicDir, p).replace(/\\/g, '/')) : [];
-      const files = [...new Set([...fromBundle, ...fromPublic])].filter((f) => !skip(f)).sort();
-      // '' = a própria raiz do escopo, que serve o index.html.
-      const precache = ['', ...files];
-      const html = bundle['index.html'];
-      const htmlSrc = html && html.type === 'asset' ? String(html.source) : '';
-      const version = createHash('sha256').update(precache.join('\n')).update(htmlSrc).digest('hex').slice(0, 12);
-      const sw = read('src/pwa/sw.js').replace("const VERSION = '__VERSION__';", `const VERSION = ${JSON.stringify(version)};`).replace('const PRECACHE = __PRECACHE__;', `const PRECACHE = ${JSON.stringify(precache)};`);
-      if (sw.includes('__PRECACHE__;') || sw.includes("'__VERSION__'")) throw new Error('sw.js: marcadores não substituídos');
-      writeFileSync(join(outDir, 'sw.js'), sw);
+      for (const [path, locale] of [
+        ['/en/manifest.webmanifest', 'en'],
+        ['/manifest.webmanifest', 'pt-BR'],
+      ] as const) {
+        server.middlewares.use(path, (_req, res) => {
+          res.setHeader('Content-Type', 'application/manifest+json');
+          res.end(manifest(locale));
+        });
+      }
     },
   };
+}
+
+/** Grava manifestos e `sw.js` no `dist` já com os dois idiomas. Precache = tudo que o build gerou, menos o opcional. */
+export function writePwa(dist: string): void {
+  writeFileSync(join(dist, 'manifest.webmanifest'), manifest('pt-BR'));
+  writeFileSync(join(dist, 'en', 'manifest.webmanifest'), manifest('en'));
+  // Subconjuntos de fonte que o latim não usa: o navegador só baixa se aparecer o caractere.
+  // Malha anatômica (models/) é grande e opcional: entra no cache só quando alguém a pede.
+  // Imagens sem WebGL (fallback/) só servem a quem não tem 3D. Os index.html entram pela raiz de cada idioma.
+  const skip = (f: string) =>
+    f.endsWith('.map') ||
+    f.startsWith('models/') ||
+    f.startsWith('fallback/') ||
+    /-(vietnamese|latin-ext)-/.test(f) ||
+    ['sw.js', '_headers', '_redirects', 'index.html', 'en/index.html'].includes(f);
+  const files = listFiles(dist)
+    .map((p) => relative(dist, p).replace(/\\/g, '/'))
+    .filter((f) => !skip(f))
+    .sort();
+  // '' e 'en/' = a raiz de cada idioma, que serve o index.html dele.
+  const precache = ['', 'en/', ...files];
+  const version = createHash('sha256')
+    .update(precache.join('\n'))
+    .update(readFileSync(join(dist, 'index.html')))
+    .update(readFileSync(join(dist, 'en', 'index.html')))
+    .digest('hex')
+    .slice(0, 12);
+  const sw = read('src/pwa/sw.js')
+    .replace("const VERSION = '__VERSION__';", `const VERSION = ${JSON.stringify(version)};`)
+    .replace('const PRECACHE = __PRECACHE__;', `const PRECACHE = ${JSON.stringify(precache)};`);
+  if (sw.includes('__PRECACHE__;') || sw.includes("'__VERSION__'")) throw new Error('sw.js: marcadores não substituídos');
+  writeFileSync(join(dist, 'sw.js'), sw);
 }

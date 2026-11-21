@@ -18,6 +18,7 @@ import '@/features/heat/heat.css';
 import './atlas.css';
 import '@/ui/target-list.css';
 import { Title } from '@/ui/Title';
+import { exerciseHref, muscleHref, R } from '@/app/routes';
 
 const PATTERNS: LinePattern[] = ['solid', 'dashed', 'dotted'];
 
@@ -30,7 +31,7 @@ function usePart(m: MuscleDef): [string | undefined, (part: string | undefined) 
   const [, navigate] = useLocation();
   const raw = new URLSearchParams(search).get('parte') ?? undefined;
   const part = m.parts.length > 1 && m.parts.some((p) => p.id === raw) ? raw : undefined;
-  const setPart = (p: string | undefined) => navigate(`/atlas/${m.id}${p ? `?parte=${p}` : ''}`, { replace: true });
+  const setPart = (p: string | undefined) => navigate(muscleHref(m.id, p), { replace: true });
   return [part, setPart];
 }
 
@@ -48,7 +49,7 @@ function Stage({ m, part, setPart }: { m: MuscleDef; part: string | undefined; s
     st.select({ kind: 'muscle', id: m.id, side: sel?.side ?? 'r', part }, { fly: true });
   }, [m, part]);
   const onTap = (p: Pick) => {
-    if (p.kind === 'muscle' && p.id !== m.id) navigate(`/atlas/${p.id}${p.part ? `?parte=${p.part}` : ''}`);
+    if (p.kind === 'muscle' && p.id !== m.id) navigate(muscleHref(p.id, p.part));
     else if (p.kind === 'muscle' && p.part !== part) setPart(p.part);
     else if (p.kind === 'muscle') useAtlas.getState().frame();
   };
@@ -63,7 +64,7 @@ function Stage({ m, part, setPart }: { m: MuscleDef; part: string | undefined; s
       />
       {m.parts.length > 1 && <PartPicker muscle={m} selection={{ kind: 'muscle', id: m.id, side: 'r', part }} onPick={setPart} />}
       <details className="atlas-stage__more">
-        <summary className="chip chip--small">{`${E.layers} e ${E.tools.toLowerCase()}`}</summary>
+        <summary className="chip chip--small">{t.atlas.layersTools}</summary>
         <div className="atlas-stage__more-body">
           <LayerControls />
           <ToolControls />
@@ -76,9 +77,9 @@ function Stage({ m, part, setPart }: { m: MuscleDef; part: string | undefined; s
 }
 
 function describe(title: string, c: ActionCurve, pick: (s: ActionCurve['series'][number]) => number[], unit: string) {
-  return `${title}, ${c.axisLabel} de ${c.range[0]} a ${c.range[1]} graus: ` + c.series.map((s) => {
+  return `${title}, ${t.sr.range(c.axisLabel, c.range[0], c.range[1])}: ` + c.series.map((s) => {
     const v = pick(s);
-    return `${s.label} vai de ${fmt.n1(v[0] ?? 0)} a ${fmt.n1(v[v.length - 1] ?? 0)} ${unit}`;
+    return t.sr.goes(s.label, fmt.n1(v[0] ?? 0), fmt.n1(v[v.length - 1] ?? 0), unit);
   }).join('; ');
 }
 
@@ -93,7 +94,7 @@ function CurveCard({ c }: { c: ActionCurve }) {
     <div className="curve" data-active={active}>
       <h3 className="curve__title">
         {c.movement.label}
-        <span className="curve__axis">eixo: {c.axisLabel.toLowerCase()}, em graus</span>
+        <span className="curve__axis">{A.axis(c.axisLabel)}</span>
       </h3>
       <div className="curve__demo">
         <DemoButton c={c} className="chip chip--small curve__play" />
@@ -122,7 +123,7 @@ function CurveCard({ c }: { c: ActionCurve }) {
           zeroLine
           reveal={false}
           yFormat={(v) => `${fmt.n0(Math.round(v) || 0)}%`}
-          description={describe(A.length, c, (s) => s.length.map((v) => v * 100), 'por cento')}
+          description={describe(A.length, c, (s) => s.length.map((v) => v * 100), t.sr.pct)}
         />
         <LineChart
           title={A.arm}
@@ -134,7 +135,7 @@ function CurveCard({ c }: { c: ActionCurve }) {
           zeroLine
           reveal={false}
           yFormat={(v) => fmt.n1(v)}
-          description={describe(A.arm, c, (s) => s.arm.map((v) => v * 100), 'centímetros')}
+          description={describe(A.arm, c, (s) => s.arm.map((v) => v * 100), t.sr.cm)}
         />
       </div>
     </div>
@@ -160,7 +161,7 @@ export default function MusclePage({ id }: { id: string }) {
     return (
       <main id="conteudo" className="sheet">
         <p>{A.notFound}</p>
-        <Link href="/atlas" className="link-btn">
+        <Link href={R.atlas} className="link-btn">
           {A.back}
         </Link>
       </main>
@@ -179,7 +180,7 @@ function MuscleBody({ m }: { m: MuscleDef }) {
   return (
     <main id="conteudo" className="sheet atlas-page">
       <header className="sheet__head atlas-page__head">
-        <Link href="/atlas" className="sheet__plate sheet__plate--link">
+        <Link href={R.atlas} className="sheet__plate sheet__plate--link">
           {A.back}
         </Link>
         <Title text={m.name} />
@@ -258,7 +259,7 @@ function MuscleBody({ m }: { m: MuscleDef }) {
             <ul className="target-list">
               {uses.map((u) => (
                 <li key={u.exercise.id} data-role={u.role}>
-                  <Link href={`/exercicios/${u.exercise.id}`} className="target-list__name">
+                  <Link href={exerciseHref(u.exercise.id)} className="target-list__name">
                     {u.exercise.name}
                   </Link>
                   <span className="target-list__parts">

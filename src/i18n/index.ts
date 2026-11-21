@@ -1,8 +1,10 @@
-import { ptBR, type Strings } from './pt-BR';
+import strings from '@/i18n/dict';
+import { LOCALE } from './locale';
+import type { Strings } from './pt-BR';
 
-/** Idioma ativo. Por ora só PT-BR; a troca futura muda só esta linha + um seletor. */
-export const t: Strings = ptBR;
-export const locale = 'pt-BR';
+/** Idioma ativo, do build (`@/i18n/dict` aponta para `pt-BR.ts` ou `en.ts`). */
+export const t: Strings = strings;
+export const locale = LOCALE;
 
 const nf1 = new Intl.NumberFormat(locale, { maximumFractionDigits: 1 });
 const nf0 = new Intl.NumberFormat(locale, { maximumFractionDigits: 0 });

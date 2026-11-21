@@ -15,6 +15,7 @@ import { claimTitle, SplitText } from '@/ui/Title';
 import { homeScroll, useHome } from './store';
 import { explodeAt, LAYER_IDS, type LayerId } from './timeline';
 import './home.css';
+import { R } from '@/app/routes';
 
 const HeroControls = lazy(() => import('./HeroControls'));
 const HomeMore = lazy(() => import('./HomeMore'));
@@ -23,10 +24,10 @@ const Atmosphere = lazy(() => import('./Atmosphere'));
 
 const H = t.home;
 const DOORS = [
-  { href: '/atlas', ...H.doors.atlas },
-  { href: '/exercicios', ...H.doors.library },
-  { href: '/lab', ...H.doors.lab },
-  { href: '/treino', ...H.doors.training },
+  { href: R.atlas, ...H.doors.atlas },
+  { href: R.library, ...H.doors.library },
+  { href: R.lab, ...H.doors.lab },
+  { href: R.training, ...H.doors.training },
 ] as const;
 
 /** Progresso do scroll dentro do bloco do herói (0..1) → palco; o DOM lê a abertura das camadas como variável de CSS. */

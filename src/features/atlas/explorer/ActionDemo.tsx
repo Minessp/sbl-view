@@ -91,7 +91,7 @@ export function DemoControls({ c }: { c: ActionCurve }) {
             max={c.range[1]}
             step={1}
             value={Math.round(deg)}
-            aria-valuetext={`${c.axisLabel} ${fmt.n0(Math.round(deg))} graus`}
+            aria-valuetext={t.sr.angleNow(c.axisLabel, fmt.n0(Math.round(deg)))}
             onChange={(e) => setDemo({ playing: false, phase: demoPhaseOf(c.from, c.to, Number(e.target.value)) })}
           />
         </div>

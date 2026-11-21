@@ -18,6 +18,7 @@ import { COMPARE_VIEWS, decodeQuery, encodeQuery, MAX_EXERCISES, uAtPhase, useCo
 import '../lab.css';
 import './compare.css';
 import { LengthLegend } from '@/ui/LengthLegend';
+import { exerciseHref } from '@/app/routes';
 
 const C = t.labCompare;
 const PERIOD_S = 3.2;
@@ -279,7 +280,7 @@ function ViewBar() {
 const X = Array.from({ length: 41 }, (_, i) => i / 40);
 
 function describe(title: string, rows: { label: string; v: readonly number[] }[], unit: string) {
-  return `${title}: ${rows.map((r) => `${r.label} vai de ${fmt.n0(r.v[0] ?? 0)} a ${fmt.n0(r.v[r.v.length - 1] ?? 0)} ${unit}, máximo ${fmt.n0(Math.max(...r.v))}`).join('; ')}`;
+  return `${title}: ${rows.map((r) => `${t.sr.goes(r.label, fmt.n0(r.v[0] ?? 0), fmt.n0(r.v[r.v.length - 1] ?? 0), unit)}, ${t.sr.max(fmt.n0(Math.max(...r.v)))}`).join('; ')}`;
 }
 
 function Charts({ items, u }: { items: { slot: Slot; a: Analysis | null; label: string }[]; u: number }) {
@@ -309,7 +310,7 @@ function Charts({ items, u }: { items: { slot: Slot; a: Analysis | null; label: 
           zeroLine
           xLabels={xl}
           yFormat={(v) => `${Math.round(v)}%`}
-          description={describe(C.charts.length, rows(withA, (a) => a.length), 'por cento')}
+          description={describe(C.charts.length, rows(withA, (a) => a.length), t.sr.pct)}
         />
       </section>
 
@@ -332,7 +333,7 @@ function Charts({ items, u }: { items: { slot: Slot; a: Analysis | null; label: 
               zeroLine
               xLabels={xl}
               yFormat={cm}
-              description={describe(C.charts.load, rows(withDof, (a) => a.load), 'centímetros')}
+              description={describe(C.charts.load, rows(withDof, (a) => a.load), t.sr.cm)}
             />
             <XYChart
               title={C.charts.profile}
@@ -344,7 +345,7 @@ function Charts({ items, u }: { items: { slot: Slot; a: Analysis | null; label: 
               yDomain={[Math.min(0, ...withDof.flatMap((x) => x.a.profile)), 1]}
               xFormat={(v) => `${Math.round(v)}%`}
               yFormat={(v) => fmt.n1(v)}
-              description={`${C.sections.profile}: ${withDof.map((x) => `${x.label}, carga ${fmt.n0(x.a.loadAtLongest * 100)}% do pico no ponto mais alongado`).join('; ')}`}
+              description={`${C.sections.profile}: ${withDof.map((x) => t.sr.loadAtLongest(x.label, fmt.n0(x.a.loadAtLongest * 100))).join('; ')}`}
             />
           </div>
           <p className="compare-note">{C.sections.profileNote}</p>
@@ -368,7 +369,7 @@ function Charts({ items, u }: { items: { slot: Slot; a: Analysis | null; label: 
               zeroLine
               xLabels={xl}
               yFormat={(v) => fmt.n1(v)}
-              description={describe(C.charts.arm, rows(withDof, (a) => a.arm), 'centímetros')}
+              description={describe(C.charts.arm, rows(withDof, (a) => a.arm), t.sr.cm)}
             />
             <LineChart
               title={C.charts.angle}
@@ -378,7 +379,7 @@ function Charts({ items, u }: { items: { slot: Slot; a: Analysis | null; label: 
               marker={u}
               xLabels={xl}
               yFormat={(v) => `${Math.round(v)}°`}
-              description={describe(C.charts.angle, rows(withDof, (a) => a.angle), 'graus')}
+              description={describe(C.charts.angle, rows(withDof, (a) => a.angle), t.sr.deg)}
             />
           </div>
         </section>
@@ -389,7 +390,7 @@ function Charts({ items, u }: { items: { slot: Slot; a: Analysis | null; label: 
 
 function Summary({ items }: { items: { slot: Slot; a: Analysis | null; label: string }[] }) {
   const T = C.table;
-  const range = (v: readonly number[]) => `${fmt.n0(Math.min(...v))} a ${fmt.n0(Math.max(...v))}`;
+  const range = (v: readonly number[]) => C.table.rangeOf(fmt.n0(Math.min(...v)), fmt.n0(Math.max(...v)));
   return (
     <section className="section" aria-labelledby="cmp-table">
       <header className="section__head">
@@ -467,7 +468,7 @@ function Notes({ items }: { items: { slot: Slot; a: Analysis | null; label: stri
             return (
               <li key={slot.key}>
                 <span className="variant-notes__name">
-                  <Link href={`/exercicios/${e.id}`}>{label}</Link>
+                  <Link href={exerciseHref(e.id)}>{label}</Link>
                 </span>
                 <p className="prose variant-notes__text">{e.length.text}</p>
                 <EvidenceSeal confidence={e.length.confidence} />

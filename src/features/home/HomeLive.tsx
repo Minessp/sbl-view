@@ -25,6 +25,7 @@ import { SplitText } from '@/ui/Title';
 import { homeScroll } from './store';
 import './home-live.css';
 import { LengthLegend } from '@/ui/LengthLegend';
+import { exerciseHref, muscleHref, R } from '@/app/routes';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -282,7 +283,7 @@ export function HomeLive() {
             <ul className="live__gauges">
               {tr?.series.map((c, i) => (
                 <li key={`${item?.id}-${c.id}`} className="live__gauge" data-g={c.id} style={{ '--i': i } as CSSProperties}>
-                  <Link href={`/atlas/${c.id}`} className="live__gauge-name">
+                  <Link href={muscleHref(c.id)} className="live__gauge-name">
                     {muscleById(c.id)?.name ?? c.id}
                   </Link>
                   <span className="live__gauge-num" data-num="">
@@ -320,11 +321,11 @@ export function HomeLive() {
             </label>
             <div className="live__links">
               {ex && (
-                <Link href={`/exercicios/${ex.id}`} className="btn-primary">
+                <Link href={exerciseHref(ex.id)} className="btn-primary">
                   {S.open(ex.name)}
                 </Link>
               )}
-              <Link href="/exercicios" className="btn-secondary">
+              <Link href={R.library} className="btn-secondary">
                 {S.all(library.length)}
               </Link>
             </div>

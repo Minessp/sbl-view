@@ -24,7 +24,12 @@
     "noUnusedParameters": true,
     "noPropertyAccessFromIndexSignature": false,
 
-    "paths": { "@/*": ["./src/*"] }
+    "paths": {
+      "@/i18n/dict": ["./src/i18n/pt-BR.ts"],
+      "@/i18n/dict.app": ["./src/i18n/pt-BR.app.ts"],
+      "@/i18n/dict.legal": ["./src/i18n/legal.pt-BR.ts"],
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["src"],
   "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx"]

@@ -30,7 +30,7 @@ interface Props {
   /** Intensidade 0..1 ao longo de x, desenhada como faixa de coloração sob o gráfico. */
   band?: { label: string; values: readonly number[] };
   zeroLine?: boolean;
-  xLabels?: readonly [string, string];
+  xLabels: readonly [string, string];
   footer?: ReactNode;
   /** Descrição textual para leitor de tela. */
   description: string;
@@ -66,7 +66,7 @@ function niceTicks(lo: number, hi: number, n = 4): number[] {
   return out;
 }
 
-export function LineChart({ title, unit, x, series, marker, yDomain, yFormat = (v) => String(Math.round(v)), band, zeroLine, xLabels = ['Em pé', 'Fundo'], footer, description, reveal = true }: Props) {
+export function LineChart({ title, unit, x, series, marker, yDomain, yFormat = (v) => String(Math.round(v)), band, zeroLine, xLabels, footer, description, reveal = true }: Props) {
   const uid = useId().replace(/:/g, '');
   const all = series.flatMap((s) => s.values);
   const lo = yDomain?.[0] ?? Math.min(0, ...all);

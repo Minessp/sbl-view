@@ -1,6 +1,6 @@
 /**
  * Auditoria de acessibilidade com axe-core (WCAG 2.2 A/AA) em todas as rotas e no painel de Ajustes aberto: desktop
- * vazio nos temas claro e escuro, celular com redução de movimento e dados registrados.
+ * vazio nos temas claro e escuro, celular com redução de movimento e dados registrados, e o inglês (`/en/`) no escuro.
  *   node scripts/a11y.mjs [url-base]
  * Sai com código 1 se houver violação. Roda no CI contra o build (`vite preview`).
  */
@@ -15,10 +15,10 @@ const axeSource = readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
 const ROUTES = [
   '/',
   '/atlas',
-  '/atlas/vastus_lateralis',
+  '/atlas/vastus-lateralis',
   '/exercicios',
   '/exercicios/squat',
-  '/exercicios/incline_dumbbell_curl',
+  '/exercicios/incline-dumbbell-curl',
   '/lab',
   '/lab/comparar',
   '/treino',
@@ -32,23 +32,46 @@ const ROUTES = [
   '/privacidade',
   '/licencas',
   '/rota-que-nao-existe',
+  '/termos#ajustes',
+];
+
+const EN_ROUTES = [
+  '/en/',
+  '/en/atlas',
+  '/en/atlas/vastus-lateralis',
+  '/en/exercises',
+  '/en/exercises/incline-dumbbell-curl',
+  '/en/lab',
+  '/en/lab/compare',
+  '/en/training',
+  '/en/training/plan',
+  '/en/training/history',
+  '/en/training/progress',
+  '/en/training/analysis',
+  '/en/training/data',
+  '/en/about',
+  '/en/terms',
+  '/en/privacy',
+  '/en/licenses',
+  '/en/no-such-page',
+  '/en/terms#ajustes',
 ];
 
 const channel = process.env.PW_CHANNEL ?? (process.platform === 'win32' ? 'msedge' : undefined);
 const browser = await chromium.launch(channel ? { channel } : {});
 let failures = 0;
 
-/** Painel de Ajustes aberto pelo rodapé (rota `/termos`, que não tem palco). */
-async function openSettings(page) {
-  await page.getByRole('contentinfo').getByRole('button', { name: 'Ajustes' }).click();
-  await page.getByRole('dialog', { name: 'Ajustes' }).waitFor();
+/** Painel de Ajustes aberto pelo rodapé (rota de termos, que não tem palco). `#ajustes` na lista = abrir o painel. */
+async function openSettings(page, name) {
+  await page.getByRole('contentinfo').getByRole('button', { name }).click();
+  await page.getByRole('dialog', { name }).waitFor();
 }
 
-async function audit(page, label) {
-  for (const route of [...ROUTES, '/termos#ajustes']) {
+async function audit(page, label, routes = ROUTES, settings = 'Ajustes') {
+  for (const route of routes) {
     await page.goto(base + route.replace('#ajustes', ''), { waitUntil: 'networkidle' });
     await page.waitForSelector('main', { timeout: 15000 });
-    if (route.endsWith('#ajustes')) await openSettings(page);
+    if (route.endsWith('#ajustes')) await openSettings(page, settings);
     await page.waitForTimeout(400);
     await page.addScriptTag({ content: axeSource });
     const res = await page.evaluate(async () => {
@@ -105,6 +128,11 @@ for (const scheme of ['light', 'dark']) {
   await seed(page);
   await audit(page, 'celular, com dados');
   await ctx.close();
+}
+{
+  const page = await browser.newPage({ viewport: { width: 1280, height: 860 }, colorScheme: 'dark' });
+  await audit(page, 'inglês', EN_ROUTES, 'Settings');
+  await page.close();
 }
 
 await browser.close();

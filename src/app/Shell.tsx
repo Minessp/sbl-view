@@ -4,6 +4,7 @@ import { t } from '@/i18n';
 import { StageHost } from '@/scene/StageHost';
 import { ThemeSwitch } from '@/ui/ThemeSwitch';
 import { UpdateNotice } from '@/pwa/UpdateNotice';
+import { R } from './routes';
 import './shell.css';
 
 /** Painel do menu em tela cheia: chunk à parte, pedido quando o ponteiro chega no botão (ou no clique). */
@@ -15,10 +16,10 @@ const Settings = lazy(loadSettings);
 const Footer = lazy(() => import('./Footer'));
 
 const SECTIONS = [
-  ['/atlas', t.nav.atlas],
-  ['/exercicios', t.nav.library],
-  ['/lab', t.nav.lab],
-  ['/treino', t.nav.training],
+  [R.atlas, t.nav.atlas],
+  [R.library, t.nav.library],
+  [R.lab, t.nav.lab],
+  [R.training, t.nav.training],
 ] as const;
 
 /**

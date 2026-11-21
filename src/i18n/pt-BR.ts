@@ -62,6 +62,11 @@ export const ptBR = {
     failed: 'Não deu para baixar o corpo anatômico. Confira a conexão e tente de novo.',
     retry: 'Tentar de novo',
   },
+  /** Link para a mesma página no outro idioma: o texto já vem na língua de destino. */
+  lang: {
+    other: 'English',
+    otherLabel: 'View this page in English',
+  },
 } as const;
 
 export type Widen<T> = T extends string
@@ -70,3 +75,5 @@ export type Widen<T> = T extends string
     ? (...args: A) => Widen<R>
     : { readonly [K in keyof T]: Widen<T[K]> };
 export type Strings = Widen<typeof ptBR>;
+
+export default ptBR;

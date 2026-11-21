@@ -12,24 +12,26 @@ import { t } from '@/i18n/app';
 import { SplitText } from '@/ui/Title';
 import { ThemeSwitch } from '@/ui/ThemeSwitch';
 import './menu.css';
+import { LangLink } from './LangLink';
+import { R } from './routes';
 
 const D = tShell.home.doors;
 const TR = t.training.tabs;
 const SECTIONS: readonly { href: string; name: string; body: string; icon: LucideIcon; sub?: readonly (readonly [string, string])[] }[] = [
-  { href: '/atlas', ...D.atlas, icon: Layers },
-  { href: '/exercicios', ...D.library, icon: Dumbbell },
-  { href: '/lab', ...D.lab, icon: FlaskConical },
+  { href: R.atlas, ...D.atlas, icon: Layers },
+  { href: R.library, ...D.library, icon: Dumbbell },
+  { href: R.lab, ...D.lab, icon: FlaskConical },
   {
-    href: '/treino',
+    href: R.training,
     ...D.training,
     icon: NotebookPen,
     sub: [
-      ['/treino', TR.log],
-      ['/treino/plano', TR.plan],
-      ['/treino/historico', TR.history],
-      ['/treino/progresso', TR.progress],
-      ['/treino/analise', TR.analysis],
-      ['/treino/dados', TR.data],
+      [R.training, TR.log],
+      [R.plan, TR.plan],
+      [R.history, TR.history],
+      [R.progress, TR.progress],
+      [R.analysis, TR.analysis],
+      [R.data, TR.data],
     ],
   },
 ];
@@ -149,6 +151,7 @@ export default function MenuPanel({ onClosed, onSettings }: { onClosed: () => vo
         >
           {t.footer.settings}
         </button>
+        <LangLink className="chip chip--small" />
       </div>
     </dialog>
   );

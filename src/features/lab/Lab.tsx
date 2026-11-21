@@ -17,6 +17,7 @@ import { Scrubber } from './Scrubber';
 import './lab.css';
 import { TableWrap } from '@/ui/TableWrap';
 import { Title } from '@/ui/Title';
+import { R } from '@/app/routes';
 
 const N = 49;
 const X = Array.from({ length: N }, (_, i) => i / (N - 1));
@@ -167,7 +168,7 @@ const seriesOf = (all: VariantSeries[], pick: (s: VariantSeries) => number[]): C
 function describe(title: string, all: VariantSeries[], pick: (s: VariantSeries) => number[], unit: string) {
   return `${title}: ` + all.map((s) => {
     const v = pick(s);
-    return `${s.variant.label} vai de ${fmt.n0(v[0] ?? 0)} a ${fmt.n0(v[v.length - 1] ?? 0)} ${unit}, máximo ${fmt.n0(Math.max(...v))}`;
+    return `${t.sr.goes(s.variant.label, fmt.n0(v[0] ?? 0), fmt.n0(v[v.length - 1] ?? 0), unit)}, ${t.sr.max(fmt.n0(Math.max(...v)))}`;
   }).join('; ');
 }
 
@@ -182,12 +183,13 @@ function Charts({ series }: { series: VariantSeries[] }) {
   const c = t.lab.charts;
 
   const angle = (title: string, pick: (s: VariantSeries) => number[]) => (
-    <LineChart title={title} unit="graus" x={X} series={seriesOf(series, pick)} marker={u} yFormat={deg} description={describe(title, series, pick, 'graus')} />
+    <LineChart title={title} unit={t.lab.units.deg} xLabels={t.lab.depthEnds} x={X} series={seriesOf(series, pick)} marker={u} yFormat={deg} description={describe(title, series, pick, t.sr.deg)} />
   );
   const moment = (title: string, pick: (s: VariantSeries) => number[], band?: number[], footer?: string) => (
     <LineChart
       title={title}
-      unit="N·m por perna"
+      unit={t.lab.units.nmLeg}
+      xLabels={t.lab.depthEnds}
       x={X}
       series={seriesOf(series, pick)}
       marker={u}
@@ -241,7 +243,7 @@ function Charts({ series }: { series: VariantSeries[] }) {
           {(['hip', 'knee'] as const).map((j) => {
             const title = j === 'hip' ? c.hipE : c.kneeE;
             const pick = (s: VariantSeries) => (efforts[series.indexOf(s)]?.[j] ?? []).map((v) => v / refs[j]);
-            return <LineChart key={j} title={title} unit="índice" x={X} series={seriesOf(series, pick)} marker={u} yDomain={[0, 1]} yFormat={(v) => fmt.n1(v)} description={describe(title, series, (s) => pick(s).map((v) => v * 100), 'por cento do pico')} />;
+            return <LineChart key={j} title={title} unit={t.lab.units.index} xLabels={t.lab.depthEnds} x={X} series={seriesOf(series, pick)} marker={u} yDomain={[0, 1]} yFormat={(v) => fmt.n1(v)} description={describe(title, series, (s) => pick(s).map((v) => v * 100), t.sr.pctPeak)} />;
           })}
         </div>
       </section>
@@ -259,13 +261,14 @@ function Charts({ series }: { series: VariantSeries[] }) {
               <LineChart
                 key={m.key}
                 title={m.label}
-                unit={m.biarticular ? 'biarticular' : '% do comprimento em pé'}
+                unit={m.biarticular ? t.lab.units.biarticular : t.lab.units.pctStanding}
+                xLabels={t.lab.depthEnds}
                 x={X}
                 series={seriesOf(series, pick)}
                 marker={u}
                 zeroLine
                 yFormat={pct}
-                description={describe(m.label, series, (s) => pick(s).map((v) => v * 100), 'por cento')}
+                description={describe(m.label, series, (s) => pick(s).map((v) => v * 100), t.sr.pct)}
               />
             );
           })}
@@ -287,15 +290,15 @@ function NumberTable({ series, u }: { series: VariantSeries[]; u: number }) {
         <table className="num-table">
           <thead>
             <tr>
-              <th scope="col">Variação</th>
-              <th scope="col">Joelho</th>
-              <th scope="col">Quadril</th>
-              <th scope="col">Tronco</th>
-              <th scope="col">Lombar</th>
-              <th scope="col">M quadril</th>
-              <th scope="col">Braço quadril</th>
-              <th scope="col">M joelho</th>
-              <th scope="col">Braço joelho</th>
+              <th scope="col">{t.lab.tableHead.variant}</th>
+              <th scope="col">{t.lab.tableHead.knee}</th>
+              <th scope="col">{t.lab.tableHead.hip}</th>
+              <th scope="col">{t.lab.tableHead.trunk}</th>
+              <th scope="col">{t.lab.tableHead.lumbar}</th>
+              <th scope="col">{t.lab.tableHead.hipM}</th>
+              <th scope="col">{t.lab.tableHead.hipArm}</th>
+              <th scope="col">{t.lab.tableHead.kneeM}</th>
+              <th scope="col">{t.lab.tableHead.kneeArm}</th>
             </tr>
           </thead>
           <tbody>
@@ -417,7 +420,7 @@ export default function Lab() {
             <h2 id="sec-log">{t.lab.log.title}</h2>
             <p>{t.lab.log.body}</p>
           </header>
-          <Link href="/treino?exercicio=squat" className="btn-secondary">
+          <Link href={`${R.training}?exercicio=squat`} className="btn-secondary">
             {t.lab.log.link}
           </Link>
         </section>

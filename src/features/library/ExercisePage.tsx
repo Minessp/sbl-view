@@ -13,6 +13,7 @@ import '@/features/atlas/explorer/explorer.css';
 import './library.css';
 import '@/ui/target-list.css';
 import { Title } from '@/ui/Title';
+import { muscleHref, R } from '@/app/routes';
 
 /** Algum alvo do exercício é alvo de outro exercício também: dá para comparar no Lab. */
 const comparable = (e: LibraryExercise): boolean =>
@@ -32,7 +33,7 @@ export default function ExercisePage({ id }: { id: string }) {
     return (
       <main id="conteudo" className="sheet">
         <p>{E.notFound}</p>
-        <Link href="/exercicios" className="link-btn">
+        <Link href={R.library} className="link-btn">
           {E.back}
         </Link>
       </main>
@@ -42,7 +43,7 @@ export default function ExercisePage({ id }: { id: string }) {
   return (
     <main id="conteudo" className="sheet">
       <header className="sheet__head">
-        <Link href="/exercicios" className="sheet__plate sheet__plate--link">
+        <Link href={R.library} className="sheet__plate sheet__plate--link">
           {E.back}
         </Link>
         <Title text={e.name} />
@@ -62,16 +63,16 @@ export default function ExercisePage({ id }: { id: string }) {
           </div>
         </dl>
         <div className="sheet__actions">
-          <Link href={`/treino?exercicio=${e.id}`} className="btn-secondary">
+          <Link href={`${R.training}?exercicio=${e.id}`} className="btn-secondary">
             {E.log}
           </Link>
           {e.labId && (
-            <Link href="/lab/agachamento" className="btn-secondary">
+            <Link href={R.labSquat} className="btn-secondary">
               {E.lab}
             </Link>
           )}
           {comparable(e) && (
-            <Link href={`/lab/comparar?ex=${e.id}`} className="btn-secondary">
+            <Link href={`${R.labCompare}?ex=${e.id}`} className="btn-secondary">
               {E.compare}
             </Link>
           )}
@@ -97,7 +98,7 @@ export default function ExercisePage({ id }: { id: string }) {
             const parts = tg.parts?.map((p) => m?.parts.find((x) => x.id === p)?.name ?? p);
             return (
               <li key={tg.muscle} data-role={tg.role}>
-                <Link href={`/atlas/${tg.muscle}`} className="target-list__name">
+                <Link href={muscleHref(tg.muscle)} className="target-list__name">
                   {m?.name ?? tg.muscle}
                 </Link>
                 {parts && <span className="target-list__parts">{parts.join(', ').toLowerCase()}</span>}

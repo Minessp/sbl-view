@@ -6,11 +6,14 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'wouter';
 import { t as tShell } from '@/i18n';
 import { t } from '@/i18n/app';
+import { LOCALE } from '@/i18n/locale';
+import { LangLink } from './LangLink';
+import { R } from './routes';
 import './footer.css';
 
 const F = t.footer;
 const N = tShell.nav;
-const built = new Date(`${__BUILD__}T12:00:00`).toLocaleDateString('pt-BR');
+const built = new Date(`${__BUILD__}T12:00:00`).toLocaleDateString(LOCALE);
 
 export default function Footer({ onSettings }: { onSettings: () => void }) {
   const ref = useRef<HTMLElement>(null);
@@ -48,16 +51,16 @@ export default function Footer({ onSettings }: { onSettings: () => void }) {
           <h2 id="ft-explore">{F.explore}</h2>
           <ul>
             <li>
-              <Link href="/atlas">{N.atlas}</Link>
+              <Link href={R.atlas}>{N.atlas}</Link>
             </li>
             <li>
-              <Link href="/exercicios">{N.library}</Link>
+              <Link href={R.library}>{N.library}</Link>
             </li>
             <li>
-              <Link href="/lab">{N.lab}</Link>
+              <Link href={R.lab}>{N.lab}</Link>
             </li>
             <li>
-              <Link href="/treino">{N.training}</Link>
+              <Link href={R.training}>{N.training}</Link>
             </li>
           </ul>
         </nav>
@@ -65,15 +68,18 @@ export default function Footer({ onSettings }: { onSettings: () => void }) {
           <h2 id="ft-project">{F.project}</h2>
           <ul>
             <li>
-              <Link href="/sobre">{F.about}</Link>
+              <Link href={R.about}>{F.about}</Link>
             </li>
             <li>
-              <Link href="/sobre#evidencia">{F.evidence}</Link>
+              <Link href={`${R.about}#evidencia`}>{F.evidence}</Link>
             </li>
             <li>
               <button type="button" className="site-footer__btn" aria-haspopup="dialog" onClick={onSettings}>
                 {F.settings}
               </button>
+            </li>
+            <li>
+              <LangLink />
             </li>
           </ul>
         </nav>
@@ -81,13 +87,13 @@ export default function Footer({ onSettings }: { onSettings: () => void }) {
           <h2 id="ft-legal">{F.legal}</h2>
           <ul>
             <li>
-              <Link href="/termos">{F.terms}</Link>
+              <Link href={R.terms}>{F.terms}</Link>
             </li>
             <li>
-              <Link href="/privacidade">{F.privacy}</Link>
+              <Link href={R.privacy}>{F.privacy}</Link>
             </li>
             <li>
-              <Link href="/licencas">{F.licenses}</Link>
+              <Link href={R.licenses}>{F.licenses}</Link>
             </li>
           </ul>
         </nav>

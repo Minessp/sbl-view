@@ -1,11 +1,12 @@
 import { Link } from 'wouter';
 import { t } from '@/i18n';
+import { R } from './routes';
 
 const LINKS = [
-  ['/atlas', t.nav.atlas],
-  ['/exercicios', t.nav.library],
-  ['/lab', t.nav.lab],
-  ['/treino', t.nav.training],
+  [R.atlas, t.nav.atlas],
+  [R.library, t.nav.library],
+  [R.lab, t.nav.lab],
+  [R.training, t.nav.training],
 ] as const;
 
 export function NotFound() {

@@ -21,6 +21,7 @@ import { fmtLoad, fromKg, toKg, useUnit } from '../units';
 import { barFor, Plates } from './Plates';
 import { useRestTimer } from './timer';
 import './live.css';
+import { exerciseHref, R } from '@/app/routes';
 
 const training = trainingJson as unknown as TrainingFile;
 
@@ -181,7 +182,7 @@ function ExerciseCard({ item, index, planned, rir, unit, done, warm, last, flash
         </span>
         <div className="live-card__title">
           <h3 id={`live-${item.exerciseId}`}>
-            <Link href={`/exercicios/${item.exerciseId}`}>{name}</Link>
+            <Link href={exerciseHref(item.exerciseId)}>{name}</Link>
           </h3>
           <p className="live-card__presc">
             {P.sets(planned)} · {P.reps(item.reps[0], item.reps[1])}
@@ -445,7 +446,7 @@ export function LiveSession({ open, onLogged, onContext }: Props) {
           )}
         </>
       )}
-      <Link href="/treino/plano" className="link-btn">
+      <Link href={R.plan} className="link-btn">
         {L.seePlan}
       </Link>
     </section>

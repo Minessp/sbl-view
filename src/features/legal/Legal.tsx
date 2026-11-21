@@ -4,13 +4,15 @@
  */
 import { Fragment, useEffect } from 'react';
 import { Link } from 'wouter';
-import { legal, type LegalBlock, type LegalPage } from '@/i18n/legal.pt-BR';
+import { legal } from '@/i18n/dict.legal';
+import type { LegalBlock, LegalPage } from '@/i18n/legal.pt-BR';
 import { t } from '@/i18n/app';
 import { TableWrap } from '@/ui/TableWrap';
 import { Title } from '@/ui/Title';
 import './legal.css';
+import { R } from '@/app/routes';
 
-const LEGAL_PATHS: Record<LegalPage, string> = { about: '/sobre', terms: '/termos', privacy: '/privacidade', licenses: '/licencas' };
+const LEGAL_PATHS: Record<LegalPage, string> = { about: R.about, terms: R.terms, privacy: R.privacy, licenses: R.licenses };
 
 /** `trecho` entre crases vira código (nomes de armazenamento). */
 function Inline({ text }: { text: string }) {

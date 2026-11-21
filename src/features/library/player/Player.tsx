@@ -6,7 +6,7 @@ import { useEffect, useId, useMemo, useRef } from 'react';
 import { LineChart, type LinePattern } from '@/charts/LineChart';
 import { cycleLength, repAt } from '@/engine/motion/keys';
 import type { CompiledClip } from '@/engine/motion/evaluate';
-import { fmt, t } from '@/i18n/app';
+import { fmt, locale, t } from '@/i18n/app';
 import { useStage } from '@/scene/stageStore';
 import { muscleById } from '../catalog';
 import { lengthCurves, valueAt } from './lengths';
@@ -165,7 +165,7 @@ function Transport({ clip }: { clip: CompiledClip }) {
           max={Math.round(T * 100) / 100}
           step={0.01}
           value={Math.round((time % T) * 100) / 100}
-          aria-valuetext={`${fmt.n1(time % T)} de ${fmt.n1(T)} segundos, ${phase.toLowerCase()}`}
+          aria-valuetext={t.sr.timeNow(fmt.n1(time % T), fmt.n1(T), phase.toLowerCase())}
           onChange={(e) => {
             const st = usePlayer.getState();
             st.setPlaying(false);
@@ -188,7 +188,7 @@ function Options() {
       <span className="demo__speeds" role="group" aria-label={P.speed}>
         {PLAYER_SPEEDS.map((v) => (
           <button key={v} type="button" className="chip chip--small" aria-pressed={speed === v} onClick={() => usePlayer.getState().setSpeed(v)}>
-            {`${String(v).replace('.', ',')}×`}
+            {`${v.toLocaleString(locale)}×`}
           </button>
         ))}
       </span>
@@ -257,7 +257,7 @@ function Lengths({ clip, targets }: { clip: CompiledClip; targets: PlayerTargets
   const describe =
     `${P.lengthTitle}: ` +
     series
-      .map((s) => `${s.label} vai de ${fmt.n0(Math.round(s.values[0] ?? 0))} a ${fmt.n0(Math.round(s.values[s.values.length - 1] ?? 0))} por cento`)
+      .map((s) => t.sr.goes(s.label, fmt.n0(Math.round(s.values[0] ?? 0)), fmt.n0(Math.round(s.values[s.values.length - 1] ?? 0)), t.sr.pct))
       .join('; ');
   return (
     <div className="player__lengths">

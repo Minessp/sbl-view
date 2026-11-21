@@ -11,6 +11,7 @@ import { actionCurves } from '../model';
 import { defaultView as defaultViewOf, keyOf, LAYER_ORDER, useAtlas, type AtlasView, type CutAxis, type LayerMode, type Pick } from '../store';
 import { DemoButton, DemoControls, useDemoMarker } from './ActionDemo';
 import { describe, searchIndex, searchStructures } from './names';
+import { muscleHref } from '@/app/routes';
 
 const E = () => t.atlas.ex;
 const VIEWS: AtlasView[] = ['front', 'back', 'side'];
@@ -236,7 +237,7 @@ function DemoChart({ c }: { c: ReturnType<typeof actionCurves>[number] }) {
       zeroLine
       reveal={false}
       yFormat={(v) => `${fmt.n0(Math.round(v) || 0)}%`}
-      description={`${t.atlas.length}, ${c.axisLabel} de ${c.range[0]} a ${c.range[1]} graus.`}
+      description={`${t.atlas.length}, ${t.sr.range(c.axisLabel, c.range[0], c.range[1])}.`}
     />
   );
 }
@@ -293,7 +294,7 @@ export function SelectionCard() {
           {d.muscle && d.muscle.parts.length > 1 && <PartPicker muscle={d.muscle} selection={selection} />}
           <div className="sel__actions">
             {d.muscle && (
-              <Link href={`/atlas/${d.muscle.id}`} className="chip chip--small chip--accent">
+              <Link href={muscleHref(d.muscle.id)} className="chip chip--small chip--accent">
                 {E().open}
               </Link>
             )}
