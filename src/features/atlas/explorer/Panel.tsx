@@ -99,7 +99,7 @@ export function LayerControls() {
   );
 }
 
-export function ToolControls() {
+export function ToolControls({ cutOnly = false }: { cutOnly?: boolean }) {
   const exploded = useAtlas((s) => s.exploded);
   const cut = useAtlas((s) => s.cut);
   const setCut = useAtlas((s) => s.setCut);
@@ -107,11 +107,13 @@ export function ToolControls() {
   return (
     <fieldset className="panel-block tools-ctl">
       <legend className="panel-block__title">{E().tools}</legend>
-      <label className="toggle">
-        <input type="checkbox" checked={exploded} onChange={(e) => useAtlas.getState().setExploded(e.target.checked)} />
-        <span className="toggle__track" aria-hidden="true" />
-        {E().explode}
-      </label>
+      {!cutOnly && (
+        <label className="toggle">
+          <input type="checkbox" checked={exploded} onChange={(e) => useAtlas.getState().setExploded(e.target.checked)} />
+          <span className="toggle__track" aria-hidden="true" />
+          {E().explode}
+        </label>
+      )}
       <div className="tools-ctl__cut">
         <span className="tools-ctl__label" id={`${id}-axis`}>
           {E().cut}

@@ -1,51 +1,4 @@
 /* ---------- Explorador do corpo ---------- */
-.explorer {
-  display: grid;
-  gap: var(--s-4);
-}
-
-.explorer__stage {
-  display: grid;
-  gap: var(--s-3);
-  align-content: start;
-  min-width: 0;
-}
-
-.explorer__view {
-  height: min(68svh, 640px);
-  min-height: 360px;
-}
-
-.explorer__hint {
-  margin: 0;
-  font-size: var(--fs-2);
-  color: var(--c-ink-2);
-}
-
-.explorer__panel {
-  display: grid;
-  gap: var(--s-3);
-  align-content: start;
-  min-width: 0;
-}
-
-@media (min-width: 1000px) {
-  .explorer {
-    grid-template-columns: minmax(0, 1fr) minmax(340px, 400px);
-    gap: var(--s-5);
-    align-items: start;
-  }
-  .explorer__stage {
-    position: sticky;
-    top: calc(var(--header-h) + var(--s-3));
-  }
-  .explorer__view {
-    height: calc(100svh - var(--header-h) - 150px);
-    max-height: 900px;
-    min-height: 480px;
-  }
-}
-
 /* Vista: arrastar gira; toque não rola a página dentro dela. */
 .explorer-view {
   touch-action: none;
@@ -641,33 +594,6 @@ fieldset.panel-block > legend + * {
   color: var(--c-cool);
 }
 
-/* ---------- Página do músculo ---------- */
-.atlas-stage__more {
-  display: grid;
-  gap: var(--s-3);
-}
-
-.atlas-stage__more > summary {
-  justify-self: start;
-  list-style: none;
-  cursor: pointer;
-}
-
-.atlas-stage__more > summary::-webkit-details-marker {
-  display: none;
-}
-
-.atlas-stage__more[open] > summary {
-  border-color: color-mix(in oklch, var(--c-accent) 70%, transparent);
-  color: var(--c-ink);
-}
-
-.atlas-stage__more-body {
-  display: grid;
-  gap: var(--s-3);
-  margin-top: var(--s-3);
-}
-
 .curve__demo {
   display: flex;
 }
@@ -676,15 +602,7 @@ fieldset.panel-block > legend + * {
   box-shadow: inset 0 0 0 var(--lw-hair) color-mix(in oklch, var(--c-accent) 45%, transparent);
 }
 
-/* ---------- Lista do índice ---------- */
-.atlas-explorer__top {
-  scroll-margin-top: calc(var(--header-h) + var(--s-3));
-}
-
-.atlas-list {
-  padding-top: var(--s-8);
-}
-
+/* ---------- Lista do índice (gaveta) ---------- */
 .atlas-row {
   display: flex;
   align-items: center;

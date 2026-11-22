@@ -1,0 +1,233 @@
+/* ---------- Mergulho: diálogo de tela cheia por cima do palco ---------- */
+.dive {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--c-bg);
+  color: var(--c-ink);
+  overflow: hidden;
+}
+
+.dive:not([open]) {
+  display: none;
+}
+
+.dive::backdrop {
+  background: transparent;
+}
+
+.dive__head {
+  position: absolute;
+  z-index: 2;
+  top: var(--s-4);
+  left: var(--s-5);
+  right: var(--s-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+
+.dive__levels {
+  display: flex;
+  margin: 0;
+  padding: 3px;
+  list-style: none;
+  border-radius: var(--r-pill);
+  background: color-mix(in oklch, var(--c-bg-2) 60%, transparent);
+  box-shadow: inset 0 0 0 var(--lw-hair) var(--c-edge);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+.dive__level-btn,
+.dive__back,
+.dive__deeper {
+  min-height: var(--touch);
+  padding: 0 var(--s-4);
+  border: 0;
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--c-ink-2);
+  font: inherit;
+  font-size: var(--fs-2);
+  cursor: pointer;
+}
+
+.dive__level-btn:hover,
+.dive__back:hover {
+  color: var(--c-ink);
+}
+
+.dive__level-btn[aria-current='step'] {
+  color: var(--c-accent);
+  box-shadow: var(--glow-ring);
+}
+
+.dive__back,
+.dive__deeper {
+  background: color-mix(in oklch, var(--c-bg-2) 60%, transparent);
+  box-shadow: inset 0 0 0 var(--lw-hair) var(--c-edge);
+  color: var(--c-ink);
+}
+
+.dive__deeper {
+  justify-self: start;
+  box-shadow: var(--glow-ring);
+}
+
+/* Cada nível entra por um corte que desce, com a frente pontilhada acesa. */
+.dive__stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  animation: dive-cut 700ms var(--ease) both;
+}
+
+.dive__stage::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  border-top: 2px dotted var(--c-glow);
+  filter: drop-shadow(0 0 6px var(--c-glow));
+  pointer-events: none;
+  animation: dive-front 700ms var(--ease) both;
+}
+
+@keyframes dive-cut {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+
+@keyframes dive-front {
+  from {
+    top: 0;
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  to {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+.dive-fibers {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.dive__card {
+  position: absolute;
+  left: var(--s-5);
+  right: var(--s-5);
+  bottom: var(--s-5);
+  display: grid;
+  gap: var(--s-3);
+  max-width: 420px;
+  padding: var(--s-4);
+  border-radius: var(--r-2);
+  background: color-mix(in oklch, var(--c-bg-2) 66%, transparent);
+  box-shadow: inset 0 0 0 var(--lw-hair) var(--c-edge);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.dive__note {
+  margin: 0;
+  color: var(--c-ink-2);
+  font-size: var(--fs-2);
+  line-height: var(--lh-text);
+}
+
+/* ---------- Sarcômero ---------- */
+.dive-sarcomere {
+  display: grid;
+  gap: var(--s-3);
+  width: min(760px, calc(100% - 2 * var(--s-4)));
+  max-height: calc(100% - 96px);
+  margin-top: 64px;
+  overflow-y: auto;
+}
+
+.sarcomere {
+  width: 100%;
+  height: auto;
+}
+
+.sarcomere__overlap {
+  fill: color-mix(in oklch, var(--c-glow) 22%, transparent);
+}
+
+.sarcomere__thick {
+  fill: var(--c-body-muscle);
+  stroke: color-mix(in oklch, var(--c-glow) 50%, var(--c-body-muscle));
+  stroke-width: 1;
+}
+
+.sarcomere__head {
+  stroke: color-mix(in oklch, var(--c-glow) 60%, var(--c-body-muscle));
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.sarcomere__thin {
+  stroke: var(--c-ink-2);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.sarcomere__z {
+  fill: none;
+  stroke: var(--c-ink);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+}
+
+.sarcomere__m {
+  stroke: var(--c-ink-2);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+
+.sarcomere__labels {
+  fill: var(--c-ink-2);
+  font-size: 13px;
+}
+
+.dive-sarcomere__rel {
+  margin: 0;
+  font-size: var(--fs-3);
+}
+
+.dive-sarcomere__rel strong {
+  color: var(--c-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dive__stage,
+  .dive__stage::after {
+    animation: none;
+  }
+
+  .dive__stage::after {
+    display: none;
+  }
+}

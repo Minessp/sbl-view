@@ -6,7 +6,7 @@
 import { PerspectiveCamera } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
-import type { PerspectiveCamera as PerspCam } from 'three';
+import { Vector3, type PerspectiveCamera as PerspCam } from 'three';
 import { muscleDefs, skeletonDef } from '@/data';
 import { forwardKinematics, pointToWorld } from '@/engine/kinematics/fk';
 import { buildSkeleton } from '@/engine/kinematics/skeleton';
@@ -15,7 +15,9 @@ import { DEG, type Vec3 } from '@/engine/math/vec';
 import { EXPLODE_SPACING } from '@/features/home/timeline';
 import { advanceDemo, DEMO_ENTER_SECONDS, demoAngle, demoPhaseOf, enterEase, strainOf } from '@/features/atlas/explorer/demo';
 import { BODY_BOX, dampOrbit, fitDistance, FOV_DEG, orbitPosition, orbitsClose, screenAxes, type Orbit } from '@/features/atlas/explorer/orbit';
-import { keyOf, LAYER_ORDER, samePick, useAtlas, type BodyLayerId, type DemoSpec, type LayerMode, type Pick, type StructureInfo } from '@/features/atlas/store';
+import { keyOf, LAYER_ORDER, samePick, useAtlas, useLabelFeed, type BodyLayerId, type DemoSpec, type LabelFeedItem, type LayerMode, type Pick, type StructureInfo } from '@/features/atlas/store';
+import { choose, HOLD_MS, settle, type Hold, type LabelCandidate } from '@/features/atlas/explorer/labels';
+import { REGIONS } from '@/features/library/catalog';
 import { ContactShadow } from '../body/ContactShadow';
 import type { BodyInstance } from '../body/instance';
 import { layerOf, mergeBoxes, type Box, type BodyModel } from '../body/model';
@@ -36,6 +38,15 @@ const HOVER = 0.4;
 /** Opacidade do fantasma por camada (pele: alfa da mistura). */
 const GHOST: Record<BodyLayerId, number> = { skin: 0.22, superficial: 0.14, deep: 0.14, bone: 0.2 };
 const CUT_GHOST = 0.05;
+/** Alavanca de descascar: a frente desce do alto da cabeça ao chão (m). */
+const PEEL_TOP = 1.86;
+const PEEL_SPAN = 1.88;
+/** Margem do corpo inteiro no quadro: 1 / 1,16 ≈ 86% da altura. */
+const BODY_MARGIN = 1.16;
+/** Grade do passe de seleção dos rótulos (células na largura). */
+const LABEL_GRID = 120;
+const LABEL_EVERY = 0.25;
+const PROJ = new Vector3();
 /** Faixa de cada eixo de corte (m), na ordem do controle 0..1, e a normal (o lado positivo some). */
 const CUTS = {
   transverse: { n: [0, 1, 0] as Vec3, lo: 1.85, hi: -0.02 },
@@ -140,7 +151,7 @@ function ExplorerBody() {
     let last: unknown[] = [];
     const apply = (force = false) => {
       const st = useAtlas.getState();
-      const sig = [st.layers, st.hidden, st.ghosted, st.isolate, st.selection, st.hover, st.exploded, st.cut.axis, st.demo.spec];
+      const sig = [st.layers, st.hidden, st.ghosted, st.isolate, st.selection, st.hover, st.exploded, st.cut.axis, st.demo.spec, peelFrac(st.peel) > 0];
       if (!force && sig.every((v, i) => v === last[i])) return;
       last = sig;
       const { layers, selection, hover, demo, exploded } = st;
@@ -148,6 +159,7 @@ function ExplorerBody() {
       body.fill('opacity', 1);
       body.fill('hidden', 0);
       if (!demo.spec) body.fill('strain', 0);
+      body.fill('ends', 0);
       const sel = selection ? keySlots(model, selection) : [];
       const selLayers = new Set(sel.map((i) => model.slots[i]?.layer));
       const inner = Math.min(...LAYER_ORDER.map((l, i) => (selLayers.has(l) ? i : 99)));
@@ -186,11 +198,12 @@ function ExplorerBody() {
         // Parte em foco: o resto do músculo fica aceso de leve, como contexto.
         if (selection.part && !demo.spec) body.fill('highlight', PART_CONTEXT, keySlots(model, { ...selection, part: undefined }));
         body.fill('highlight', demo.spec ? 0.1 : 1, sel);
+        if (selection.kind === 'muscle' && !demo.spec) body.fill('ends', 1, sel);
         if (!st.hidden.includes(k)) body.fill('hidden', 0, sel);
         if (!st.ghosted.includes(k)) body.fill('opacity', 1, sel);
       }
       // Pele intacta e opaca: o que está embaixo não precisa desenhar (e não fura a pele onde encosta).
-      const sealed = layers.skin === 'on' && skinAlpha >= 1 && !exploded && st.cut.axis === 'none';
+      const sealed = layers.skin === 'on' && skinAlpha >= 1 && !exploded && st.cut.axis === 'none' && peelFrac(st.peel) === 0;
       for (const l of ['superficial', 'deep', 'bone'] as const) body.layer(l, { showAbove: sealed ? 99 : -99 });
       body.commit();
       invalidate();
@@ -231,7 +244,8 @@ function ExplorerBody() {
       const st = useAtlas.getState();
       // Enquadra pelo slot da página (o procurador pode estar no meio do voo).
       const rect = (slot ?? dir.frame).getBoundingClientRect();
-      const aspect = rect.width / Math.max(1, rect.height);
+      // Com o corpo deslocado, sobra menos largura para enquadrar.
+      const aspect = (rect.width / Math.max(1, rect.height)) * (1 - 2 * Math.abs(st.shift));
       const yaw = st.fly.yaw ?? st.orbit.yaw;
       const ex = st.exploded;
       if (st.fly.yaw !== null || !ex) {
@@ -239,7 +253,17 @@ function ExplorerBody() {
         spreadAxis.current = right;
       }
       let box: Box | null = null;
-      if (st.selection) {
+      const to = st.fly.to;
+      if (to && 'region' in to) {
+        const groups = new Set(REGIONS.find((r) => r.id === to.region)?.groups ?? []);
+        const slots = muscleDefs.filter((m) => groups.has(m.group)).flatMap((m) => model.byMuscle.get(m.id) ?? []);
+        const b = body.posedBox(slots);
+        if (b) box = { center: b.center, size: [b.size[0] * 1.05, b.size[1] * 1.08, b.size[2]] };
+      } else if (to && st.selection) {
+        const i = endSlot(model, st.selection);
+        const q: [number, number, number] = [0, 0, 0];
+        if (i !== null && body.linePoint(i, to.end === 'origin' ? 0 : 15, q)) box = { center: q, size: [0.2, 0.2, 0.2] };
+      } else if (st.selection) {
         box = selectionBox(body, model, st.selection);
         if (box && st.demo.spec) box = demoBox(body, model, st.selection, st.demo.spec) ?? box;
         if (box && ex) {
@@ -250,10 +274,11 @@ function ExplorerBody() {
         }
       }
       let dist: number;
+      // shortcut: ponta e região não levam o deslocamento da vista explodida; com as camadas abertas o voo erra um pouco.
       if (box) dist = fitDistance(box.size, yaw, aspect);
       else {
         box = BODY_BOX;
-        dist = ex ? fitDistance([BODY_BOX.size[0] + Math.max(0, LAYER_ORDER.filter((l) => st.layers[l] !== 'off').length - 1) * EXPLODE_SPACING, BODY_BOX.size[1], BODY_BOX.size[2]], 0, aspect, 1.08) : fitDistance(BODY_BOX.size, yaw, aspect, 1.06);
+        dist = ex ? fitDistance([BODY_BOX.size[0] + Math.max(0, LAYER_ORDER.filter((l) => st.layers[l] !== 'off').length - 1) * EXPLODE_SPACING, BODY_BOX.size[1], BODY_BOX.size[2]], 0, aspect, 1.08) : fitDistance(BODY_BOX.size, yaw, aspect, BODY_MARGIN);
       }
       const goal: Orbit = { yaw, pitch: st.orbit.pitch, dist, target: box.center };
       st.setOrbit(goal);
@@ -265,6 +290,153 @@ function ExplorerBody() {
       if (s.fly.nonce !== p.fly.nonce) run();
     });
   }, [body, model, slot, dir, invalidate]);
+
+  /** Rótulos vivos: histerese, ponto 3D de cada rótulo mostrado, última medida e se a vista mudou desde ela. */
+  const labels = useRef({
+    mem: new Map<string, Hold>(),
+    anchors: new Map<string, { p: Vec3; muscleId: string; side: LabelFeedItem['side'] }>(),
+    shown: [] as string[],
+    last: -1,
+    dirty: true,
+    pending: false,
+    bounds: null as { l: number; r: number } | null,
+    live: false,
+  });
+  useEffect(
+    () =>
+      useAtlas.subscribe(() => {
+        labels.current.dirty = true;
+      }),
+    [],
+  );
+  useEffect(
+    () =>
+      useLabelFeed.subscribe((s, p) => {
+        if (s.on === p.on && s.labels === p.labels) return;
+        labels.current.dirty = true;
+        invalidate();
+      }),
+    [invalidate],
+  );
+
+  /** Mede a área visível de cada músculo num passe de seleção em grade e escolhe os rótulos. */
+  const sampleLabels = (cam: PerspCam, now: number) => {
+    if (!body || !model) return;
+    const L = labels.current;
+    const w = dir.rect.w, h = dir.rect.h;
+    const gw = LABEL_GRID, gh = Math.max(1, Math.round((gw * h) / Math.max(1, w)));
+    const ids = body.pickGrid(gl, cam, gw, gh);
+    type Acc = { n: number; sx: number; sy: number; bx: number; by: number; bd: number; slot: number };
+    const acc = new Map<string, Acc>();
+    let lo = Infinity, hi = -Infinity;
+    const keyAt = (i: number): string | null => {
+      const s = model.slots[(ids[i] ?? 0) - 1];
+      return s && s.kind === 'muscle' && s.muscleId ? `${s.muscleId}:${s.side}` : null;
+    };
+    for (let y = 0; y < gh; y++)
+      for (let x = 0; x < gw; x++) {
+        const i = y * gw + x;
+        if (!ids[i]) continue;
+        lo = Math.min(lo, x);
+        hi = Math.max(hi, x);
+        const k = keyAt(i);
+        if (!k) continue;
+        const a = acc.get(k) ?? { n: 0, sx: 0, sy: 0, bx: 0, by: 0, bd: Infinity, slot: (ids[i] ?? 1) - 1 };
+        a.n++;
+        a.sx += x;
+        a.sy += y;
+        acc.set(k, a);
+      }
+    // Ponto do rótulo: a célula do músculo mais perto do centróide (o centróide de uma lâmina curva pode cair fora dela).
+    for (let y = 0; y < gh; y++)
+      for (let x = 0; x < gw; x++) {
+        const i = y * gw + x;
+        const k = ids[i] ? keyAt(i) : null;
+        const a = k ? acc.get(k) : undefined;
+        if (!a) continue;
+        const d = (x - a.sx / a.n) ** 2 + (y - a.sy / a.n) ** 2;
+        if (d < a.bd) Object.assign(a, { bd: d, bx: x, by: y, slot: (ids[i] ?? 1) - 1 });
+      }
+    const px = (a: Acc): [number, number] => [((a.bx + 0.5) / gw) * w, (1 - (a.by + 0.5) / gh) * h];
+    // Um rótulo por músculo (o corpo é simétrico): a cópia que mais aparece concorre.
+    const sides = new Map<string, [string, Acc][]>();
+    for (const [key, a] of acc) {
+      const id = key.slice(0, key.lastIndexOf(':'));
+      sides.set(id, [...(sides.get(id) ?? []), [key, a]]);
+    }
+    const cands: LabelCandidate[] = [];
+    for (const [id, list] of sides) {
+      const top = list.reduce((m, x) => (x[1].n > m[1].n ? x : m));
+      const [x, y] = px(top[1]);
+      cands.push({ key: id, area: top[1].n, x, y });
+    }
+    const max = w < 700 ? 6 : 10;
+    L.shown = settle(L.mem, choose(cands, w, h, max), now * 1000, HOLD_MS, max);
+    L.pending = [...L.mem.values()].some((e) => e.since !== null);
+    L.bounds = hi >= lo ? { l: (lo / gw) * w, r: ((hi + 1) / gw) * w } : null;
+    const mid = L.bounds ? (L.bounds.l + L.bounds.r) / 2 : w / 2;
+    cam.updateMatrixWorld();
+    const q: [number, number, number] = [0, 0, 0];
+    const count = { l: 0, r: 0 };
+    for (const id of L.shown) {
+      // Cópia de cada músculo: a que deixa as duas colunas mais parelhas; empate fica com a da medida anterior.
+      const opts = (sides.get(id) ?? []).map(([, a]) => ({ a, col: px(a)[0] < mid ? ('l' as const) : ('r' as const), side: model.slots[a.slot]?.side }));
+      const prev = L.anchors.get(id)?.side;
+      opts.sort((u, v) => count[u.col] - count[v.col] || Number(v.side === prev) - Number(u.side === prev) || v.a.n - u.a.n);
+      const o = opts[0];
+      const s = o ? model.slots[o.a.slot] : undefined;
+      if (!o || !s || !s.muscleId) continue;
+      count[o.col]++;
+      // Ponto 3D: o da linha central que cai mais perto da célula escolhida (o rótulo acompanha o giro entre medidas).
+      const [tx, ty] = px(o.a);
+      const off = body.meshes[s.layer].position;
+      let best: Vec3 | null = null;
+      let bd = Infinity;
+      for (let k = 0; k < 16; k++) {
+        if (!body.linePoint(o.a.slot, k, q)) break;
+        PROJ.set(q[0] + off.x, q[1] + off.y, q[2] + off.z).project(cam);
+        const d = (((PROJ.x + 1) / 2) * w - tx) ** 2 + (((1 - PROJ.y) / 2) * h - ty) ** 2;
+        if (d < bd) {
+          bd = d;
+          best = [q[0] + off.x, q[1] + off.y, q[2] + off.z];
+        }
+      }
+      if (best) L.anchors.set(id, { p: best, muscleId: s.muscleId, side: s.side });
+    }
+    for (const k of [...L.anchors.keys()]) if (!L.shown.includes(k)) L.anchors.delete(k);
+  };
+
+  /** Projeta os rótulos mostrados e as pontas da seleção (px do cliente) e entrega à página. */
+  const publishLabels = (cam: PerspCam) => {
+    if (!body || !model || !slot) return;
+    const L = labels.current;
+    const r = slot.getBoundingClientRect();
+    const w = dir.rect.w, h = dir.rect.h;
+    cam.updateMatrixWorld();
+    const toClient = (p: Vec3): [number, number] | null => {
+      PROJ.set(p[0], p[1], p[2]).project(cam);
+      return PROJ.z > 1 ? null : [r.left + ((PROJ.x + 1) / 2) * w, r.top + ((1 - PROJ.y) / 2) * h];
+    };
+    const items: LabelFeedItem[] = [];
+    for (const key of L.shown) {
+      const a = L.anchors.get(key);
+      const c = a ? toClient(a.p) : null;
+      if (a && c) items.push({ key, muscleId: a.muscleId, side: a.side, x: c[0], y: c[1] });
+    }
+    let ends: { origin: [number, number]; insertion: [number, number] } | null = null;
+    const st = useAtlas.getState();
+    const i = st.selection?.kind === 'muscle' && !st.demo.spec ? endSlot(model, st.selection) : null;
+    if (i !== null) {
+      const q: [number, number, number] = [0, 0, 0];
+      const off = body.meshes[model.slots[i]?.layer ?? 'deep'].position;
+      const at = (k: number) => (body.linePoint(i, k, q) ? toClient([q[0] + off.x, q[1] + off.y, q[2] + off.z]) : null);
+      const o = at(0), n = at(15);
+      if (o && n) ends = { origin: o, insertion: n };
+    }
+    const b = L.bounds;
+    useLabelFeed.setState({ items, ends, rect: { x: r.left, y: r.top, w, h }, body: b ? { left: r.left + b.l, right: r.left + b.r } : null });
+    L.live = true;
+  };
 
   const clock = useRef(0);
   useFrame(() => {
@@ -324,10 +496,14 @@ function ExplorerBody() {
     const a = spreadAxis.current;
     const cut = st.cut.axis === 'none' ? null : CUTS[st.cut.axis];
     const spread = spreadSlots(st.layers);
+    // Alavanca entre dois batentes: a camada de cima vira vulto acima de uma frente que desce da cabeça aos pés.
+    const pf = peelFrac(st.peel);
+    const peeling = pf > 0 ? LAYER_ORDER[Math.floor(st.peel)] : undefined;
     for (const l of LAYER_ORDER) {
       const o = spread[l] * EXPLODE_SPACING * e;
       body.meshes[l].position.set(a[0] * o, 0, a[2] * o);
-      if (cut) {
+      if (l === peeling) body.layer(l, { cut: PEEL_TOP - pf * PEEL_SPAN, cutNormal: [0, 1, 0], ghost: GHOST[l] });
+      else if (cut) {
         // O plano acompanha a camada aberta.
         const d = cut.lo + (cut.hi - cut.lo) * st.cut.at + (cut.n[0] * a[0] + cut.n[2] * a[2]) * o;
         body.layer(l, { cut: d, cutNormal: cut.n, ghost: CUT_GHOST });
@@ -340,10 +516,39 @@ function ExplorerBody() {
     if (orbitsClose(cur.current, goal)) cur.current = goal;
     else invalidate();
     cam.aspect = dir.rect.w / dir.rect.h;
-    const drawn = dir.camera(cam, orbitPosition(cur.current), cur.current.target);
+    let eye = orbitPosition(cur.current);
+    let look = cur.current.target;
+    if (st.shift) {
+      // Corpo deslocado no quadro: câmera e alvo andam juntos ao contrário, no plano da tela.
+      const { right } = screenAxes(cur.current);
+      const k = st.shift * 2 * cur.current.dist * Math.tan((FOV_DEG * Math.PI) / 360) * cam.aspect;
+      eye = [eye[0] - right[0] * k, eye[1] - right[1] * k, eye[2] - right[2] * k];
+      look = [look[0] - right[0] * k, look[1] - right[1] * k, look[2] - right[2] * k];
+    }
+    const drawn = dir.camera(cam, eye, look);
     cam.near = Math.max(0.02, Math.min(drawn, cur.current.dist) * 0.05);
     cam.far = Math.max(drawn, cur.current.dist) + 12;
     cam.updateProjectionMatrix();
+
+    // ---- Rótulos vivos: medem com a vista mudando (no máximo a cada 0,25 s) e de novo quando a histerese pede ----
+    const L = labels.current;
+    if (!useLabelFeed.getState().on || dir.flying) {
+      if (L.live) useLabelFeed.setState({ items: [], ends: null });
+      L.live = false;
+      L.dirty = true;
+      return;
+    }
+    if (!orbitsClose(cur.current, goal) || spec || e !== goalE) L.dirty = true;
+    if (!useLabelFeed.getState().labels) {
+      L.shown = [];
+      L.pending = false;
+    } else if ((L.dirty || L.pending) && now - L.last >= LABEL_EVERY) {
+      sampleLabels(cam, now);
+      L.last = now;
+      L.dirty = false;
+    }
+    publishLabels(cam);
+    if (L.dirty || L.pending) invalidate();
   });
 
   return (
@@ -353,6 +558,18 @@ function ExplorerBody() {
       {body && <primitive object={body.group} />}
     </>
   );
+}
+
+/** Parte fracionária da alavanca (0 no batente). */
+function peelFrac(p: number): number {
+  const f = p - Math.floor(p + 1e-6);
+  return f > 0.002 ? f : 0;
+}
+
+/** Vaga cuja linha central dá origem e inserção da seleção: a primeira do lado tocado. */
+function endSlot(model: BodyModel, sel: Pick): number | null {
+  const all = keySlots(model, sel).filter((i) => model.slots[i]?.line);
+  return all.find((i) => model.slots[i]?.side === sel.side || model.slots[i]?.side === 'c') ?? all[0] ?? null;
 }
 
 /** Ângulos da demonstração na fase dada; `k` mistura da pose em pé (0) até a da ação (1). */

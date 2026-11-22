@@ -90,3 +90,12 @@ export function actionCurves(m: MuscleDef, part?: string): ActionCurve[] {
   }
   return out;
 }
+
+/** Comprimento relativo a em pé (1 = em pé) na fração f do eixo da curva (primeira série). */
+export function relLength(c: ActionCurve | undefined, f: number): number {
+  const v = c?.series[0]?.length;
+  if (!c || !v || v.length < 2) return 1;
+  const x = Math.min(1, Math.max(0, f)) * (v.length - 1);
+  const i = Math.min(v.length - 2, Math.floor(x));
+  return 1 + ((v[i] ?? 0) + ((v[i + 1] ?? 0) - (v[i] ?? 0)) * (x - i));
+}

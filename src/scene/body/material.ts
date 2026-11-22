@@ -4,7 +4,8 @@
  *
  * Estado (2 texels por vaga, RGBA float):
  *   linha 0: destaque, opacidade, calor, ativação (0..1)
- *   linha 1: oculto (> 0,5), volume (fração radial somada ao ventre), deformação (−1 alongado … +1 encurtado), —
+ *   linha 1: oculto (> 0,5), volume (fração radial somada ao ventre), deformação (−1 alongado … +1 encurtado), pontas
+ *   (origem e inserção acesas, 0..1)
  * Opacidade abaixo de 1 vira pontilhado (sem ordenar transparência); a pele é a única camada com mistura.
  *
  * Luz (rig.ts): fluxo linear, key de tungstênio com difusão envolvente (luz atravessa a borda: vermelho no músculo),
@@ -332,12 +333,17 @@ const fragment = /* glsl */ `
       emit += glow * lit * (0.1 + 0.22 * lit) * add;
       // Borda da lente: a camada acende onde foi cortada.
       if (peel > 0.0) emit += glow * exp(-pow((lensD - peel) / max(2.0, uLens.z * 0.025), 2.0)) * 1.4;
+      // Frente do corte: a superfície acende onde o plano a atravessa.
+      if (uCut < 90.0) emit += glow * exp(-pow((dot(vW, uCutN) - uCut) / 0.005, 2.0)) * 1.2 * add;
       #ifdef MUSCLE
         // Frente da montagem.
         if (uGrow < 2.0) emit += glow * exp(-pow((grow - t) * 16.0, 2.0)) * 2.2;
       #endif
       #ifdef MUSCLE
         emit += (glow * sh * 0.6 + cool * st * 0.95) * add;
+        // Origem e inserção do músculo em foco: as pontas da linha central acendem.
+        float tt = clamp(vAlong, 0.0, 1.0);
+        emit += glow * vS1.w * max(1.0 - smoothstep(0.035, 0.07, tt), smoothstep(0.93, 0.965, tt)) * 1.3 * add;
         // Halo de pigmento (claro): a silhueta do que está aceso puxa para laranja escuro em vez de brilhar.
         col = mix(col, glow * 0.3, pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 2.0) * lit * uRimMode * 0.6);
       #endif

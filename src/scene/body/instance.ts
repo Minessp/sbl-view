@@ -26,7 +26,7 @@ import { detailFor, screenHeightPx, type Detail } from '../anatomy/lod';
 import { LAYERS, mergeBoxes, type Box, type BodyLayer, type BodyModel } from './model';
 
 /** Canais do estado por vaga. */
-export const CH = { highlight: 0, opacity: 1, heat: 2, activation: 3, hidden: 4, bulge: 5, strain: 6 } as const;
+export const CH = { highlight: 0, opacity: 1, heat: 2, activation: 3, hidden: 4, bulge: 5, strain: 6, ends: 7 } as const;
 export type Channel = keyof typeof CH;
 
 const COLOR: Record<BodyLayer, keyof Palette> = { bone: 'body-bone', deep: 'body-muscle', superficial: 'body-muscle', skin: 'body-skin' };
@@ -68,6 +68,7 @@ export class BodyInstance {
   private readonly picking: Record<BodyLayer, ShaderMaterial>;
   private readonly bind: Map<string, readonly [number, number, number]>;
   private target: WebGLRenderTarget | null = null;
+  private grid: WebGLRenderTarget | null = null;
   private lockDetail = false;
   /** Matrizes da última pose (12 por junta), para medir caixas posadas. */
   private matrices: Float64Array | null = null;
@@ -343,33 +344,72 @@ export class BodyInstance {
    * Vaga sob o pixel (x, y) de uma vista de w × h (px, origem no canto superior esquerdo), ou null.
    * Desenha só o corpo, com o material de seleção, num alvo de 1 × 1.
    */
-  pick(gl: WebGLRenderer, camera: Camera & { setViewOffset?: (...a: number[]) => void; clearViewOffset?: () => void; updateProjectionMatrix?: () => void }, x: number, y: number, w: number, h: number): number | null {
-    if (!camera.setViewOffset || !camera.clearViewOffset) return null;
-    this.target ??= new WebGLRenderTarget(1, 1);
+  /** Ponto k (0 origem … 15 inserção) da linha central posada da vaga (m, mundo, sem o deslocamento das malhas). */
+  linePoint(slot: number, k: number, out: [number, number, number]): boolean {
+    const line = this.model.slots[slot]?.line;
+    const M = this.matrices;
+    if (!line || !M) return false;
+    const tmp: [number, number, number] = [0, 0, 0];
+    out[0] = out[1] = out[2] = 0;
+    for (let i = 0; i < 4; i++) {
+      const w = line.weights[k * 4 + i] ?? 0;
+      if (w === 0) continue;
+      skinPoint(M, line.joints[k * 4 + i] ?? 0, line.points[k * 3] ?? 0, line.points[k * 3 + 1] ?? 0, line.points[k * 3 + 2] ?? 0, tmp);
+      out[0] += w * tmp[0];
+      out[1] += w * tmp[1];
+      out[2] += w * tmp[2];
+    }
+    return true;
+  }
+
+  /**
+   * Passe de seleção na vista inteira numa grade gw × gh (sem a pele): vaga + 1 por célula, 0 = nada; linha 0 embaixo.
+   * Um desenho só dá a área visível de cada estrutura (rótulos vivos).
+   */
+  pickGrid(gl: WebGLRenderer, camera: Camera, gw: number, gh: number): Uint16Array {
+    const grid = (this.grid ??= new WebGLRenderTarget(gw, gh));
+    if (grid.width !== gw || grid.height !== gh) grid.setSize(gw, gh);
+    const px = new Uint8Array(gw * gh * 4);
+    this.pickPass(gl, camera, grid, () => gl.readRenderTargetPixels(grid, 0, 0, gw, gh, px));
+    const ids = new Uint16Array(gw * gh);
+    for (let i = 0; i < ids.length; i++) {
+      const id = (px[i * 4] ?? 0) + (px[i * 4 + 1] ?? 0) * 256;
+      ids[i] = id <= this.width ? id : 0;
+    }
+    return ids;
+  }
+
+  private pickPass(gl: WebGLRenderer, camera: Camera, target: WebGLRenderTarget, read: () => void) {
     for (const l of LAYERS) this.meshes[l].material = this.picking[l];
     const skinVisible = this.meshes.skin.visible;
     this.meshes.skin.visible = false;
+    const prevTarget = gl.getRenderTarget();
+    const prevScissor = gl.getScissorTest();
+    gl.setScissorTest(false);
+    gl.setRenderTarget(target);
+    gl.setClearColor(0x000000, 0);
+    gl.clear();
+    gl.render(this.group, camera);
+    read();
+    gl.setRenderTarget(prevTarget);
+    gl.setScissorTest(prevScissor);
+    this.meshes.skin.visible = skinVisible;
+    for (const l of LAYERS) this.meshes[l].material = this.display[l];
+  }
+
+  pick(gl: WebGLRenderer, camera: Camera & { setViewOffset?: (...a: number[]) => void; clearViewOffset?: () => void; updateProjectionMatrix?: () => void }, x: number, y: number, w: number, h: number): number | null {
+    if (!camera.setViewOffset || !camera.clearViewOffset) return null;
+    const target = (this.target ??= new WebGLRenderTarget(1, 1));
     camera.setViewOffset(w, h, Math.floor(x), Math.floor(y), 1, 1);
     // No alvo 1 × 1 o pixel escolhido fica em (0,5; 0,5): a lente, centrada no ponteiro, vai junto.
     const lx = this.lens.value.x, ly = this.lens.value.y;
     this.lens.value.x = 0.5;
     this.lens.value.y = 0.5;
-    const prevTarget = gl.getRenderTarget();
-    const prevScissor = gl.getScissorTest();
-    gl.setScissorTest(false);
-    gl.setRenderTarget(this.target);
-    gl.setClearColor(0x000000, 0);
-    gl.clear();
-    gl.render(this.group, camera);
     const px = new Uint8Array(4);
-    gl.readRenderTargetPixels(this.target, 0, 0, 1, 1, px);
-    gl.setRenderTarget(prevTarget);
-    gl.setScissorTest(prevScissor);
+    this.pickPass(gl, camera, target, () => gl.readRenderTargetPixels(target, 0, 0, 1, 1, px));
     camera.clearViewOffset();
     this.lens.value.x = lx;
     this.lens.value.y = ly;
-    this.meshes.skin.visible = skinVisible;
-    for (const l of LAYERS) this.meshes[l].material = this.display[l];
     const id = (px[0] ?? 0) + (px[1] ?? 0) * 256;
     return id > 0 && id <= this.width ? id - 1 : null;
   }
@@ -380,7 +420,7 @@ export class BodyInstance {
    */
   reset() {
     for (let s = 0; s < this.width; s++) {
-      for (const ch of ['highlight', 'heat', 'activation', 'hidden', 'strain'] as const) this.set(s, ch, 0);
+      for (const ch of ['highlight', 'heat', 'activation', 'hidden', 'strain', 'ends'] as const) this.set(s, ch, 0);
       this.set(s, 'opacity', 1);
     }
     this.commit();
@@ -401,6 +441,7 @@ export class BodyInstance {
     this.skinDepth?.dispose();
     this.texture.dispose();
     this.target?.dispose();
+    this.grid?.dispose();
     this.group.removeFromParent();
   }
 }

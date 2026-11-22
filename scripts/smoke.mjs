@@ -104,28 +104,50 @@ await step('lab: comparar abre pela aba, troca alvo, duplica e muda a variação
   if (lines < 2) throw new Error(`só ${lines} curvas de carga`);
 });
 
-await step('atlas: índice lista músculos e a página desenha corpo e curvas', async () => {
+await step('atlas: gaveta lista músculos e a página desenha corpo e curvas', async () => {
   await page.goto(`${base}/atlas`, { waitUntil: 'networkidle' });
-  await page.getByRole('link', { name: /Semimembranáceo/ }).click();
+  await page.getByRole('button', { name: /131 músculos/ }).click();
+  await page.getByRole('dialog', { name: 'Todos os músculos' }).getByRole('link', { name: /Semimembranáceo/ }).click();
   await page.getByRole('heading', { level: 1, name: 'Semimembranáceo' }).waitFor();
   await page.waitForSelector('.stage[data-ready="true"]', { timeout: 20000 });
-  await page.getByRole('button', { name: 'Perfil' }).click();
   const charts = await page.locator('.curve .chart').count();
   if (charts < 4) throw new Error(`só ${charts} gráficos`);
 });
 
-await step('atlas: explorador busca, isola, troca camada, abre e demonstra', async () => {
+await step('atlas: rótulo seleciona; descascar por teclado; busca, isola, explode, corta e demonstra', async () => {
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(`${base}/atlas`, { waitUntil: 'networkidle' });
   await page.waitForSelector('.stage[data-ready="true"]', { timeout: 20000 });
+  // Rótulo vivo: clicar seleciona o músculo dele, e origem e inserção ganham marca.
+  const label = page.locator('.live-label').first();
+  await label.waitFor({ timeout: 15000 });
+  const name = (await label.textContent()) ?? '';
+  await label.click();
+  await page.locator('.sel__name', { hasText: name }).waitFor();
+  await page.locator('.end-mark[data-end="origin"]').waitFor();
+  await page.locator('.sel').getByRole('button', { name: 'Limpar seleção' }).click();
+  // Alavanca: Page Down pula de camada, Home volta à pele.
+  const peel = page.getByRole('slider', { name: 'Camadas' });
+  await peel.focus();
+  await page.keyboard.press('PageDown');
+  await page.waitForFunction(() => document.querySelector('.peel__track')?.getAttribute('aria-valuetext') === 'Profundo', null, { timeout: 4000 });
+  await page.keyboard.press('ArrowDown');
+  if (!/descascada/.test((await peel.getAttribute('aria-valuetext')) ?? '')) throw new Error('alavanca sem estado entre camadas');
+  await page.keyboard.press('Home');
+  await page.waitForFunction(() => document.querySelector('.peel__track')?.getAttribute('aria-valuetext') === 'Pele', null, { timeout: 4000 });
+  await page.keyboard.press('PageDown');
+  // Busca na gaveta: Enter seleciona e fecha.
+  await page.getByRole('button', { name: /131 músculos/ }).click();
   await page.getByRole('combobox', { name: 'Buscar estrutura' }).fill('gluteo max');
   await page.getByRole('option', { name: /Glúteo máximo/ }).waitFor();
   await page.keyboard.press('Enter');
   await page.locator('.sel__name', { hasText: 'Glúteo máximo' }).waitFor();
-  await page.getByRole('button', { name: 'Isolar' }).click();
+  await page.locator('.sel').getByRole('button', { name: 'Isolar' }).click();
   await page.locator('.sel button[aria-pressed="true"]', { hasText: 'Isolar' }).waitFor();
-  await page.getByRole('group', { name: 'Ossos' }).getByRole('button', { name: 'Oculta' }).click();
-  await page.getByText('Vista explodida').click();
-  await page.getByRole('button', { name: 'Sagital' }).click();
+  await page.getByRole('toolbar', { name: 'Ferramentas' }).getByRole('button', { name: 'Vista explodida' }).click();
+  await page.getByRole('toolbar', { name: 'Ferramentas' }).getByRole('button', { name: 'Plano de corte' }).click();
+  await page.locator('#atlas-cut').getByRole('button', { name: 'Sagital' }).click();
+  await page.keyboard.press('Escape');
   const demo = page.locator('.sel__demo-list button').first();
   await demo.click();
   const a = await page.locator('.demo__value').textContent();
@@ -133,12 +155,12 @@ await step('atlas: explorador busca, isola, troca camada, abre e demonstra', asy
   const b = await page.locator('.demo__value').textContent();
   if (a === b) throw new Error(`demonstração parada em ${a}`);
   // Arrastar gira a câmera sem selecionar nada.
-  const view = page.locator('.explorer__view');
+  const view = page.locator('.atlas-full__view');
   const box = await view.boundingBox();
   if (!box) throw new Error('sem vista');
-  await page.mouse.move(box.x + box.width * 0.3, box.y + box.height * 0.5);
+  await page.mouse.move(box.x + box.width * 0.45, box.y + box.height * 0.5);
   await page.mouse.down();
-  await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.5, { steps: 8 });
+  await page.mouse.move(box.x + box.width * 0.6, box.y + box.height * 0.5, { steps: 8 });
   await page.mouse.up();
   await page.locator('.sel__name', { hasText: 'Glúteo máximo' }).waitFor();
 });
@@ -146,6 +168,7 @@ await step('atlas: explorador busca, isola, troca camada, abre e demonstra', asy
 await step('atlas: parte pela busca e pela URL; demonstração no plano frontal vai do alongado ao encurtado', async () => {
   await page.goto(`${base}/atlas`, { waitUntil: 'networkidle' });
   await page.waitForSelector('.stage[data-ready="true"]', { timeout: 20000 });
+  await page.getByRole('button', { name: /131 músculos/ }).click();
   await page.getByRole('combobox', { name: 'Buscar estrutura' }).fill('trapezio ascendente');
   await page.getByRole('option', { name: /Trapézio, parte ascendente/ }).first().waitFor();
   await page.keyboard.press('Enter');
@@ -155,21 +178,40 @@ await step('atlas: parte pela busca e pela URL; demonstração no plano frontal 
   await page.getByRole('heading', { level: 2, name: /Ações: parte acromial/ }).waitFor();
   await page.locator('.part-picker button[aria-pressed="true"]', { hasText: 'Parte acromial' }).waitFor();
   const demo = page.locator('.curve__play', { hasText: 'Abdução do ombro' });
-  await demo.click();
-  await page.locator('.demo__stage', { hasText: 'encurtando' }).waitFor();
-  const a = await page.locator('.demo__value').textContent();
+  await demo.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(400);
+  if ((await demo.getAttribute('aria-pressed')) !== 'true') await demo.click();
+  await page.locator('.demo__stage', { hasText: /encurtando|alongando/ }).first().waitFor();
+  const a = await page.locator('.demo__value').first().textContent();
   await page.waitForTimeout(1500);
-  const b = await page.locator('.demo__value').textContent();
+  const b = await page.locator('.demo__value').first().textContent();
   if (a === b) throw new Error(`demonstração parada em ${a}`);
 });
 
+await step('atlas: mergulhar até o sarcômero e voltar', async () => {
+  await page.goto(`${base}/atlas/biceps-brachii`, { waitUntil: 'networkidle' });
+  await page.waitForSelector('.stage[data-ready="true"]', { timeout: 20000 });
+  await page.getByRole('button', { name: 'Mergulhar' }).click();
+  const dive = page.getByRole('dialog', { name: /Mergulhar: Bíceps braquial/ });
+  await dive.waitFor();
+  await dive.locator('.dive__level-btn[aria-current="step"]', { hasText: 'Fibras' }).waitFor();
+  await dive.getByRole('button', { name: 'Mais fundo' }).click();
+  await dive.locator('.sarcomere').waitFor();
+  await dive.getByText(/o comprimento do sarcômero não é medido aqui/).waitFor();
+  await page.keyboard.press('Escape');
+  await dive.locator('.dive__level-btn[aria-current="step"]', { hasText: 'Fibras' }).waitFor();
+  await dive.getByRole('button', { name: 'Voltar' }).click();
+  await page.waitForFunction(() => !document.querySelector('dialog.dive')?.open, null, { timeout: 4000 });
+  await page.setViewportSize({ width: 390, height: 844 });
+});
+
 // Página aberta direto, sem mover o ponteiro: nenhum chunk de outra rota pedido de antemão (o CSS da lista morava no da biblioteca).
-await step('página de músculo: lista de exercícios nasce estilizada', async () => {
+await step('página de músculo: tira de exercícios nasce estilizada', async () => {
   await page.goto(`${base}/atlas/latissimus-dorsi`, { waitUntil: 'networkidle' });
-  const li = page.locator('.target-list li').first();
-  await li.waitFor();
-  const display = await li.evaluate((el) => getComputedStyle(el).display);
-  if (display !== 'grid') throw new Error(`.target-list li com display ${display}`);
+  const strip = page.locator('.film-strip').first();
+  await strip.waitFor();
+  const display = await strip.evaluate((el) => getComputedStyle(el).display);
+  if (display !== 'grid') throw new Error(`.film-strip com display ${display}`);
 });
 
 await step('rodapé leva aos termos; Ajustes troca a qualidade e grava sbl-lod', async () => {
@@ -351,7 +393,7 @@ await step('atlas: corpo anatômico desenha; tocar em outro músculo abre a pág
   await page.goto(`${base}/atlas/vastus-lateralis`, { waitUntil: 'networkidle' });
   await page.waitForSelector('.stage[data-ready="true"]', { timeout: 20000 });
   await page.getByText('Z-Anatomy', { exact: false }).first().waitFor({ timeout: 15000 });
-  const slot = page.locator('.atlas-stage__slot');
+  const slot = page.locator('.mfilm__view');
   await slot.scrollIntoViewIfNeeded();
   const box = await slot.boundingBox();
   if (!box) throw new Error('sem slot');

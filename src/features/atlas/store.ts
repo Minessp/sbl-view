@@ -5,7 +5,7 @@
 import { create } from 'zustand';
 import type { MuscleGroup } from '@/data/schema/muscle';
 import { DEMO_SPEEDS, type DemoSpeed } from './explorer/demo';
-import { BODY_BOX, clampOrbit, panOrbit, VIEW_YAW, type AtlasView, type Orbit } from './explorer/orbit';
+import { BODY_BOX, clampOrbit, DIST, panOrbit, VIEW_YAW, type AtlasView, type Orbit } from './explorer/orbit';
 
 export type { AtlasView } from './explorer/orbit';
 export type BodyLayerId = 'skin' | 'superficial' | 'deep' | 'bone';
@@ -74,7 +74,37 @@ export interface FlyRequest {
   /** Guinada nova (vista pedida) ou null = mantém a atual. */
   readonly yaw: number | null;
   readonly instant: boolean;
+  /** Destino além da seleção: uma ponta do músculo selecionado ou uma região do corpo. */
+  readonly to?: { readonly end: 'origin' | 'insertion' } | { readonly region: string } | undefined;
 }
+
+/** Peso de cada camada na alavanca de descascar: 0 pele, 1 superficial, 2 profundo, 3 osso. */
+export const PEEL_MAX = LAYER_ORDER.length - 1;
+/** Camadas que a alavanca deixa: as de cima da posição saem, a da posição e as de baixo ficam. */
+export const peelLayers = (p: number): Record<BodyLayerId, LayerMode> =>
+  Object.fromEntries(LAYER_ORDER.map((l, i) => [l, i < Math.floor(p + 1e-6) ? 'off' : 'on'])) as Record<BodyLayerId, LayerMode>;
+
+/** Rótulo vivo na tela (px do cliente), escrito pelo palco. */
+export interface LabelFeedItem {
+  readonly key: string;
+  readonly muscleId: string;
+  readonly side: 'r' | 'l' | 'c';
+  readonly x: number;
+  readonly y: number;
+}
+export interface LabelFeed {
+  /** Alguém mostra os rótulos (o palco só mede quando há quem leia). */
+  on: boolean;
+  /** Rótulos de músculos ligados (tela larga); sem eles o palco não mede a vista, só projeta as pontas da seleção. */
+  labels: boolean;
+  items: readonly LabelFeedItem[];
+  /** Bordas do corpo na tela e o retângulo do slot (px do cliente). */
+  body: { left: number; right: number } | null;
+  rect: { x: number; y: number; w: number; h: number } | null;
+  /** Origem e inserção do músculo selecionado (px do cliente). */
+  ends: { origin: readonly [number, number]; insertion: readonly [number, number] } | null;
+}
+export const useLabelFeed = create<LabelFeed>(() => ({ on: false, labels: false, items: [], body: null, rect: null, ends: null }));
 
 const START: Orbit = { yaw: 0, pitch: 0.04, dist: 4.4, target: BODY_BOX.center };
 /** Rotação (plano transversal) vista de cima e de frente. */
@@ -87,6 +117,8 @@ interface AtlasState {
   orbit: Orbit;
   fly: FlyRequest;
   layers: Record<BodyLayerId, LayerMode>;
+  /** Alavanca de descascar (0..PEEL_MAX); a parte fracionária descasca a camada da vez de cima para baixo. */
+  peel: number;
   hidden: readonly string[];
   ghosted: readonly string[];
   isolate: boolean;
@@ -94,6 +126,11 @@ interface AtlasState {
   cut: { axis: CutAxis; at: number };
   demo: DemoState;
   structures: readonly StructureInfo[];
+  /** Corpo deslocado no quadro (fração da largura, + = para a direita): as pranchas ocupam a esquerda. */
+  shift: number;
+  /** Mergulho: 0 = músculo, 1 = fibras, 2 = sarcômero. `diveable`: a página tem mergulho (aproximar além do mínimo entra). */
+  dive: 0 | 1 | 2;
+  diveable: boolean;
   /** Elemento onde o palco desenha o corpo. */
   slot: HTMLElement | null;
   pick: AtlasPickFn | null;
@@ -111,6 +148,9 @@ interface AtlasState {
   frame: (instant?: boolean) => void;
   resetCamera: () => void;
   setLayer: (l: BodyLayerId, m: LayerMode) => void;
+  setPeel: (p: number) => void;
+  flyToEnd: (end: 'origin' | 'insertion') => void;
+  flyToRegion: (id: string) => void;
   toggleHidden: (key: string) => void;
   toggleGhost: (key: string) => void;
   setIsolate: (on: boolean) => void;
@@ -122,13 +162,18 @@ interface AtlasState {
   stopDemo: () => void;
   setStructures: (s: readonly StructureInfo[]) => void;
   setSlot: (el: HTMLElement | null) => void;
+  setShift: (x: number) => void;
+  setDive: (level: 0 | 1 | 2) => void;
+  setDiveable: (on: boolean) => void;
   setPick: (f: AtlasPickFn | null) => void;
   setHandoff: (h: AtlasState['handoff']) => void;
   /** Volta ao estado inicial (troca de página). */
   reset: (selection?: Pick | null, view?: AtlasView) => void;
 }
 
-const LAYERS_DEFAULT: Record<BodyLayerId, LayerMode> = { skin: 'off', superficial: 'on', deep: 'on', bone: 'on' };
+/** Começa sem a pele: o Atlas mostra músculo. */
+const PEEL_DEFAULT = 1;
+const LAYERS_DEFAULT = peelLayers(PEEL_DEFAULT);
 const DEMO_DEFAULT: DemoState = { spec: null, playing: false, speed: 1, loop: true, phase: 0 };
 const toggle = (list: readonly string[], k: string) => (list.includes(k) ? list.filter((x) => x !== k) : [...list, k]);
 
@@ -140,6 +185,7 @@ export const useAtlas = create<AtlasState>((set, get) => {
     orbit: START,
     fly: { nonce: 0, yaw: 0, instant: true },
     layers: { ...LAYERS_DEFAULT },
+    peel: PEEL_DEFAULT,
     hidden: [],
     ghosted: [],
     isolate: false,
@@ -147,6 +193,9 @@ export const useAtlas = create<AtlasState>((set, get) => {
     cut: { axis: 'none', at: 0.5 },
     demo: DEMO_DEFAULT,
     structures: [],
+    shift: 0,
+    dive: 0,
+    diveable: false,
     slot: null,
     pick: null,
     handoff: null,
@@ -164,7 +213,11 @@ export const useAtlas = create<AtlasState>((set, get) => {
       }),
     setHover: (hover) => set((s) => (samePick(s.hover, hover) ? s : { hover })),
     orbitBy: (dyaw, dpitch) => set((s) => ({ orbit: clampOrbit({ ...s.orbit, yaw: s.orbit.yaw + dyaw, pitch: s.orbit.pitch + dpitch }) })),
-    zoomBy: (f) => set((s) => ({ orbit: clampOrbit({ ...s.orbit, dist: s.orbit.dist * f }) })),
+    zoomBy: (f) =>
+      set((s) =>
+        // Já encostado e pedindo mais: mergulha (onde a página tem mergulho).
+        s.diveable && f < 1 && s.dive === 0 && s.orbit.dist <= DIST[0] + 1e-3 ? { dive: 1 } : { orbit: clampOrbit({ ...s.orbit, dist: s.orbit.dist * f }) },
+      ),
     panBy: (dx, dy) => set((s) => ({ orbit: panOrbit(s.orbit, dx, dy) })),
     setOrbit: (orbit) => set({ orbit: clampOrbit(orbit) }),
     setView: (v) => set((s) => ({ orbit: { ...s.orbit, pitch: START.pitch }, fly: fly(VIEW_YAW[v]) })),
@@ -172,10 +225,19 @@ export const useAtlas = create<AtlasState>((set, get) => {
     resetCamera: () => set((s) => ({ orbit: { ...s.orbit, pitch: START.pitch }, fly: fly(0) })),
     // Aberta, a vista explodida reenquadra (o número de camadas abertas muda).
     setLayer: (l, m) => set((s) => ({ layers: { ...s.layers, [l]: m }, ...(s.exploded && { fly: fly(null) }) })),
+    setPeel: (p) =>
+      set((s) => {
+        const peel = Math.min(PEEL_MAX, Math.max(0, p));
+        const layers = peelLayers(peel);
+        const same = LAYER_ORDER.every((l) => s.layers[l] === layers[l]);
+        return { peel, ...(!same && { layers, ...(s.exploded && { fly: fly(null) }) }) };
+      }),
+    flyToEnd: (end) => set({ fly: { ...fly(null), to: { end } } }),
+    flyToRegion: (region) => set((s) => ({ selection: null, demo: { ...s.demo, spec: null, playing: false, phase: 0 }, fly: { ...fly(null), to: { region } } })),
     toggleHidden: (k) => set((s) => ({ hidden: toggle(s.hidden, k), ghosted: s.ghosted.filter((x) => x !== k) })),
     toggleGhost: (k) => set((s) => ({ ghosted: toggle(s.ghosted, k), hidden: s.hidden.filter((x) => x !== k) })),
     setIsolate: (isolate) => set({ isolate }),
-    showAll: () => set({ hidden: [], ghosted: [], isolate: false, layers: { ...LAYERS_DEFAULT } }),
+    showAll: () => set({ hidden: [], ghosted: [], isolate: false, layers: { ...LAYERS_DEFAULT }, peel: PEEL_DEFAULT }),
     setExploded: (exploded) => set({ exploded, fly: fly(null) }),
     setCut: (c) => set((s) => ({ cut: { ...s.cut, ...c } })),
     // A vista mostra o plano do movimento: perfil direito no sagital, frente (ou costas) no frontal, de cima e de frente no
@@ -190,6 +252,9 @@ export const useAtlas = create<AtlasState>((set, get) => {
     setDemo: (d) => set((s) => ({ demo: { ...s.demo, ...d } })),
     stopDemo: () => set((s) => ({ demo: { ...s.demo, spec: null, playing: false, phase: 0 } })),
     setStructures: (structures) => set({ structures }),
+    setShift: (shift) => set((s) => (s.shift === shift ? s : { shift, fly: fly(null, true) })),
+    setDive: (dive) => set({ dive }),
+    setDiveable: (diveable) => set({ diveable, dive: 0 }),
     setSlot: (slot) => set((s) => (s.slot === slot ? s : { slot })),
     setPick: (pick) => set({ pick }),
     setHandoff: (handoff) => set({ handoff }),
@@ -204,12 +269,14 @@ export const useAtlas = create<AtlasState>((set, get) => {
         fly: { nonce: s.fly.nonce + 1, yaw: VIEW_YAW[view], instant: !h },
         handoff: null,
         layers: { ...LAYERS_DEFAULT },
+        peel: PEEL_DEFAULT,
         hidden: [],
         ghosted: [],
         isolate: false,
         exploded: false,
         cut: { axis: 'none', at: 0.5 },
         demo: DEMO_DEFAULT,
+        dive: 0,
         };
       }),
   };

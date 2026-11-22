@@ -21,9 +21,11 @@ interface Props {
   /** Texto do rótulo flutuante sobre a estrutura sob o ponteiro. */
   hoverText?: (name: string, p: Pick) => string | null;
   className?: string;
+  /** Página que rola por cima do palco: a roda rola; zoom só com Ctrl/⌘ (pinça do trackpad). */
+  scrolls?: boolean;
 }
 
-export function Viewport({ label, onTap, hoverText, className = '' }: Props) {
+export function Viewport({ label, onTap, hoverText, className = '', scrolls = false }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const keysId = useId();
   const setSlot = useAtlas((s) => s.setSlot);
@@ -70,13 +72,14 @@ export function Viewport({ label, onTap, hoverText, className = '' }: Props) {
     const el = ref.current;
     if (!el) return;
     const onWheel = (e: WheelEvent) => {
+      if (scrolls && !e.ctrlKey && !e.metaKey) return;
       e.preventDefault();
       const d = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
       useAtlas.getState().zoomBy(Math.exp(Math.max(-60, Math.min(60, d)) * 0.0022));
     };
     el.addEventListener('wheel', onWheel, { passive: false });
     return () => el.removeEventListener('wheel', onWheel);
-  }, []);
+  }, [scrolls]);
 
   useEffect(() => () => cancelAnimationFrame(raf.current), []);
 
