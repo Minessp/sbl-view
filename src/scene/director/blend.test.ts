@@ -10,10 +10,10 @@ describe('voo entre rotas', () => {
     expect(lerpRect(a, b, 0.5)).toEqual({ x: 300, y: 60, w: 1120, h: 750 });
   });
 
-  it('curva de tempo: pontas fixas, monótona, meio em 0,5', () => {
+  it('curva de tempo: pontas fixas, monótona, decidida no começo', () => {
     expect(shotEase(0)).toBe(0);
-    expect(shotEase(1)).toBe(1);
-    expect(shotEase(0.5)).toBeCloseTo(0.5, 9);
+    expect(shotEase(1)).toBeCloseTo(1, 12);
+    expect(shotEase(0.25)).toBeGreaterThan(0.8);
     let last = -1;
     for (let i = 0; i <= 50; i++) {
       const v = shotEase(i / 50);

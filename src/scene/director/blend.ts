@@ -7,10 +7,10 @@ import type { Rect, Shot } from './handoff';
 /** Duração do voo (câmera, recorte); a pose chega antes (70%), o equipamento se monta em 35–100%. */
 export const SHOT_MS = 900;
 
-/** In-out cúbica. */
+/** Expo de saída, a mesma família da curva da página (`--ease`): parte decidida, assenta devagar. */
 export function shotEase(k: number): number {
   const x = Math.min(1, Math.max(0, k));
-  return x < 0.5 ? 4 * x * x * x : 1 - (-2 * x + 2) ** 3 / 2;
+  return (1 - 2 ** (-10 * x)) / (1 - 2 ** -10);
 }
 
 /** Trecho [a, b] do voo remapeado para 0..1. */

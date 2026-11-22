@@ -3,8 +3,8 @@
  * - Troca de rota = corte de cinema (900 ms, App.tsx). O palco (`view-transition-name: stage`) fica fora da foto da
  *   página: a imagem nova dele é viva, o WebGL segue desenhando e o corpo voa do plano de saída ao da página nova
  *   (scene/director). Com palco nas duas páginas (`html.vt-live`) a foto velha do palco some; sem palco novo, ela apaga.
- *   A página que sai desce 16 px e perde o foco (0–25%); um risco de luz cruza o quadro na diagonal (20–45%); a nova chega
- *   em foco (55–100%) e os blocos sobem 16 px em cascata (`html.cut-in`). O cabeçalho fica parado, o nome da seção troca
+ *   A página que sai desce 16 px e perde o foco (0–280 ms); a nova entra por cima dela a partir de 140 ms, em foco, com os
+ *   blocos subindo 16 px em cascata (`html.cut-in`); um risco de luz cruza o quadro na diagonal. Mesma curva expo do voo. O cabeçalho fica parado, o nome da seção troca
  *   pela penumbra.
  * - Troca de tema: a luz nova se espalha em círculo a partir do interruptor (ThemeSwitch.tsx).
  * - Sem suporte: entrada por CSS (só `backwards`, para não deixar transform no elemento: viraria bloco de contenção e
@@ -40,11 +40,12 @@ html.vt-live::view-transition-old(stage) {
 }
 
 ::view-transition-old(root) {
-  animation: cut-out 225ms var(--ease-in) both;
+  animation: cut-out 280ms var(--ease-in) both;
 }
 
+/* Entra enquanto a velha sai (sem tela vazia), na mesma curva do voo do corpo. */
 ::view-transition-new(root) {
-  animation: cut-focus 405ms var(--ease) 495ms both;
+  animation: cut-focus 640ms var(--ease) 140ms both;
 }
 
 ::view-transition-old(site-where) {
@@ -120,8 +121,8 @@ html.vt-nav .vt-beam {
 /* Blocos da página nova sobem em cascata (2 × --stagger), dentro da imagem viva da página. */
 html.cut-in main.sheet > *,
 html.cut-in main.page > * {
-  animation: cut-rise 420ms var(--ease) backwards;
-  animation-delay: calc(495ms + var(--cut-i, 0) * var(--stagger) * 2);
+  animation: cut-rise 560ms var(--ease) backwards;
+  animation-delay: calc(160ms + var(--cut-i, 0) * var(--stagger) * 2);
 }
 
 html.cut-in main > :nth-child(2) {

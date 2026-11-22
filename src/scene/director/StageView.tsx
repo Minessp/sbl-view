@@ -25,6 +25,8 @@ import { useHandoff, type Rect, type Shot } from './handoff';
 export const STANDING_DEG: Readonly<Record<string, number>> = Object.fromEntries(Object.entries(STANDING).map(([k, v]) => [k, v / DEG]));
 /** Pico da puxada de foco no meio do voo (0 = nítido, 1 = tudo desfocado). */
 const PULL = 0.28;
+/** Borda macia da máscara no meio do voo (fração da altura da tela). */
+const FEATHER = 0.2;
 const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /** Raiz que o FK usa quando não recebe uma (pelve na origem neutra, sem rotação). */
@@ -57,7 +59,10 @@ export class Director {
   flight: Flight | null = null;
   /** O que a vista desenhou no último quadro (a captura devolve isto). */
   drawn: { camera: Shot['camera'] | null; pose: Shot['pose']; skin: number } = { camera: null, pose: null, skin: 1 };
+  /** Recorte lógico da vista (px CSS): o do slot, ou o intermediário no voo. A câmera enquadra por ele. */
   rect: Rect = { x: 0, y: 0, w: 1, h: 1 };
+  /** No voo a vista desenha no canvas inteiro (sem borda dura cortando o corpo) com o enquadramento do recorte lógico. */
+  canvas: Rect | null = null;
   /** Último plano já usado (não voa duas vezes do mesmo). */
   lastAt = -1;
 
@@ -84,6 +89,10 @@ export class Director {
     cam.position.set(c.pos[0], c.pos[1], c.pos[2]);
     cam.fov = c.fovDeg;
     cam.lookAt(c.target[0], c.target[1], c.target[2]);
+    const v = this.flight ? this.canvas : null;
+    // O recorte lógico vira a "imagem cheia" e o canvas a região desenhada: o frustum se estende além do recorte.
+    if (v) cam.setViewOffset(this.rect.w, this.rect.h, v.x - this.rect.x, v.y - this.rect.y, v.w, v.h);
+    else if (cam.view?.enabled) cam.clearViewOffset();
     this.drawn.camera = c;
     return Math.hypot(c.pos[0] - c.target[0], c.pos[1] - c.target[1], c.pos[2] - c.target[2]);
   }
@@ -159,6 +168,7 @@ export function useDirector(): Director {
  */
 export function StageView({ slot, index, main = false, capture = main, children }: { slot: HTMLElement; index: number; main?: boolean; capture?: boolean; children: ReactNode }) {
   const invalidate = useThree((s) => s.invalidate);
+  const gl = useThree((s) => s.gl);
   const [frame] = useState(() => {
     const el = document.createElement('div');
     el.setAttribute('aria-hidden', 'true');
@@ -194,23 +204,27 @@ export function StageView({ slot, index, main = false, capture = main, children 
     capturers.add(dir);
     useStage.getState().setCapture(captureStage);
     return () => {
+      feather(gl.domElement, null);
       capturers.delete(dir);
       if (!capturers.size && useStage.getState().capture === captureStage) useStage.getState().setCapture(null);
       if (dir.flight) cinema.pull = 0;
     };
-  }, [capture, dir]);
+  }, [capture, dir, gl]);
 
   // Antes das cenas (prioridade −1): o procurador recebe o recorte deste quadro; elas medem por ele.
   useFrame(() => {
     const target = slot.getBoundingClientRect();
     const f = dir.flight;
     if (!f) {
+      dir.canvas = null;
       place(frame, dir, target);
       return;
     }
     if (f.final) {
       dir.flight = null;
+      dir.canvas = null;
       cinema.pull = 0;
+      if (main) feather(gl.domElement, null);
       place(frame, dir, target);
       return;
     }
@@ -221,8 +235,13 @@ export function StageView({ slot, index, main = false, capture = main, children 
     if (f.k >= 1) f.final = true;
     const from = f.from.rect;
     const r = lerpRect(from, { x: target.left, y: target.top, w: target.width, h: target.height }, dir.e());
-    place(frame, dir, { left: r.x, top: r.y, width: r.w, height: r.h });
-    if (main) cinema.pull = f.final ? 0 : PULL * Math.sin(Math.PI * f.k);
+    const c = gl.domElement.getBoundingClientRect();
+    dir.canvas = { x: c.left, y: c.top, w: c.width, h: c.height };
+    place(frame, dir, { left: r.x, top: r.y, width: r.w, height: r.h }, c);
+    // Sem a tesoura o corpo desenharia sobre a página: a máscara parte do recorte de saída, abre em degradê e fecha no slot.
+    if (main) feather(gl.domElement, { r, c: dir.canvas, f: FEATHER * c.height * Math.sin(Math.PI * f.k) });
+    // A lente desfoca enquanto o corpo anda (o movimento é decidido no começo) e foca ao assentar.
+    if (main) cinema.pull = f.final ? 0 : PULL * 4 * dir.e() * (1 - dir.e());
     invalidate();
   }, -1);
 
@@ -233,11 +252,30 @@ export function StageView({ slot, index, main = false, capture = main, children 
   );
 }
 
-function place(el: HTMLElement, dir: Director, r: { left: number; top: number; width: number; height: number }) {
-  const w = Math.max(1, r.width), h = Math.max(1, r.height);
-  if (dir.rect.x === r.left && dir.rect.y === r.top && dir.rect.w === w && dir.rect.h === h) return;
-  dir.rect = { x: r.left, y: r.top, w, h };
-  el.style.transform = `translate(${r.left}px, ${r.top}px)`;
-  el.style.width = `${w}px`;
-  el.style.height = `${h}px`;
+type Box = { left: number; top: number; width: number; height: number };
+
+/** Máscara retangular de borda macia (`f` px para fora do recorte) no canvas; null tira. */
+function feather(el: HTMLElement, m: { r: Rect; c: Rect; f: number } | null) {
+  const st = el.style as CSSStyleDeclaration & { webkitMaskImage: string; webkitMaskComposite: string };
+  if (!m) {
+    st.maskImage = st.webkitMaskImage = '';
+    return;
+  }
+  const { r, c, f } = m;
+  const x0 = r.x - c.x, y0 = r.y - c.y;
+  const g = (to: string, a: number, b: number) => `linear-gradient(${to}, transparent ${(a - f).toFixed(1)}px, #000 ${a.toFixed(1)}px, #000 ${b.toFixed(1)}px, transparent ${(b + f).toFixed(1)}px)`;
+  const img = `${g('to right', x0, x0 + r.w)}, ${g('to bottom', y0, y0 + r.h)}`;
+  st.maskImage = st.webkitMaskImage = img;
+  st.maskComposite = 'intersect';
+  st.webkitMaskComposite = 'source-in';
+}
+
+/** `r` = recorte lógico (enquadramento); `box` = onde a vista desenha (o canvas inteiro no voo). */
+function place(el: HTMLElement, dir: Director, r: Box, box: Box = r) {
+  dir.rect = { x: r.left, y: r.top, w: Math.max(1, r.width), h: Math.max(1, r.height) };
+  const t = `translate(${box.left}px, ${box.top}px)`, w = `${Math.max(1, box.width)}px`, h = `${Math.max(1, box.height)}px`;
+  if (el.style.transform === t && el.style.width === w && el.style.height === h) return;
+  el.style.transform = t;
+  el.style.width = w;
+  el.style.height = h;
 }

@@ -27,6 +27,7 @@ import type { BodyInstance } from '../body/instance';
 import { LIGHT_GLSL } from '../body/material';
 import { palette, rig } from '../body/rig';
 import { cinema } from '../cinema/state';
+import { useDirector } from '../director/StageView';
 
 const SHADOW_SIZE = 1024;
 const SHADOW_SPAN = 1.7;
@@ -60,6 +61,7 @@ const FLOOR_FS = /* glsl */ `
   uniform float uReflectK;
   uniform float uShadowK;
   uniform float uFloorK;
+  uniform float uAppear;
   varying vec3 vW;
   varying vec3 vView;
   ${LIGHT_GLSL}
@@ -96,7 +98,7 @@ const FLOOR_FS = /* glsl */ `
 
   void main() {
     float r = length(vW.xz - uCenter);
-    float fade = 1.0 - smoothstep(0.9, 3.4 * uFade, r);
+    float fade = (1.0 - smoothstep(0.9, 3.4 * uFade, r)) * uAppear;
     if (fade <= 0.001) discard;
     vec3 n = normalize((viewMatrix * vec4(0.0, 1.0, 0.0, 0.0)).xyz);
     vec3 v = normalize(-vView);
@@ -184,6 +186,7 @@ export function Studio({
   const gl = useThree((s) => s.gl);
   const camera = useThree((s) => s.camera);
   const size = useThree((s) => s.size);
+  const dir = useDirector();
 
   const res = useMemo(() => {
     const shadowRT = new WebGLRenderTarget(SHADOW_SIZE, SHADOW_SIZE, { depthBuffer: true });
@@ -199,6 +202,7 @@ export function Studio({
       viewport: { value: new Vector4(0, 0, 1, 1) },
       shadowK: { value: 0.82 },
       floorK: { value: 0.5 },
+      appear: { value: 1 },
       projInv: { value: new Matrix4() },
       camWorld: { value: new Matrix4() },
     };
@@ -223,6 +227,7 @@ export function Studio({
         uReflectK: { value: 0.55 },
         uShadowK: uni.shadowK,
         uFloorK: uni.floorK,
+        uAppear: uni.appear,
       },
       transparent: true,
       depthWrite: true,
@@ -283,6 +288,8 @@ export function Studio({
     const uni = res.uni;
     const light = document.documentElement.dataset.theme === 'light';
     uni.color.value.copy(palette.floor);
+    // Troca de rota: o chão (sombra e reflexo juntos) chega no pouso, não voa com o corpo.
+    uni.appear.value = dir.e(0.5, 1);
     BOXES.forEach((b, i) => res.tints[i]?.value.copy(b.warm ? palette['light-key'] : palette['light-rim']));
     // Celular: o quadro estreito põe as softboxes atrás do texto do herói e lava a letra.
     for (const m of res.boxes) m.visible = boxes && !light && size.width >= 900;
