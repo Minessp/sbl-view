@@ -39,3 +39,9 @@ export const setAnchorWorld = (id: string, world: Vec3) => {
 export const setAnchorWeight = (id: string, w: number) => {
   ensure(id).weight = w;
 };
+
+/** Rótulos da telemetria do player (o palco posiciona e escreve o número; a página dá o texto). */
+export const HUD_TAGS = { angle: 'hud-angle', load: 'hud-load', arm: 'hud-arm', handle: 'hud-handle', end: 'hud-end' } as const;
+
+/** Rastro da carga projetado na tela (px do cliente), escrito pelo palco a cada quadro: a alça de carga arrasta por ele. */
+export const hudTrail: { pts: [number, number][] } = { pts: [] };

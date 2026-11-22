@@ -4,6 +4,7 @@
  */
 import { create } from 'zustand';
 import type { CompiledClip } from '@/engine/motion/evaluate';
+import type { MusclePath } from '@/engine/muscle/paths';
 
 export type PlayerView = 'front' | 'side' | 'back' | 'diagonal' | 'top';
 export const PLAYER_VIEWS: readonly PlayerView[] = ['front', 'side', 'back', 'diagonal', 'top'];
@@ -26,6 +27,21 @@ export interface PlayerTargets {
   readonly synergist: readonly string[];
 }
 
+/** Articulação da telemetria (arco de ângulo) e caminhos do músculo isolado (linha de ação e braço de momento). */
+export interface PlayerJoint {
+  readonly dof: string | null;
+  readonly paths: readonly MusclePath[];
+  /** Caminho do alvo principal: âncora do rótulo das pontas (alongado/encurtado). */
+  readonly target: MusclePath | null;
+}
+
+/** Enquadramento da página do exercício: deslocamento do corpo no quadro (fração da largura/altura) e folga do encaixe. */
+export interface PlayerCompose {
+  readonly x: number;
+  readonly y: number;
+  readonly margin: number;
+}
+
 interface PlayerState {
   slot: HTMLElement | null;
   clip: CompiledClip | null;
@@ -39,6 +55,14 @@ interface PlayerState {
   isolate: string | null;
   showLoad: boolean;
   skin: boolean;
+  telemetry: boolean;
+  joint: PlayerJoint;
+  /** null = encaixe padrão centrado (vitrine da home, Comparar). */
+  compose: PlayerCompose | null;
+  /** Raio X enquanto o botão (ou X) está apertado: tudo fora dos alvos vira vulto. */
+  xray: boolean;
+  /** Aproximação pedida pela leitura da prancha (fator da distância; 1 = nenhuma). */
+  dolly: number;
   setSlot: (el: HTMLElement | null) => void;
   load: (clip: CompiledClip | null, targets: PlayerTargets) => void;
   setPlaying: (p: boolean) => void;
@@ -51,6 +75,11 @@ interface PlayerState {
   setIsolate: (id: string | null) => void;
   setShowLoad: (v: boolean) => void;
   setSkin: (v: boolean) => void;
+  setTelemetry: (v: boolean) => void;
+  setJoint: (j: PlayerJoint) => void;
+  setCompose: (c: PlayerCompose | null) => void;
+  setXray: (v: boolean) => void;
+  setDolly: (k: number) => void;
 }
 
 const reduce = () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -68,6 +97,12 @@ export const usePlayer = create<PlayerState>((set, get) => ({
   isolate: null,
   showLoad: true,
   skin: false,
+  // Celular começa sem telemetria (o corpo é pequeno); um toque liga.
+  telemetry: typeof window !== 'undefined' && window.matchMedia('(min-width: 900px)').matches,
+  joint: { dof: null, paths: [], target: null },
+  compose: null,
+  xray: false,
+  dolly: 1,
   setSlot: (slot) => set({ slot }),
   // Clipe novo: volta ao início, na vista do clipe; com redução de movimento começa parado.
   load: (clip, targets) =>
@@ -100,4 +135,9 @@ export const usePlayer = create<PlayerState>((set, get) => ({
   setIsolate: (isolate) => set({ isolate }),
   setShowLoad: (showLoad) => set({ showLoad }),
   setSkin: (skin) => set({ skin }),
+  setTelemetry: (telemetry) => set({ telemetry }),
+  setJoint: (joint) => set({ joint }),
+  setCompose: (compose) => set({ compose }),
+  setXray: (xray) => set({ xray }),
+  setDolly: (dolly) => set({ dolly }),
 }));

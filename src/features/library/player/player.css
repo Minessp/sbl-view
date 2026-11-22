@@ -1,33 +1,239 @@
-/* Player de exercício: vista 3D grande, controles e leitura ao lado (desktop) ou embaixo (celular). */
+/*
+ * Página do exercício: palco pleno preso no alto e prancha de vidro que passa por cima.
+ * Desktop: a seção do player fica acima do canvas (controles por cima do corpo) com fundo transparente; a poça de luz
+ * mora no `.ex`, abaixo do canvas. Celular: o player preso fica abaixo do canvas com fundo opaco e a prancha rola por baixo.
+ */
+.ex {
+  --pad: clamp(16px, 3.2vw, 48px);
+  position: relative;
+}
+
 .player {
-  display: grid;
-  gap: var(--s-3);
+  position: sticky;
+  top: 0;
   margin: 0;
 }
 
 .player__view {
-  height: min(64svh, 600px);
-  min-height: 340px;
   cursor: grab;
   touch-action: none;
-  outline-offset: 3px;
+  outline-offset: -4px;
 }
 
 .player__view:active {
   cursor: grabbing;
 }
 
-.player__caption {
+/* ---------- Cabeçalho do exercício ---------- */
+.ex-head {
+  display: grid;
+  gap: var(--s-2);
+  max-width: 30ch;
+}
+
+.ex-head__back {
+  justify-self: start;
+  font-size: var(--fs-2);
+  color: var(--c-ink-2);
+  text-decoration: none;
+}
+
+.ex-head__back:hover {
+  color: var(--c-ink);
+}
+
+.ex-head h1 {
+  margin: 0;
+  font-size: var(--fs-8);
+  line-height: 0.95;
+}
+
+.ex-head__facts {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  gap: var(--s-2) var(--s-4);
-  font-size: var(--fs-1);
+  gap: var(--s-1) var(--s-4);
+  margin: var(--s-1) 0 0;
+  font-size: var(--fs-2);
+  font-stretch: var(--wd-cond);
+}
+
+.ex-head__facts div {
+  display: flex;
+  gap: var(--s-1);
+}
+
+.ex-head__facts dt {
   color: var(--c-ink-2);
 }
 
-.player__controls {
-  animation: none;
+.ex-head__facts dd {
+  margin: 0;
+  color: var(--c-ink);
+}
+
+/* ---------- Alto: câmeras e chaves ---------- */
+.player__top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--s-2) var(--s-4);
+}
+
+.player__cams,
+.player__speeds,
+.player__keys,
+.player__steps {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--s-1);
+}
+
+.player__keys {
+  gap: var(--s-4);
+  font-size: var(--fs-2);
+}
+
+/* ---------- Réguas de comprimento ---------- */
+.player__bars {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--s-2);
+  max-width: 280px;
+}
+
+.player__bars .length-legend {
+  flex-basis: 100%;
+}
+
+.player__bar {
+  display: grid;
+  grid-template-columns: 9px auto;
+  grid-template-rows: auto 200px;
+  gap: var(--s-2) var(--s-1);
+  min-width: 44px;
+  padding: var(--s-2) var(--s-1);
+  border: 0;
+  border-radius: var(--r-1);
+  background: none;
+  color: var(--c-ink-2);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: color var(--t-fast) var(--ease);
+}
+
+.player__bar:hover,
+.player__bar[aria-pressed='true'] {
+  color: var(--c-ink);
+}
+
+.player__pct {
+  grid-row: 1;
+  grid-column: 1 / -1;
+  font-size: var(--fs-3);
+  font-weight: 500;
+  font-stretch: var(--wd-cond);
+  font-variant-numeric: tabular-nums;
+  color: var(--c-ink);
+}
+
+.player__bar[data-dir='short'] .player__pct {
+  color: var(--c-glow);
+}
+
+.player__bar[data-dir='long'] .player__pct {
+  color: var(--c-stretch);
+}
+
+/* Trilho fino com o zero (em pé) no meio; o preenchimento sai do zero. */
+.player__rule {
+  position: relative;
+  grid-row: 2;
+  grid-column: 1;
+  height: 200px;
+  justify-self: center;
+  width: var(--lw-hair);
+  background: color-mix(in oklch, var(--c-ink) 22%, transparent);
+}
+
+.player__rule::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -5px;
+  width: 11px;
+  height: var(--lw-hair);
+  background: var(--c-ink-2);
+}
+
+.player__fill {
+  position: absolute;
+  left: -2px;
+  width: 5px;
+  border-radius: 3px;
+}
+
+.player__bar[data-dir='short'] .player__fill {
+  bottom: 50%;
+  height: calc(var(--v) * 50%);
+  background: var(--c-glow);
+}
+
+.player__bar[data-dir='long'] .player__fill {
+  top: 50%;
+  height: calc(var(--v) * -50%);
+  background: var(--c-stretch);
+}
+
+.player__bar[aria-pressed='true'] .player__rule {
+  width: var(--lw-curve);
+}
+
+.player__name {
+  grid-row: 2;
+  grid-column: 2;
+  overflow: hidden;
+  max-height: 200px;
+  font-size: var(--fs-1);
+  font-stretch: var(--wd-cond);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  writing-mode: vertical-rl;
+  rotate: 180deg;
+}
+
+/* ---------- Trilho da repetição ---------- */
+.player__timeline {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+
+.player__play {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--c-gel-fill);
+  color: var(--c-on-accent);
+  cursor: pointer;
+  transition: transform var(--t-fast) var(--ease);
+}
+
+.player__play:active {
+  transform: scale(0.95);
+}
+
+.player__play svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
 }
 
 .player__step {
@@ -38,20 +244,14 @@
   height: 36px;
   border: 0;
   border-radius: var(--r-pill);
-  background: var(--c-bg-2);
+  background: color-mix(in oklch, var(--c-bg-2) 80%, transparent);
   color: var(--c-ink);
   box-shadow: inset 0 0 0 var(--lw-hair) var(--c-edge);
-  transition:
-    transform var(--t-fast) var(--ease),
-    background var(--t-fast) var(--ease);
+  cursor: pointer;
 }
 
 .player__step:hover {
   background: var(--c-bg-3);
-}
-
-.player__step:active {
-  transform: scale(0.94);
 }
 
 .player__step svg {
@@ -60,60 +260,354 @@
   fill: currentColor;
 }
 
-.player__transport .demo__value {
-  font-size: var(--fs-2);
-}
-
-.player__opts {
-  justify-content: flex-start;
-}
-
-.player__focus {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--s-1);
-}
-
-.player__focus-label {
-  margin-right: var(--s-1);
-  font-size: var(--fs-1);
-  font-stretch: var(--wd-cond);
-  color: var(--c-ink-2);
-}
-
-.player__focus .chip[data-role='sinergista'] {
-  color: var(--c-ink-2);
-}
-
-.player__lengths {
+.player__track {
+  position: relative;
   display: grid;
-  gap: var(--s-3);
+  flex: 1;
+  gap: var(--s-2);
+  min-width: 0;
+  padding-top: var(--s-3);
 }
 
-@media (min-width: 960px) {
-  .player {
-    grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr);
-    align-items: start;
-    column-gap: var(--s-5);
-  }
-  .player__view {
-    grid-column: 1;
-    grid-row: 1 / span 4;
-    height: min(72svh, 680px);
-  }
-  .player__caption {
-    grid-column: 1;
-    grid-row: 5;
-  }
-  .player > :not(.player__view, .player__caption) {
-    grid-column: 2;
-  }
+.player__legs {
+  position: relative;
+  display: flex;
+  gap: 3px;
+  height: 3px;
 }
 
-.player__tempo {
+/* Marcas a cada 0,25 s acima do trilho. */
+.player__legs::before {
+  content: '';
+  position: absolute;
+  inset: -9px 0 auto;
+  height: 5px;
+  background: repeating-linear-gradient(to right, color-mix(in oklch, var(--c-ink) 32%, transparent) 0 1px, transparent 1px calc(100% / var(--ticks)));
+}
+
+.player__legs > [data-phase] {
+  flex-basis: 0;
+  border-radius: 2px;
+}
+
+.player__legs > [data-phase='concentric'] {
+  background: var(--c-glow);
+}
+
+.player__legs > [data-phase='eccentric'] {
+  background: var(--c-stretch);
+}
+
+.player__legs > [data-phase='stretched'],
+.player__legs > [data-phase='shortened'] {
+  background: repeating-linear-gradient(to right, var(--c-ink-2) 0 2px, transparent 2px 5px);
+}
+
+.player__cursor {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--p) * 100%);
+  width: var(--lw-curve);
+  height: 20px;
+  border-radius: 1px;
+  background: var(--c-ink);
+  translate: -50% -50%;
+}
+
+.player__track input {
+  position: absolute;
+  inset: -6px 0 auto;
+  width: 100%;
+  height: 34px;
   margin: 0;
-  font-size: var(--fs-1);
+  opacity: 0;
+  cursor: pointer;
+}
+
+.player__track:has(input:focus-visible) .player__legs {
+  outline: var(--lw-curve) solid var(--c-accent);
+  outline-offset: 10px;
+  border-radius: 2px;
+}
+
+.player__read {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--s-3);
+  margin: 0;
+  font-stretch: var(--wd-cond);
+}
+
+.player__phase {
+  font-size: var(--fs-4);
+  font-weight: 600;
+  color: var(--c-ink-2);
+}
+
+.player__phase[data-phase='concentric'] {
+  color: var(--c-glow);
+}
+
+.player__phase[data-phase='eccentric'] {
+  color: var(--c-stretch);
+}
+
+.player__clock {
+  font-size: var(--fs-2);
   font-variant-numeric: tabular-nums;
   color: var(--c-ink-2);
+}
+
+/* ---------- Rótulos da telemetria (no overlay do palco; o palco põe a posição) ---------- */
+.hud-tag {
+  position: absolute;
+  visibility: hidden;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-1);
+  opacity: 0;
+  translate: 10px -50%;
+  font-size: var(--fs-2);
+  font-stretch: var(--wd-cond);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--c-ink);
+  text-shadow: 0 0 8px var(--c-bg), 0 0 2px var(--c-bg);
+  pointer-events: none;
+}
+
+.hud-tag--end {
+  translate: calc(-100% - 14px) -50%;
+  font-size: var(--fs-3);
+  font-weight: 500;
+}
+
+.hud-tag--end[data-end='long'] {
+  color: var(--c-stretch);
+}
+
+.hud-tag--end[data-end='short'] {
+  color: var(--c-glow);
+}
+
+/* ---------- Alça de carga (fixa: o palco escreve a posição em px do cliente) ---------- */
+.player__handle {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 0 1.5px var(--c-ink),
+    0 0 0 6px color-mix(in oklch, var(--c-ink) 10%, transparent);
+  visibility: hidden;
+  cursor: grab;
+  touch-action: none;
+  transition: box-shadow var(--t-fast) var(--ease);
+}
+
+.player__handle:hover,
+.player__handle:focus-visible {
+  box-shadow:
+    inset 0 0 0 2px var(--c-ink),
+    0 0 0 10px color-mix(in oklch, var(--c-ink) 16%, transparent);
+}
+
+.player__handle:active {
+  cursor: grabbing;
+}
+
+.hud-tag[data-tag='hud-angle'] [data-v] {
+  font-size: var(--fs-6);
+  font-weight: 300;
+  line-height: 1;
+}
+
+.hud-tag__label {
+  font-size: var(--fs-1);
+  color: var(--c-ink-2);
+}
+
+/* ---------- Prancha ---------- */
+.ex-plate {
+  position: relative;
+  z-index: var(--z-over-stage);
+  border-top: var(--lw-hair) solid var(--c-edge);
+  background: color-mix(in oklch, var(--c-bg) 84%, transparent);
+  backdrop-filter: blur(28px) saturate(1.15);
+}
+
+.ex-plate__inner {
+  padding-top: var(--s-8);
+}
+
+.ex-plate__lead {
+  max-width: 46ch;
+  margin: 0 0 var(--s-7);
+  font-size: var(--fs-5);
+  line-height: 1.35;
+}
+
+.ex-plate__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  margin-top: var(--s-7);
+}
+
+/* ---------- Desktop: palco pleno ---------- */
+@media (min-width: 900px) {
+  .ex {
+    background:
+      radial-gradient(ellipse 50% 55% at 58% 10%, color-mix(in oklch, var(--c-light-key) 9%, transparent), transparent 70%),
+      radial-gradient(ellipse 42% 18% at 58% 86%, color-mix(in oklch, var(--c-floor) 85%, transparent), transparent 75%),
+      var(--c-bg-2);
+    background-attachment: fixed;
+  }
+
+  :root[data-theme='light'] .ex {
+    --cyc-x: 58%;
+    background: var(--cyclorama);
+    background-attachment: fixed;
+  }
+
+  .player {
+    z-index: var(--z-over-stage);
+    height: 100svh;
+  }
+
+  .player__view {
+    position: absolute;
+    inset: 0;
+  }
+
+  :root .player__view.viewport {
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .player__head,
+  .player__top,
+  .player__bars,
+  .player__timeline {
+    position: absolute;
+  }
+
+  .player__head {
+    top: calc(var(--header-h) + var(--s-5));
+    left: var(--pad);
+  }
+
+  .player__top {
+    top: calc(var(--header-h) + var(--s-5));
+    right: var(--pad);
+    max-width: 420px;
+  }
+
+  /* Prancha numa coluna de vidro à esquerda: o corpo segue à vista e a câmera acompanha a leitura. */
+  .ex-plate {
+    width: min(620px, 44vw);
+    margin: 0 0 30svh var(--pad);
+    border: var(--lw-hair) solid var(--c-edge);
+    border-radius: var(--r-2);
+  }
+
+  .ex-plate__inner {
+    padding: var(--s-7) var(--s-6);
+  }
+
+  .player__bars {
+    top: 52%;
+    left: var(--pad);
+    translate: 0 -50%;
+  }
+
+  .player__timeline {
+    right: var(--pad);
+    bottom: var(--s-5);
+    left: var(--pad);
+  }
+}
+
+/* ---------- Celular: palco preso no alto, prancha rola por baixo ---------- */
+@media (max-width: 899.98px) {
+  .player {
+    z-index: 2;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-2);
+    padding: calc(var(--header-h) + var(--s-2)) var(--s-4) var(--s-3);
+    background: var(--c-bg);
+    box-shadow: 0 1px 0 var(--c-edge);
+  }
+
+  .player__view {
+    order: 2;
+    height: 40svh;
+    min-height: 240px;
+  }
+
+  .player__head {
+    order: 1;
+  }
+
+  .ex-head {
+    max-width: none;
+  }
+
+  .ex-head h1 {
+    font-size: var(--fs-6);
+  }
+
+  .ex-head__facts {
+    display: none;
+  }
+
+  .player__top {
+    position: relative;
+    order: 3;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .player__bars {
+    display: none;
+  }
+
+  .player__timeline {
+    order: 4;
+    gap: var(--s-3);
+  }
+
+  .player__play {
+    width: 48px;
+    height: 48px;
+  }
+
+  .player__speeds {
+    display: none;
+  }
+
+  .ex-plate {
+    z-index: 1;
+    border-top: 0;
+    background: var(--c-bg);
+    backdrop-filter: none;
+  }
+
+  .ex-plate__inner {
+    padding-top: var(--s-6);
+  }
+
+  .ex-plate__lead {
+    font-size: var(--fs-4);
+  }
 }

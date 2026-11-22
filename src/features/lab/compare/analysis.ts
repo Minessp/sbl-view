@@ -81,7 +81,7 @@ export function clipView(exercise: string): 'side' | 'front' | 'back' | 'diagona
 
 let pathsCache: MusclePath[] | null = null;
 const rightPaths = (): MusclePath[] => (pathsCache ??= buildMusclePaths(motionSkeleton, musclePathDefs).filter((p) => p.side === 'r'));
-const pathsOf = (muscle: string) => rightPaths().filter((p) => p.muscleId === muscle);
+export const pathsOf = (muscle: string) => rightPaths().filter((p) => p.muscleId === muscle);
 
 /** Exercícios que têm o músculo como alvo. */
 export const exercisesTargeting = (muscle: string): LibraryExercise[] =>
@@ -182,6 +182,19 @@ function mainDof(c: CompiledClip, parts: readonly MusclePath[], muscle: string, 
 function motionLabel(dof: string, sign: number): string | null {
   const base = dof.replace(/_[rl]$/, '');
   return movements.find((m) => m.dof === base && m.sign === sign && !m.base)?.label ?? movements.find((m) => m.dof === base && m.sign === sign)?.label ?? null;
+}
+
+const jointCache = new WeakMap<CompiledClip, Map<string, string | null>>();
+
+/** Articulação principal do músculo no clipe (a mesma do Comparar); a telemetria do player desenha o arco nela. */
+export function mainJoint(c: CompiledClip, muscle: string): string | null {
+  let m = jointCache.get(c);
+  if (!m) jointCache.set(c, (m = new Map()));
+  if (m.has(muscle)) return m.get(muscle) ?? null;
+  const parts = pathsOf(muscle);
+  const dof = parts.length ? mainDof(c, parts, muscle, Array.from({ length: N }, (_, i) => evaluateClip(c, i / (N - 1)))) : null;
+  m.set(muscle, dof);
+  return dof;
 }
 
 const analysisCache = new Map<string, Analysis | null>();

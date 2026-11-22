@@ -675,11 +675,11 @@ export class EquipmentView {
     const len = 0.32;
     const start = L.point;
     const tip: Vec3 = [start[0] + L.dir[0] * len, start[1] + L.dir[1] * len, start[2] + L.dir[2] * len];
-    stretch(this.arrowShaft, start, [start[0] + L.dir[0] * (len - 0.06), start[1] + L.dir[1] * (len - 0.06), start[2] + L.dir[2] * (len - 0.06)], 0.007);
+    stretch(this.arrowShaft, start, [start[0] + L.dir[0] * (len - 0.05), start[1] + L.dir[1] * (len - 0.05), start[2] + L.dir[2] * (len - 0.05)], 0.0035);
     tB.set(L.dir[0], L.dir[1], L.dir[2]);
     this.arrowHead.quaternion.setFromUnitVectors(UP, tB.clone().negate());
     this.arrowHead.position.set(tip[0] - L.dir[0] * 0.03, tip[1] - L.dir[1] * 0.03, tip[2] - L.dir[2] * 0.03);
-    this.arrowHead.scale.set(0.022, 0.06, 0.022);
+    this.arrowHead.scale.set(0.014, 0.05, 0.014);
   }
 
   dispose() {

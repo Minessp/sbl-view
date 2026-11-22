@@ -10,9 +10,9 @@ import type { Camera, PerspectiveCamera as PerspCam, WebGLRenderer } from 'three
 import { forwardKinematics, pointToWorld } from '@/engine/kinematics/fk';
 import { evaluateClip, type CompiledClip, type MotionFrame } from '@/engine/motion/evaluate';
 import { cycleLength, repAt } from '@/engine/motion/keys';
-import type { Vec3 } from '@/engine/math/vec';
+import { add, scale, sub, type Vec3 } from '@/engine/math/vec';
 import { strainOf } from '@/features/atlas/explorer/demo';
-import { dampOrbit, fitDistance, FOV_DEG, orbitPosition, orbitsClose, type Orbit } from '@/features/atlas/explorer/orbit';
+import { dampOrbit, fitDistance, FOV_DEG, orbitPosition, orbitsClose, screenAxes, type Orbit } from '@/features/atlas/explorer/orbit';
 import { usePlayer, VIEW_ANGLES } from '@/features/library/player/store';
 import { useTheme } from '@/ui/theme';
 import { ContactShadow } from '../body/ContactShadow';
@@ -24,6 +24,7 @@ import { claimMain, releaseMain } from '../cinema/state';
 import { SCENE_IN } from '../director/blend';
 import { StageView, useDirector } from '../director/StageView';
 import { Studio } from '../set/Studio';
+import { Telemetry } from '../hud/telemetry';
 import { useStage } from '../stageStore';
 import { EquipmentView } from './equipment';
 import { gearAppear } from './gear/material';
@@ -75,7 +76,13 @@ function applyLook(body: BodyInstance, model: BodyModel) {
   body.fill('hidden', 0);
   body.layer('skin', { visible: st.skin, alpha: SKIN_ALPHA });
   for (const l of ['superficial', 'deep', 'bone'] as const) body.layer(l, { showAbove: -99, visible: true });
-  if (st.isolate) {
+  if (st.xray) {
+    // Raio X: só os alvos ficam inteiros; o resto, osso inclusive, vira vulto.
+    const keep = new Set(slotsOf(model, st.isolate ? [st.isolate] : [...primary, ...st.targets.synergist]));
+    body.layer('skin', { visible: false, alpha: SKIN_ALPHA });
+    for (const s of model.slots) if (!keep.has(s.index)) body.set(s.index, 'opacity', s.layer === 'bone' ? 0.18 : 0.06);
+    body.fill('highlight', 0.35, [...keep]);
+  } else if (st.isolate) {
     const keep = new Set(slotsOf(model, [st.isolate]));
     for (const s of model.slots) {
       if (s.layer === 'bone' || keep.has(s.index)) continue;
@@ -125,6 +132,18 @@ export function PlayerBody({ main = false }: { main?: boolean }) {
       setEquipment((cur) => (cur === e ? null : cur));
     };
   }, [clip]);
+  // Telemetria só na página do exercício (a vitrine da home e o Comparar não desenham).
+  const [hud, setHud] = useState<Telemetry | null>(null);
+  useEffect(() => {
+    if (!clip || !main) return;
+    const h = new Telemetry(clip);
+    setHud(h);
+    return () => {
+      h.dispose();
+      setHud((cur) => (cur === h ? null : cur));
+    };
+  }, [clip, main]);
+
   useEffect(() => {
     const id = requestAnimationFrame(() => {
       equipment?.refreshColors();
@@ -148,7 +167,7 @@ export function PlayerBody({ main = false }: { main?: boolean }) {
     if (!body || !model) return;
     let last: unknown[] = [];
     return usePlayer.subscribe((s) => {
-      const sig = [s.isolate, s.skin, s.targets];
+      const sig = [s.isolate, s.skin, s.targets, s.xray];
       if (sig.every((v, i) => v === last[i])) return;
       last = sig;
       applyLook(body, model);
@@ -207,12 +226,16 @@ export function PlayerBody({ main = false }: { main?: boolean }) {
     const pitch = Math.min(1.25, Math.max(-0.5, v.pitch + st.drag.pitch));
     // Vista de cima: a caixa aparece pela planta; o enquadramento usa a maior dimensão horizontal como altura.
     const sz: Vec3 = pitch > 0.7 ? [box.size[0], Math.max(box.size[2], box.size[1] * 0.7), box.size[1]] : box.size;
-    const goal: Orbit = {
-      yaw,
-      pitch,
-      dist: fitDistance(sz, yaw, aspect, 1.1) * st.drag.zoom,
-      target: box.center,
-    };
+    const k = st.compose;
+    const dist = fitDistance(sz, yaw, aspect, k?.margin ?? 1.1) * st.drag.zoom * st.dolly;
+    let target = box.center;
+    if (k) {
+      // Corpo deslocado no quadro: o alvo da câmera anda ao contrário no plano da tela.
+      const { right, up } = screenAxes({ yaw, pitch, dist, target });
+      const hv = 2 * dist * Math.tan((FOV_DEG * Math.PI) / 360);
+      target = sub(box.center, add(scale(right, k.x * hv * aspect), scale(up, k.y * hv)));
+    }
+    const goal: Orbit = { yaw, pitch, dist, target };
     cur.current = !cur.current || reduce ? goal : dampOrbit(cur.current, goal, 1 - Math.exp(-dt * 6));
     if (orbitsClose(cur.current, goal)) cur.current = goal;
     else invalidate();
@@ -222,6 +245,15 @@ export function PlayerBody({ main = false }: { main?: boolean }) {
     cam.far = Math.max(drawn, cur.current.dist) + 12;
     cam.updateProjectionMatrix();
     if (main) claimMain(cam, slot, gl.domElement, drawn, 0.3, 0);
+
+    // ---- Telemetria (rótulos no DOM precisam da câmera já posta) ----
+    if (hud) {
+      if (st.telemetry && !dir.flying && frame.current) {
+        cam.updateMatrixWorld();
+        const u = repAt(clip.clip.tempo, time).u;
+        hud.update({ frame: frame.current, u, dof: st.joint.dof, paths: st.isolate ? st.joint.paths : [], showLoad: st.showLoad, target: st.joint.target, full: dir.rect.w >= 600 }, cam, dir.rect);
+      } else hud.hide();
+    }
   });
 
   useEffect(() => {
@@ -238,6 +270,7 @@ export function PlayerBody({ main = false }: { main?: boolean }) {
       {body && <ContactShadow feet={getFeet} />}
       {body && <primitive object={body.group} />}
       {equipment && <primitive object={equipment.group} />}
+      {hud && <primitive object={hud.group} />}
     </>
   );
 }

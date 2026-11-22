@@ -203,7 +203,9 @@ await step('biblioteca: busca + comprimento longo + consolidado deixa um exercí
   await page.getByRole('heading', { level: 1, name: 'Cadeira extensora reclinada' }).waitFor();
 });
 
-await step('exercício: o corpo executa o clipe; pausar, quadro a quadro e trocar câmera', async () => {
+await step('exercício: o corpo executa o clipe; pausar, quadro a quadro, câmera, régua isola, alça da carga', async () => {
+  // Palco pleno do desktop: réguas de comprimento e alça da carga só existem com a telemetria à vista.
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.locator('.player__view[data-ready="true"]').waitFor({ timeout: 30000 });
   const time = page.locator('.player input[type=range]');
   const a = await time.inputValue();
@@ -217,6 +219,28 @@ await step('exercício: o corpo executa o clipe; pausar, quadro a quadro e troca
   await page.getByRole('button', { name: 'Reto femoral' }).click();
   const pressed = await page.getByRole('button', { name: 'Reto femoral' }).getAttribute('aria-pressed');
   if (pressed !== 'true') throw new Error('isolar músculo não marcou');
+  await page.getByLabel('Telemetria').check({ force: true });
+  const handle = page.getByRole('slider', { name: /Alça da carga/ });
+  await handle.waitFor({ timeout: 8000 });
+  await handle.focus();
+  await page.keyboard.press('Home');
+  await page.waitForTimeout(200);
+  const h0 = await handle.getAttribute('aria-valuenow');
+  const start = await handle.boundingBox();
+  await page.keyboard.press('End');
+  await page.waitForTimeout(200);
+  const h1 = await handle.getAttribute('aria-valuenow');
+  const end = await handle.boundingBox();
+  if (h0 !== '0' || h1 !== '100') throw new Error(`alça da carga: Home ${h0}, End ${h1}`);
+  if (!start || !end) throw new Error('alça da carga sem posição');
+  // Arrastar da ponta encurtada até onde a alça estava na alongada percorre o rastro de volta.
+  await page.mouse.move(end.x + end.width / 2, end.y + end.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(start.x + start.width / 2, start.y + start.height / 2, { steps: 8 });
+  await page.mouse.up();
+  const h2 = Number(await handle.getAttribute('aria-valuenow'));
+  if (!(h2 < 50)) throw new Error(`arrastar a alça não percorreu o rastro (${h2})`);
+  await page.setViewportSize({ width: 390, height: 844 });
 });
 
 await step('troca de rota: duas trocas em 300 ms não esvaziam o palco', async () => {
