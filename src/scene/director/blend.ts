@@ -4,8 +4,11 @@
 import type { Vec3 } from '@/engine/math/vec';
 import type { Rect, Shot } from './handoff';
 
-/** Duração do voo (câmera, recorte); a pose chega antes (70%), o equipamento se monta em 35–100%. */
+/** Duração do voo (câmera, recorte); a pose chega antes (70%). */
 export const SHOT_MS = 900;
+
+/** Trecho do voo em que o ambiente da página nova (chão, equipamento) entra: o mesmo da página (140–780 ms do corte). */
+export const SCENE_IN = [0.15, 0.85] as const;
 
 /** Expo de saída, a mesma família da curva da página (`--ease`): parte decidida, assenta devagar. */
 export function shotEase(k: number): number {

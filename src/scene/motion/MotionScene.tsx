@@ -21,6 +21,7 @@ import { mergeBoxes, type Box, type BodyModel } from '../body/model';
 import { STANDING } from '../body/poses';
 import { useBodyInstance, useBodyModel } from '../body/useBody';
 import { claimMain, releaseMain } from '../cinema/state';
+import { SCENE_IN } from '../director/blend';
 import { StageView, useDirector } from '../director/StageView';
 import { Studio } from '../set/Studio';
 import { useStage } from '../stageStore';
@@ -196,7 +197,7 @@ export function PlayerBody({ main = false }: { main?: boolean }) {
       feet.current = [...f.contacts, ...(equipment?.floor ?? [])].slice(0, 8);
     }
     if (frame.current) equipment?.update(frame.current, st.showLoad);
-    if (main) gearAppear.value = dir.e(0.35, 1);
+    if (main) gearAppear.value = dir.e(...SCENE_IN);
     dir.skin(body, st.skin, SKIN_ALPHA);
 
     // ---- Câmera ----

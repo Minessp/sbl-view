@@ -1,6 +1,7 @@
 /**
  * Anima a luz do estúdio (rig.ts) uma vez por quadro, para todo o palco:
- * - acende quando a cena fica pronta (contraluz primeiro, depois a key; ~1,6 s, saída exponencial);
+ * - acende quando a cena fica pronta (contraluz primeiro, depois a key; ~1,6 s, saída exponencial); chegando por troca
+ *   de rota com voo (plano de saída fresco), a luz já está acesa e fica: o corpo não chega escuro, depois do ambiente;
  * - a key segue o ponteiro de leve (ponteiro fino, sem redução de movimento);
  * - relógio do brilho que percorre o músculo destacado.
  * Com frameloop="demand", só pede quadro novo enquanto algo está mudando.
@@ -8,6 +9,7 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { Vector3 } from 'three';
+import { useHandoff } from '../director/handoff';
 import { useStage } from '../stageStore';
 import { KEY_BASE, PULSE_SECONDS, refreshPalette, rig } from './rig';
 
@@ -26,12 +28,13 @@ export function LightRig() {
     refreshPalette();
   }, []);
 
-  // Acende a cada cena nova (pronta); apaga quando ela sai.
+  // Acende a cada cena nova sem plano de saída. A troca de rota passa por "não pronto" entre uma cena e outra: apagar ali
+  // fazia o corpo chegar escuro, quase 1 s depois da página e do equipamento.
   useEffect(
     () =>
       useStage.subscribe((s, prev) => {
-        if (s.ready === prev.ready) return;
-        rig.uLight.value = s.ready && reduceMotion() ? 1 : 0;
+        if (!s.ready || prev.ready) return;
+        rig.uLight.value = reduceMotion() || performance.now() - useHandoff.getState().lastAt < 1500 ? 1 : 0;
         invalidate();
       }),
     [invalidate],

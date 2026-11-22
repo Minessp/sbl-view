@@ -27,6 +27,7 @@ import type { BodyInstance } from '../body/instance';
 import { LIGHT_GLSL } from '../body/material';
 import { palette, rig } from '../body/rig';
 import { cinema } from '../cinema/state';
+import { SCENE_IN } from '../director/blend';
 import { useDirector } from '../director/StageView';
 
 const SHADOW_SIZE = 1024;
@@ -294,8 +295,8 @@ export function Studio({
     const uni = res.uni;
     const light = document.documentElement.dataset.theme === 'light';
     uni.color.value.copy(palette.floor);
-    // Troca de rota: o chão (sombra e reflexo juntos) chega no pouso, não voa com o corpo.
-    uni.appear.value = dir.e(0.5, 1);
+    // Troca de rota: o chão (sombra e reflexo juntos) entra junto com a página nova, recortado pelo quadro (uClip).
+    uni.appear.value = dir.e(...SCENE_IN);
     // Quadro lógico da vista em px do alvo (origem embaixo): recorta o chão também quando a vista ocupa o canvas inteiro.
     const cv = gl.domElement.getBoundingClientRect(), k = gl.getPixelRatio(), r = dir.rect;
     uni.clip.value.set((r.x - cv.left) * k, (cv.bottom - r.y - r.h) * k, r.w * k, r.h * k);

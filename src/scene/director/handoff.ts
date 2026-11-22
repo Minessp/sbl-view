@@ -26,6 +26,8 @@ export interface Shot {
 
 interface HandoffState {
   shot: Shot | null;
+  /** Instante (performance.now) do último plano deixado; fica mesmo depois de consumido (a luz do palco consulta). */
+  lastAt: number;
   leave: (s: Shot) => void;
   /** Plano deixado há no máximo `maxAgeMs`; consome (a próxima cena não reaproveita um voo velho). */
   take: (maxAgeMs?: number) => Shot | null;
@@ -33,7 +35,8 @@ interface HandoffState {
 
 export const useHandoff = create<HandoffState>((set, get) => ({
   shot: null,
-  leave: (shot) => set({ shot }),
+  lastAt: -Infinity,
+  leave: (shot) => set({ shot, lastAt: shot.at }),
   take: (maxAgeMs = 1500) => {
     const s = get().shot;
     if (!s) return null;
