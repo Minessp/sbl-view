@@ -41,7 +41,7 @@ organização e o texto, não os fatos em si.
 
 ## Derivados do Z-Anatomy: CC BY-SA 4.0
 
-Abrange `public/models/anatomy-*.bin`, `public/fallback/corpo-*.webp` e `src/data/muscle-paths.json`, obtidos da
+Abrange `public/models/anatomy-*.bin`, `public/fallback/corpo-*.webp`, `public/posters/*.webp` e `src/data/muscle-paths.json`, obtidos da
 malha anatômica do Z-Anatomy (CC BY-SA 4.0). A cláusula Compartilha Igual da licença de origem não admite
 restrições adicionais, por isso esses arquivos seguem sob a mesma licença:
 https://creativecommons.org/licenses/by-sa/4.0/deed.pt_BR

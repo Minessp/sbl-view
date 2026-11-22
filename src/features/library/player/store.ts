@@ -63,6 +63,8 @@ interface PlayerState {
   xray: boolean;
   /** Aproximação pedida pela leitura da prancha (fator da distância; 1 = nenhuma). */
   dolly: number;
+  /** Músculo sob o pixel (x, y) do slot, registrado pela cena; null sem palco. */
+  pick: ((x: number, y: number) => string | null) | null;
   setSlot: (el: HTMLElement | null) => void;
   load: (clip: CompiledClip | null, targets: PlayerTargets) => void;
   setPlaying: (p: boolean) => void;
@@ -80,6 +82,7 @@ interface PlayerState {
   setCompose: (c: PlayerCompose | null) => void;
   setXray: (v: boolean) => void;
   setDolly: (k: number) => void;
+  setPick: (fn: ((x: number, y: number) => string | null) | null) => void;
 }
 
 const reduce = () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -103,6 +106,7 @@ export const usePlayer = create<PlayerState>((set, get) => ({
   compose: null,
   xray: false,
   dolly: 1,
+  pick: null,
   setSlot: (slot) => set({ slot }),
   // Clipe novo: volta ao início, na vista do clipe; com redução de movimento começa parado.
   load: (clip, targets) =>
@@ -140,4 +144,5 @@ export const usePlayer = create<PlayerState>((set, get) => ({
   setCompose: (compose) => set({ compose }),
   setXray: (xray) => set({ xray }),
   setDolly: (dolly) => set({ dolly }),
+  setPick: (pick) => set({ pick }),
 }));

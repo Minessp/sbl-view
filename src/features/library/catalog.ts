@@ -18,6 +18,8 @@ const mvIndex = new Map(movements.map((m) => [m.id, m]));
 export const exerciseById = (id: string): LibraryExercise | undefined => exIndex.get(id);
 export const muscleById = (id: string): MuscleDef | undefined => muIndex.get(id);
 export const movementById = (id: string): Movement | undefined => mvIndex.get(id);
+/** Cartaz do exercício (scripts/posters.mjs). Slug à mão: o palco importa este arquivo e `@/app/routes` depende do idioma. */
+export const posterSrc = (id: string): string => `${import.meta.env.BASE_URL}posters/${id.replaceAll('_', '-')}.webp`;
 
 /** Ordem de leitura do Atlas: de cima para baixo, de dentro para fora. */
 export const REGIONS: { id: string; groups: MuscleGroup[] }[] = [
@@ -70,9 +72,11 @@ export interface ExerciseFilters {
   status: 'consolidado' | 'hipotese' | null;
   /** Só exercícios que carregam o alvo alongado. */
   longOnly: boolean;
+  /** Músculo tocado no corpo: exercícios em que ele trabalha (alvo ou sinergista). */
+  muscle: string | null;
 }
 
-export const NO_FILTERS: ExerciseFilters = { query: '', region: null, group: null, equipment: [], pattern: null, status: null, longOnly: false };
+export const NO_FILTERS: ExerciseFilters = { query: '', region: null, group: null, equipment: [], pattern: null, status: null, longOnly: false, muscle: null };
 
 /**
  * Filtro da biblioteca. Equipamento é "tem tudo isto?": marcar barra e banco mostra
@@ -88,8 +92,44 @@ export function filterExercises(list: readonly LibraryExercise[], f: ExerciseFil
     if (f.longOnly && e.length.emphasis !== 'alongado') return false;
     if (f.equipment.some((q) => !e.equipment.includes(q))) return false;
     if (f.group && !e.targets.some((t) => t.role === 'alvo' && muIndex.get(t.muscle)?.group === f.group)) return false;
+    if (f.muscle && !e.targets.some((t) => t.muscle === f.muscle)) return false;
     return true;
   });
+}
+
+/** Filtros na URL (`?q=&parte=&grupo=&musculo=&eq=&padrao=&status=&longo=1`); só o que difere do vazio. */
+export function toQuery(f: ExerciseFilters): string {
+  const p = new URLSearchParams();
+  if (f.query.trim()) p.set('q', f.query.trim());
+  if (f.region) p.set('parte', f.region);
+  if (f.group) p.set('grupo', f.group);
+  if (f.muscle) p.set('musculo', f.muscle);
+  if (f.equipment.length) p.set('eq', f.equipment.join(','));
+  if (f.pattern) p.set('padrao', f.pattern);
+  if (f.status) p.set('status', f.status);
+  if (f.longOnly) p.set('longo', '1');
+  const s = p.toString();
+  return s ? `?${s}` : '';
+}
+
+const KNOWN_EQUIPMENT = new Set(library.flatMap((e) => e.equipment));
+const KNOWN_PATTERNS = new Set(library.map((e) => e.pattern));
+const KNOWN_GROUPS = new Set(REGIONS.flatMap((r) => r.groups));
+const pick = <T extends string>(v: string | null, ok: (v: string) => boolean): T | null => (v && ok(v) ? (v as T) : null);
+
+/** Lê a URL; valor desconhecido (link velho, digitado à mão) é ignorado. */
+export function fromQuery(search: string): ExerciseFilters {
+  const p = new URLSearchParams(search);
+  return {
+    query: p.get('q') ?? '',
+    region: pick<ExerciseRegion>(p.get('parte'), (v) => (EXERCISE_REGIONS as readonly string[]).includes(v)),
+    group: pick<MuscleGroup>(p.get('grupo'), (v) => KNOWN_GROUPS.has(v as MuscleGroup)),
+    muscle: pick<string>(p.get('musculo'), (v) => muIndex.has(v)),
+    equipment: (p.get('eq') ?? '').split(',').filter((q): q is Equipment => KNOWN_EQUIPMENT.has(q as Equipment)),
+    pattern: pick<MovementPattern>(p.get('padrao'), (v) => KNOWN_PATTERNS.has(v as MovementPattern)),
+    status: pick<'consolidado' | 'hipotese'>(p.get('status'), (v) => v === 'consolidado' || v === 'hipotese'),
+    longOnly: p.get('longo') === '1',
+  };
 }
 
 export interface MuscleUse {

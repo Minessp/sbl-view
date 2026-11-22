@@ -101,11 +101,12 @@ export function writePwa(dist: string): void {
   writeFileSync(join(dist, 'en', 'manifest.webmanifest'), manifest('en'));
   // Subconjuntos de fonte que o latim não usa: o navegador só baixa se aparecer o caractere.
   // Malha anatômica (models/) é grande e opcional: entra no cache só quando alguém a pede.
-  // Imagens sem WebGL (fallback/) só servem a quem não tem 3D. Os index.html entram pela raiz de cada idioma.
+  // Imagens sem WebGL (fallback/) só servem a quem não tem 3D; cartazes (posters/) chegam sob demanda, com a parede. Os index.html entram pela raiz de cada idioma.
   const skip = (f: string) =>
     f.endsWith('.map') ||
     f.startsWith('models/') ||
     f.startsWith('fallback/') ||
+    f.startsWith('posters/') ||
     /-(vietnamese|latin-ext)-/.test(f) ||
     ['sw.js', '_headers', '_redirects', 'index.html', 'en/index.html'].includes(f);
   const files = listFiles(dist)

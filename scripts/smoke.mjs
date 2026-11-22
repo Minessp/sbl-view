@@ -192,14 +192,28 @@ await step('rodapé leva aos termos; Ajustes troca a qualidade e grava sbl-lod',
   await dlg.waitFor({ state: 'hidden' });
 });
 
-await step('biblioteca: busca + comprimento longo + consolidado deixa um exercício', async () => {
+await step('biblioteca: alvo da arara filtra por músculo; setas trocam o foco; Enter abre', async () => {
   await page.goto(`${base}/exercicios`, { waitUntil: 'networkidle' });
-  await page.getByText('Só carga no músculo alongado').click();
-  await page.getByRole('button', { name: 'Consolidado' }).click();
-  await page.getByRole('status').filter({ hasText: /^\s*\d{2} exercícios/ }).waitFor();
+  const name = page.locator('.rack__name');
+  await page.locator('.rack__targets button').first().click();
+  await page.getByRole('button', { name: /^Tirar o filtro de músculo/ }).waitFor();
+  if (!page.url().includes('musculo=')) throw new Error(`URL sem o músculo: ${page.url()}`);
+  const first = await name.textContent();
+  await page.getByRole('group', { name: 'Arara de exercícios' }).focus();
+  await page.keyboard.press('ArrowRight');
+  await page.waitForFunction((a) => document.querySelector('.rack__name')?.textContent !== a, first);
+  const second = (await name.textContent()) ?? '';
+  await page.keyboard.press('Enter');
+  await page.getByRole('heading', { level: 1, name: second }).waitFor();
+});
+
+await step('biblioteca: filtros pela URL + busca deixam um exercício', async () => {
+  await page.goto(`${base}/exercicios?longo=1&status=consolidado`, { waitUntil: 'networkidle' });
+  await page.getByRole('status').filter({ hasText: /^\s*\d+ exercícios/ }).waitFor();
   await page.getByLabel('Buscar').fill('extensora');
   await page.getByRole('status').filter({ hasText: '1 exercício' }).waitFor();
-  await page.getByRole('link', { name: /Cadeira extensora reclinada/ }).click();
+  if (!page.url().includes('q=extensora')) throw new Error(`URL sem a busca: ${page.url()}`);
+  await page.locator('.wall').getByRole('link', { name: /Cadeira extensora reclinada/ }).click();
   await page.getByRole('heading', { level: 1, name: 'Cadeira extensora reclinada' }).waitFor();
 });
 
@@ -393,7 +407,7 @@ await step('inglês: /en/ com lang, menu, exercícios e troca de idioma para a m
   await page.getByRole('dialog').getByRole('link', { name: /^Exercises/ }).click();
   await page.waitForURL((u) => u.pathname === '/en/exercises');
   await page.getByRole('heading', { level: 1, name: 'Exercises' }).waitFor();
-  await page.locator('.ex-card__link').first().click();
+  await page.locator('.poster-card__link').first().click();
   await page.waitForURL(/\/en\/exercises\/[a-z-]+$/);
   const path = new URL(page.url()).pathname;
   await page.getByRole('button', { name: 'Log a set' }).or(page.getByRole('link', { name: 'Log a set' })).first().waitFor();

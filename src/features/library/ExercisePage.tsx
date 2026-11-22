@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useRef } from 'react';
 import { Link } from 'wouter';
 import { getReference } from '@/data';
 import { fmt, t } from '@/i18n/app';
@@ -15,6 +15,9 @@ import './library.css';
 import '@/ui/target-list.css';
 import { Title } from '@/ui/Title';
 import { muscleHref, R } from '@/app/routes';
+
+// Só em desenvolvimento: o build troca DEV por false e o chunk some.
+const PosterCapture = import.meta.env.DEV ? lazy(() => import('@/features/dev/PosterCapture')) : null;
 
 /** Algum alvo do exercício é alvo de outro exercício também: dá para comparar no Lab. */
 const comparable = (e: LibraryExercise): boolean =>
@@ -71,6 +74,13 @@ export default function ExercisePage({ id }: { id: string }) {
       </main>
     );
   }
+
+  if (PosterCapture && clip && new URLSearchParams(window.location.search).has('cartaz'))
+    return (
+      <Suspense fallback={null}>
+        <PosterCapture name={e.name} clip={clip} targets={targets} />
+      </Suspense>
+    );
 
   const head = (
     <header className="ex-head">

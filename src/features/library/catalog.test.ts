@@ -1,5 +1,7 @@
+import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { exerciseById, exerciseRegion, exercisesForMuscle, filterExercises, library, muscleById, NO_FILTERS, REGIONS, targetGroups } from './catalog';
+import { slug } from '@/app/routes';
+import { exerciseById, exerciseRegion, exercisesForMuscle, filterExercises, fromQuery, library, muscleById, NO_FILTERS, REGIONS, targetGroups, toQuery } from './catalog';
 import { muscleDefs } from '@/data';
 
 const byId = (id: string) => {
@@ -68,5 +70,22 @@ describe('catálogo de exercícios', () => {
     const all = new Set(REGIONS.flatMap((r) => r.groups));
     for (const m of muscleDefs) expect(all, m.id).toContain(m.group);
     expect(muscleById('soleus')?.latin).toBe('Soleus');
+  });
+
+  it('músculo tocado: alvo ou sinergista', () => {
+    const r = ids({ muscle: 'gluteus_maximus' });
+    expect(r).toEqual(expect.arrayContaining(['hip_thrust', 'squat']));
+    expect(r.every((id) => byId(id).targets.some((t) => t.muscle === 'gluteus_maximus'))).toBe(true);
+  });
+
+  it('URL ida e volta; lixo é ignorado', () => {
+    const f = { ...NO_FILTERS, query: 'rosca', region: 'upper', group: 'elbow_flexors', muscle: 'biceps_brachii', equipment: ['halteres', 'banco'], pattern: library[0]?.pattern ?? null, status: 'hipotese', longOnly: true } as const;
+    expect(fromQuery(toQuery(f))).toEqual(f);
+    expect(toQuery(NO_FILTERS)).toBe('');
+    expect(fromQuery('?parte=pe&grupo=x&musculo=nada&eq=foguete,halteres&status=talvez&longo=sim')).toEqual({ ...NO_FILTERS, equipment: ['halteres'] });
+  });
+
+  it('todo exercício tem cartaz no disco (scripts/posters.mjs)', () => {
+    expect(library.filter((e) => !existsSync(`public/posters/${slug(e.id)}.webp`)).map((e) => e.id)).toEqual([]);
   });
 });

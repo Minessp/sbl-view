@@ -8,9 +8,10 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Camera, PerspectiveCamera as PerspCam, WebGLRenderer } from 'three';
 import { forwardKinematics, pointToWorld } from '@/engine/kinematics/fk';
+import { blendDeg, blendRoot } from '@/engine/motion/blend';
 import { evaluateClip, type CompiledClip, type MotionFrame } from '@/engine/motion/evaluate';
 import { cycleLength, repAt } from '@/engine/motion/keys';
-import { add, scale, sub, type Vec3 } from '@/engine/math/vec';
+import { add, DEG, scale, sub, type Vec3 } from '@/engine/math/vec';
 import { strainOf } from '@/features/atlas/explorer/demo';
 import { dampOrbit, fitDistance, FOV_DEG, orbitPosition, orbitsClose, screenAxes, type Orbit } from '@/features/atlas/explorer/orbit';
 import { usePlayer, VIEW_ANGLES } from '@/features/library/player/store';
@@ -34,6 +35,10 @@ const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)')
 const SKIN_ALPHA = 0.2;
 /** Opacidade dos músculos fora do foco quando um músculo está isolado. */
 const DIM = 0.12;
+/** Troca de clipe na mesma vista (arara): a pose funde da anterior em SWAP_S; o equipamento novo se monta em GEAR_S. */
+const SWAP_S = 0.45;
+const GEAR_S = 0.7;
+const easeOut = (k: number) => 1 - (1 - k) ** 3;
 
 /** Caixa que contém o corpo e o equipamento ao longo da repetição (a câmera não persegue o movimento). */
 export function clipBox(c: CompiledClip): Box {
@@ -122,6 +127,15 @@ export function PlayerBody({ main = false }: { main?: boolean }) {
   // Equipamento do clipe.
   // Criado no efeito: no StrictMode a limpeza roda entre as duas montagens e precisa de um equipamento novo.
   const [equipment, setEquipment] = useState<EquipmentView | null>(null);
+  // Clipe trocado sem sair da vista: parte da última pose desenhada.
+  const swap = useRef<{ deg: Readonly<Record<string, number>>; root: MotionFrame['root']; at: number } | null>(null);
+  const prevClip = useRef<CompiledClip | null>(null);
+  useEffect(() => {
+    if (!clip) return;
+    const from = dir.drawn.pose;
+    swap.current = prevClip.current && prevClip.current !== clip && from && !dir.flying && !reduceMotion() ? { ...from, at: performance.now() / 1000 } : null;
+    prevClip.current = clip;
+  }, [clip, dir]);
   useEffect(() => {
     if (!clip) return;
     const e = new EquipmentView([0, 0.25, 0.5, 0.75, 1].map((u) => evaluateClip(clip, u)));
@@ -196,12 +210,24 @@ export function PlayerBody({ main = false }: { main?: boolean }) {
 
     // ---- Pose, cor, equipamento ----
     // No voo da troca de rota a pose mistura a de saída com a do clipe a cada quadro.
-    if (time !== lastTime.current || dir.flying) {
+    const sw = swap.current;
+    const swapK = sw ? Math.min(1, (now - sw.at) / SWAP_S) : 1;
+    if (time !== lastTime.current || dir.flying || sw) {
       lastTime.current = time;
       const { u } = repAt(clip.clip.tempo, time);
       const f = evaluateClip(clip, u);
       frame.current = f;
-      body.setPose(clip.sk, dir.pose(clip.sk, f.deg, f.root) ?? f.pose);
+      let pose = dir.pose(clip.sk, f.deg, f.root) ?? f.pose;
+      if (sw && !dir.flying) {
+        const k = easeOut(swapK);
+        const d = blendDeg(sw.deg, f.deg, k);
+        const r = blendRoot(sw.root, f.root, k);
+        dir.drawn.pose = { deg: d, root: r };
+        pose = forwardKinematics(clip.sk, Object.fromEntries(Object.entries(d).map(([id, v]) => [id, v * DEG])), { root: r, clampToRom: false });
+        if (swapK < 1 || now - sw.at < GEAR_S) invalidate();
+        if (now - sw.at >= GEAR_S) swap.current = null;
+      }
+      body.setPose(clip.sk, pose);
       const base = rest.current;
       if (base) {
         body.fill('strain', 0);
@@ -216,7 +242,7 @@ export function PlayerBody({ main = false }: { main?: boolean }) {
       feet.current = [...f.contacts, ...(equipment?.floor ?? [])].slice(0, 8);
     }
     if (frame.current) equipment?.update(frame.current, st.showLoad);
-    if (main) gearAppear.value = dir.e(...SCENE_IN);
+    if (main) gearAppear.value = Math.min(dir.e(...SCENE_IN), sw ? easeOut(Math.min(1, (now - sw.at) / GEAR_S)) : 1);
     dir.skin(body, st.skin, SKIN_ALPHA);
 
     // ---- Câmera ----
@@ -260,6 +286,17 @@ export function PlayerBody({ main = false }: { main?: boolean }) {
     const cam = camRef.current;
     return () => releaseMain(cam);
   }, []);
+
+  // Seleção pelo slot da página (o canvas fixo não recebe ponteiro): só músculo.
+  useEffect(() => {
+    if (!main || !body || !model) return;
+    usePlayer.getState().setPick((x, y) => {
+      const cam = camRef.current;
+      const i = cam ? body.pick(gl, cam, x, y, dir.rect.w, dir.rect.h) : null;
+      return (i === null ? undefined : model.slots[i])?.muscleId ?? null;
+    });
+    return () => usePlayer.getState().setPick(null);
+  }, [main, body, model, gl, dir]);
 
   const casters = useMemo(() => () => (equipment ? [{ render: (r: WebGLRenderer, c: Camera) => r.render(equipment.group, c) }] : []), [equipment]);
 

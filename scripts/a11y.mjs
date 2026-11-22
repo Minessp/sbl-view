@@ -17,6 +17,7 @@ const ROUTES = [
   '/atlas',
   '/atlas/vastus-lateralis',
   '/exercicios',
+  '/exercicios#filtros',
   '/exercicios/squat',
   '/exercicios/incline-dumbbell-curl',
   '/lab',
@@ -69,9 +70,14 @@ async function openSettings(page, name) {
 
 async function audit(page, label, routes = ROUTES, settings = 'Ajustes') {
   for (const route of routes) {
-    await page.goto(base + route.replace('#ajustes', ''), { waitUntil: 'networkidle' });
+    await page.goto(base + route.replace(/#(ajustes|filtros)$/, ''), { waitUntil: 'networkidle' });
     await page.waitForSelector('main', { timeout: 15000 });
     if (route.endsWith('#ajustes')) await openSettings(page, settings);
+    if (route.endsWith('#filtros')) {
+      // Folha de filtros da biblioteca aberta.
+      await page.getByRole('button', { name: 'Filtros' }).click();
+      await page.getByRole('dialog', { name: 'Filtros' }).waitFor();
+    }
     await page.waitForTimeout(400);
     await page.addScriptTag({ content: axeSource });
     const res = await page.evaluate(async () => {

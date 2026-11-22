@@ -311,6 +311,8 @@ export function Studio({
     uni.shadowK.value = light ? 0.42 : 0.82;
     // Claro: ciclorama de estúdio, chão quase da cor do fundo.
     uni.floorK.value = light ? 1.9 : 0.5;
+    // Cartaz da biblioteca (captura em dev, fundo transparente): só a sombra de contato fica.
+    res.floor.visible = !document.documentElement.classList.contains('poster-capture');
     if (!body || (!shadowOn && !reflectOn)) return;
     const prev = gl.getRenderTarget();
     const prevScissor = gl.getScissorTest();

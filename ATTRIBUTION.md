@@ -21,7 +21,8 @@ CC BY 4.0, https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html).
 
 - **Arquivos derivados, sob CC BY-SA 4.0:** `public/models/anatomy-{lo,mid,hi,ultra}.bin`,
   `public/fallback/corpo-frente.webp`, `public/fallback/corpo-costas.webp` (corpo renderizado para navegadores sem
-  WebGL) e `src/data/muscle-paths.json` (linhas centrais dos músculos).
+  WebGL), `public/posters/*.webp` (cartazes da biblioteca: o corpo executando cada exercício, com o equipamento) e
+  `src/data/muscle-paths.json` (linhas centrais dos músculos).
 - **Componentes excluídos:** o repositório de origem traz peças com licença própria, conferidas no `License.txt`:
   ouvido interno (Univ. de Dundee, CC BY-NC-SA 4.0), rim (Lissie Cowley, CC BY-NC 4.0), nervos cranianos (Univ. de
   Dundee, CC BY 4.0) e cérebro/substância branca (Univ. de Washington). Nenhuma delas é usada: a exportação lê apenas
