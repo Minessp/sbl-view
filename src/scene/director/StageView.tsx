@@ -82,7 +82,10 @@ export class Director {
     return this.flight ? shotEase(window01(this.flight.k, a, b)) : 1;
   }
 
-  /** Posiciona a câmera: a própria fora do voo; no voo, em arco a partir da de saída. Devolve a distância ao alvo. */
+  /**
+   * Posiciona a câmera: a própria fora do voo; no voo, em arco a partir da de saída. Devolve a distância ao alvo. Chamar
+   * depois de pôr `cam.aspect` (no voo o aspect sai daqui).
+   */
   camera(cam: PerspectiveCamera, pos: Vec3, target: Vec3): number {
     const own = { pos, target, fovDeg: cam.fov };
     const c = this.flight ? arcCamera(this.flight.from.camera, own, this.e()) : own;
@@ -90,9 +93,13 @@ export class Director {
     cam.fov = c.fovDeg;
     cam.lookAt(c.target[0], c.target[1], c.target[2]);
     const v = this.flight ? this.canvas : null;
-    // O recorte lógico vira a "imagem cheia" e o canvas a região desenhada: o frustum se estende além do recorte.
-    if (v) cam.setViewOffset(this.rect.w, this.rect.h, v.x - this.rect.x, v.y - this.rect.y, v.w, v.h);
-    else if (cam.view?.enabled) cam.clearViewOffset();
+    if (v) {
+      // O recorte lógico vira a "imagem cheia" e o canvas a região desenhada: o frustum se estende além do recorte. A
+      // `View` do drei força aspect = proporção do canvas; com o FOV vertical fixo, alargar a imagem cheia em volta do centro
+      // até essa proporção dá a mesma projeção e deixa o aspect dela correto.
+      const r = this.rect, fullW = (r.h * v.w) / v.h;
+      cam.setViewOffset(fullW, r.h, v.x - r.x + (fullW - r.w) / 2, v.y - r.y, v.w, v.h);
+    } else if (cam.view?.enabled) cam.clearViewOffset();
     this.drawn.camera = c;
     return Math.hypot(c.pos[0] - c.target[0], c.pos[1] - c.target[1], c.pos[2] - c.target[2]);
   }

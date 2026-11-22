@@ -339,8 +339,8 @@ function ExplorerBody() {
     cur.current = reduce ? goal : dampOrbit(cur.current, goal, 1 - Math.exp(-dt * 6));
     if (orbitsClose(cur.current, goal)) cur.current = goal;
     else invalidate();
-    const drawn = dir.camera(cam, orbitPosition(cur.current), cur.current.target);
     cam.aspect = dir.rect.w / dir.rect.h;
+    const drawn = dir.camera(cam, orbitPosition(cur.current), cur.current.target);
     cam.near = Math.max(0.02, Math.min(drawn, cur.current.dist) * 0.05);
     cam.far = Math.max(drawn, cur.current.dist) + 12;
     cam.updateProjectionMatrix();

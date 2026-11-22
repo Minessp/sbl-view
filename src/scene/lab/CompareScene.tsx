@@ -118,8 +118,8 @@ function CompareBody({ spec, model, main }: { spec: CompareSpec; model: BodyMode
     const aspect = dir.rect.w / dir.rect.h;
     const v = VIEWS[st.view];
     const p = orbitPosition({ yaw: v.yaw, pitch: v.pitch, dist: fitDistance(box.size, v.yaw, aspect, 1.12), target: box.center });
-    dir.camera(cam, p, box.center);
     cam.aspect = aspect;
+    dir.camera(cam, p, box.center);
     cam.near = 0.05;
     cam.far = 30;
     cam.updateProjectionMatrix();

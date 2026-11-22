@@ -215,8 +215,8 @@ export function PlayerBody({ main = false }: { main?: boolean }) {
     cur.current = !cur.current || reduce ? goal : dampOrbit(cur.current, goal, 1 - Math.exp(-dt * 6));
     if (orbitsClose(cur.current, goal)) cur.current = goal;
     else invalidate();
-    const drawn = dir.camera(cam, orbitPosition(cur.current), cur.current.target);
     cam.aspect = aspect;
+    const drawn = dir.camera(cam, orbitPosition(cur.current), cur.current.target);
     cam.near = Math.max(0.05, Math.min(drawn, cur.current.dist) * 0.05);
     cam.far = Math.max(drawn, cur.current.dist) + 12;
     cam.updateProjectionMatrix();

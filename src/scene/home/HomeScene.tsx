@@ -268,8 +268,8 @@ function HeroBody() {
     else invalidate();
     heroCamera.orbit = cur.current;
     const c = cur.current;
-    const drawn = dir.camera(cam, orbitPosition(c), c.target);
     cam.aspect = aspect;
+    const drawn = dir.camera(cam, orbitPosition(c), c.target);
     cam.near = Math.max(0.05, Math.min(drawn, c.dist) * 0.05);
     cam.far = Math.max(drawn, c.dist) + 14;
     cam.updateProjectionMatrix();
