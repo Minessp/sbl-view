@@ -519,9 +519,11 @@ export function Player({ name, clip, targets, head }: { name: string; clip: Comp
   return (
     <section className="player" aria-label={P.figure(name)}>
       <Slot label={P.figure(name)} />
-      {head && <div className="player__head">{head}</div>}
+      <div className="player__side">
+        {head && <div className="player__head">{head}</div>}
+        <LengthBars clip={clip} targets={targets} />
+      </div>
       <Top />
-      <LengthBars clip={clip} targets={targets} />
       <Timeline clip={clip} />
       <ScrubHandle clip={clip} />
       <HudTags />
