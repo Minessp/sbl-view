@@ -478,7 +478,7 @@
 
   .player {
     z-index: var(--z-over-stage);
-    height: 100svh;
+    height: calc(100svh - 88px);
   }
 
   .player__view {
@@ -510,16 +510,9 @@
     max-width: 420px;
   }
 
-  /* Prancha numa coluna de vidro à esquerda: o corpo segue à vista e a câmera acompanha a leitura. */
-  .ex-plate {
-    width: min(620px, 44vw);
-    margin: 0 0 30svh var(--pad);
-    border: var(--lw-hair) solid var(--c-edge);
-    border-radius: var(--r-2);
-  }
-
+  /* A prancha já aparece no pé da primeira tela (a primeira linha do texto à vista): rolar é o caminho óbvio. */
   .ex-plate__inner {
-    padding: var(--s-7) var(--s-6);
+    padding-top: var(--s-5);
   }
 
   .player__bars {
