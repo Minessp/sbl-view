@@ -62,6 +62,7 @@ const FLOOR_FS = /* glsl */ `
   uniform float uShadowK;
   uniform float uFloorK;
   uniform float uAppear;
+  uniform vec4 uClip;
   varying vec3 vW;
   varying vec3 vView;
   ${LIGHT_GLSL}
@@ -97,6 +98,9 @@ const FLOOR_FS = /* glsl */ `
   }
 
   void main() {
+    // O ambiente não sai do quadro da vista: no voo o corpo desenha no canvas inteiro, o chão não.
+    vec2 q = gl_FragCoord.xy - uClip.xy;
+    if (q.x < 0.0 || q.y < 0.0 || q.x > uClip.z || q.y > uClip.w) discard;
     float r = length(vW.xz - uCenter);
     float fade = (1.0 - smoothstep(0.9, 3.4 * uFade, r)) * uAppear;
     if (fade <= 0.001) discard;
@@ -203,6 +207,7 @@ export function Studio({
       shadowK: { value: 0.82 },
       floorK: { value: 0.5 },
       appear: { value: 1 },
+      clip: { value: new Vector4(0, 0, 1e5, 1e5) },
       projInv: { value: new Matrix4() },
       camWorld: { value: new Matrix4() },
     };
@@ -228,6 +233,7 @@ export function Studio({
         uShadowK: uni.shadowK,
         uFloorK: uni.floorK,
         uAppear: uni.appear,
+        uClip: uni.clip,
       },
       transparent: true,
       depthWrite: true,
@@ -290,6 +296,9 @@ export function Studio({
     uni.color.value.copy(palette.floor);
     // Troca de rota: o chão (sombra e reflexo juntos) chega no pouso, não voa com o corpo.
     uni.appear.value = dir.e(0.5, 1);
+    // Quadro lógico da vista em px do alvo (origem embaixo): recorta o chão também quando a vista ocupa o canvas inteiro.
+    const cv = gl.domElement.getBoundingClientRect(), k = gl.getPixelRatio(), r = dir.rect;
+    uni.clip.value.set((r.x - cv.left) * k, (cv.bottom - r.y - r.h) * k, r.w * k, r.h * k);
     BOXES.forEach((b, i) => res.tints[i]?.value.copy(b.warm ? palette['light-key'] : palette['light-rim']));
     // Celular: o quadro estreito põe as softboxes atrás do texto do herói e lava a letra.
     for (const m of res.boxes) m.visible = boxes && !light && size.width >= 900;
