@@ -138,8 +138,15 @@
   stroke-linejoin: round;
 }
 
+/* Par no canto inferior direito: a leitura (esquerda) cresce com os alvos e cobria a seta da esquerda. */
+.rack__nav {
+  top: auto;
+  bottom: var(--s-6);
+  transform: none;
+}
+
 .rack__nav--prev {
-  left: var(--s-5);
+  right: calc(var(--s-5) + var(--touch) + var(--s-2));
 }
 
 .rack__nav--next {
@@ -256,6 +263,9 @@
   min-width: 0;
   overflow-x: auto;
   scrollbar-width: none;
+  /* A rolagem recorta: folga para o brilho do chip ativo (--glow-ring, 14 px) não sair cortado. */
+  padding: 14px;
+  margin: -14px;
 }
 
 .filter-bar__more {
@@ -570,6 +580,7 @@
 
   .rack__nav--prev {
     left: var(--s-3);
+    right: auto;
   }
 
   .rack__nav--next {
