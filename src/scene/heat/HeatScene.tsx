@@ -2,9 +2,9 @@
  * Mapa de calor: corpo anatômico de frente e de costas, cada músculo aceso pelo degrau de séries
  * semanais. O músculo em repouso usa --c-bg-3, a mesma base da rampa: degrau 0 igual ao da legenda.
  */
-import { OrthographicCamera, View } from '@react-three/drei';
+import { OrthographicCamera } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { type OrthographicCamera as OrthoCam } from 'three';
 import { skeletonDef } from '@/data';
 import { forwardKinematics } from '@/engine/kinematics/fk';
@@ -15,6 +15,7 @@ import type { BodyModel } from '../body/model';
 import { ContactShadow } from '../body/ContactShadow';
 import { footContacts, STANDING } from '../body/poses';
 import { useBodyInstance, useBodyModel } from '../body/useBody';
+import { StageView } from '../director/StageView';
 import { useStage } from '../stageStore';
 
 const H = 1.92;
@@ -91,7 +92,6 @@ export function HeatScene() {
     return () => useStage.getState().setReady(false);
   }, [model, invalidate]);
 
-  const refs = useMemo(() => ({ front: { current: slots.front }, back: { current: slots.back } }), [slots]);
   if (!model) return null;
 
   return (
@@ -99,9 +99,9 @@ export function HeatScene() {
       {(['front', 'back'] as const).map((v) => {
         const el = slots[v];
         return el ? (
-          <View key={v} track={refs[v] as React.RefObject<HTMLElement>} index={v === 'front' ? 1 : 2}>
+          <StageView key={v} slot={el} index={v === 'front' ? 1 : 2}>
             <HeatBody view={v} slot={el} model={model} />
-          </View>
+          </StageView>
         ) : null;
       })}
     </>

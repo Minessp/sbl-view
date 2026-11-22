@@ -12,7 +12,6 @@ import { t } from '@/i18n/app';
 import { SplitText } from '@/ui/Title';
 import { ThemeSwitch } from '@/ui/ThemeSwitch';
 import './menu.css';
-import { LangLink } from './LangLink';
 import { R } from './routes';
 
 const D = tShell.home.doors;
@@ -151,7 +150,6 @@ export default function MenuPanel({ onClosed, onSettings }: { onClosed: () => vo
         >
           {t.footer.settings}
         </button>
-        <LangLink className="chip chip--small" />
       </div>
     </dialog>
   );

@@ -1,12 +1,16 @@
 /*
  * Linguagem de movimento.
- * - Troca de rota: a luz baixa na página que sai (desfoca e escurece) e a nova é revelada de cima para baixo por uma
- *   borda de luz macia (máscara). O cabeçalho fica parado, o nome da seção troca pela penumbra e o título da página
- *   (`view-transition-name: page-title`) viaja de um lugar ao outro: da entrada da home ao h1, de h1 a h1.
+ * - Troca de rota = corte de cinema (900 ms, App.tsx). O palco (`view-transition-name: stage`) fica fora da foto da
+ *   página: a imagem nova dele é viva, o WebGL segue desenhando e o corpo voa do plano de saída ao da página nova
+ *   (scene/director). Com palco nas duas páginas (`html.vt-live`) a foto velha do palco some; sem palco novo, ela apaga.
+ *   A página que sai desce 16 px e perde o foco (0–25%); um risco de luz cruza o quadro na diagonal (20–45%); a nova chega
+ *   em foco (55–100%) e os blocos sobem 16 px em cascata (`html.cut-in`). O cabeçalho fica parado, o nome da seção troca
+ *   pela penumbra.
  * - Troca de tema: a luz nova se espalha em círculo a partir do interruptor (ThemeSwitch.tsx).
  * - Sem suporte: entrada por CSS (só `backwards`, para não deixar transform no elemento: viraria bloco de contenção e
  *   mexeria nas vistas 3D).
- * - Redução de movimento zera as durações nos tokens e desliga as duas transições (App.tsx, ThemeSwitch.tsx).
+ * - Redução de movimento: as durações zeram nos tokens, a troca de rota vira fusão de 150 ms (`html.vt-dry`, sem voo) e a
+ *   do tema desliga (ThemeSwitch.tsx).
  */
 
 .site-header {
@@ -17,26 +21,30 @@
   view-transition-name: site-where;
 }
 
-.page-title {
-  view-transition-name: page-title;
+.stage {
+  view-transition-name: stage;
 }
 
-::view-transition-group(site-header) {
+::view-transition-group(site-header),
+::view-transition-group(stage),
+::view-transition-new(stage) {
   animation: none;
 }
 
-::view-transition-old(root) {
+::view-transition-old(stage) {
   animation: vt-out var(--t-exit) var(--ease-in) both;
 }
 
+html.vt-live::view-transition-old(stage) {
+  display: none;
+}
+
+::view-transition-old(root) {
+  animation: cut-out 225ms var(--ease-in) both;
+}
+
 ::view-transition-new(root) {
-  animation: vt-in 640ms var(--ease) 70ms both;
-  -webkit-mask-image: linear-gradient(to bottom, #000 0 44%, transparent 56%);
-  mask-image: linear-gradient(to bottom, #000 0 44%, transparent 56%);
-  -webkit-mask-size: 100% 230%;
-  mask-size: 100% 230%;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
+  animation: cut-focus 405ms var(--ease) 495ms both;
 }
 
 ::view-transition-old(site-where) {
@@ -47,32 +55,21 @@
   animation: vt-title-in 420ms var(--ease) 60ms both;
 }
 
-/* Título: o grupo leva posição e tamanho; as duas imagens trocam pela penumbra. */
-::view-transition-group(page-title) {
-  animation-duration: 560ms;
-  animation-timing-function: var(--ease);
-}
-
-::view-transition-old(page-title) {
-  animation: vt-title-out 260ms var(--ease-in) both;
-}
-
-::view-transition-new(page-title) {
-  animation: vt-title-in 520ms var(--ease) 80ms both;
-}
-
-/* Feixe da troca de rota: só existe no estado novo (html.vt-nav) e desce com a borda da máscara, mesma curva e tempo.
-   A borda vai de −15% a 115% da altura (máscara de 230%, transição em 44–56%). */
+/* Risco de luz: só existe no estado novo (html.vt-nav); um traço fino cruza o quadro de baixo à esquerda para cima à
+   direita (20–45% do corte). */
 .vt-beam {
   position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 2px;
+  left: 50%;
+  top: 50%;
+  width: 46vmax;
+  height: 1.5px;
+  margin: -0.75px 0 0 -23vmax;
   display: none;
+  z-index: var(--z-toast);
   pointer-events: none;
-  background: linear-gradient(90deg, transparent, var(--c-glow) 30%, var(--c-light-key) 50%, var(--c-glow) 70%, transparent);
-  box-shadow: 0 0 22px 4px color-mix(in oklch, var(--c-glow) 45%, transparent);
+  background: linear-gradient(90deg, transparent, var(--c-glow) 35%, var(--c-light-key) 50%, var(--c-glow) 65%, transparent);
+  box-shadow: 0 0 18px 2px color-mix(in oklch, var(--c-glow) 40%, transparent);
+  transform: rotate(-24deg) translateX(-110vmax);
   view-transition-name: vt-beam;
 }
 
@@ -81,44 +78,72 @@ html.vt-nav .vt-beam {
 }
 
 ::view-transition-new(vt-beam) {
-  animation: vt-beam 640ms var(--ease) 70ms both;
+  animation: vt-beam 225ms var(--ease-in-out) 180ms both;
 }
 
 @keyframes vt-beam {
   from {
-    transform: translateY(-15vh);
     opacity: 0;
   }
-  12% {
-    opacity: 1;
-  }
+  20%,
   80% {
     opacity: 1;
   }
   to {
-    transform: translateY(115vh);
     opacity: 0;
+    transform: translateX(220vmax);
   }
 }
 
 @keyframes vt-out {
   to {
     opacity: 0;
-    transform: scale(0.992);
     filter: blur(6px) brightness(0.55);
   }
 }
 
-@keyframes vt-in {
-  from {
-    -webkit-mask-position: 0 100%;
-    mask-position: 0 100%;
-    transform: translateY(14px);
-    filter: brightness(0.65);
-  }
+@keyframes cut-out {
   to {
-    -webkit-mask-position: 0 0;
-    mask-position: 0 0;
+    opacity: 0;
+    transform: translateY(16px);
+    filter: blur(6px);
+  }
+}
+
+@keyframes cut-focus {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+  }
+}
+
+/* Blocos da página nova sobem em cascata (2 × --stagger), dentro da imagem viva da página. */
+html.cut-in main.sheet > *,
+html.cut-in main.page > * {
+  animation: cut-rise 420ms var(--ease) backwards;
+  animation-delay: calc(495ms + var(--cut-i, 0) * var(--stagger) * 2);
+}
+
+html.cut-in main > :nth-child(2) {
+  --cut-i: 1;
+}
+
+html.cut-in main > :nth-child(3) {
+  --cut-i: 2;
+}
+
+html.cut-in main > :nth-child(4) {
+  --cut-i: 3;
+}
+
+html.cut-in main > :nth-child(n + 5) {
+  --cut-i: 4;
+}
+
+@keyframes cut-rise {
+  from {
+    opacity: 0;
+    translate: 0 16px;
   }
 }
 
@@ -226,10 +251,26 @@ html:not(.vt) main.page > :nth-child(n + 3) {
   .split__char {
     animation: none;
   }
-  ::view-transition-old(*),
-  ::view-transition-new(*),
-  ::view-transition-group(*) {
+  html:not(.vt-dry)::view-transition-old(*),
+  html:not(.vt-dry)::view-transition-new(*),
+  ::view-transition-group(*),
+  html.cut-in main > * {
     animation: none !important;
+  }
+  html.vt-dry::view-transition-old(*) {
+    animation: vt-fade 150ms linear both reverse;
+  }
+  html.vt-dry::view-transition-new(*) {
+    animation: vt-fade 150ms linear both;
+  }
+  html.vt-dry .vt-beam {
+    display: none;
+  }
+}
+
+@keyframes vt-fade {
+  from {
+    opacity: 0;
   }
 }
 

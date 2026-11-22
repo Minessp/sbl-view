@@ -17,7 +17,7 @@ const EQUIPMENT = (Object.keys(t.equipment) as Equipment[]).filter((q) => librar
 function ExerciseCard({ e, i }: { e: LibraryExercise; i: number }) {
   const targets = e.targets.filter((x) => x.role === 'alvo').map((x) => muscleById(x.muscle)?.name ?? x.muscle);
   return (
-    <li className="ex-card rise lamp" style={{ '--i': i } as CSSProperties}>
+    <li className="ex-card rise" style={{ '--i': i } as CSSProperties}>
       <Link href={exerciseHref(e.id)} className="ex-card__link">
         <span className="ex-card__name">{e.name}</span>
         <span className="ex-card__pattern">{t.patterns[e.pattern]}</span>

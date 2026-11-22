@@ -3,7 +3,7 @@
  * comprimento (tungstênio = mais curto que em pé, aço = mais comprido), o equipamento acompanha as mãos e a carga aparece
  * como vetor. Todo o estado vem de `usePlayer` (sem three.js); aqui só se aplica.
  */
-import { PerspectiveCamera, View } from '@react-three/drei';
+import { PerspectiveCamera } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Camera, PerspectiveCamera as PerspCam, WebGLRenderer } from 'three';
@@ -21,11 +21,15 @@ import { mergeBoxes, type Box, type BodyModel } from '../body/model';
 import { STANDING } from '../body/poses';
 import { useBodyInstance, useBodyModel } from '../body/useBody';
 import { claimMain, releaseMain } from '../cinema/state';
+import { StageView, useDirector } from '../director/StageView';
 import { Studio } from '../set/Studio';
 import { useStage } from '../stageStore';
 import { EquipmentView } from './equipment';
+import { gearAppear } from './gear/material';
 
 const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+/** Alfa da pele ligada no player. */
+const SKIN_ALPHA = 0.2;
 /** Opacidade dos músculos fora do foco quando um músculo está isolado. */
 const DIM = 0.12;
 
@@ -68,7 +72,7 @@ function applyLook(body: BodyInstance, model: BodyModel) {
   body.fill('highlight', 0);
   body.fill('opacity', 1);
   body.fill('hidden', 0);
-  body.layer('skin', { visible: st.skin, alpha: 0.2 });
+  body.layer('skin', { visible: st.skin, alpha: SKIN_ALPHA });
   for (const l of ['superficial', 'deep', 'bone'] as const) body.layer(l, { showAbove: -99, visible: true });
   if (st.isolate) {
     const keep = new Set(slotsOf(model, [st.isolate]));
@@ -86,12 +90,16 @@ function applyLook(body: BodyInstance, model: BodyModel) {
 }
 
 /** `main`: vista principal do pipeline de cinema (foco, oclusão); a vitrine da home não é. */
-export function PlayerBody({ slot, main = false }: { slot: HTMLElement; main?: boolean }) {
+export function PlayerBody({ main = false }: { main?: boolean }) {
   const invalidate = useThree((s) => s.invalidate);
   const gl = useThree((s) => s.gl);
   const camRef = useRef<PerspCam>(null);
+  const dir = useDirector();
+  const slot = dir.frame;
+  // Slot da página: trocou (outra página com player), o palco volta a "pronto" (o procurador é o mesmo).
+  const pageSlot = usePlayer((s) => s.slot);
   const { model } = useBodyModel();
-  const body = useBodyInstance(model);
+  const body = useBodyInstance(model, main ? 'main' : undefined);
   const clip = usePlayer((s) => s.clip);
   const resolved = useTheme((s) => s.resolved);
 
@@ -133,7 +141,7 @@ export function PlayerBody({ slot, main = false }: { slot: HTMLElement; main?: b
     applyLook(body, model);
     useStage.getState().setReady(true);
     invalidate();
-  }, [body, model, clip, invalidate, slot]);
+  }, [body, model, clip, invalidate, pageSlot]);
 
   useEffect(() => {
     if (!body || !model) return;
@@ -167,12 +175,13 @@ export function PlayerBody({ slot, main = false }: { slot: HTMLElement; main?: b
     }
 
     // ---- Pose, cor, equipamento ----
-    if (time !== lastTime.current) {
+    // No voo da troca de rota a pose mistura a de saída com a do clipe a cada quadro.
+    if (time !== lastTime.current || dir.flying) {
       lastTime.current = time;
       const { u } = repAt(clip.clip.tempo, time);
       const f = evaluateClip(clip, u);
       frame.current = f;
-      body.setPose(clip.sk, f.pose);
+      body.setPose(clip.sk, dir.pose(clip.sk, f.deg, f.root) ?? f.pose);
       const base = rest.current;
       if (base) {
         body.fill('strain', 0);
@@ -187,10 +196,11 @@ export function PlayerBody({ slot, main = false }: { slot: HTMLElement; main?: b
       feet.current = [...f.contacts, ...(equipment?.floor ?? [])].slice(0, 8);
     }
     if (frame.current) equipment?.update(frame.current, st.showLoad);
+    if (main) gearAppear.value = dir.e(0.35, 1);
+    dir.skin(body, st.skin, SKIN_ALPHA);
 
     // ---- Câmera ----
-    const rect = slot.getBoundingClientRect();
-    const aspect = rect.width / Math.max(1, rect.height);
+    const aspect = dir.rect.w / dir.rect.h;
     const v = VIEW_ANGLES[st.view];
     const yaw = v.yaw + st.drag.yaw;
     const pitch = Math.min(1.25, Math.max(-0.5, v.pitch + st.drag.pitch));
@@ -205,14 +215,12 @@ export function PlayerBody({ slot, main = false }: { slot: HTMLElement; main?: b
     cur.current = !cur.current || reduce ? goal : dampOrbit(cur.current, goal, 1 - Math.exp(-dt * 6));
     if (orbitsClose(cur.current, goal)) cur.current = goal;
     else invalidate();
-    const p = orbitPosition(cur.current);
-    cam.position.set(p[0], p[1], p[2]);
-    cam.lookAt(cur.current.target[0], cur.current.target[1], cur.current.target[2]);
+    const drawn = dir.camera(cam, orbitPosition(cur.current), cur.current.target);
     cam.aspect = aspect;
-    cam.near = Math.max(0.05, cur.current.dist * 0.05);
-    cam.far = cur.current.dist + 12;
+    cam.near = Math.max(0.05, Math.min(drawn, cur.current.dist) * 0.05);
+    cam.far = Math.max(drawn, cur.current.dist) + 12;
     cam.updateProjectionMatrix();
-    if (main) claimMain(cam, slot, gl.domElement, cur.current.dist, 0.3);
+    if (main) claimMain(cam, slot, gl.domElement, drawn, 0.3, 0);
   });
 
   useEffect(() => {
@@ -233,11 +241,10 @@ export function PlayerBody({ slot, main = false }: { slot: HTMLElement; main?: b
   );
 }
 
-/** Uma vista recortada no slot do player (o canvas fixo desenha por cima). */
+/** Uma vista recortada no slot do player (o canvas fixo desenha por cima); protagonista da troca de rota. */
 export function MotionScene() {
   const slot = usePlayer((s) => s.slot);
   const invalidate = useThree((s) => s.invalidate);
-  const ref = useMemo(() => ({ current: slot }), [slot]);
 
   useEffect(() => {
     const unsub = usePlayer.subscribe(() => invalidate());
@@ -257,8 +264,8 @@ export function MotionScene() {
 
   if (!slot) return null;
   return (
-    <View track={ref as React.RefObject<HTMLElement>} index={1}>
-      <PlayerBody slot={slot} main />
-    </View>
+    <StageView slot={slot} index={1} main>
+      <PlayerBody main />
+    </StageView>
   );
 }

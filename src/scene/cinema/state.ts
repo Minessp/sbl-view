@@ -35,8 +35,11 @@ export const cinema = {
 
 if (import.meta.env.DEV && typeof window !== 'undefined') (window as unknown as { __cinema: typeof cinema }).__cinema = cinema;
 
-/** A cena principal se declara no quadro (chamar no useFrame dela). `focus` = distância da câmera ao assunto. */
-export function claimMain(camera: PerspectiveCamera, slot: HTMLElement, canvas: HTMLCanvasElement, focus: number, aperture = 0.55) {
+/**
+ * A cena principal se declara no quadro (chamar no useFrame dela). `focus` = distância da câmera ao assunto. `beam`: força
+ * do feixe volumétrico (o player passa 0: no quadro menor, com a câmera afastada, o feixe virava névoa sobre o corpo).
+ */
+export function claimMain(camera: PerspectiveCamera, slot: HTMLElement, canvas: HTMLCanvasElement, focus: number, aperture = 0.55, beam = 1) {
   const s = slot.getBoundingClientRect();
   const c = canvas.getBoundingClientRect();
   const rect = { x: s.left - c.left, y: s.top - c.top, w: s.width, h: s.height };
@@ -45,6 +48,7 @@ export function claimMain(camera: PerspectiveCamera, slot: HTMLElement, canvas: 
   cinema.seen = performance.now();
   cinema.focusGoal = focus;
   cinema.apertureGoal = aperture;
+  cinema.beamK = beam;
 }
 
 export function releaseMain(camera: PerspectiveCamera | null) {

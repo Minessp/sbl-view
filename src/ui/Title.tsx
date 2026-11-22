@@ -1,4 +1,4 @@
-import { Fragment, type CSSProperties, type MouseEvent } from 'react';
+import { Fragment, type CSSProperties } from 'react';
 
 /**
  * Texto com letras animadas (motion.css → `.split`). O leitor de tela lê o texto inteiro (oculto visualmente); as letras
@@ -29,23 +29,11 @@ export function SplitText({ text }: { text: string }) {
   );
 }
 
-/**
- * Título de página com letras animadas. `data-text` guarda o texto para o título da aba (App.tsx). Por padrão leva
- * `page-title`: viaja entre rotas na View Transition.
- */
+/** Título de página com letras animadas. `data-text` guarda o texto para o título da aba (App.tsx). */
 export function Title({ text, as: As = 'h1', className = 'sheet__title page-title', id }: { text: string; as?: 'h1' | 'h2'; className?: string; id?: string }) {
   return (
     <As className={className} id={id} data-text={text}>
       <SplitText text={text} />
     </As>
   );
-}
-
-/**
- * Link de entrada cujo nome vira o título da página nova na View Transition (motion.css → page-title): a palavra viaja
- * da lista até o h1. Só o elemento clicado leva o nome (tem de ser único na foto). O nome é o filho com `data-title`.
- */
-export function claimTitle(e: MouseEvent<HTMLElement>) {
-  const name = e.currentTarget.querySelector<HTMLElement>('[data-title]');
-  if (name) name.style.viewTransitionName = 'page-title';
 }

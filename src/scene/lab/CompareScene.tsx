@@ -3,7 +3,7 @@
  * cor pelo comprimento (tungstênio = mais curto que em pé, aço = mais comprido); o equipamento e o vetor da carga
  * acompanham. Estado em `useCompare` (sem three.js); aqui só se aplica.
  */
-import { PerspectiveCamera, View } from '@react-three/drei';
+import { PerspectiveCamera } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { PerspectiveCamera as PerspCam } from 'three';
@@ -20,6 +20,7 @@ import type { BodyInstance } from '../body/instance';
 import type { BodyModel } from '../body/model';
 import { STANDING } from '../body/poses';
 import { useBodyInstance, useBodyModel } from '../body/useBody';
+import { StageView, useDirector } from '../director/StageView';
 import { useStage } from '../stageStore';
 import { EquipmentView } from '../motion/equipment';
 import { clipBox } from '../motion/MotionScene';
@@ -45,10 +46,12 @@ function applyLook(body: BodyInstance, model: BodyModel, muscle: string, skin: b
   body.commit();
 }
 
-function CompareBody({ spec, slot, model }: { spec: CompareSpec; slot: HTMLElement; model: BodyModel }) {
+function CompareBody({ spec, model, main }: { spec: CompareSpec; model: BodyModel; main: boolean }) {
   const invalidate = useThree((s) => s.invalidate);
   const camRef = useRef<PerspCam>(null);
-  const body = useBodyInstance(model);
+  const dir = useDirector();
+  // A primeira vista herda o corpo da página anterior (troca de rota sem corte).
+  const body = useBodyInstance(model, main ? 'main' : undefined);
   const muscle = useCompare((s) => s.muscle);
   const skin = useCompare((s) => s.skin);
   const resolved = useTheme((s) => s.resolved);
@@ -95,11 +98,11 @@ function CompareBody({ spec, slot, model }: { spec: CompareSpec; slot: HTMLEleme
     if (!cam || !body) return;
     const st = useCompare.getState();
     const u = uAtPhase(st.phase);
-    if (u !== lastU.current) {
+    if (u !== lastU.current || dir.flying) {
       lastU.current = u;
       const f = evaluateClip(clip, u);
       frame.current = f;
-      body.setPose(clip.sk, f.pose);
+      body.setPose(clip.sk, dir.pose(clip.sk, f.deg, f.root) ?? f.pose);
       const base = rest.current;
       if (base) {
         body.fill('strain', 0);
@@ -109,14 +112,13 @@ function CompareBody({ spec, slot, model }: { spec: CompareSpec; slot: HTMLEleme
       feet.current = [...f.contacts, ...(equipment?.floor ?? [])].slice(0, 8);
     }
     if (frame.current) equipment?.update(frame.current, true);
+    dir.skin(body, st.skin, 0.2);
 
     // Câmera parada no quadro do clipe inteiro: os corpos não pulam enquanto a repetição anda.
-    const rect = slot.getBoundingClientRect();
-    const aspect = rect.width / Math.max(1, rect.height);
+    const aspect = dir.rect.w / dir.rect.h;
     const v = VIEWS[st.view];
     const p = orbitPosition({ yaw: v.yaw, pitch: v.pitch, dist: fitDistance(box.size, v.yaw, aspect, 1.12), target: box.center });
-    cam.position.set(p[0], p[1], p[2]);
-    cam.lookAt(box.center[0], box.center[1], box.center[2]);
+    dir.camera(cam, p, box.center);
     cam.aspect = aspect;
     cam.near = 0.05;
     cam.far = 30;
@@ -156,19 +158,16 @@ export function CompareScene() {
 
   useEffect(() => () => useStage.getState().setReady(false), []);
 
-  const refs = useMemo(() => Object.fromEntries(specs.map((s) => [s.key, { current: slots[s.key] ?? null }])), [specs, slots]);
-
   if (!model) return null;
   return (
     <>
       {specs.map((s, i) => {
         const el = slots[s.key];
-        const ref = refs[s.key];
-        if (!el || !ref) return null;
+        if (!el) return null;
         return (
-          <View key={s.key} track={ref as React.RefObject<HTMLElement>} index={i + 1}>
-            <CompareBody spec={s} slot={el} model={model} />
-          </View>
+          <StageView key={s.key} slot={el} index={i + 1} main={i === 0}>
+            <CompareBody spec={s} model={model} main={i === 0} />
+          </StageView>
         );
       })}
     </>

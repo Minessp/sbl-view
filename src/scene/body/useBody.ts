@@ -1,5 +1,5 @@
 import { useThree } from '@react-three/fiber';
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import type { WebGLRenderer } from 'three';
 import { muscleDefs } from '@/data';
 import { useTheme } from '@/ui/theme';
@@ -52,10 +52,12 @@ export function preferredLod(gl?: WebGLRenderer): AnatomyLod {
 }
 
 let model: Promise<BodyModel> | null = null;
+/** Já carregado: a cena que entra numa troca de rota tem o corpo no primeiro quadro (sem esperar a promessa). */
+let loaded: BodyModel | null = null;
 /** Modelo único da página: o nível leve primeiro (primeiro quadro rápido); o escolhido entra depois (`upgradeBody`). */
 export function loadBodyModel(): Promise<BodyModel> {
   model ??= loadAnatomyPack('lo')
-    .then((pack) => buildBodyModel(pack, muscleDefs))
+    .then((pack) => (loaded = buildBodyModel(pack, muscleDefs)))
     .catch((e: unknown) => {
       model = null;
       throw e;
@@ -125,13 +127,13 @@ export function upgradeBody(m: BodyModel, gl: WebGLRenderer): void {
 
 export function useBodyModel(): { model: BodyModel | null; error: boolean } {
   const gl = useThree((s) => s.gl);
-  const [state, setState] = useState<{ model: BodyModel | null; error: boolean }>({ model: null, error: false });
+  const [state, setState] = useState<{ model: BodyModel | null; error: boolean }>({ model: loaded, error: false });
   useEffect(() => {
     let alive = true;
     loadBodyModel().then(
       (m) => {
         if (!alive) return;
-        setState({ model: m, error: false });
+        setState((cur) => (cur.model === m ? cur : { model: m, error: false }));
         useStage.getState().setFailed(false);
         upgradeBody(m, gl);
       },
@@ -148,26 +150,62 @@ export function useBodyModel(): { model: BodyModel | null; error: boolean } {
   return state;
 }
 
-/** Instância própria (pose e estado) para uma vista; relê as cores quando o tema muda e troca de malha com o nível. */
-export function useBodyInstance(m: BodyModel | null): BodyInstance | null {
+interface Pooled {
+  inst: BodyInstance;
+  users: number;
+  timer: number | null;
+  invalidate: (() => void) | null;
+  off: () => void;
+}
+/** Fundo de instâncias por chave: a cena que entra pega o corpo da que saiu (mesma pose, sem material novo no voo). */
+const pool = new Map<string, Pooled>();
+const RELEASE_MS = 5000;
+
+function drop(key: string, p: Pooled) {
+  if (p.timer !== null) window.clearTimeout(p.timer);
+  p.off();
+  p.inst.dispose();
+  if (pool.get(key) === p) pool.delete(key);
+}
+
+/** Pega (ou cria) sem contar uso: pode rodar no render. Sem uso, sai sozinha depois de RELEASE_MS. */
+function peek(m: BodyModel, key: string): Pooled {
+  const cur = pool.get(key);
+  if (cur && cur.inst.model === m) return cur;
+  if (cur) drop(key, cur);
+  const inst = new BodyInstance(m, palette);
+  const p: Pooled = { inst, users: 0, timer: null, invalidate: null, off: () => undefined };
+  p.off = m.subscribe(() => {
+    inst.syncGeometry();
+    p.invalidate?.();
+  });
+  inst.onDetailChange = () => p.invalidate?.();
+  p.timer = window.setTimeout(() => drop(key, p), RELEASE_MS);
+  pool.set(key, p);
+  return p;
+}
+
+/**
+ * Instância própria (pose e estado) para uma vista; relê as cores quando o tema muda e troca de malha com o nível.
+ * `key` compartilhada ('main'): a vista principal de cada página usa o mesmo corpo, que atravessa a troca de rota.
+ * Quem pega uma instância livre recebe o estado zerado (`reset`), com a pose de quem saiu.
+ */
+export function useBodyInstance(m: BodyModel | null, key?: string): BodyInstance | null {
   const invalidate = useThree((s) => s.invalidate);
-  // Criada no efeito: no StrictMode a limpeza roda entre as duas montagens e precisa de uma instância nova.
-  const [inst, setInst] = useState<BodyInstance | null>(null);
+  const own = useId();
+  const k = key ?? own;
+  const p = m ? peek(m, k) : null;
   useEffect(() => {
-    if (!m) return;
-    const b = new BodyInstance(m, palette);
-    b.onDetailChange = invalidate;
-    setInst(b);
-    const off = m.subscribe(() => {
-      b.syncGeometry();
-      invalidate();
-    });
+    if (!p) return;
+    if (p.timer !== null) window.clearTimeout(p.timer);
+    p.timer = null;
+    if (p.users++ === 0) p.inst.reset();
+    p.invalidate = invalidate;
     return () => {
-      off();
-      b.dispose();
-      setInst((cur) => (cur === b ? null : cur));
+      // A limpeza do StrictMode (e a troca de rota) não descarta: a próxima montagem pega de volta.
+      if (--p.users === 0) p.timer = window.setTimeout(() => drop(k, p), RELEASE_MS);
     };
-  }, [m, invalidate]);
+  }, [p, k, invalidate]);
   const resolved = useTheme((s) => s.resolved);
   useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -176,5 +214,5 @@ export function useBodyInstance(m: BodyModel | null): BodyInstance | null {
     });
     return () => cancelAnimationFrame(id);
   }, [resolved, invalidate]);
-  return inst;
+  return p?.inst ?? null;
 }

@@ -126,8 +126,9 @@ html.menu-open {
   overflow: hidden;
 }
 
-/* Tema: um botão, lua (escuro) ou sol (claro). */
-.theme-toggle {
+/* Tema: um botão, lua (escuro) ou sol (claro). Idioma: a bandeira do outro idioma, mesmo alvo de toque. */
+.theme-toggle,
+.lang-flag {
   display: grid;
   place-items: center;
   flex: none;
@@ -141,9 +142,16 @@ html.menu-open {
   transition: color var(--t-fast) var(--ease), background-color var(--t-fast) var(--ease);
 }
 
-.theme-toggle:hover {
+.theme-toggle:hover,
+.lang-flag:hover {
   color: var(--c-ink);
   background: var(--c-hover);
+}
+
+.lang-flag svg {
+  width: 22px;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px var(--c-rule);
 }
 
 .theme-toggle svg {

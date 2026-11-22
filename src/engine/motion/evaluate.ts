@@ -221,6 +221,8 @@ export interface MotionFrame {
   /** Graus finais por DOF (com lado), antes do limite do FK: o teste confere a amplitude. */
   readonly deg: Readonly<Record<string, number>>;
   readonly pose: Pose;
+  /** Raiz dada ao FK (antes dos DOFs da pelve): com `deg`, refaz a pose (mistura entre rotas). */
+  readonly root: Transform;
   readonly grips: Readonly<Record<'r' | 'l', Vec3>>;
   readonly equipment: readonly ResolvedEquipment[];
   /** Ponto de aplicação e direção (unitária) da carga. */
@@ -435,7 +437,7 @@ function solveFrame(c: CompiledClip, u: number, ankleOffset: number) {
   if (!c.arms.length && alignBarGrip(c, pose, rad)) pose = fk();
 
   const grips = { r: gripWorld(pose, 'r'), l: gripWorld(pose, 'l') };
-  return { deg: toDeg(rad), rad, pose, grips, error };
+  return { deg: toDeg(rad), rad, root, pose, grips, error };
 }
 
 function resolveEquipment(c: CompiledClip, pose: Pose, grips: Readonly<Record<'r' | 'l', Vec3>>, eq: Equipment): ResolvedEquipment[] {
@@ -582,6 +584,7 @@ export function evaluateClip(c: CompiledClip, u: number): MotionFrame {
     u,
     deg: fr.deg,
     pose: fr.pose,
+    root: fr.root,
     grips: fr.grips,
     equipment,
     load: loadOf(c, u, fr, equipment),

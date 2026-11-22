@@ -4,6 +4,8 @@ import { Redirect, Route, Router, Switch, useLocation, useSearch, type AroundNav
 import Home from '@/features/home/Home';
 import { t } from '@/i18n';
 import { PREFIX } from '@/i18n/locale';
+import { useHandoff } from '@/scene/director/handoff';
+import { useStage } from '@/scene/stageStore';
 import { ErrorBoundary } from './ErrorBoundary';
 import { NotFound } from './NotFound';
 import { exerciseHref, muscleHref, R, unslug } from './routes';
@@ -129,44 +131,70 @@ function RouteChange() {
 type VTDocument = Document & { startViewTransition?: (update: () => void | Promise<void>) => { finished: Promise<void> } };
 
 /**
- * Espera a página nova montar (h1 visível) antes da foto do "depois", até 600 ms. O lazy do React suspende uma vez mesmo
- * com o chunk já baixado. Durante a espera a tela fica na foto do "antes"; setTimeout porque o quadro está pausado.
+ * Espera a página nova montar (h1 visível) e o palco dela ficar pronto antes da foto do "depois", até 600 ms. O lazy do
+ * React suspende uma vez mesmo com o chunk já baixado. Durante a espera a tela fica na foto do "antes"; setTimeout porque
+ * o quadro está pausado.
  */
 function pageReady(): Promise<void> {
   const t0 = performance.now();
   return new Promise((resolve) => {
     const check = () => {
       const h1 = [...document.querySelectorAll<HTMLElement>('main h1')].find((el) => el.offsetParent !== null);
-      if (h1 || performance.now() - t0 > 600) resolve();
+      const st = useStage.getState();
+      const stage = st.scene === 'none' || st.ready || st.failed;
+      if ((h1 && stage) || performance.now() - t0 > 600) resolve();
       else setTimeout(check, 16);
     };
     check();
   });
 }
+
+/** O corpo deixa o plano de saída (recorte, câmera, pose); a cena da página nova voa a partir dele (scene/director). */
+function leaveShot() {
+  const s = useStage.getState().capture?.();
+  if (s) useHandoff.getState().leave(s);
+}
 const canTransition = () => typeof document !== 'undefined' && 'startViewTransition' in document;
 
+/** Fim da cascata dos blocos da página nova (motion.css → `cut-rise`): a classe sai depois dela. */
+const CUT_IN_MS = 1500;
+let cutTimer = 0;
+/** Conta as trocas pedidas: a que esperava o chunk não pousa depois de uma mais nova. */
+let navSeq = 0;
+
 /**
- * Troca de caminho vira View Transition (motion.css). Mudança só de busca/âncora e redução de movimento: direto.
- * flushSync: a página nova precisa estar no DOM quando o navegador tira a foto do "depois". Por isso a troca espera o
- * chunk da rota (até 1,2 s): sem ele, a foto seria a página vazia do Suspense e o título não teria para onde viajar.
+ * Troca de caminho = corte (motion.css): o palco fica fora da foto (`view-transition-name: stage`) e segue desenhando
+ * enquanto o corpo voa do plano de saída até o da página nova; a página que sai desce e perde o foco, um risco de luz
+ * cruza o quadro, a nova chega em foco e os blocos sobem em cascata. Redução de movimento: fusão de 150 ms, sem voo.
+ * Mudança só de busca/âncora: direto. flushSync: a página nova precisa estar no DOM quando o navegador tira a foto do
+ * "depois"; por isso a troca espera o chunk da rota (até 1,2 s) e o palco da página nova (até 600 ms).
  */
 const aroundNav: AroundNavHandler = (navigate, to, options) => {
   const doc = document as VTDocument;
   const samePath = to.split(/[?#]/)[0] === window.location.pathname.slice(base.length);
-  if (!doc.startViewTransition || samePath || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const seq = ++navSeq;
+  if (!doc.startViewTransition || samePath) {
+    if (!samePath) leaveShot();
     navigate(to, options);
     return;
   }
-  // `vt-nav` só no estado novo: o feixe (Shell → .vt-beam) existe na foto do "depois" e desce com a borda da revelação.
+  const dry = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // `vt-nav` só no estado novo: o risco de luz (Shell → .vt-beam) existe na foto do "depois". `vt-live`: a página nova
+  // tem palco, a foto velha do palco some (o vivo continua); sem palco novo, a velha apaga.
   const root = document.documentElement;
   const go = () => {
+    if (seq !== navSeq) return;
     const vt = doc.startViewTransition?.(async () => {
-      root.classList.add('vt-nav');
+      leaveShot();
+      root.classList.add('vt-nav', dry ? 'vt-dry' : 'cut-in');
       flushSync(() => navigate(to, options));
       await pageReady();
+      root.classList.toggle('vt-live', useStage.getState().scene !== 'none');
     });
-    const done = () => root.classList.remove('vt-nav');
+    const done = () => root.classList.remove('vt-nav', 'vt-live', 'vt-dry');
     vt?.finished.then(done, done);
+    window.clearTimeout(cutTimer);
+    cutTimer = window.setTimeout(() => root.classList.remove('cut-in'), CUT_IN_MS);
   };
   const chunk = routeChunk(to);
   if (!chunk) {
@@ -175,6 +203,14 @@ const aroundNav: AroundNavHandler = (navigate, to, options) => {
   }
   void Promise.race([chunk(), new Promise((r) => setTimeout(r, 1200))]).then(go, go);
 };
+
+/** Voltar e avançar do navegador: o corpo também deixa o plano de saída (fase de captura, antes do roteador trocar). */
+function usePopShot() {
+  useEffect(() => {
+    window.addEventListener('popstate', leaveShot, { capture: true });
+    return () => window.removeEventListener('popstate', leaveShot, { capture: true });
+  }, []);
+}
 
 /** Primeira carga usa a entrada por CSS; depois dela, as trocas de rota ficam com a View Transition. */
 function useTransitionClass() {
@@ -209,6 +245,7 @@ function RouteBoundary({ children }: { children: ReactNode }) {
 export function App() {
   useTransitionClass();
   usePrefetchOnIntent();
+  usePopShot();
   return (
     <Router base={base} aroundNav={aroundNav}>
       <RouteChange />

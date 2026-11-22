@@ -219,6 +219,24 @@ await step('exercício: o corpo executa o clipe; pausar, quadro a quadro e troca
   if (pressed !== 'true') throw new Error('isolar músculo não marcou');
 });
 
+await step('troca de rota: duas trocas em 300 ms não esvaziam o palco', async () => {
+  await page.locator('main a.target-list__name').first().click();
+  await page.waitForTimeout(300);
+  await page.locator('.site-header a.wordmark').click();
+  await page.waitForURL(`${base}/`, { timeout: 8000 });
+  await page.waitForTimeout(1500);
+  const st = await page.evaluate(() => ({ stage: document.documentElement.dataset.stage, scene: document.querySelector('.stage')?.getAttribute('data-scene') }));
+  if (st.stage !== 'ready' || st.scene !== 'home') throw new Error(`palco ${st.stage}, cena ${st.scene}`);
+});
+
+await step('troca de rota: voltar do navegador devolve a página e o corpo', async () => {
+  // A primeira das duas trocas pode ter sido descartada (a mais nova vence): volta ao músculo ou ao exercício.
+  await page.goBack();
+  await page.waitForURL(/\/(atlas|exercicios)\/[a-z-]+$/, { timeout: 8000 });
+  await page.locator('main h1').waitFor();
+  await page.waitForSelector('.stage[data-ready="true"]:is([data-scene="atlas"], [data-scene="motion"])', { timeout: 20000 });
+});
+
 const marker = `fumaça ${Date.now()}`;
 await step('treino: registrar série persiste após recarregar', async () => {
   await page.goto(`${base}/treino?exercicio=seated_leg_curl`, { waitUntil: 'networkidle' });

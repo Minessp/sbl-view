@@ -3,10 +3,10 @@
  * fantasma, vista explodida, plano de corte e demonstração de ação (o esqueleto percorre a faixa, o músculo muda de
  * comprimento, volume e cor). Todo o estado vem de `useAtlas` (sem three.js); aqui só se aplica.
  */
-import { PerspectiveCamera, View } from '@react-three/drei';
+import { PerspectiveCamera } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
-import { type PerspectiveCamera as PerspCam, Vector3 } from 'three';
+import type { PerspectiveCamera as PerspCam } from 'three';
 import { muscleDefs, skeletonDef } from '@/data';
 import { forwardKinematics, pointToWorld } from '@/engine/kinematics/fk';
 import { buildSkeleton } from '@/engine/kinematics/skeleton';
@@ -22,10 +22,12 @@ import { layerOf, mergeBoxes, type Box, type BodyModel } from '../body/model';
 import { footContacts, STANDING } from '../body/poses';
 import { pulse } from '../body/rig';
 import { useBodyInstance, useBodyModel } from '../body/useBody';
+import { radToDeg, restRoot, STANDING_DEG, StageView, useDirector } from '../director/StageView';
 import { useStage } from '../stageStore';
 
 const sk = buildSkeleton(skeletonDef);
 const standing = forwardKinematics(sk, STANDING);
+const restTf = restRoot(sk);
 /** Destaque do resto do músculo quando uma parte está selecionada. */
 const PART_CONTEXT = 0.3;
 const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -88,12 +90,18 @@ function selectionBox(body: BodyInstance, model: BodyModel, sel: Pick): Box | nu
   return { center: box.center, size: [Math.max(0.3, s[0] * 1.5), h, Math.max(0.25, s[2] * 1.4)] };
 }
 
-function ExplorerBody({ slot }: { slot: HTMLElement }) {
+function ExplorerBody() {
   const invalidate = useThree((s) => s.invalidate);
   const gl = useThree((s) => s.gl);
   const camRef = useRef<PerspCam>(null);
+  const dir = useDirector();
+  const slot = useAtlas((s) => s.slot);
   const { model } = useBodyModel();
-  const body = useBodyInstance(model);
+  const body = useBodyInstance(model, 'main');
+  /** O que a cena desenharia sem o voo: graus da pose e a pele (o diretor mistura com o plano de saída). */
+  const ownDeg = useRef<Readonly<Record<string, number>>>(STANDING_DEG);
+  const ownSkin = useRef({ visible: true, alpha: 1 });
+  const reapply = useRef<(() => void) | null>(null);
 
   /** Órbita desenhada (amortecida até a meta do store). */
   const cur = useRef<Orbit>(useAtlas.getState().orbit);
@@ -130,10 +138,10 @@ function ExplorerBody({ slot }: { slot: HTMLElement }) {
   useEffect(() => {
     if (!body || !model) return;
     let last: unknown[] = [];
-    const apply = () => {
+    const apply = (force = false) => {
       const st = useAtlas.getState();
       const sig = [st.layers, st.hidden, st.ghosted, st.isolate, st.selection, st.hover, st.exploded, st.cut.axis, st.demo.spec];
-      if (sig.every((v, i) => v === last[i])) return;
+      if (!force && sig.every((v, i) => v === last[i])) return;
       last = sig;
       const { layers, selection, hover, demo, exploded } = st;
       body.fill('highlight', 0);
@@ -160,6 +168,7 @@ function ExplorerBody({ slot }: { slot: HTMLElement }) {
       // Fáscias e aponeuroses (trato iliotibial, fáscia toracolombar…) cobrem o ventre: com um músculo em foco, viram vulto.
       if (selection?.kind === 'muscle') for (const sl of model.slots) if (sl.kind === 'tendon') body.set(sl.index, 'opacity', GHOST.superficial);
       body.layer('skin', { alpha: skinAlpha });
+      ownSkin.current = { visible: layers.skin !== 'off', alpha: skinAlpha };
       for (const k of st.ghosted) body.fill('opacity', GHOST.superficial, keySlots(model, parseKey(k)));
       for (const k of st.hidden) body.fill('hidden', 1, keySlots(model, parseKey(k)));
       if (st.isolate && sel.length) {
@@ -187,7 +196,8 @@ function ExplorerBody({ slot }: { slot: HTMLElement }) {
       invalidate();
     };
     apply();
-    return useAtlas.subscribe(apply);
+    reapply.current = () => apply(true);
+    return useAtlas.subscribe(() => apply());
   }, [body, model, invalidate]);
 
   // Seleção nova: o brilho percorre a fibra.
@@ -205,22 +215,22 @@ function ExplorerBody({ slot }: { slot: HTMLElement }) {
     useAtlas.getState().setPick((x, y) => {
       const cam = camRef.current;
       if (!cam) return null;
-      const r = slot.getBoundingClientRect();
-      const i = body.pick(gl, cam, x, y, r.width, r.height);
+      const i = body.pick(gl, cam, x, y, dir.rect.w, dir.rect.h);
       const s = i === null ? undefined : model.slots[i];
       if (!s) return null;
       if (!s.muscleId) return { kind: 'part', id: s.anatomyId, side: s.side };
       return { kind: 'muscle', id: s.muscleId, side: s.side, ...(MULTI_PART.has(s.muscleId) && s.musclePartId && { part: s.musclePartId }) };
     });
     return () => useAtlas.getState().setPick(null);
-  }, [body, model, gl, slot]);
+  }, [body, model, gl, dir]);
 
   // Pedido de voo: enquadra a seleção (ou o corpo) e escreve a nova meta.
   useEffect(() => {
     if (!body || !model) return;
     const run = () => {
       const st = useAtlas.getState();
-      const rect = slot.getBoundingClientRect();
+      // Enquadra pelo slot da página (o procurador pode estar no meio do voo).
+      const rect = (slot ?? dir.frame).getBoundingClientRect();
       const aspect = rect.width / Math.max(1, rect.height);
       const yaw = st.fly.yaw ?? st.orbit.yaw;
       const ex = st.exploded;
@@ -254,9 +264,8 @@ function ExplorerBody({ slot }: { slot: HTMLElement }) {
     return useAtlas.subscribe((s, p) => {
       if (s.fly.nonce !== p.fly.nonce) run();
     });
-  }, [body, model, slot, invalidate]);
+  }, [body, model, slot, dir, invalidate]);
 
-  const look = useMemo(() => new Vector3(), []);
   const clock = useRef(0);
   useFrame(() => {
     const cam = camRef.current;
@@ -286,7 +295,9 @@ function ExplorerBody({ slot }: { slot: HTMLElement }) {
         phase = r.phase;
         st.setDemo(r.done ? { phase, playing: false } : { phase });
       }
-      const pose: Pose = spec ? forwardKinematics(sk, demoAngles(spec, phase, enterEase(enter.current))) : standing;
+      const angles = spec ? demoAngles(spec, phase, enterEase(enter.current)) : null;
+      ownDeg.current = angles ? radToDeg(angles) : STANDING_DEG;
+      const pose: Pose = angles ? forwardKinematics(sk, angles) : standing;
       body.setPose(sk, pose);
       feet.current = footContacts(sk, pose);
       const base = rest.current;
@@ -297,6 +308,12 @@ function ExplorerBody({ slot }: { slot: HTMLElement }) {
       demoSpec.current = specKey;
       if (spec && (st.demo.playing || enter.current < 1)) invalidate();
     }
+
+    // ---- Troca de rota: pose e pele misturam com o plano de saída; no pouso, o visual da cena volta inteiro ----
+    const bp = dir.pose(sk, ownDeg.current, restTf);
+    if (bp) body.setPose(sk, bp);
+    dir.skin(body, ownSkin.current.visible, ownSkin.current.alpha);
+    if (dir.landed) reapply.current?.();
 
     // ---- Vista explodida ----
     const goalE = st.exploded ? 1 : 0;
@@ -322,15 +339,10 @@ function ExplorerBody({ slot }: { slot: HTMLElement }) {
     cur.current = reduce ? goal : dampOrbit(cur.current, goal, 1 - Math.exp(-dt * 6));
     if (orbitsClose(cur.current, goal)) cur.current = goal;
     else invalidate();
-    const rect = slot.getBoundingClientRect();
-    const p = orbitPosition(cur.current);
-    const t = cur.current.target;
-    cam.position.set(p[0], p[1], p[2]);
-    look.set(t[0], t[1], t[2]);
-    cam.lookAt(look);
-    cam.aspect = rect.width / Math.max(1, rect.height);
-    cam.near = Math.max(0.02, cur.current.dist * 0.05);
-    cam.far = cur.current.dist + 12;
+    const drawn = dir.camera(cam, orbitPosition(cur.current), cur.current.target);
+    cam.aspect = dir.rect.w / dir.rect.h;
+    cam.near = Math.max(0.02, Math.min(drawn, cur.current.dist) * 0.05);
+    cam.far = Math.max(drawn, cur.current.dist) + 12;
     cam.updateProjectionMatrix();
   });
 
@@ -385,7 +397,6 @@ function demoBox(body: BodyInstance, model: BodyModel, sel: Pick, spec: DemoSpec
 export function AtlasScene() {
   const slot = useAtlas((s) => s.slot);
   const invalidate = useThree((s) => s.invalidate);
-  const ref = useMemo(() => ({ current: slot }), [slot]);
 
   useEffect(() => {
     const unsub = useAtlas.subscribe(() => invalidate());
@@ -405,8 +416,8 @@ export function AtlasScene() {
 
   if (!slot) return null;
   return (
-    <View track={ref as React.RefObject<HTMLElement>} index={1}>
-      <ExplorerBody slot={slot} />
-    </View>
+    <StageView slot={slot} index={1} main>
+      <ExplorerBody />
+    </StageView>
   );
 }

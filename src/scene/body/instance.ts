@@ -374,6 +374,25 @@ export class BodyInstance {
     return id > 0 && id <= this.width ? id - 1 : null;
   }
 
+  /**
+   * Volta ao estado de quando nasceu, menos a pose (fundo de instâncias: a cena que entra herda o corpo da que saiu,
+   * na mesma pose, e aplica o próprio visual por cima).
+   */
+  reset() {
+    for (let s = 0; s < this.width; s++) {
+      for (const ch of ['highlight', 'heat', 'activation', 'hidden', 'strain'] as const) this.set(s, ch, 0);
+      this.set(s, 'opacity', 1);
+    }
+    this.commit();
+    for (const l of LAYERS) {
+      this.layer(l, { cut: 99, cutNormal: [0, 1, 0], ghost: 0, alpha: l === 'skin' ? 0.22 : 1, showAbove: -99, visible: true, lensPeel: 0, lensOnly: 0 });
+      this.color(l, COLOR[l]);
+      this.meshes[l].position.set(0, 0, 0);
+    }
+    this.lens.value.set(0, 0, 0);
+    this.grow.value = 9;
+  }
+
   dispose() {
     for (const l of LAYERS) {
       this.display[l].dispose();

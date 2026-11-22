@@ -8,7 +8,6 @@ import { muscleDefs } from '@/data';
 import { library } from '@/features/library/catalog';
 import { t as tShell } from '@/i18n';
 import { t } from '@/i18n/app';
-import { claimTitle } from '@/ui/Title';
 import { HomeLive } from './HomeLive';
 import './home-more.css';
 import { R } from '@/app/routes';
@@ -87,11 +86,11 @@ function Doors() {
       <ol className="home-gates__list">
         {rows.map((r, k) => (
           <li key={r.href} style={{ '--i': k } as CSSProperties}>
-            <Link href={r.href} className="home-gates__link lamp" onClick={claimTitle}>
+            <Link href={r.href} className="home-gates__link lamp">
               <span className="home-gates__num" aria-hidden="true">
                 {String(k + 1).padStart(2, '0')}
               </span>
-              <span className="home-gates__name" data-title="">
+              <span className="home-gates__name">
                 {r.name}
               </span>
               <span className="home-gates__body">{r.body}</span>

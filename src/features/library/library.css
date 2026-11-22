@@ -113,11 +113,6 @@
   color: var(--c-accent);
 }
 
-/* A lâmpada segue o ponteiro sobre o cartão (ui/pointerLight.ts). */
-.ex-card:hover {
-  background: var(--lamp);
-}
-
 .ex-card__pattern {
   font-size: var(--fs-2);
   font-stretch: var(--wd-cond);

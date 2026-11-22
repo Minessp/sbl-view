@@ -1,8 +1,8 @@
-import { View } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useLab, useLabSlots } from '@/features/lab/store';
 import { useBodyModel } from '../body/useBody';
+import { StageView } from '../director/StageView';
 import { useStage } from '../stageStore';
 import { VariantBody } from './VariantBody';
 
@@ -36,19 +36,16 @@ export function LabScene() {
     return () => useStage.getState().setReady(false);
   }, [model, invalidate]);
 
-  const refs = useMemo(() => Object.fromEntries(ids.map((id) => [id, { current: slots[id] ?? null }])), [ids, slots]);
-
   if (!model) return null;
   return (
     <>
       {ids.map((id, i) => {
         const el = slots[id];
-        const ref = refs[id];
-        if (!el || !ref) return null;
+        if (!el) return null;
         return (
-          <View key={id} track={ref as React.RefObject<HTMLElement>} index={i + 1}>
+          <StageView key={id} slot={el} index={i + 1}>
             <VariantBody variantId={id} slot={el} overlay={overlays[id] ?? null} model={model} />
-          </View>
+          </StageView>
         );
       })}
     </>

@@ -167,7 +167,20 @@ export interface ShadowCaster {
   render(gl: WebGLRenderer, camera: Camera): void;
 }
 
-export function Studio({ body, cx = 0, cz = 0, shadowCasters }: { body: BodyInstance | null; cx?: number; cz?: number; shadowCasters?: () => readonly ShadowCaster[] }) {
+/** `boxes`: softboxes ao fundo. Só no herói da home: no quadro do player, com a câmera afastada, viravam névoa clara. */
+export function Studio({
+  body,
+  cx = 0,
+  cz = 0,
+  shadowCasters,
+  boxes = false,
+}: {
+  body: BodyInstance | null;
+  cx?: number;
+  cz?: number;
+  shadowCasters?: () => readonly ShadowCaster[];
+  boxes?: boolean;
+}) {
   const gl = useThree((s) => s.gl);
   const camera = useThree((s) => s.camera);
   const size = useThree((s) => s.size);
@@ -272,7 +285,7 @@ export function Studio({ body, cx = 0, cz = 0, shadowCasters }: { body: BodyInst
     uni.color.value.copy(palette.floor);
     BOXES.forEach((b, i) => res.tints[i]?.value.copy(b.warm ? palette['light-key'] : palette['light-rim']));
     // Celular: o quadro estreito põe as softboxes atrás do texto do herói e lava a letra.
-    for (const m of res.boxes) m.visible = !light && size.width >= 900;
+    for (const m of res.boxes) m.visible = boxes && !light && size.width >= 900;
     const shadowOn = !!body && (force.shadow ?? fx?.shadow ?? false);
     const reflectOn = !!body && !light && (force.reflect ?? fx?.reflect ?? false);
     uni.useShadow.value = shadowOn ? 1 : 0;

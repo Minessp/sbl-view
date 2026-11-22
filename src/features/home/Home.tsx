@@ -11,7 +11,7 @@ import { Link } from 'wouter';
 import { t } from '@/i18n';
 import { bindAnchor } from '@/scene/annotations';
 import { useStage } from '@/scene/stageStore';
-import { claimTitle, SplitText } from '@/ui/Title';
+import { SplitText } from '@/ui/Title';
 import { homeScroll, useHome } from './store';
 import { explodeAt, LAYER_IDS, type LayerId } from './timeline';
 import './home.css';
@@ -122,11 +122,11 @@ function Doors({ className }: { className: string }) {
       <ol>
         {DOORS.map((d, i) => (
           <li key={d.href} style={{ '--i': i } as CSSProperties}>
-            <Link href={d.href} className="home-doors__link" onClick={claimTitle}>
+            <Link href={d.href} className="home-doors__link">
               <span className="home-doors__num" aria-hidden="true">
                 {String(i + 1).padStart(2, '0')}
               </span>
-              <span className="home-doors__name" data-title="">
+              <span className="home-doors__name">
                 {d.name}
               </span>
               <span className="home-doors__body">{d.body}</span>

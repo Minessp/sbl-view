@@ -166,10 +166,13 @@
   transform: scaleX(var(--seg));
 }
 
+/* Mora na camada do palco (#stage-overlay, acima do canvas); o transform em linha põe a origem no canto inferior esquerdo
+   da vista. */
 .live__read {
   position: absolute;
   left: var(--s-5);
-  bottom: var(--s-5);
+  top: calc(-1 * var(--s-5));
+  translate: 0 -100%;
   display: grid;
   justify-items: start;
   gap: var(--s-1);
@@ -507,7 +510,7 @@
   }
   .live__read {
     left: var(--s-3);
-    bottom: var(--s-3);
+    top: calc(-1 * var(--s-3));
   }
   .live__angle {
     font-size: 3.25rem;

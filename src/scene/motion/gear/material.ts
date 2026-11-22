@@ -19,8 +19,10 @@ const vertex = /* glsl */ `
   varying vec3 vN;
   varying vec3 vView;
   varying vec3 vO;
+  varying float vWy;
   void main() {
     vO = position;
+    vWy = (modelMatrix * vec4(position, 1.0)).y;
     vec4 mv = modelViewMatrix * vec4(position, 1.0);
     vView = mv.xyz;
     vN = normalize(normalMatrix * normal);
@@ -28,7 +30,14 @@ const vertex = /* glsl */ `
   }
 `;
 
+/** Altura (m) acima da qual nada do equipamento passa (coluna da polia): a frente da montagem vai do chão até aqui. */
+const APPEAR_TOP = 2.6;
+
+/** Montagem do equipamento (0 = nada, 1 = inteiro): um uniform para todos os materiais; o player anima na troca de rota. */
+export const gearAppear = { value: 1 };
+
 const fragment = /* glsl */ `
+  #define APPEAR_TOP ${APPEAR_TOP.toFixed(2)}
   uniform vec3 uColor;
   uniform float uMetal;
   uniform float uGloss;
@@ -38,9 +47,11 @@ const fragment = /* glsl */ `
   uniform int uPattern;
   uniform float uScale;
   uniform vec3 uSize;
+  uniform float uAppear;
   varying vec3 vN;
   varying vec3 vView;
   varying vec3 vO;
+  varying float vWy;
   ${LIGHT_GLSL}
 
   float hash3(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
@@ -52,6 +63,9 @@ const fragment = /* glsl */ `
   }
 
   void main() {
+    // Montagem (troca de rota): revela de baixo para cima com uma linha acesa na frente.
+    float front = mix(-0.06, APPEAR_TOP, uAppear);
+    if (uAppear < 1.0 && vWy > front) discard;
     vec3 n = normalize(vN);
     if (!gl_FrontFacing) n = -n;
     vec3 v = normalize(-vView);
@@ -103,7 +117,9 @@ const fragment = /* glsl */ `
     vec3 key = toLinear(uKeyColor) * smoothstep(0.25, 1.0, uLight) * sp * mix(vec3(1.0), albedo * 3.0 + 0.2, uMetal);
     // Brilho rasante (couro, borracha): só na borda.
     vec3 sheen = toLinear(uRimColor) * uSheen * fres * 0.6;
-    gl_FragColor = vec4(finish(diffuse + refl + key + sheen), 1.0);
+    float edge = uAppear < 1.0 ? smoothstep(0.035, 0.0, front - vWy) : 0.0;
+    vec3 seam = toLinear(uKeyColor) * edge * 3.0;
+    gl_FragColor = vec4(finish(diffuse + refl + key + sheen + seam), 1.0);
   }
 `;
 
@@ -145,6 +161,7 @@ export function createGearMaterial(finish: Finish, pattern: Pattern = 0, scale =
       uPattern: { value: pattern },
       uScale: { value: scale },
       uSize: { value: new Vector3(size[0], size[1], size[2]) },
+      uAppear: gearAppear,
     },
   }) as GearMaterial;
   Object.defineProperty(m, 'finish', { value: finish });

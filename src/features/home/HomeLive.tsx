@@ -13,6 +13,7 @@ import { line } from 'd3-shape';
 import { Mouse } from 'lucide-react';
 import { domMax, LazyMotion, m } from 'motion/react';
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'wouter';
 import { evaluateClip } from '@/engine/motion/evaluate';
 import { repAt, repLegs } from '@/engine/motion/keys';
@@ -108,6 +109,9 @@ export function HomeLive() {
   const root = useRef<HTMLElement>(null);
   const slot = useRef<HTMLDivElement>(null);
   const hud = useRef<HTMLDivElement>(null);
+  const read = useRef<HTMLDivElement>(null);
+  // A leitura (articulação, ângulo, fase) vai para a camada acima do canvas: o chão e o equipamento a cobriam.
+  const [overlay] = useState(() => (typeof document === 'undefined' ? null : document.getElementById('stage-overlay')));
   const [k, setK] = useState(0);
   const [still] = useState(() => typeof window !== 'undefined' && reduced());
   /** Posição manual (controle deslizante) quando nada é comandado pela rolagem. */
@@ -150,12 +154,12 @@ export function HomeLive() {
         const num = el.querySelector('[data-num]');
         if (num) num.textContent = fmtPct(v);
       }
-      const ang = root.current?.querySelector('[data-angle]');
+      const ang = read.current?.querySelector('[data-angle]');
       if (ang) ang.textContent = valueAt(tk.x, tk.angle, u).toFixed(0);
       // Fase pelo sentido da média dos alvos no sentido do movimento.
       const dir = phase === 'concentric' ? 1 : phase === 'eccentric' ? -1 : 0;
       const d = dir === 0 ? 0 : (valueAt(tk.x, tk.mean, Math.min(1, u + 0.02)) - valueAt(tk.x, tk.mean, Math.max(0, u - 0.02))) * dir;
-      const ph = root.current?.querySelector<HTMLElement>('[data-phase]');
+      const ph = read.current?.querySelector<HTMLElement>('[data-phase]');
       if (ph) {
         const key = Math.abs(d) < 0.05 ? 'still' : d > 0 ? 'long' : 'short';
         if (ph.dataset.k !== key) {
@@ -171,6 +175,29 @@ export function HomeLive() {
     },
     [L],
   );
+
+  // A leitura acompanha o canto inferior esquerdo da vista (a camada do palco é fixa na tela).
+  useEffect(() => {
+    const el = read.current, s = slot.current;
+    if (!el || !s) return;
+    let raf = 0;
+    const place = () => {
+      raf = 0;
+      const r = s.getBoundingClientRect();
+      el.style.transform = `translate(${r.left.toFixed(1)}px, ${r.bottom.toFixed(1)}px)`;
+    };
+    const on = () => {
+      raf ||= requestAnimationFrame(place);
+    };
+    place();
+    window.addEventListener('scroll', on, { passive: true });
+    window.addEventListener('resize', on);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', on);
+      window.removeEventListener('resize', on);
+    };
+  }, [overlay]);
 
   // Rolagem → progresso com inércia (scrub). Só sem redução de movimento.
   useEffect(() => {
@@ -225,6 +252,19 @@ export function HomeLive() {
     return [...tr.series.map((c) => ({ id: c.id, d: mk([...c.values]) ?? '' })), { id: '__zero', d: `M0 ${sy(0).toFixed(1)}H${CW}` }];
   }, [tr]);
 
+  const readBox = (
+    <div ref={read} className="live__read" aria-hidden="true">
+      <span className="live__joint">{item ? L.joints[item.joint] : ''}</span>
+      <span className="live__angle">
+        <span data-angle="">0</span>
+        <span className="live__deg">°</span>
+      </span>
+      <span className="live__phase" data-phase="" data-k="still">
+        {L.still}
+      </span>
+    </div>
+  );
+
   return (
     <LazyMotion features={domMax}>
       <section id="home-show" ref={root} className="live" data-still={still} aria-labelledby="live-title">
@@ -258,16 +298,7 @@ export function HomeLive() {
                 <span key={x.id} className="live__seg" data-state={i < k ? 'done' : i === k ? 'now' : 'next'} />
               ))}
             </div>
-            <figcaption className="live__read" aria-hidden="true">
-              <span className="live__joint">{item ? L.joints[item.joint] : ''}</span>
-              <span className="live__angle">
-                <span data-angle="">0</span>
-                <span className="live__deg">°</span>
-              </span>
-              <span className="live__phase" data-phase="" data-k="still">
-                {L.still}
-              </span>
-            </figcaption>
+            {overlay ? createPortal(readBox, overlay) : readBox}
             {!still && (
               <p className="live__hint" aria-hidden="true">
                 <Mouse size={16} strokeWidth={1.5} />

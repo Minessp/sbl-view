@@ -3,6 +3,7 @@
  * Rotas mandam "diretivas" (qual cena, progresso); o palco lazy reage.
  */
 import { create } from 'zustand';
+import type { Shot } from './director/handoff';
 
 export type SceneId = 'none' | 'home' | 'lab' | 'compare' | 'atlas' | 'heat' | 'motion';
 
@@ -21,6 +22,9 @@ interface StageState {
   setScene: (scene: SceneId) => void;
   setProgress: (p: number) => void;
   setReady: (r: boolean) => void;
+  /** A vista principal registra o que está desenhando; a troca de rota chama antes de trocar a página. */
+  capture: (() => Shot | null) | null;
+  setCapture: (fn: (() => Shot | null) | null) => void;
 }
 
 export const useStage = create<StageState>((set) => ({
@@ -34,6 +38,8 @@ export const useStage = create<StageState>((set) => ({
   setScene: (scene) => set({ scene }),
   setProgress: (p) => set({ progress: Math.min(1, Math.max(0, p)) }),
   setReady: (ready) => set({ ready }),
+  capture: null,
+  setCapture: (capture) => set({ capture }),
 }));
 
 export function hasWebGL(): boolean {

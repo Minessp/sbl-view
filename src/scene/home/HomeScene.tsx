@@ -8,7 +8,7 @@
  * - Mais abaixo, uma segunda vista executa exercícios da biblioteca (o mesmo corpo do player).
  * Estado em `useHome` e `useStage` (sem three.js); aqui só se aplica.
  */
-import { PerspectiveCamera, View } from '@react-three/drei';
+import { PerspectiveCamera } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
 import { type PerspectiveCamera as PerspCam, Vector3 } from 'three';
@@ -25,6 +25,7 @@ import { anchors } from '../annotations';
 import { structuresOf } from '../atlas/AtlasScene';
 import { ContactShadow } from '../body/ContactShadow';
 import { claimMain, releaseMain } from '../cinema/state';
+import { restRoot, STANDING_DEG, StageView, useDirector } from '../director/StageView';
 import { Studio } from '../set/Studio';
 import type { BodyInstance } from '../body/instance';
 import type { Box, BodyModel } from '../body/model';
@@ -36,6 +37,7 @@ import { useStage } from '../stageStore';
 
 const sk = buildSkeleton(skeletonDef);
 const standing = forwardKinematics(sk, STANDING);
+const rest = restRoot(sk);
 const feet = footContacts(sk, standing);
 const ankles = feet.filter((_, i) => i % 2 === 0);
 const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -59,12 +61,15 @@ function focusBox(body: BodyInstance, model: BodyModel, p: HomePick): Box | null
 /** Rótulo de camada: id da âncora. */
 export const layerAnchor = (l: string) => `home-layer-${l}`;
 
-function HeroBody({ slot }: { slot: HTMLElement }) {
+function HeroBody() {
   const invalidate = useThree((s) => s.invalidate);
   const gl = useThree((s) => s.gl);
   const camRef = useRef<PerspCam>(null);
+  const dir = useDirector();
+  const slot = dir.frame;
+  const pageSlot = useHome((s) => s.slot);
   const { model } = useBodyModel();
-  const body = useBodyInstance(model);
+  const body = useBodyInstance(model, 'main');
 
   /** Início da entrada (s, relógio de parede); só no topo da página e sem redução de movimento. */
   const t0 = useRef<number | null>(null);
@@ -98,7 +103,7 @@ function HeroBody({ slot }: { slot: HTMLElement }) {
     useAtlas.getState().setStructures(structuresOf(model));
     useStage.getState().setReady(true);
     invalidate();
-  }, [body, model, invalidate, slot]);
+  }, [body, model, invalidate, pageSlot]);
 
   useEffect(() => {
     const cam = camRef.current;
@@ -111,14 +116,13 @@ function HeroBody({ slot }: { slot: HTMLElement }) {
     useHome.getState().setPick((x, y) => {
       const cam = camRef.current;
       if (!cam) return null;
-      const r = slot.getBoundingClientRect();
-      const i = body.pick(gl, cam, x, y, r.width, r.height);
+      const i = body.pick(gl, cam, x, y, dir.rect.w, dir.rect.h);
       const s = i === null ? undefined : model.slots[i];
       if (!s) return null;
       return s.muscleId ? { kind: 'muscle', id: s.muscleId, side: s.side } : { kind: 'part', id: s.anatomyId, side: s.side };
     });
     return () => useHome.getState().setPick(null);
-  }, [body, model, gl, slot]);
+  }, [body, model, gl, dir]);
 
   // Destaque: o que está sob o ponteiro acende; o escolhido acende inteiro e o que o cobre vira vulto.
   useEffect(() => {
@@ -161,8 +165,10 @@ function HeroBody({ slot }: { slot: HTMLElement }) {
     const reduce = reduceMotion();
     const st = useHome.getState();
 
-    // ---- Entrada ----
-    t0.current ??= skipIntro.current ? -99 : now;
+    // ---- Entrada (chegando de outra página o corpo já está montado) ----
+    t0.current ??= skipIntro.current || dir.flying ? -99 : now;
+    const bp = dir.pose(sk, STANDING_DEG, rest);
+    if (bp) body.setPose(sk, bp);
     const intro = introFrame(now - t0.current);
     if (!intro.done) invalidate();
     else if (!st.live) st.setLive(true);
@@ -188,15 +194,16 @@ function HeroBody({ slot }: { slot: HTMLElement }) {
     if (st.leaving && lv.k < 0.999) invalidate();
 
     // ---- Camadas: pele, lente, vedação ----
-    const sealed = intro.skin >= 0.999 && ex < 0.001 && !st.leaving;
+    const sealed = intro.skin >= 0.999 && ex < 0.001 && !st.leaving && !dir.flying;
     // Fim da entrada: o que está sob a pele some pontilhado junto com a pele que fica opaca (corte em −99 = tudo fantasma).
     if (!intro.done && ex < 0.001 && !st.leaving && intro.under < 1) {
       for (const l of ['superficial', 'deep', 'bone'] as const) body.layer(l, { cut: -99, ghost: intro.under });
     }
-    body.layer('skin', { alpha: st.leaving ? 1 + (0.16 - 1) * lv.k : intro.skin });
+    const skinAlpha = st.leaving ? 1 + (0.16 - 1) * lv.k : intro.skin;
+    body.layer('skin', { alpha: skinAlpha });
     const canvas = gl.domElement.getBoundingClientRect();
     const dpr = gl.getPixelRatio();
-    const rect = slot.getBoundingClientRect();
+    const rect = { left: dir.rect.x, top: dir.rect.y, width: dir.rect.w, height: dir.rect.h };
     const lensOn = st.live && lens.on && ex < 0.02 && !st.leaving;
     const goalR = lensOn ? lensRadius(rect.width) * dpr : 0;
     const px = (lens.x - canvas.left) * dpr, py = (canvas.bottom - lens.y) * dpr;
@@ -215,6 +222,7 @@ function HeroBody({ slot }: { slot: HTMLElement }) {
     body.lens.value.set(L.x, L.y, L.r);
     const peel = lensPeel(st.depth);
     for (const l of LAYER_IDS) body.layer(l, { lensPeel: L.r > 0 ? peel[l] : 0, lensOnly: l !== 'skin' && sealed ? 1 : 0, showAbove: -99 });
+    dir.skin(body, true, skinAlpha);
 
     // ---- Câmera ----
     const aspect = rect.width / Math.max(1, rect.height);
@@ -260,15 +268,14 @@ function HeroBody({ slot }: { slot: HTMLElement }) {
     else invalidate();
     heroCamera.orbit = cur.current;
     const c = cur.current;
-    const pos = orbitPosition(c);
-    cam.position.set(pos[0], pos[1], pos[2]);
-    cam.lookAt(c.target[0], c.target[1], c.target[2]);
+    const drawn = dir.camera(cam, orbitPosition(c), c.target);
     cam.aspect = aspect;
-    cam.near = Math.max(0.05, c.dist * 0.05);
-    cam.far = c.dist + 14;
+    cam.near = Math.max(0.05, Math.min(drawn, c.dist) * 0.05);
+    cam.far = Math.max(drawn, c.dist) + 14;
     cam.updateProjectionMatrix();
     cam.updateMatrixWorld();
-    claimMain(cam, slot, gl.domElement, c.dist, 0.35);
+    // Herói fora da tela (o leitor desceu ao "Ao vivo"): sem feixe, que lavava a vitrine.
+    claimMain(cam, slot, gl.domElement, drawn, 0.35, rect.top + rect.height > 1 ? 1 : 0);
 
     // ---- Camadas lado a lado no eixo lateral da câmera ----
     const ax = screenAxes(c).right;
@@ -300,7 +307,7 @@ function HeroBody({ slot }: { slot: HTMLElement }) {
   return (
     <>
       <PerspectiveCamera ref={camRef} makeDefault manual fov={FOV_DEG} near={0.05} far={30} position={[0, 1, 4]} />
-      <Studio body={body} />
+      <Studio body={body} boxes />
       {body && <ContactShadow feet={getFeet} />}
       {body && <primitive object={body.group} />}
     </>
@@ -311,8 +318,6 @@ export function HomeScene() {
   const hero = useHome((s) => s.slot);
   const show = usePlayer((s) => s.slot);
   const invalidate = useThree((s) => s.invalidate);
-  const heroRef = useMemo(() => ({ current: hero }), [hero]);
-  const showRef = useMemo(() => ({ current: show }), [show]);
 
   useEffect(() => {
     const unsub = [useHome.subscribe(() => invalidate()), useStage.subscribe(() => invalidate())];
@@ -334,14 +339,14 @@ export function HomeScene() {
   return (
     <>
       {hero && (
-        <View track={heroRef as React.RefObject<HTMLElement>} index={1}>
-          <HeroBody slot={hero} />
-        </View>
+        <StageView slot={hero} index={1} main>
+          <HeroBody />
+        </StageView>
       )}
       {show && (
-        <View track={showRef as React.RefObject<HTMLElement>} index={2}>
-          <PlayerBody slot={show} />
-        </View>
+        <StageView slot={show} index={2} capture>
+          <PlayerBody />
+        </StageView>
       )}
     </>
   );

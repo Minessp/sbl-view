@@ -4,6 +4,7 @@ import { t } from '@/i18n';
 import { StageHost } from '@/scene/StageHost';
 import { ThemeSwitch } from '@/ui/ThemeSwitch';
 import { UpdateNotice } from '@/pwa/UpdateNotice';
+import { LangLink } from './LangLink';
 import { R } from './routes';
 import './shell.css';
 
@@ -75,6 +76,7 @@ export function Shell({ children }: { children: ReactNode }) {
           <span className="wordmark__view">View</span>
         </Link>
         <Where />
+        <LangLink className="lang-flag" flag />
         <ThemeSwitch />
         <button
           type="button"

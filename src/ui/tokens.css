@@ -171,6 +171,13 @@
   --z-header: 20;
   --z-toast: 30;
   --z-skip: 100;
+  /* Bandeiras da troca de idioma (cores oficiais, iguais nos dois temas). */
+  --flag-us-red: #b22234;
+  --flag-us-blue: #3c3b6e;
+  --flag-br-green: #009c3b;
+  --flag-br-yellow: #ffdf00;
+  --flag-br-blue: #002776;
+  --flag-white: #ffffff;
 
   --header-h: 56px;
 }
