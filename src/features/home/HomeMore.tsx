@@ -1,16 +1,12 @@
 /**
  * Parte de baixo da página inicial (chunk à parte, montado quando o leitor se aproxima): exercícios da biblioteca
- * executados ao vivo pelo mesmo corpo do player, as quatro entradas com números e a nota de fonte.
+ * executados ao vivo pelo mesmo corpo do player e os Mundos (as quatro entradas sobre o mesmo corpo).
  */
 import { useEffect, useRef, type CSSProperties } from 'react';
-import { Link } from 'wouter';
-import { muscleDefs } from '@/data';
-import { library } from '@/features/library/catalog';
-import { t as tShell } from '@/i18n';
 import { t } from '@/i18n/app';
+import { Doors } from './Doors';
 import { HomeLive } from './HomeLive';
 import './home-more.css';
-import { R } from '@/app/routes';
 
 /**
  * Frase que acende palavra a palavra conforme a rolagem: o bloco é alto e o texto fica preso no meio da tela; o
@@ -65,41 +61,6 @@ function Statement() {
         </p>
         <span className="home-say__rule" aria-hidden="true" />
       </div>
-    </section>
-  );
-}
-
-function Doors() {
-  const D = t.homeMore.doors;
-  const H = tShell.home.doors;
-  const rows = [
-    { href: R.atlas, name: H.atlas.name, body: H.atlas.body, stat: D.atlas(muscleDefs.length) },
-    { href: R.library, name: H.library.name, body: H.library.body, stat: D.library(library.length) },
-    { href: R.lab, name: H.lab.name, body: H.lab.body, stat: D.lab },
-    { href: R.training, name: H.training.name, body: H.training.body, stat: D.training },
-  ];
-  return (
-    <section id="home-gates" className="home-gates" aria-labelledby="home-gates-title">
-      <h2 id="home-gates-title" className="home-gates__title">
-        {D.title}
-      </h2>
-      <ol className="home-gates__list">
-        {rows.map((r, k) => (
-          <li key={r.href} style={{ '--i': k } as CSSProperties}>
-            <Link href={r.href} className="home-gates__link lamp">
-              <span className="home-gates__num" aria-hidden="true">
-                {String(k + 1).padStart(2, '0')}
-              </span>
-              <span className="home-gates__name">
-                {r.name}
-              </span>
-              <span className="home-gates__body">{r.body}</span>
-              <span className="home-gates__stat">{r.stat}</span>
-            </Link>
-          </li>
-        ))}
-      </ol>
-      <p className="home-gates__note">{t.homeMore.note}</p>
     </section>
   );
 }

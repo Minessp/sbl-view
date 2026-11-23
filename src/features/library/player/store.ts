@@ -61,6 +61,8 @@ interface PlayerState {
   compose: PlayerCompose | null;
   /** Raio X enquanto o botão (ou X) está apertado: tudo fora dos alvos vira vulto. */
   xray: boolean;
+  /** Mapa de calor (brilho 0..1 por músculo) no lugar da cor do comprimento; só a vitrine da home (Mundos) usa. */
+  heat: Readonly<Record<string, number>> | null;
   /** Aproximação pedida pela leitura da prancha (fator da distância; 1 = nenhuma). */
   dolly: number;
   /** Músculo sob o pixel (x, y) do slot, registrado pela cena; null sem palco. */
@@ -105,6 +107,7 @@ export const usePlayer = create<PlayerState>((set, get) => ({
   joint: { dof: null, paths: [], target: null },
   compose: null,
   xray: false,
+  heat: null,
   dolly: 1,
   pick: null,
   setSlot: (slot) => set({ slot }),
@@ -118,6 +121,7 @@ export const usePlayer = create<PlayerState>((set, get) => ({
       view: clip?.clip.view ?? 'side',
       drag: { yaw: 0, pitch: 0, zoom: 1 },
       isolate: null,
+      heat: null,
     }),
   setPlaying: (playing) => set({ playing }),
   setSpeed: (speed) => set({ speed }),

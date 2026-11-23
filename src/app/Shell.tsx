@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useState, type ReactNode } from 'react';
 import { Link, useLocation } from 'wouter';
 import { t } from '@/i18n';
 import { StageHost } from '@/scene/StageHost';
@@ -15,6 +15,9 @@ const MenuPanel = lazy(loadMenu);
 const loadSettings = () => import('./Settings');
 const Settings = lazy(loadSettings);
 const Footer = lazy(() => import('./Footer'));
+/** Busca global: chunk à parte (índice montado ao abrir). Ctrl/⌘+K ou "/" em qualquer página. */
+const loadSearch = () => import('./Search');
+const Search = lazy(loadSearch);
 
 const SECTIONS = [
   [R.atlas, t.nav.atlas],
@@ -60,11 +63,34 @@ function usePreloadMenu() {
   }, []);
 }
 
+/** Atalhos da busca: Ctrl/⌘+K sempre; "/" fora de campo de texto. */
+function useSearchKeys(open: () => void) {
+  useEffect(() => {
+    const on = (e: KeyboardEvent) => {
+      const el = e.target instanceof HTMLElement ? e.target : null;
+      const typing = !!el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName));
+      const mod = e.ctrlKey || e.metaKey;
+      if ((mod && e.key.toLowerCase() === 'k') || (e.key === '/' && !typing && !mod && !e.altKey)) {
+        e.preventDefault();
+        open();
+      }
+    };
+    window.addEventListener('keydown', on);
+    return () => window.removeEventListener('keydown', on);
+  }, [open]);
+}
+
 export function Shell({ children }: { children: ReactNode }) {
   const scrolled = useScrolled();
   const [menu, setMenu] = useState(false);
   const [settings, setSettings] = useState(false);
+  const [search, setSearch] = useState(false);
+  const openSearch = useCallback(() => {
+    setMenu(false);
+    setSearch(true);
+  }, []);
   usePreloadMenu();
+  useSearchKeys(openSearch);
   return (
     <>
       <a className="skip-link" href="#conteudo">
@@ -76,6 +102,22 @@ export function Shell({ children }: { children: ReactNode }) {
           <span className="wordmark__view">View</span>
         </Link>
         <Where />
+        <button
+          type="button"
+          className="search-btn"
+          aria-haspopup="dialog"
+          aria-label={t.nav.search}
+          aria-keyshortcuts="Control+K Meta+K /"
+          onPointerEnter={() => void loadSearch()}
+          onFocus={() => void loadSearch()}
+          onClick={openSearch}
+        >
+          {/* Ícone `search` do Lucide (ISC), em linha. */}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.9-3.9" />
+          </svg>
+        </button>
         <LangLink className="lang-flag" flag />
         <ThemeSwitch />
         <button
@@ -99,7 +141,12 @@ export function Shell({ children }: { children: ReactNode }) {
       </header>
       {menu && (
         <Suspense fallback={null}>
-          <MenuPanel onClosed={() => setMenu(false)} onSettings={() => setSettings(true)} />
+          <MenuPanel onClosed={() => setMenu(false)} onSettings={() => setSettings(true)} onSearch={openSearch} />
+        </Suspense>
+      )}
+      {search && (
+        <Suspense fallback={null}>
+          <Search onClosed={() => setSearch(false)} onSettings={() => setSettings(true)} />
         </Suspense>
       )}
       {settings && (

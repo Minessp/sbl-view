@@ -14,6 +14,7 @@ export const en: Strings = {
     lab: 'Lab',
     training: 'Training',
     skip: 'Skip to content',
+    search: 'Search the site (Ctrl+K)',
     menu: 'Menu',
     menuOpen: 'Open the menu',
   },

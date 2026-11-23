@@ -1,0 +1,223 @@
+/* Busca global (Search.tsx): vidro central sobre a página (o palco continua visível, escurecido); folha cheia no celular. */
+.search {
+  width: min(640px, calc(100% - 2 * var(--s-4)));
+  max-width: none;
+  max-height: none;
+  margin: calc(var(--header-h) + 6svh) auto auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--c-ink);
+  overflow: visible;
+}
+
+.search::backdrop {
+  background: color-mix(in oklch, var(--c-bg) 55%, transparent);
+  backdrop-filter: blur(3px);
+}
+
+.search[open] {
+  animation: search-in var(--t-enter) var(--ease) both;
+}
+
+@keyframes search-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.985);
+  }
+}
+
+.search__panel {
+  display: flex;
+  flex-direction: column;
+  max-height: min(70svh, 620px);
+  border: var(--lw-hair) solid var(--c-edge);
+  border-radius: var(--r-3);
+  background: var(--c-scrim);
+  backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: var(--shadow-pop);
+  overflow: hidden;
+}
+
+.search__field {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: 0 var(--s-2) 0 var(--s-4);
+  border-bottom: var(--lw-hair) solid var(--c-edge);
+}
+
+.search__field svg {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  color: var(--c-ink-2);
+}
+
+.search__field input {
+  flex: 1;
+  min-width: 0;
+  height: 60px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: var(--fs-4);
+  outline: none;
+}
+
+.search__field input::placeholder {
+  color: var(--c-ink-2);
+}
+
+.search__field input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.search__close {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--c-ink-2);
+}
+
+.search__close kbd {
+  padding: 2px 6px;
+  border: var(--lw-hair) solid var(--c-edge);
+  border-radius: 4px;
+  font: inherit;
+  font-size: var(--fs-1);
+}
+
+.search__list {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0;
+  padding: var(--s-2);
+  list-style: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.search__list:empty {
+  display: none;
+}
+
+.search__hit {
+  position: relative;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s-3);
+  min-height: 52px;
+  padding: var(--s-1) var(--s-3);
+  border-radius: var(--r-2);
+  cursor: pointer;
+}
+
+/* Nome do grupo acima do primeiro resultado de cada um. */
+.search__hit[data-head]::before {
+  content: attr(data-head);
+  grid-column: 1 / -1;
+  padding: var(--s-3) 0 var(--s-1);
+  font-size: var(--fs-1);
+  font-stretch: var(--wd-cond);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-ink-2);
+}
+
+.search__hit[aria-selected='true'] {
+  background: linear-gradient(90deg, color-mix(in oklch, var(--c-accent) 14%, transparent), transparent 80%);
+  box-shadow: inset 2px 0 0 var(--c-accent);
+}
+
+.search__hit[data-head][aria-selected='true'] {
+  background: none;
+  box-shadow: none;
+}
+
+/* Com o rótulo do grupo dentro, o realce fica só na linha do resultado. */
+.search__hit[data-head][aria-selected='true'] > :not(.search__dot, .search__thumb) {
+  color: var(--c-accent);
+}
+
+.search__thumb {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.search__dot {
+  justify-self: center;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--c-ink-2);
+}
+
+.search__hit[data-kind='muscle'] .search__dot {
+  background: var(--c-glow);
+}
+
+.search__hit[data-kind='action'] .search__dot {
+  border-radius: 2px;
+  background: var(--c-stretch);
+}
+
+.search__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search__sub {
+  font-size: var(--fs-1);
+  color: var(--c-ink-2);
+  white-space: nowrap;
+}
+
+.search__hit[data-kind='muscle'] .search__sub {
+  font-style: italic;
+}
+
+.search__empty {
+  display: grid;
+  justify-items: start;
+  gap: var(--s-3);
+  padding: var(--s-5) var(--s-4);
+  color: var(--c-ink-2);
+}
+
+.search__empty p {
+  margin: 0;
+}
+
+@media (max-width: 719px) {
+  .search {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+  }
+
+  .search__panel {
+    height: 100%;
+    max-height: none;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .search__sub {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .search[open] {
+    animation: none;
+  }
+}

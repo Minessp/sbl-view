@@ -1,44 +1,41 @@
 /**
  * Menu em tela cheia (chunk à parte). `<dialog>` modal: foco preso, Esc fecha, o resto da página fica inerte.
- * A cortina desce do cabeçalho, os nomes das seções entram letra a letra em cascata e o fio de cada linha se acende.
- * A barra de cima repete o cabeçalho no mesmo lugar (marca, tema, e "Fechar" onde estava "Menu").
+ * Vidro sobre o palco: o corpo da página continua lá, escurecido. Os nomes entram letra a letra; o da linha sob o
+ * ponteiro ou o foco alonga (largura da fonte) e os outros encurtam. Linha de baixo: abas do Treino, Buscar, idioma,
+ * Ajustes. A barra de cima repete o cabeçalho no mesmo lugar (marca, tema, e "Fechar" onde estava "Menu").
  */
 import { Dumbbell, FlaskConical, Layers, NotebookPen, X, type LucideIcon } from 'lucide-react';
-import { domMax, LazyMotion, m } from 'motion/react';
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { Link, useLocation } from 'wouter';
 import { t as tShell } from '@/i18n';
 import { t } from '@/i18n/app';
 import { SplitText } from '@/ui/Title';
 import { ThemeSwitch } from '@/ui/ThemeSwitch';
+import { LangLink } from './LangLink';
 import './menu.css';
 import { R } from './routes';
 
 const D = tShell.home.doors;
 const TR = t.training.tabs;
-const SECTIONS: readonly { href: string; name: string; body: string; icon: LucideIcon; sub?: readonly (readonly [string, string])[] }[] = [
+const SECTIONS: readonly { href: string; name: string; body: string; icon: LucideIcon }[] = [
   { href: R.atlas, ...D.atlas, icon: Layers },
   { href: R.library, ...D.library, icon: Dumbbell },
   { href: R.lab, ...D.lab, icon: FlaskConical },
-  {
-    href: R.training,
-    ...D.training,
-    icon: NotebookPen,
-    sub: [
-      [R.training, TR.log],
-      [R.plan, TR.plan],
-      [R.history, TR.history],
-      [R.progress, TR.progress],
-      [R.analysis, TR.analysis],
-      [R.data, TR.data],
-    ],
-  },
+  { href: R.training, ...D.training, icon: NotebookPen },
 ];
+const TRAINING = [
+  [R.training, TR.log],
+  [R.plan, TR.plan],
+  [R.history, TR.history],
+  [R.progress, TR.progress],
+  [R.analysis, TR.analysis],
+  [R.data, TR.data],
+] as const;
 
 /** Duração da saída (motion.css: --t-exit); com redução de movimento, fecha na hora. */
 const EXIT_MS = 220;
 
-export default function MenuPanel({ onClosed, onSettings }: { onClosed: () => void; onSettings: () => void }) {
+export default function MenuPanel({ onClosed, onSettings, onSearch }: { onClosed: () => void; onSettings: () => void; onSearch: () => void }) {
   const ref = useRef<HTMLDialogElement>(null);
   const close = useRef<HTMLButtonElement>(null);
   const [loc] = useLocation();
@@ -98,20 +95,18 @@ export default function MenuPanel({ onClosed, onSettings }: { onClosed: () => vo
         </button>
       </div>
       <nav className="menu__nav" aria-label={t.menu.sections}>
-        <LazyMotion features={domMax}>
-        <ol className="menu__list" onPointerLeave={() => setHover(null)}>
+        <ol className="menu__list" data-lit={lit !== null} onPointerLeave={() => setHover(null)}>
           {SECTIONS.map((s, k) => (
-            <li key={s.href} className="menu__item" style={{ '--k': k, '--d': `${140 + k * 70}ms` } as CSSProperties}>
+            <li key={s.href} className="menu__item" data-lit={lit === k} style={{ '--k': k, '--d': `${140 + k * 70}ms` } as CSSProperties}>
               <Link
                 href={s.href}
-                className="menu__link lamp"
+                className="menu__link"
                 aria-current={here(s.href) ? 'page' : undefined}
                 onClick={() => shut(false)}
                 onPointerEnter={() => setHover(k)}
                 onFocus={() => setHover(k)}
                 onBlur={() => setHover(null)}
               >
-                {lit === k && <m.span layoutId="menu-plate" className="menu__plate" aria-hidden="true" transition={{ type: 'spring', stiffness: 380, damping: 36 }} />}
                 <span className="menu__num" aria-hidden="true">
                   <s.icon size={18} strokeWidth={1.4} className="menu__icon" />
                   {String(k + 1).padStart(2, '0')}
@@ -121,35 +116,37 @@ export default function MenuPanel({ onClosed, onSettings }: { onClosed: () => vo
                 </span>
                 <span className="menu__body">{s.body}</span>
               </Link>
-              {s.sub && (
-                <ul className="menu__sub" aria-label={t.menu.training}>
-                  {s.sub.map(([href, label]) => (
-                    <li key={href}>
-                      <Link href={href} className="chip chip--small" aria-current={loc === href ? 'page' : undefined} onClick={() => shut(false)}>
-                        {label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              )}
             </li>
           ))}
         </ol>
-        </LazyMotion>
       </nav>
       <div className="menu__foot">
-        <p>{t.menu.foot}</p>
-        <button
-          type="button"
-          className="chip chip--small"
-          aria-haspopup="dialog"
-          onClick={() => {
-            shut(false);
-            onSettings();
-          }}
-        >
-          {t.footer.settings}
-        </button>
+        <ul className="menu__sub" aria-label={t.menu.training}>
+          {TRAINING.map(([href, label]) => (
+            <li key={href}>
+              <Link href={href} className="chip chip--small" aria-current={loc === href ? 'page' : undefined} onClick={() => shut(false)}>
+                {label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <div className="menu__tools">
+          <button type="button" className="chip chip--small" aria-haspopup="dialog" aria-keyshortcuts="Control+K Meta+K /" onClick={onSearch}>
+            {t.menu.search}
+          </button>
+          <LangLink className="chip chip--small" />
+          <button
+            type="button"
+            className="chip chip--small"
+            aria-haspopup="dialog"
+            onClick={() => {
+              shut(false);
+              onSettings();
+            }}
+          >
+            {t.footer.settings}
+          </button>
+        </div>
       </div>
     </dialog>
   );

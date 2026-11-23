@@ -81,11 +81,19 @@ function applyLook(body: BodyInstance, model: BodyModel) {
   body.fill('hidden', 0);
   body.layer('skin', { visible: st.skin, alpha: SKIN_ALPHA });
   for (const l of ['superficial', 'deep', 'bone'] as const) body.layer(l, { showAbove: -99, visible: true });
-  if (st.xray) {
-    // Raio X: só os alvos ficam inteiros; o resto, osso inclusive, vira vulto.
+  // Calor: músculo em repouso na base da rampa (como a cena de calor), sem pele.
+  const muscle = st.heat ? 'bg-3' : 'body-muscle';
+  body.color('superficial', muscle);
+  body.color('deep', muscle);
+  body.fill('heat', 0);
+  if (st.heat) {
+    body.layer('skin', { visible: false, alpha: SKIN_ALPHA });
+    for (const [id, v] of Object.entries(st.heat)) body.fill('heat', v, model.byMuscle.get(id) ?? []);
+  } else if (st.xray) {
+    // Raio X como dissecação: osso inteiro e só os alvos; o resto some (vulto por transparência pontilhava).
     const keep = new Set(slotsOf(model, st.isolate ? [st.isolate] : [...primary, ...st.targets.synergist]));
     body.layer('skin', { visible: false, alpha: SKIN_ALPHA });
-    for (const s of model.slots) if (!keep.has(s.index)) body.set(s.index, 'opacity', s.layer === 'bone' ? 0.18 : 0.06);
+    for (const s of model.slots) if (s.layer !== 'bone' && !keep.has(s.index)) body.set(s.index, 'hidden', 1);
     body.fill('highlight', 0.35, [...keep]);
   } else if (st.isolate) {
     const keep = new Set(slotsOf(model, [st.isolate]));
@@ -103,7 +111,8 @@ function applyLook(body: BodyInstance, model: BodyModel) {
 }
 
 /** `main`: vista principal do pipeline de cinema (foco, oclusão); a vitrine da home não é. */
-export function PlayerBody({ main = false }: { main?: boolean }) {
+/** `hud`: desenha a telemetria (arco e rastro); padrão = só a vista principal. */
+export function PlayerBody({ main = false, hud: withHud = main }: { main?: boolean; hud?: boolean }) {
   const invalidate = useThree((s) => s.invalidate);
   const gl = useThree((s) => s.gl);
   const camRef = useRef<PerspCam>(null);
@@ -146,17 +155,17 @@ export function PlayerBody({ main = false }: { main?: boolean }) {
       setEquipment((cur) => (cur === e ? null : cur));
     };
   }, [clip]);
-  // Telemetria só na página do exercício (a vitrine da home e o Comparar não desenham).
+  // Telemetria na página do exercício e na vitrine da home (o Comparar não desenha).
   const [hud, setHud] = useState<Telemetry | null>(null);
   useEffect(() => {
-    if (!clip || !main) return;
+    if (!clip || !withHud) return;
     const h = new Telemetry(clip);
     setHud(h);
     return () => {
       h.dispose();
       setHud((cur) => (cur === h ? null : cur));
     };
-  }, [clip, main]);
+  }, [clip, withHud]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -181,7 +190,7 @@ export function PlayerBody({ main = false }: { main?: boolean }) {
     if (!body || !model) return;
     let last: unknown[] = [];
     return usePlayer.subscribe((s) => {
-      const sig = [s.isolate, s.skin, s.targets, s.xray];
+      const sig = [s.isolate, s.skin, s.targets, s.xray, s.heat];
       if (sig.every((v, i) => v === last[i])) return;
       last = sig;
       applyLook(body, model);

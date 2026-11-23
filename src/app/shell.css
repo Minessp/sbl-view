@@ -128,6 +128,7 @@ html.menu-open {
 
 /* Tema: um botão, lua (escuro) ou sol (claro). Idioma: a bandeira do outro idioma, mesmo alvo de toque. */
 .theme-toggle,
+.search-btn,
 .lang-flag {
   display: grid;
   place-items: center;
@@ -143,6 +144,7 @@ html.menu-open {
 }
 
 .theme-toggle:hover,
+.search-btn:hover,
 .lang-flag:hover {
   color: var(--c-ink);
   background: var(--c-hover);
@@ -154,7 +156,8 @@ html.menu-open {
   box-shadow: 0 0 0 1px var(--c-rule);
 }
 
-.theme-toggle svg {
+.theme-toggle svg,
+.search-btn svg {
   width: 20px;
   height: 20px;
   overflow: visible;

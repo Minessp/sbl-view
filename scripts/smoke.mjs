@@ -61,6 +61,43 @@ await step('página inicial: lente escolhe profundidade, acende o músculo e o c
   throw new Error('nenhum músculo sob a lente');
 });
 
+await step('página inicial: Mundos abrem a faixa pelo foco e Enter entra na seção', async () => {
+  await page.goto(`${base}/`, { waitUntil: 'networkidle' });
+  await page.waitForSelector('.stage[data-ready="true"]', { timeout: 20000 });
+  for (let i = 0; i < 40 && !(await page.$('.worlds__link')); i++) await page.mouse.wheel(0, 1500);
+  const link = page.locator('.worlds__link').nth(3);
+  await link.focus();
+  await page.waitForSelector('.worlds__item:nth-child(4)[data-open="true"]', { timeout: 4000 });
+  await page.waitForSelector('.worlds__sample[data-on="true"]');
+  await page.keyboard.press('Enter');
+  await page.waitForURL((u) => u.pathname === '/treino', { timeout: 8000 });
+});
+
+await step('menu: a linha acesa alonga e Buscar abre a busca, que acha "pulldown" e abre a puxada', async () => {
+  await page.getByRole('button', { name: 'Abrir o menu' }).click();
+  const lab = page.locator('.menu__item').nth(2);
+  await lab.locator('.menu__link').hover();
+  if ((await lab.getAttribute('data-lit')) !== 'true') throw new Error('linha não acendeu');
+  await page.getByRole('dialog').getByRole('button', { name: 'Buscar' }).click();
+  const box = page.getByRole('combobox', { name: 'Buscar no site' });
+  await box.fill('pulldown');
+  const first = page.getByRole('option').first();
+  if (!/Puxada alta/.test((await first.textContent()) ?? '')) throw new Error('primeiro resultado não é a puxada');
+  await box.press('Enter');
+  await page.waitForURL((u) => u.pathname === '/exercicios/lat-pulldown', { timeout: 8000 });
+  await page.locator('main h1').first().waitFor();
+});
+
+await step('busca: "/" abre, sem resultado oferece a biblioteca, Esc fecha', async () => {
+  await page.locator('body').click({ position: { x: 5, y: 300 } });
+  await page.keyboard.press('/');
+  const box = page.getByRole('combobox', { name: 'Buscar no site' });
+  await box.fill('zzqx');
+  await page.getByRole('link', { name: 'Procurar na biblioteca de exercícios' }).waitFor();
+  await box.press('Escape');
+  await page.waitForSelector('dialog.search', { state: 'detached', timeout: 3000 });
+});
+
 await step('rota inexistente mostra 404 e navegação leva o foco ao h1', async () => {
   await page.goto(`${base}/nao-existe`, { waitUntil: 'networkidle' });
   await page.getByRole('heading', { name: 'Página não encontrada' }).waitFor();
@@ -252,7 +289,7 @@ await step('biblioteca: alvo da arara filtra por músculo; setas trocam o foco; 
 await step('biblioteca: filtros pela URL + busca deixam um exercício', async () => {
   await page.goto(`${base}/exercicios?longo=1&status=consolidado`, { waitUntil: 'networkidle' });
   await page.getByRole('status').filter({ hasText: /^\s*\d+ exercícios/ }).waitFor();
-  await page.getByLabel('Buscar').fill('extensora');
+  await page.getByLabel('Buscar', { exact: true }).fill('extensora');
   await page.getByRole('status').filter({ hasText: '1 exercício' }).waitFor();
   if (!page.url().includes('q=extensora')) throw new Error(`URL sem a busca: ${page.url()}`);
   await page.locator('.wall').getByRole('link', { name: /Cadeira extensora reclinada/ }).click();

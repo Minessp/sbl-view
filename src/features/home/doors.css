@@ -1,0 +1,225 @@
+/* Mundos: faixas sobre o corpo da vitrine. O slot do corpo cobre a seção; as faixas ficam acima do palco. */
+.worlds {
+  position: relative;
+  padding: var(--s-7) var(--s-4) var(--s-6);
+}
+
+.worlds__title {
+  margin-bottom: var(--s-4);
+  font-size: var(--fs-1);
+  font-stretch: var(--wd-cond);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-ink-2);
+}
+
+.worlds__view {
+  height: 52svh;
+  min-height: 320px;
+}
+
+.worlds__list {
+  position: relative;
+  z-index: var(--z-over-stage);
+}
+
+.worlds__link {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto 0fr;
+  gap: 0 var(--s-3);
+  padding: var(--s-4) var(--s-2);
+  border-top: var(--lw-hair) solid var(--c-edge);
+  text-decoration: none;
+  transition: grid-template-rows var(--t-mid) var(--ease);
+}
+
+.worlds__item:last-child .worlds__link {
+  border-bottom: var(--lw-hair) solid var(--c-edge);
+}
+
+.worlds__num {
+  font-size: var(--fs-1);
+  font-stretch: var(--wd-cond);
+  font-variant-numeric: tabular-nums;
+  color: var(--c-glow);
+  padding-top: 0.5em;
+}
+
+.worlds__name {
+  font-size: var(--fs-6);
+  font-weight: 250;
+  font-stretch: var(--display-stretch);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  transition: color var(--t-fast) var(--ease);
+}
+
+.worlds__body,
+.worlds__stat {
+  grid-column: 2;
+  overflow: hidden;
+  min-height: 0;
+  font-size: var(--fs-2);
+  color: var(--c-ink-2);
+  opacity: 0;
+  transition: opacity var(--t-mid) var(--ease);
+}
+
+.worlds__stat {
+  font-size: var(--fs-1);
+  font-stretch: var(--wd-cond);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Linha 2 abre com o corpo e a cifra (grid 0fr → 1fr). */
+.worlds__item[data-open='true'] .worlds__link {
+  grid-template-rows: auto 1fr;
+}
+
+.worlds__item[data-open='true'] .worlds__name {
+  color: var(--c-accent);
+}
+
+.worlds__item[data-open='true'] :is(.worlds__body, .worlds__stat) {
+  opacity: 1;
+}
+
+.worlds__body {
+  padding-top: var(--s-2);
+}
+
+.worlds__sample,
+.worlds__note {
+  position: relative;
+  z-index: var(--z-over-stage);
+  max-width: 64ch;
+  font-size: var(--fs-1);
+  line-height: 1.55;
+  color: var(--c-ink-2);
+}
+
+.worlds__sample {
+  margin-top: var(--s-4);
+  color: var(--c-ink);
+  opacity: 0;
+  transition: opacity var(--t-mid) var(--ease);
+}
+
+.worlds__sample[data-on='true'] {
+  opacity: 1;
+}
+
+.worlds__note {
+  margin-top: var(--s-3);
+}
+
+/* Desktop: faixas verticais de altura total, a aberta vale três; o corpo anda até o centro dela (compose da cena). */
+@media (min-width: 900px) {
+  .worlds {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto auto;
+    height: max(100svh, 680px);
+    padding: calc(var(--header-h) + var(--s-5)) var(--s-7) var(--s-5);
+  }
+
+  .worlds__view {
+    position: absolute;
+    inset: 0;
+    height: auto;
+  }
+
+  .worlds__list {
+    display: flex;
+    min-height: 0;
+  }
+
+  .worlds__item {
+    flex: 1 1 0;
+    min-width: 0;
+    transition: flex-grow var(--t-slow) var(--ease-quart);
+  }
+
+  .worlds__item[data-open='true'] {
+    flex-grow: 3;
+  }
+
+  .worlds__link,
+  .worlds__item[data-open='true'] .worlds__link {
+    position: relative;
+    height: 100%;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    align-content: start;
+    gap: var(--s-2);
+    padding: var(--s-4) var(--s-4) var(--s-4) var(--s-4);
+    border-top: 0;
+    border-bottom: 0;
+    border-left: var(--lw-hair) solid var(--c-edge);
+    transition: none;
+  }
+
+  .worlds__item:last-child .worlds__link {
+    border-bottom: 0;
+    border-right: var(--lw-hair) solid var(--c-edge);
+  }
+
+  /* Fio aceso no alto da faixa aberta. */
+  .worlds__link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -1px;
+    right: 0;
+    height: 2px;
+    background: var(--c-accent);
+    box-shadow: var(--glow-line);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--t-slow) var(--ease-quart);
+  }
+
+  .worlds__item[data-open='true'] .worlds__link::before {
+    transform: none;
+  }
+
+  .worlds__body,
+  .worlds__stat {
+    grid-column: 1;
+    max-width: 30ch;
+    padding-top: 0;
+    overflow: visible;
+  }
+
+  /* Palavra em pé, no pé da faixa, fora da grade (não empurra o texto); o tamanho respeita a altura da tela. */
+  .worlds__name {
+    position: absolute;
+    left: var(--s-4);
+    bottom: var(--s-4);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: clamp(2.25rem, min(5.2vw, 7.5svh), 5.5rem);
+    white-space: nowrap;
+  }
+
+  .worlds__sample {
+    position: absolute;
+    right: var(--s-7);
+    bottom: calc(var(--s-5) + 2.4em);
+    max-width: 40ch;
+    margin: 0;
+    text-align: right;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .worlds__item,
+  .worlds__link,
+  .worlds__link::before,
+  .worlds__name,
+  .worlds__body,
+  .worlds__stat,
+  .worlds__sample {
+    transition: none;
+  }
+}

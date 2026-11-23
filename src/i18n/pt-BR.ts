@@ -15,6 +15,7 @@ export const ptBR = {
     lab: 'Lab',
     training: 'Treino',
     skip: 'Pular para o conteúdo',
+    search: 'Buscar no site (Ctrl+K)',
     menu: 'Menu',
     menuOpen: 'Abrir o menu',
   },

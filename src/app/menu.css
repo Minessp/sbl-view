@@ -1,7 +1,7 @@
 /*
- * Menu em tela cheia (MenuPanel.tsx). Estúdio apagado com uma poça de tungstênio; a cortina desce do cabeçalho
- * (clip-path), os nomes entram letra a letra (`.split`, atraso por linha em --d), o fio de cada linha se acende da
- * esquerda. Saída: a cortina sobe em --t-exit.
+ * Menu em tela cheia (MenuPanel.tsx). Vidro sobre o palco (o corpo segue visível, escurecido) com uma poça de
+ * tungstênio; a cortina desce do cabeçalho (clip-path), os nomes entram letra a letra (`.split`, atraso por linha em
+ * --d), o fio de cada linha se acende da esquerda. Saída: a cortina sobe em --t-exit.
  */
 .menu {
   position: fixed;
@@ -21,7 +21,8 @@
   background:
     radial-gradient(ellipse 60% 50% at 78% 18%, color-mix(in oklch, var(--c-light-key) 7%, transparent), transparent 70%),
     radial-gradient(ellipse 50% 40% at 10% 100%, color-mix(in oklch, var(--c-light-rim) 5%, transparent), transparent 70%),
-    var(--c-bg);
+    color-mix(in oklch, var(--c-bg) 82%, transparent);
+  backdrop-filter: blur(10px) saturate(0.8);
   animation: menu-in var(--t-slow) var(--ease) both;
 }
 
@@ -124,10 +125,6 @@
   transition: background-color var(--t-mid) var(--ease);
 }
 
-.menu__link:hover {
-  background: var(--lamp);
-}
-
 .menu__num {
   font-size: var(--fs-2);
   font-stretch: var(--wd-cond);
@@ -143,7 +140,18 @@
   line-height: 1;
   transition:
     color var(--t-mid) var(--ease),
-    font-weight var(--t-slow) var(--ease);
+    font-weight var(--t-slow) var(--ease),
+    font-stretch var(--t-slow) var(--ease-quart);
+}
+
+/* Tipo vivo: a linha acesa (ponteiro, foco ou a seção atual) fica larga; as outras encolhem. */
+.menu__list[data-lit='true'] .menu__name {
+  font-stretch: 72%;
+}
+
+.menu__list[data-lit='true'] .menu__item[data-lit='true'] .menu__name {
+  font-stretch: var(--display-stretch);
+  font-weight: 400;
 }
 
 .menu__body {
@@ -180,12 +188,14 @@
   color: var(--c-accent);
 }
 
-.menu__sub {
+.menu__sub,
+.menu__tools {
   display: flex;
   flex-wrap: wrap;
   gap: var(--s-2);
-  padding: 0 var(--s-3) var(--s-4) calc(4rem + var(--s-4) + var(--s-3));
-  animation: menu-fade var(--t-enter) var(--ease) calc(var(--d) + 200ms) backwards;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .menu__sub .chip {
@@ -212,10 +222,6 @@
   animation: menu-fade var(--t-enter) var(--ease) 480ms backwards;
 }
 
-.menu__foot p {
-  margin: 0;
-}
-
 @media (max-width: 719px) {
   .menu__bar {
     padding: 0 var(--s-2) 0 var(--s-4);
@@ -238,9 +244,6 @@
     text-align: left;
     font-size: var(--fs-2);
   }
-  .menu__sub {
-    padding-left: calc(3.5rem + var(--s-3) + var(--s-2));
-  }
   .menu__foot {
     padding: 0 var(--s-4);
   }
@@ -251,25 +254,13 @@
   .menu[data-state='closing'],
   .menu__item::after,
   .menu__body,
-  .menu__sub,
   .menu__foot {
     animation: none;
   }
-}
 
-/* Placa acesa que desliza até a linha sob o ponteiro (Motion, layoutId); repousa na seção atual. */
-.menu__link {
-  position: relative;
-  isolation: isolate;
-}
-
-.menu__plate {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: var(--r-2);
-  background: linear-gradient(90deg, color-mix(in oklch, var(--c-accent) 11%, transparent), transparent 70%);
-  box-shadow: inset 2px 0 0 var(--c-accent);
+  .menu__name {
+    transition: none;
+  }
 }
 
 .menu__num {

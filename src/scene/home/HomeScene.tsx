@@ -345,7 +345,7 @@ export function HomeScene() {
       )}
       {show && (
         <StageView slot={show} index={2} capture>
-          <PlayerBody />
+          <PlayerBody hud />
         </StageView>
       )}
     </>

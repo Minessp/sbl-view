@@ -12,7 +12,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { line } from 'd3-shape';
 import { Mouse } from 'lucide-react';
 import { domMax, LazyMotion, m } from 'motion/react';
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'wouter';
 import { evaluateClip } from '@/engine/motion/evaluate';
@@ -24,6 +24,7 @@ import { usePlayer } from '@/features/library/player/store';
 import { t } from '@/i18n/app';
 import { SplitText } from '@/ui/Title';
 import { homeScroll } from './store';
+import { useVitrine } from './vitrine';
 import './home-live.css';
 import { LengthLegend } from '@/ui/LengthLegend';
 import { exerciseHref, muscleHref, R } from '@/app/routes';
@@ -121,20 +122,22 @@ export function HomeLive() {
   const tr = item ? trackOf(item.id, item.joint) : null;
   const ex = item ? exerciseById(item.id) : undefined;
 
-  // Corpo do player nesta vista; parado (o relógio é a rolagem).
-  useEffect(() => {
-    usePlayer.getState().setSlot(slot.current);
-    return () => {
-      usePlayer.getState().setSlot(null);
-      usePlayer.getState().setPlaying(false);
-    };
+  /** Exercício da vez no corpo, parado (o relógio é a rolagem), com o arco na articulação que o número mostra. */
+  const show = useCallback(() => {
+    const it = SHOW[kRef.current];
+    const tk = it ? trackOf(it.id, it.joint) : null;
+    if (!it || !tk) return;
+    usePlayer.getState().load(tk.clip, { primary: tk.primary, synergist: tk.synergist });
+    usePlayer.setState({ playing: false, joint: { dof: `${it.joint}_flex_r`, paths: [], target: null } });
   }, []);
-
+  // Corpo do player nesta vista (os Mundos, mais abaixo, pegam a mesma vitrine).
+  useVitrine(root, slot, show);
   useEffect(() => {
-    if (!tr) return;
-    usePlayer.getState().load(tr.clip, { primary: tr.primary, synergist: tr.synergist });
-    usePlayer.setState({ playing: false });
-  }, [tr]);
+    if (!usePlayer.getState().slot) usePlayer.getState().setSlot(slot.current);
+  }, []);
+  useEffect(() => {
+    if (usePlayer.getState().slot === slot.current) show();
+  }, [k, show]);
 
   /** Escreve o quadro: pose do corpo (via store) e o painel (direto no DOM). */
   const paint = useMemo(
