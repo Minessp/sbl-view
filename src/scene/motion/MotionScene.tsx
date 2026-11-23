@@ -81,8 +81,8 @@ function applyLook(body: BodyInstance, model: BodyModel) {
   body.fill('hidden', 0);
   body.layer('skin', { visible: st.skin, alpha: SKIN_ALPHA });
   for (const l of ['superficial', 'deep', 'bone'] as const) body.layer(l, { showAbove: -99, visible: true });
-  // Calor: músculo em repouso na base da rampa (como a cena de calor), sem pele.
-  const muscle = st.heat ? 'bg-3' : 'body-muscle';
+  // Calor: músculo em repouso em grafite quente (o `bg-3` azulado virava piche), sem pele; o calor acende por cima.
+  const muscle = st.heat ? 'gear-pad' : 'body-muscle';
   body.color('superficial', muscle);
   body.color('deep', muscle);
   body.fill('heat', 0);
