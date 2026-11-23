@@ -2,7 +2,7 @@
  * Avalia um clipe de movimento num instante da repetição: graus → apoio (raiz) → IK das pernas → IK dos braços (com ritmo
  * escapuloumeral) → FK final, mais o equipamento e o vetor da carga no mundo. Puro e determinístico.
  */
-import type { Angle, Equipment, MotionClip, Place, Reach } from '@/data/schema/motion';
+import type { Angle, Equipment, MotionClip, Place, Reach, StationId } from '@/data/schema/motion';
 import { MIDFOOT_AHEAD_OF_ANKLE } from '../exercises/squat';
 import { forwardKinematics, pointToWorld } from '../kinematics/fk';
 import { mirrorId } from '../kinematics/skeleton';
@@ -79,6 +79,37 @@ export interface CompiledClip {
   readonly masses: readonly PointMass[];
   /** Barra segura pelas duas mãos: pegada supinada (palmas para cima/à frente) ou pronada, por lado. Sem barra: null. */
   readonly bar: Readonly<Record<'r' | 'l', boolean>> | null;
+  /** Quanto cada mão fecha (0 espalmada … 1 fechada). */
+  readonly fingers: Readonly<Record<'r' | 'l', number>>;
+}
+
+/** Mão fechada no implemento; corda pede um pouco mais; mão solta meio aberta; espalmada no chão ou no banco. */
+export const FINGERS = { grip: 0.85, rope: 0.9, loose: 0.15, flat: 0 } as const;
+
+/**
+ * Quanto a mão fecha, pelo que ela segura: barra, halter, pegador ou barra fixa = fechada; corda um pouco mais; braço
+ * sem alvo ou pendurado sem implemento = solta; alvo de caminho sem implemento: pegador de máquina ou barras paralelas
+ * fecham, o resto (chão, banco) fica espalmado. `clip.fingers` sobrescreve.
+ */
+function fingersOf(clip: MotionClip): Record<'r' | 'l', number> {
+  const holds = (s: 'r' | 'l'): number | null => {
+    for (const e of clip.equipment) {
+      if (e.kind === 'barbell') return FINGERS.grip;
+      if (e.kind === 'dumbbell' && (s === 'r' || e.hands !== 'r')) return FINGERS.grip;
+      if (e.kind === 'cable' && (s === 'r' || e.handle !== 'single')) return e.handle === 'rope' ? FINGERS.rope : FINGERS.grip;
+    }
+    return null;
+  };
+  const machine = clip.equipment.some((e) => e.kind === 'pad' || e.kind === 'rail' || e.kind === 'swing');
+  const of = (s: 'r' | 'l') => {
+    const held = holds(s);
+    if (held !== null) return held;
+    const arm = clip.reach.find((r) => r.limb === 'arm' && (r.side === 'both' || r.side === s));
+    if (!arm || arm.target.kind === 'hang') return FINGERS.loose;
+    if (arm.target.kind === 'path' && (machine || clip.support === 'hanging')) return FINGERS.grip;
+    return FINGERS.flat;
+  };
+  return { r: clip.fingers?.r ?? of('r'), l: clip.fingers?.l ?? of('l') };
 }
 
 /** Nome de DOF do dado → ids do esqueleto (sem lado = os dois). */
@@ -139,6 +170,7 @@ export function compileClip(clip: MotionClip, sk: EngineSkeleton, masses: readon
     },
     masses,
     bar: hasBar ? { r: supinated('r'), l: supinated('l') } : null,
+    fingers: fingersOf(clip),
   };
 }
 
@@ -191,7 +223,14 @@ export type ResolvedEquipment =
     }
   | { readonly kind: 'rail'; readonly from: Vec3; readonly to: Vec3; readonly gauge: number }
   | { readonly kind: 'swing'; readonly pivot: Vec3; readonly end: Vec3 }
-  | { readonly kind: 'dumbbell'; readonly center: Vec3; readonly axis: Vec3 }
+  | { readonly kind: 'dumbbell'; readonly center: Vec3; readonly axis: Vec3; readonly style: 'round' | 'hex' }
+  | {
+      readonly kind: 'station';
+      readonly id: StationId;
+      readonly at: Vec3 | undefined;
+      readonly yaw: number;
+      readonly params: Readonly<Record<string, number>>;
+    }
   | {
       readonly kind: 'cable';
       readonly grips: readonly Vec3[];
@@ -224,6 +263,8 @@ export interface MotionFrame {
   /** Raiz dada ao FK (antes dos DOFs da pelve): com `deg`, refaz a pose (mistura entre rotas). */
   readonly root: Transform;
   readonly grips: Readonly<Record<'r' | 'l', Vec3>>;
+  /** Quanto cada mão fecha (0 espalmada … 1 fechada). */
+  readonly fingers: Readonly<Record<'r' | 'l', number>>;
   readonly equipment: readonly ResolvedEquipment[];
   /** Ponto de aplicação e direção (unitária) da carga. */
   readonly load: { readonly point: Vec3; readonly dir: Vec3 } | null;
@@ -466,7 +507,10 @@ function resolveEquipment(c: CompiledClip, pose: Pose, grips: Readonly<Record<'r
         kind: 'dumbbell',
         center: grips[s],
         axis: handAxis(s),
+        style: eq.style ?? 'round',
       }));
+    case 'station':
+      return [{ kind: 'station', id: eq.id, at: eq.at, yaw: eq.yaw ?? 0, params: eq.params ?? {} }];
     case 'cable': {
       const axis = normalize(sub(grips.l, grips.r));
       if (eq.mirror)
@@ -586,6 +630,7 @@ export function evaluateClip(c: CompiledClip, u: number): MotionFrame {
     pose: fr.pose,
     root: fr.root,
     grips: fr.grips,
+    fingers: c.fingers,
     equipment,
     load: loadOf(c, u, fr, equipment),
     contacts: contactsOf(c.sk, fr.pose),

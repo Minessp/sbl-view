@@ -238,6 +238,7 @@ export function PlayerBody({ main = false, hud: withHud = main }: { main?: boole
         if (now - sw.at >= GEAR_S) swap.current = null;
       }
       body.setPose(clip.sk, pose);
+      body.setGrip(f.fingers.r, f.fingers.l);
       const base = rest.current;
       if (base) {
         body.fill('strain', 0);

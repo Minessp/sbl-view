@@ -1,5 +1,15 @@
 {
   "stature": 1.75,
+  "hand": {
+    "axis": [-0.1286, -0.8812, 0.4548],
+    "palm": [0.0864, 0.4469, 0.8904],
+    "mcp": [[-0.3031, 0.7881, 0.0445], [-0.281, 0.7889, 0.0448], [-0.2617, 0.7938, 0.0446], [-0.2432, 0.8015, 0.0476]],
+    "pip": [[-0.3166, 0.7529, 0.0612], [-0.2878, 0.7503, 0.0691], [-0.2626, 0.7561, 0.0666], [-0.2389, 0.7704, 0.0645]],
+    "dip": [[-0.3231, 0.7371, 0.0788], [-0.2917, 0.7279, 0.0879], [-0.2637, 0.7353, 0.0877], [-0.2355, 0.7527, 0.078]],
+    "thumb": { "base": [-0.2973, 0.868, 0.0339], "tip": [-0.3406, 0.7854, 0.0775], "axis": [-0.4384, 0.5884, 0.6794] },
+    "evidence": { "source": [{ "refId": "zanatomy" }, { "refId": "sbl_authored" }], "confidence": "especulativo",
+      "note": "Centros articulares medidos na malha óssea da mão (pacote hi): cada osso é um componente conexo; a junta fica no meio do vão entre as pontas, na média dos vértices a 6 mm dela. Normal da palma = direção de menor espalhamento dos ossos perpendicular ao eixo. Eixo do polegar escolhido para levar a ponta por cima das falanges médias do indicador e do médio fechados; ângulos da mão fechada são autorais." }
+  },
   "segments": [
     {
       "id": "pelvis",

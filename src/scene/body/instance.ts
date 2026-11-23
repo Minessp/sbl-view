@@ -12,6 +12,7 @@ import {
   NearestFilter,
   RGBAFormat,
   type ShaderMaterial,
+  Vector2,
   Vector3,
   Vector4,
   type WebGLRenderer,
@@ -63,6 +64,8 @@ export class BodyInstance {
   private readonly glassMeshes: Mesh[] = [];
   /** Opacidade abaixo de 1 vira vidro em vez de pontilhado. */
   readonly glass = { value: 0 };
+  /** Mão que fecha: direita (x), esquerda (y). */
+  readonly grip = { value: new Vector2(0, 0) };
   readonly layers: Readonly<Record<BodyLayer, BodyUniforms>>;
   private readonly state: Float32Array;
   private readonly texture: DataTexture;
@@ -122,10 +125,12 @@ export class BodyInstance {
       uLensIn: { value: 0 },
       uGrow: this.grow,
       uGlass: this.glass,
+      uGrip: this.grip,
     });
+    const hands = [model.jointIds.indexOf('hand_r'), model.jointIds.indexOf('hand_l')] as const;
     this.layers = Object.fromEntries(LAYERS.map((l) => [l, mk(l)])) as Record<BodyLayer, BodyUniforms>;
     const mat = (l: BodyLayer, pick: boolean) =>
-      createBodyMaterial({ joints: model.jointIds.length, muscle: l === 'deep' || l === 'superficial', translucent: l === 'skin', pick, uniforms: this.layers[l] });
+      createBodyMaterial({ joints: model.jointIds.length, muscle: l === 'deep' || l === 'superficial', translucent: l === 'skin', pick, hands, uniforms: this.layers[l] });
     this.display = Object.fromEntries(LAYERS.map((l) => [l, mat(l, false)])) as Record<BodyLayer, ShaderMaterial>;
     this.picking = Object.fromEntries(LAYERS.map((l) => [l, mat(l, true)])) as Record<BodyLayer, ShaderMaterial>;
     this.meshes = Object.fromEntries(
@@ -149,7 +154,7 @@ export class BodyInstance {
           this.skinDepth = depth;
         } else {
           // Depois das camadas sólidas e antes do pré-passe da pele (a pele por cima tapa o vidro de dentro).
-          const g = new Mesh(model.geometry[l], createBodyMaterial({ joints: model.jointIds.length, muscle: l !== 'bone', translucent: false, pick: false, glass: true, uniforms: this.layers[l] }));
+          const g = new Mesh(model.geometry[l], createBodyMaterial({ joints: model.jointIds.length, muscle: l !== 'bone', translucent: false, pick: false, glass: true, hands, uniforms: this.layers[l] }));
           g.frustumCulled = false;
           g.renderOrder = 2.5;
           g.visible = false;
@@ -327,6 +332,11 @@ export class BodyInstance {
     return mergeBoxes(boxes);
   }
 
+  /** Quanto cada mão fecha (0 aberta … 1 fechada). */
+  setGrip(r: number, l: number) {
+    this.grip.value.set(r, l);
+  }
+
   /** Vidro no lugar do pontilhado (opacidade abaixo de 1). */
   setGlass(on: boolean) {
     this.glass.value = on ? 1 : 0;
@@ -465,6 +475,7 @@ export class BodyInstance {
       this.meshes[l].position.set(0, 0, 0);
     }
     this.lens.value.set(0, 0, 0);
+    this.grip.value.set(0, 0);
     this.grow.value = 9;
     this.setGlass(false);
   }

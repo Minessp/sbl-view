@@ -229,6 +229,7 @@
   {
     "id": "lat_pulldown",
     "name": "Puxada alta",
+    "aliases": ["pulldown", "puxador", "lat pull"],
     "pattern": "puxar_vertical",
     "equipment": ["polia"],
     "status": "consolidado",

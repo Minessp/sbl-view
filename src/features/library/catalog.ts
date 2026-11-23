@@ -86,7 +86,7 @@ export function filterExercises(list: readonly LibraryExercise[], f: ExerciseFil
   const q = fold(f.query.trim());
   return list.filter((e) => {
     if (f.region && exerciseRegion(e) !== f.region) return false;
-    if (q && !fold(e.name).includes(q) && !e.targets.some((t) => t.role === 'alvo' && fold(muIndex.get(t.muscle)?.name ?? '').includes(q))) return false;
+    if (q && !fold(e.name).includes(q) && !(e.aliases ?? []).some((a) => fold(a).includes(q)) && !e.targets.some((t) => t.role === 'alvo' && fold(muIndex.get(t.muscle)?.name ?? '').includes(q))) return false;
     if (f.pattern && e.pattern !== f.pattern) return false;
     if (f.status && e.status !== f.status) return false;
     if (f.longOnly && e.length.emphasis !== 'alongado') return false;

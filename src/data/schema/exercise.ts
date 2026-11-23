@@ -77,6 +77,21 @@ export const LibraryExercise = z.object({
     .array(z.object({ muscle: z.string(), role: z.enum(['alvo', 'sinergista']), parts: z.array(z.string()).optional() }))
     .min(1),
   length: Evidence.extend({ emphasis: LengthEmphasis, text: z.string() }),
+  /**
+   * Como fazer. Voz: imperativo curto, uma ideia por linha, sem promessa. Opcional até as auditorias de execução fecharem.
+   * `execution[].u`: instante da repetição que o passo descreve (a página leva o corpo até lá quando o passo entra em foco).
+   */
+  how: z
+    .object({
+      setup: z.array(z.string()).min(1).max(4),
+      execution: z.array(z.object({ text: z.string(), u: z.number().min(0).max(1).optional() })).min(2).max(5),
+      mistakes: z.array(z.string()).min(1).max(4),
+    })
+    .optional(),
+  /** Outros nomes de busca ("pulldown", "puxador", "lat pull"). */
+  aliases: z.array(z.string()).optional(),
+  /** Um lado de cada vez. */
+  unilateral: z.boolean().optional(),
 });
 export type LibraryExercise = z.infer<typeof LibraryExercise>;
 export const LibraryFile = z.array(LibraryExercise);

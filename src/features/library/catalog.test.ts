@@ -40,10 +40,11 @@ describe('catálogo de exercícios', () => {
     expect(ids({ longOnly: true })).not.toContain('lying_leg_curl');
   });
 
-  it('região pelo primeiro alvo; busca por nome ou músculo, sem acento', () => {
+  it('região pelo primeiro alvo; busca por nome, apelido ou músculo, sem acento', () => {
     expect(exerciseRegion(byId('squat'))).toBe('lower');
     expect(exerciseRegion(byId('lat_pulldown'))).toBe('upper');
     expect(exerciseRegion(byId('cable_crunch'))).toBe('trunk');
+    expect(ids({ query: 'puxador' })).toContain('lat_pulldown');
     expect(ids({ query: 'nordica' })).toEqual(expect.arrayContaining(['nordic_curl', 'reverse_nordic']));
     expect(ids({ query: 'Tríceps braquial' }).length).toBeGreaterThan(3);
     expect(ids({ region: 'trunk' }).every((id) => exerciseRegion(byId(id)) === 'trunk')).toBe(true);

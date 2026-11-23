@@ -39,7 +39,7 @@ export function buildIndex(): Hit[] {
   const out: Hit[] = [];
   for (const e of library) {
     const targets = e.targets.map((x) => muscleById(x.muscle)?.name ?? '').filter(Boolean);
-    out.push({ kind: 'exercise', id: e.id, label: e.name, sub: targets[0], href: exerciseHref(e.id), main: words(e.name, e.id), extra: words(...targets) });
+    out.push({ kind: 'exercise', id: e.id, label: e.name, sub: targets[0], href: exerciseHref(e.id), main: words(e.name, e.id, ...(e.aliases ?? [])), extra: words(...targets) });
   }
   for (const m of muscleDefs) {
     out.push({ kind: 'muscle', id: m.id, label: m.name, sub: m.latin, href: muscleHref(m.id), main: words(m.name, m.id), extra: words(m.latin) });

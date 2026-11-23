@@ -24,6 +24,7 @@ import { LabVariationFile } from './schema/lab';
 import { applyPatches } from '@/engine/motion/patch';
 import { ClipFile, MotionClip } from './schema/motion';
 import { compileClip, evaluateClip } from '@/engine/motion/evaluate';
+import { PENETRATION_LIMIT, penetrations } from '@/engine/motion/collide';
 import { angleBetween, DEG, normalize, rotate, scale, sub } from '@/engine/math/vec';
 import { pointToWorld } from '@/engine/kinematics/fk';
 import { readJoints } from '@/engine/kinematics/limits';
@@ -36,7 +37,8 @@ import { Reference, type Evidence } from './schema/evidence';
 import { Exercise as ExerciseSchema, LibraryFile } from './schema/exercise';
 import { MovementFile, MuscleFile, MusclePathsFile } from './schema/muscle';
 import { resolveMuscleParts } from '@/engine/muscle/resolve';
-import { SkeletonDef } from './schema/skeleton';
+import { BodyVolumes, SkeletonDef } from './schema/skeleton';
+import bodyVolumesJson from './body-volumes.json';
 import { z } from 'zod';
 
 const refs = z.array(Reference).parse(referencesJson);
@@ -289,6 +291,35 @@ describe('clipes de movimento', () => {
     }
     expect(wrong).toEqual([]);
   }, 30_000);
+
+  // Atravessamento (corpo × peças, chão, barra; mãos × coxas e tronco) em 9 amostras por clipe. Por ora só RELATA: a
+  // lista é o trabalho das auditorias de execução; cada lote passa a falhar de verdade ao fechar (`COLLISION_ENFORCED`).
+  const COLLISION_ENFORCED = new Set<string>();
+  const COLLISION_EXCEPTIONS: Record<string, string> = {};
+
+  it('atravessamento: nada passa do limite fora dos contatos declarados (relato)', () => {
+    expect(() => BodyVolumes.parse(bodyVolumesJson)).not.toThrow();
+    const lines: string[] = [];
+    const wrong: string[] = [];
+    for (const ex of lib) {
+      const c = compiled(ex.id);
+      const worst = new Map<string, { depth: number; u: number; kind: keyof typeof PENETRATION_LIMIT }>();
+      for (let i = 0; i <= 8; i++) {
+        const u = i / 8;
+        for (const h of penetrations(evaluateClip(c, u), c)) {
+          if (h.depthM <= PENETRATION_LIMIT[h.kind]) continue;
+          const k = `${h.a}×${h.b}`;
+          if ((worst.get(k)?.depth ?? 0) < h.depthM) worst.set(k, { depth: h.depthM, u, kind: h.kind });
+        }
+      }
+      if (!worst.size) continue;
+      const desc = [...worst].sort((a, b) => b[1].depth - a[1].depth).map(([k, v]) => `${k} ${(v.depth * 100).toFixed(1)} cm (u ${v.u})`);
+      lines.push(`${ex.id}: ${desc.join('; ')}`);
+      if (COLLISION_ENFORCED.has(ex.id) && !(ex.id in COLLISION_EXCEPTIONS)) wrong.push(`${ex.id}: ${desc.join('; ')}`);
+    }
+    console.log(`[colisão] ${lines.length} de ${lib.length} exercícios com atravessamento\n${lines.join('\n')}`);
+    expect(wrong).toEqual([]);
+  }, 60_000);
 
   // Barra nas duas mãos: o eixo da palma (polegar → mínimo) corre ao longo da barra. Onde a pronação sozinha não basta
   // (punho ou rotação do ombro teriam de mudar junto), o exercício fica na lista com o motivo.

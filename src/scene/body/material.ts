@@ -23,7 +23,9 @@
  * Lente (página inicial): círculo na tela; cada camada é tirada dentro de uma fração do raio (anéis em degrau, borda
  * acesa em tungstênio). Montagem: o músculo cresce da origem à inserção com uma frente incandescente.
  */
-import { DoubleSide, FrontSide, ShaderMaterial, type DataTexture, type IUniform, type Matrix4, type Vector3 } from 'three';
+import { DoubleSide, FrontSide, ShaderMaterial, type DataTexture, type IUniform, type Matrix4, type Vector2, type Vector3 } from 'three';
+import { skeletonDef } from '@/data';
+import { FOLD_HALF, gripRig, handSpec, THUMB_MASK } from '@/engine/kinematics/grip';
 import { rig, type Rig } from './rig';
 
 export const STATE_ROWS = 2;
@@ -54,6 +56,8 @@ export type BodyUniforms = Rig & {
   uGrow: IUniform<number>;
   /** > 0,5: opacidade abaixo de 1 é vidro, não pontilhado. Um objeto por instância. */
   uGlass: IUniform<number>;
+  /** Mão que fecha: direita, esquerda (0 aberta … 1 fechada). Um objeto por instância. */
+  uGrip: IUniform<Vector2>;
 };
 
 /** Funções de luz compartilhadas (corpo e equipamento). */
@@ -106,8 +110,75 @@ export const LIGHT_GLSL = /* glsl */ `
   vec3 studio(vec3 albedo, vec3 n, vec3 v, float wrap, vec3 sss, out float ndl) { return studioRim(albedo, n, v, wrap, sss, 0.35, ndl); }
 `;
 
-const vertex = (joints: number) => /* glsl */ `
+const f = (x: number) => x.toFixed(6);
+const v = (p: readonly number[]) => `vec3(${p.map(f).join(', ')})`;
+
+/** Mão que fecha (`engine/kinematics/grip.ts`, mesma conta): números da mão direita na ligação viram constantes. */
+function gripGlsl(): string {
+  const r = gripRig(handSpec(skeletonDef));
+  const fold = (k: number) => {
+    const fd = r.folds[k];
+    if (!fd) return '';
+    const j = fd.joints;
+    const pair = (i: number) => `vec2(${f(j[i]?.[0] ?? 0)}, ${f(j[i]?.[2] ?? 0)})`;
+    const w = (i: number) => f(j[i]?.[1] ?? 0);
+    return /* glsl */ `
+    {
+      vec2 J = l.y >= ${w(0)} ? ${pair(0)}
+        : l.y >= ${w(1)} ? mix(${pair(0)}, ${pair(1)}, (${w(0)} - l.y) / (${w(0)} - ${w(1)}))
+        : l.y >= ${w(2)} ? mix(${pair(1)}, ${pair(2)}, (${w(1)} - l.y) / (${w(1)} - ${w(2)}))
+        : l.y >= ${w(3)} ? mix(${pair(2)}, ${pair(3)}, (${w(2)} - l.y) / (${w(2)} - ${w(3)}))
+        : ${pair(3)};
+      float phi = ${f(fd.angle)} * g * (1.0 - m) * smoothstep(${f(-FOLD_HALF)}, ${f(FOLD_HALF)}, l.x - J.x);
+      vec2 d = vec2(s, h) - J;
+      float c = cos(phi), sn = sin(phi);
+      s = J.x + d.x * c - d.y * sn;
+      h = J.y + d.x * sn + d.y * c;
+      tot += phi;
+    }`;
+  };
+  return /* glsl */ `
+  const vec3 H_O = ${v(handSpec(skeletonDef).origin)};
+  const vec3 H_S = ${v(handSpec(skeletonDef).axis)};
+  const vec3 H_W = ${v(r.across)};
+  const vec3 H_H = ${v(handSpec(skeletonDef).palm)};
+  const vec3 T_B = ${v(r.thumb.base)};
+  const vec2 T_BL = vec2(${f(r.thumb.baseL[0])}, ${f(r.thumb.baseL[1])});
+  const vec2 T_TL = vec2(${f(r.thumb.tipL[0])}, ${f(r.thumb.tipL[1])});
+  const vec3 T_K = ${v(r.thumb.axis)};
+  vec3 rotK(vec3 p, vec3 k, float a) {
+    float c = cos(a), sn = sin(a);
+    return p * c + cross(k, p) * sn + k * dot(k, p) * (1.0 - c);
+  }
+  // Mão direita na ligação: dobra dos dedos (ponta → base) e oposição do polegar; a normal gira junto.
+  vec3 gripBend(vec3 p, float g, inout vec3 n) {
+    vec3 q = p - H_O;
+    vec3 l = vec3(dot(q, H_S), dot(q, H_W), dot(q, H_H));
+    vec2 tb = T_TL - T_BL;
+    float tt = clamp(dot(l.xy - T_BL, tb) / dot(tb, tb), 0.0, 1.0);
+    float m = 1.0 - smoothstep(${f(THUMB_MASK[0])}, ${f(THUMB_MASK[1])}, length(l.xy - (T_BL + tb * tt)));
+    float s = l.x, h = l.z, tot = 0.0;
+    ${fold(0)}
+    ${fold(1)}
+    ${fold(2)}
+    vec3 r = H_O + H_S * s + H_W * l.y + H_H * h;
+    vec3 nl = vec3(dot(n, H_S), dot(n, H_W), dot(n, H_H));
+    float c = cos(tot), sn = sin(tot);
+    n = H_S * (nl.x * c - nl.z * sn) + H_W * nl.y + H_H * (nl.x * sn + nl.z * c);
+    if (m > 0.0) {
+      float a = ${f(r.thumb.angle)} * g * m;
+      r = T_B + rotK(r - T_B, T_K, a);
+      n = rotK(n, T_K, a);
+    }
+    return r;
+  }`;
+}
+const GRIP_GLSL = gripGlsl();
+
+const vertex = (joints: number, hands: readonly [number, number]) => /* glsl */ `
   #define JOINTS ${joints}
+  #define HAND_R ${hands[0].toFixed(1)}
+  #define HAND_L ${hands[1].toFixed(1)}
   attribute vec4 skinIndex;
   attribute vec4 skinWeight;
   attribute float aSlot;
@@ -124,6 +195,7 @@ const vertex = (joints: number) => /* glsl */ `
   uniform mat4 uJoints[JOINTS];
   uniform sampler2D uState;
   uniform float uStateW;
+  uniform vec2 uGrip;
   varying vec3 vN;
   varying vec3 vView;
   varying vec3 vW;
@@ -132,8 +204,25 @@ const vertex = (joints: number) => /* glsl */ `
   varying vec4 vS0;
   varying vec4 vS1;
   varying float vSlot;
+  ${GRIP_GLSL}
 
   void main() {
+    vec3 pos = position;
+    vec3 nrm = normal;
+    // Peso do vértice no segmento da mão escala a dobra (o punho não rasga). Esquerda: espelho da direita.
+    float wr = dot(skinWeight, vec4(equal(skinIndex, vec4(HAND_R))));
+    float wl = dot(skinWeight, vec4(equal(skinIndex, vec4(HAND_L))));
+    if (uGrip.x > 0.0 && wr > 0.0) {
+      vec3 n2 = nrm;
+      pos = mix(pos, gripBend(pos, uGrip.x, n2), wr);
+      nrm = normalize(mix(nrm, n2, wr));
+    }
+    if (uGrip.y > 0.0 && wl > 0.0) {
+      const vec3 X = vec3(-1.0, 1.0, 1.0);
+      vec3 n2 = nrm * X;
+      pos = mix(pos, gripBend(pos * X, uGrip.y, n2) * X, wl);
+      nrm = normalize(mix(nrm, n2 * X, wl));
+    }
     mat4 M = uJoints[int(skinIndex.x)] * skinWeight.x + uJoints[int(skinIndex.y)] * skinWeight.y
            + uJoints[int(skinIndex.z)] * skinWeight.z + uJoints[int(skinIndex.w)] * skinWeight.w;
     float u = (aSlot + 0.5) / uStateW;
@@ -144,7 +233,7 @@ const vertex = (joints: number) => /* glsl */ `
     vP = position;
     // Ligação → vista (posado): leva o gradiente do relevo para a superfície posada.
     vMv = mat3(modelViewMatrix) * mat3(M);
-    vec4 p = M * vec4(position, 1.0);
+    vec4 p = M * vec4(pos, 1.0);
     #ifdef MUSCLE
     vAlong = aMuscle.x;
     vTendon = aMuscle.y;
@@ -158,7 +247,7 @@ const vertex = (joints: number) => /* glsl */ `
     vW = w.xyz;
     vec4 mv = viewMatrix * w;
     vView = mv.xyz;
-    vN = normalize(normalMatrix * (mat3(M) * normal));
+    vN = normalize(normalMatrix * (mat3(M) * nrm));
     gl_Position = projectionMatrix * mv;
   }
 `;
@@ -381,6 +470,8 @@ export interface BodyMaterialOptions {
   translucent: boolean;
   pick: boolean;
   glass?: boolean;
+  /** Índices das juntas `hand_r` e `hand_l` (−1 = sem mão). */
+  hands: readonly [number, number];
   uniforms: BodyUniforms;
 }
 
@@ -392,7 +483,7 @@ export function createBodyMaterial(o: BodyMaterialOptions): ShaderMaterial {
   if (o.glass) defines.GLASS = '';
   const blend = (o.translucent || !!o.glass) && !o.pick;
   return new ShaderMaterial({
-    vertexShader: vertex(o.joints),
+    vertexShader: vertex(o.joints, o.hands),
     fragmentShader: fragment,
     defines,
     uniforms: o.uniforms,

@@ -118,6 +118,7 @@ function CompareBody({ spec, model, main }: { spec: CompareSpec; model: BodyMode
       const f = evaluateClip(clip, u);
       frame.current = f;
       body.setPose(clip.sk, dir.pose(clip.sk, f.deg, f.root) ?? f.pose);
+      body.setGrip(f.fingers.r, f.fingers.l);
       const base = rest.current;
       if (base) {
         body.fill('strain', 0);

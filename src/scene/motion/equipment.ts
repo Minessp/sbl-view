@@ -5,12 +5,14 @@
  * com quadro de aço e pés no chão, plataformas de chapa xadrez, trilhos e braço pendular das máquinas, rolos e alavancas.
  * Montado uma vez por clipe; cada quadro só move as peças. Medidas de catálogo (barra de 2,2 m, anilha de 45 cm).
  */
-import { type BufferGeometry, CylinderGeometry, Group, type Material, Mesh, MeshBasicMaterial, type Object3D, Quaternion, SRGBColorSpace, Vector3 } from 'three';
+import { type BufferGeometry, CylinderGeometry, Group, TorusGeometry, type Material, Mesh, MeshBasicMaterial, type Object3D, Quaternion, SRGBColorSpace, Vector3 } from 'three';
 import type { MotionFrame, ResolvedEquipment } from '@/engine/motion/evaluate';
 import type { Vec3 } from '@/engine/math/vec';
 import { palette } from '../body/rig';
-import { createGearMaterial, refreshGearMaterial, type Finish, type GearMaterial, type Pattern } from './gear/material';
-import { ball, dHandleGeometry, dumbbellHeadGeometry, padGeometry, plateGeometry, rod, rollerGeometry, sheaveGeometry, unitRod } from './gear/parts';
+import { GearKit, orient, stretch } from './gear/kit';
+import { BENCH_STATIONS, buildStation } from './gear/stations';
+import { type Finish, type GearMaterial, type Pattern } from './gear/material';
+import { ball, dHandleGeometry, dumbbellHeadGeometry, padGeometry, plateGeometry, rod, rollerGeometry, sheaveGeometry } from './gear/parts';
 
 const UP = new Vector3(0, 1, 0);
 const Z = new Vector3(0, 0, 1);
@@ -21,42 +23,18 @@ const DEG = Math.PI / 180;
 
 const v3 = (p: Vec3) => new Vector3(p[0], p[1], p[2]);
 
-/** Objeto de eixo Y esticado entre dois pontos (geometria unitária: raio 1, altura 1). */
-function stretch(m: Object3D, a: Vec3 | Vector3, b: Vec3 | Vector3, radius: number) {
-  const ax = a instanceof Vector3 ? a.x : a[0],
-    ay = a instanceof Vector3 ? a.y : a[1],
-    az = a instanceof Vector3 ? a.z : a[2];
-  tA.set(ax, ay, az);
-  if (b instanceof Vector3) tB.copy(b).sub(tA);
-  else tB.set(b[0] - ax, b[1] - ay, b[2] - az);
-  const len = tB.length();
-  m.visible = len > 1e-4;
-  if (!m.visible) return;
-  m.position.copy(tA).addScaledVector(tB, 0.5);
-  m.quaternion.setFromUnitVectors(UP, tB.normalize());
-  m.scale.set(radius, len, radius);
-}
-
-/** Objeto de eixo Y no centro, virado para `axis`. */
-function orient(m: Object3D, center: Vec3, axis: Vec3) {
-  tB.set(axis[0], axis[1], axis[2]).normalize();
-  m.quaternion.setFromUnitVectors(UP, tB);
-  m.position.set(center[0], center[1], center[2]);
-}
-
 /** Direção horizontal para fora do corpo (do eixo do corpo até o ponto). */
 function outward(p: Vec3): Vector3 {
   const d = new Vector3(p[0], 0, p[2]);
   return d.lengthSq() < 0.0025 ? Z.clone() : d.normalize();
 }
 
-type Updater = (e: ResolvedEquipment, i: number) => void;
+type Updater = (e: ResolvedEquipment, i: number, f: MotionFrame) => void;
 
 export class EquipmentView {
   readonly group = new Group();
-  private readonly geos: BufferGeometry[] = [];
-  private readonly mats: GearMaterial[] = [];
-  private readonly matCache = new Map<string, GearMaterial>();
+  /** Geometrias e materiais com dono (as estações usam o mesmo). */
+  readonly kit = new GearKit();
   private readonly arrow: MeshBasicMaterial;
   private readonly updaters: Updater[] = [];
   private readonly arrowShaft: Mesh;
@@ -64,12 +42,14 @@ export class EquipmentView {
   private readonly unit: BufferGeometry;
   /** Pontos no chão sob as peças fixas (sombra). */
   readonly floor: Vec3[] = [];
+  /** Uma estação desenha a estrutura do banco: a peça do clipe fica só com o estofado e o quadro `frame` some. */
+  private benchStation = false;
 
   /** `frames`: o primeiro quadro do clipe e outras amostras (o curso da pilha de pesos sai delas). */
   constructor(frames: readonly MotionFrame[]) {
     const first = frames[0];
     this.arrow = new MeshBasicMaterial({ transparent: true, opacity: 0.95, depthTest: false });
-    this.unit = this.geo(unitRod(18));
+    this.unit = this.kit.unit;
     const head = this.geo(new CylinderGeometry(0, 1, 1, 18));
     this.arrowShaft = new Mesh(this.unit, this.arrow);
     this.arrowHead = new Mesh(head, this.arrow);
@@ -79,6 +59,7 @@ export class EquipmentView {
     }
     this.refreshColors();
     if (!first) return;
+    this.benchStation = first.equipment.some((e) => e.kind === 'station' && BENCH_STATIONS.has(e.id));
     const seen = new Map<string, number>();
     for (const e of first.equipment) {
       const i = seen.get(e.kind) ?? 0;
@@ -88,23 +69,16 @@ export class EquipmentView {
   }
 
   private geo<T extends BufferGeometry>(g: T): T {
-    this.geos.push(g);
-    return g;
+    return this.kit.geo(g);
   }
 
   private mat(f: Finish, pattern: Pattern = 0, scale = 1, size: readonly [number, number, number] = [1, 1, 1]): GearMaterial {
-    const key = `${f}|${pattern}|${scale}|${size.join(',')}`;
-    const hit = this.matCache.get(key);
-    if (hit) return hit;
-    const m = createGearMaterial(f, pattern, scale, size);
-    this.mats.push(m);
-    this.matCache.set(key, m);
-    return m;
+    return this.kit.mat(f, pattern, scale, size);
   }
 
   /** Cores da paleta (troca de tema). */
   refreshColors() {
-    for (const m of this.mats) refreshGearMaterial(m);
+    this.kit.refresh();
     const a = palette.accent;
     this.arrow.color.setRGB(a.x, a.y, a.z, SRGBColorSpace);
   }
@@ -119,17 +93,9 @@ export class EquipmentView {
     return this.mesh(this.unit, this.mat(finish));
   }
 
-  /** Tubo quadrado de aço entre dois pontos (caixa arredondada esticada no eixo Y). */
+  /** Tubo quadrado de aço entre dois pontos. */
   private beam(a: Vec3, b: Vec3, w = 0.06, finish: Finish = 'steel'): Mesh {
-    const g = this.geo(padGeometry(1, 1, 1, 0.12));
-    const m = this.mesh(g, this.mat(finish));
-    tA.set(a[0], a[1], a[2]);
-    tB.set(b[0] - a[0], b[1] - a[1], b[2] - a[2]);
-    const len = tB.length();
-    m.position.copy(tA).addScaledVector(tB, 0.5);
-    m.quaternion.setFromUnitVectors(UP, tB.normalize());
-    m.scale.set(w, Math.max(len, 1e-3), w);
-    return m;
+    return this.kit.beam(this.group, a, b, w, finish);
   }
 
   private build(e: ResolvedEquipment, index: number, frames: readonly MotionFrame[]) {
@@ -137,7 +103,7 @@ export class EquipmentView {
       case 'barbell':
         return e.bar === 'fixed' ? this.buildPullupBar(e) : this.buildBarbell(e);
       case 'dumbbell':
-        return this.buildDumbbell(index);
+        return this.buildDumbbell(e, index);
       case 'cable':
         return this.buildCable(e, index, frames);
       case 'block':
@@ -148,6 +114,16 @@ export class EquipmentView {
         return this.buildRail(e);
       case 'swing':
         return this.buildSwing(e);
+      case 'station': {
+        const v = buildStation(e.id, { frames, kit: this.kit }, e.params, e.at, e.yaw);
+        this.group.add(v.group);
+        this.floor.push(...v.floor);
+        if (v.update) {
+          const up = v.update;
+          this.updaters.push((_r, _i, f) => up(f));
+        }
+        return;
+      }
     }
   }
 
@@ -161,8 +137,16 @@ export class EquipmentView {
       // Eixo de 28 mm: centro liso, recartilhado onde as mãos pegam, colar interno, manga de 50 mm.
       this.mesh(this.geo(rod(0.014, 0.42)), chrome, g);
       for (const s of [-1, 1]) {
-        const k = this.mesh(this.geo(rod(0.0142, 0.43, 28)), this.mat('chrome', 1, 0.0142), g);
-        k.position.y = s * 0.43;
+        // Recartilhado de 0,215 a 0,645 m do centro, com a marca lisa de 81 cm (1,2 cm) no meio.
+        for (const [a, b] of [
+          [0.215, 0.399],
+          [0.411, 0.645],
+        ] as const) {
+          const k = this.mesh(this.geo(rod(0.0142, b - a, 28)), this.mat('chrome', 1, 0.0142), g);
+          k.position.y = (s * (a + b)) / 2;
+        }
+        const mark = this.mesh(this.geo(rod(0.014, 0.012, 28)), chrome, g);
+        mark.position.y = s * 0.405;
         const collar = this.mesh(this.geo(rod(0.036, 0.03, 32)), chrome, g);
         collar.position.y = s * 0.66;
         const sleeve = this.mesh(this.geo(rod(0.025, 0.415, 28)), chrome, g);
@@ -178,8 +162,19 @@ export class EquipmentView {
           y += t + 0.002;
         }
         if (e.plates > 0) {
-          const clip = this.mesh(this.geo(rod(0.042, 0.028, 28)), this.mat('rubber'), g);
-          clip.position.y = s * (y + 0.016);
+          // Presilha de mola: três espiras na manga e as duas alças.
+          for (let k = 0; k < 3; k++) {
+            const coil = this.mesh(this.geo(new TorusGeometry(0.0285, 0.0042, 8, 28)), this.mat('steel'), g);
+            coil.rotation.x = Math.PI / 2;
+            coil.position.y = s * (y + 0.006 + k * 0.0085);
+          }
+          for (const t of [-1, 1]) {
+            const arm = this.tube('steel');
+            arm.removeFromParent();
+            g.add(arm);
+            const y0 = s * (y + 0.01);
+            stretch(arm, [0.03, y0, t * 0.006], [0.085, y0 + s * 0.02, t * 0.03], 0.0035);
+          }
         }
       }
     } else {
@@ -224,14 +219,15 @@ export class EquipmentView {
 
   // ---- Halteres ----
 
-  private buildDumbbell(index: number) {
+  private buildDumbbell(e: Extract<ResolvedEquipment, { kind: 'dumbbell' }>, index: number) {
     const g = new Group();
     this.group.add(g);
     this.mesh(this.geo(rod(0.016, 0.13, 24)), this.mat('chrome', 1, 0.016), g);
     for (const s of [-1, 1]) {
       const c = this.mesh(this.geo(rod(0.026, 0.012, 24)), this.mat('chrome'), g);
       c.position.y = s * 0.071;
-      const h = this.mesh(this.geo(dumbbellHeadGeometry(0.064, 0.072)), this.mat('rubber'), g);
+      // Sextavado: cabeça prismática de seis faces (não rola no chão); redondo: emborrachado torneado.
+      const h = this.mesh(this.geo(e.style === 'hex' ? rod(0.07, 0.072, 6) : dumbbellHeadGeometry(0.064, 0.072)), this.mat('rubber'), g);
       h.position.y = s * 0.113;
       const cap = this.mesh(this.geo(rod(0.034, 0.008, 24)), this.mat('chrome'), g);
       cap.position.y = s * 0.152;
@@ -324,6 +320,7 @@ export class EquipmentView {
     const legBoom = this.tube(cableMat);
     legBoom.visible = near;
     const handle = this.buildHandle(e.handle);
+    const link = this.buildConnector();
     // Curso da pilha: o cabo que sai da roldana sobe a pilha na mesma medida.
     const lengths = frames.flatMap((f) => f.equipment.filter((q) => q.kind === 'cable').map((q) => (q.kind === 'cable' ? cableLength(q) : 0)));
     const own = lengths.filter((_, k) => k % Math.max(1, frames[0]?.equipment.filter((q) => q.kind === 'cable').length ?? 1) === index);
@@ -338,7 +335,7 @@ export class EquipmentView {
       if (r.kind !== 'cable' || i !== index) return;
       const lift = Math.min(0.5, Math.max(0, cableLength(r) - Lmin));
       stack.position.y = lift;
-      const knot = handle.update(r);
+      const knot = link(handle.update(r), P);
       // Roda no plano que o cabo faz com a vertical, tangente ao cabo que sobe pela coluna.
       tA.set(knot[0] - P[0], knot[1] - P[1], knot[2] - P[2]).normalize();
       tB.set(tA.z, 0, -tA.x);
@@ -358,6 +355,31 @@ export class EquipmentView {
   }
 
   /** Pegador do cabo; devolve a função que o posiciona e o ponto onde o cabo prende. */
+  /**
+   * Mosquetão, giro e corrente curta entre o pegador e o cabo (o cabo não cola mais no pegador). Recebe o ponto de
+   * engate do pegador e a roldana; devolve onde o cabo começa.
+   */
+  private buildConnector(): (knot: Vec3, pulley: Vec3) => Vec3 {
+    const steel = this.mat('chrome');
+    const biner = this.mesh(this.geo(new TorusGeometry(0.014, 0.0032, 8, 20)), steel);
+    const swivel = this.mesh(this.geo(rod(0.008, 0.022, 14)), steel);
+    const links = [0, 1, 2].map(() => this.mesh(this.geo(new TorusGeometry(0.008, 0.0022, 6, 14)), steel));
+    const d = new Vector3();
+    const at = (m: Object3D, k: Vec3, t: number, sy: number, turn: number) => {
+      m.position.set(k[0] + d.x * t, k[1] + d.y * t, k[2] + d.z * t);
+      m.quaternion.setFromUnitVectors(UP, d);
+      m.rotateY(turn);
+      m.scale.set(1, sy, 1);
+    };
+    return (knot, pulley) => {
+      d.set(pulley[0] - knot[0], pulley[1] - knot[1], pulley[2] - knot[2]).normalize();
+      at(biner, knot, 0.018, 1.7, 0);
+      at(swivel, knot, 0.05, 1, 0);
+      links.forEach((m, i) => at(m, knot, 0.068 + i * 0.019, 1.45, i % 2 ? Math.PI / 2 : 0));
+      return [knot[0] + d.x * 0.095, knot[1] + d.y * 0.095, knot[2] + d.z * 0.095];
+    };
+  }
+
   private buildHandle(kind: 'bar' | 'rope' | 'v' | 'single'): { update: (r: Extract<ResolvedEquipment, { kind: 'cable' }>) => Vec3 } {
     const chrome = this.mat('chrome');
     const rubber = this.mat('rubber');
@@ -392,7 +414,8 @@ export class EquipmentView {
     }
     if (kind === 'rope') {
       const ropes = [this.tube('rubber'), this.tube('rubber')];
-      const tips = [this.mesh(this.geo(ball(0.022)), rubber), this.mesh(this.geo(ball(0.022)), rubber)];
+      // Ponteiras de borracha (batente que a mão não passa).
+      const tips = [this.mesh(this.geo(new CylinderGeometry(0.017, 0.024, 0.045, 18)), rubber), this.mesh(this.geo(new CylinderGeometry(0.017, 0.024, 0.045, 18)), rubber)];
       const ring = this.mesh(this.geo(ball(0.016)), chrome);
       return {
         update: (r) => {
@@ -405,7 +428,7 @@ export class EquipmentView {
             tB.set(g[0] - knot[0], g[1] - knot[1], g[2] - knot[2]).normalize();
             const end: Vec3 = [g[0] + tB.x * 0.04, g[1] + tB.y * 0.04, g[2] + tB.z * 0.04];
             stretch(ropes[i] as Mesh, knot, end, 0.011);
-            (tips[i] as Mesh).position.set(end[0], end[1], end[2]);
+            orient(tips[i] as Mesh, [end[0] + tB.x * 0.015, end[1] + tB.y * 0.015, end[2] + tB.z * 0.015], [tB.x, tB.y, tB.z]);
           });
           ring.position.set(knot[0], knot[1], knot[2]);
           return knot;
@@ -465,12 +488,16 @@ export class EquipmentView {
     place(e.center, e.pitch);
     g.updateMatrixWorld();
     const role = e.role;
+    if (role === 'frame' && this.benchStation && !e.moving) {
+      g.removeFromParent();
+      return;
+    }
     if ((role === 'bench' || role === 'seat' || role === 'back') && dpt < h && dpt <= 0.1) {
       // Encosto fino em Z (a pessoa apoia na face +Z): espuma inteira e chapa de aço atrás.
       this.mesh(this.geo(padGeometry(w, h, dpt, 0.025)), this.mat('pad'), g);
       const plate = this.mesh(this.geo(padGeometry(w * 0.86, h * 0.92, 0.012, 0.004)), this.mat('steel'), g);
       plate.position.z = -dpt / 2 - 0.006;
-      if (!e.moving && e.center[1] - h / 2 > 0.2) {
+      if (!e.moving && !this.benchStation && e.center[1] - h / 2 > 0.2) {
         const back = new Vector3(0, -h * 0.25, -dpt / 2 - 0.03).applyMatrix4(g.matrixWorld);
         this.beam([back.x, back.y, back.z], [back.x, 0.03, back.z], 0.05);
         this.beam([back.x, 0.025, back.z - 0.25], [back.x, 0.025, back.z + 0.25], 0.045);
@@ -483,7 +510,7 @@ export class EquipmentView {
       pad.position.y = h / 2 - padH / 2;
       const plate = this.mesh(this.geo(padGeometry(w * 0.86, 0.012, dpt * 0.92, 0.004)), this.mat('steel'), g);
       plate.position.y = h / 2 - padH - 0.006;
-      if (!e.moving) this.buildBlockFrame(g, e, padH);
+      if (!e.moving && !this.benchStation) this.buildBlockFrame(g, e, padH);
     } else if (role === 'platform') {
       const top = this.mesh(this.geo(padGeometry(w, Math.min(h, 0.02), dpt, 0.004)), this.mat('steel', 2, 0.03), g);
       top.position.y = h / 2 - Math.min(h, 0.02) / 2;
@@ -665,7 +692,7 @@ export class EquipmentView {
     for (const e of f.equipment) {
       const i = seen.get(e.kind) ?? 0;
       seen.set(e.kind, i + 1);
-      for (const u of this.updaters) u(e, i);
+      for (const u of this.updaters) u(e, i, f);
     }
     const L = f.load;
     const on = showLoad && L !== null;
@@ -683,8 +710,7 @@ export class EquipmentView {
   }
 
   dispose() {
-    for (const g of this.geos) g.dispose();
-    for (const m of this.mats) m.dispose();
+    this.kit.dispose();
     this.arrow.dispose();
     this.group.removeFromParent();
   }

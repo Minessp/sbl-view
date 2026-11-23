@@ -91,6 +91,10 @@ export const Balance = z.object({
   rangeDeg: z.tuple([z.number(), z.number()]),
 });
 
+/** Estação: estrutura desenhada a partir das peças do próprio clipe (`scene/motion/gear/stations/`). */
+export const StationId = z.enum(['power_rack', 'bench_rack', 'flat_bench', 'adjustable_bench']);
+export type StationId = z.infer<typeof StationId>;
+
 export const Equipment = z.discriminatedUnion('kind', [
   /**
    * Barra entre as duas pegadas. `bar`: olímpica (2,2 m, mangas e anilhas; padrão com anilhas), curta (barra fixa de
@@ -101,8 +105,8 @@ export const Equipment = z.discriminatedUnion('kind', [
     plates: z.number().int().min(0).max(4),
     bar: z.enum(['olympic', 'curl', 'fixed']).optional(),
   }),
-  /** Halter em cada mão, ou só na direita (`hands: 'r'`). */
-  z.object({ kind: z.literal('dumbbell'), hands: z.enum(['both', 'r']).optional() }),
+  /** Halter em cada mão, ou só na direita (`hands: 'r'`); cabeça redonda (padrão) ou sextavada. */
+  z.object({ kind: z.literal('dumbbell'), hands: z.enum(['both', 'r']).optional(), style: z.enum(['round', 'hex']).optional() }),
   /**
    * Cabo da pegada (média das mãos) até a roldana. `single` = pegador de uma mão (só a direita). `mirror` = um cabo por
    * mão, cada um na sua roldana (a esquerda espelhada): crucifixo, cross-over.
@@ -139,6 +143,18 @@ export const Equipment = z.discriminatedUnion('kind', [
     point: Vec3,
     lever: z.boolean(),
     both: z.boolean(),
+  }),
+  /**
+   * Estação (gaiola, suporte de supino, bancos): lê a barra, os blocos, os rolos e os cabos do clipe e desenha a estrutura
+   * que os liga ao chão, sem repetir coordenada. `at`/`yaw` deslocam e giram a estação inteira; `params` são medidas
+   * próprias de cada uma (m).
+   */
+  z.object({
+    kind: z.literal('station'),
+    id: StationId,
+    at: Vec3.optional(),
+    yaw: z.number().optional(),
+    params: z.record(z.string(), z.number()).optional(),
   }),
 ]);
 export type Equipment = z.infer<typeof Equipment>;
@@ -191,6 +207,8 @@ export const MotionClip = z.object({
   balance: Balance.optional(),
   /** Ponto de pegada na mão (pose neutra, lado direito). Padrão: centro da palma (`engine/motion/evaluate.ts`). */
   grip: Vec3.optional(),
+  /** Quanto cada mão fecha (0 espalmada … 1 fechada). Sem isso, sai do implemento (`engine/motion/evaluate.ts`). */
+  fingers: z.object({ r: z.number().min(0).max(1).optional(), l: z.number().min(0).max(1).optional() }).optional(),
   equipment: z.array(Equipment),
   load: Load,
   tempo: Tempo,

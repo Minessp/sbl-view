@@ -1,0 +1,17 @@
+{
+  "evidence": { "source": [{ "refId": "sbl_authored" }], "confidence": "especulativo",
+    "note": "Cápsula por segmento, da articulação proximal (0) à ponta (1): raio próximo da metade da profundidade ântero-posterior do segmento no corpo de referência (1,75 m), para medir atravessamento no teste de dados. Não é massa nem forma real." },
+  "segments": {
+    "pelvis": { "radius": 0.1, "ends": [-0.3, 1] },
+    "lumbar": { "radius": 0.1 },
+    "trunk": { "radius": 0.11, "ends": [0, 0.92] },
+    "neck": { "radius": 0.05 },
+    "head": { "radius": 0.09, "ends": [0.45, 0.5] },
+    "upperarm_r": { "radius": 0.045, "ends": [0.15, 1] },
+    "forearm_r": { "radius": 0.035 },
+    "hand_r": { "radius": 0.025, "ends": [0, 0.75] },
+    "thigh_r": { "radius": 0.07, "ends": [0.15, 1] },
+    "shank_r": { "radius": 0.045 },
+    "foot_r": { "radius": 0.03, "ends": [0.1, 0.6] }
+  }
+}

@@ -4,7 +4,7 @@
  * para colar em `src/data/exercises/clips.json`. Usa o mesmo player da biblioteca (palco único).
  * Não entra no build de produção (App.tsx só registra a rota com import.meta.env.DEV). Texto fora do i18n: é ferramenta.
  */
-import { useMemo, useState } from 'react';
+import { lazy, Suspense, useMemo, useState } from 'react';
 import { MotionClip as MotionClipSchema, type MotionClip } from '@/data/schema/motion';
 import { cycleLength, repAt, timeAtU } from '@/engine/motion/keys';
 import { clipEntries, compileLoose, expandEntry, motionSkeleton } from '@/features/library/motion';
@@ -23,7 +23,20 @@ const DOFS = [...new Map(motionSkeleton.segments.flatMap((s) => s.dofs.map((d) =
 
 const round = (v: number, k = 10) => Math.round(v * k) / k;
 
+const ContactSheet = lazy(() => import('./ContactSheet'));
+
 export default function DevClips() {
+  if (new URLSearchParams(location.search).has('folha')) {
+    return (
+      <Suspense fallback={null}>
+        <ContactSheet />
+      </Suspense>
+    );
+  }
+  return <ClipEditor />;
+}
+
+function ClipEditor() {
   const [id, setId] = useState(clipEntries[0]?.id ?? '');
   const [text, setText] = useState(() =>
     JSON.stringify(
