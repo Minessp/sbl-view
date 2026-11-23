@@ -2,11 +2,29 @@
   {
     "id": "squat",
     "name": "Agachamento livre",
+    "aliases": ["back squat", "agachamento com barra", "agachamento costas"],
     "pattern": "agachamento",
     "equipment": ["barra", "rack"],
     "status": "consolidado",
     "labId": "squat",
     "summary": "Barra nas costas, descer flexionando quadril, joelho e tornozelo ao mesmo tempo e subir de volta. O equilíbrio decide quanto o tronco inclina.",
+    "how": {
+      "setup": [
+        "Gancho da gaiola na altura do meio do peito.",
+        "Barra apoiada no trapézio, mãos um pouco além dos ombros.",
+        "Pés na largura dos ombros, pontas um pouco para fora."
+      ],
+      "execution": [
+        { "text": "Inspire, trave o tronco e desça dobrando quadril e joelho juntos.", "u": 0.5 },
+        { "text": "Desça até a coxa passar da horizontal, joelho na direção da ponta do pé.", "u": 0 },
+        { "text": "Suba empurrando o chão, com a barra sobre o meio do pé.", "u": 1 }
+      ],
+      "mistakes": [
+        "Joelho fecha para dentro na subida: empurre o joelho na direção da ponta do pé.",
+        "Calcanhar sai do chão: abra um pouco mais os pés ou desça menos até ganhar mobilidade.",
+        "Quadril sobe antes do peito: reduza a carga e suba com o tronco firme."
+      ]
+    },
     "targets": [
       { "muscle": "vastus_lateralis", "role": "alvo" },
       { "muscle": "vastus_medialis", "role": "alvo" },
@@ -28,10 +46,24 @@
   {
     "id": "romanian_deadlift",
     "name": "Levantamento terra romeno",
+    "aliases": ["rdl", "romanian deadlift", "terra romeno"],
     "pattern": "dobradica",
     "equipment": ["barra"],
     "status": "consolidado",
     "summary": "Joelhos quase estendidos, o quadril vai para trás e o tronco inclina com a barra rente às coxas, até sentir a parte de trás da coxa esticar.",
+    "how": {
+      "setup": ["Comece em pé com a barra, pegada pronada na largura dos ombros.", "Joelhos destravados, um pouco dobrados, e fixos assim."],
+      "execution": [
+        { "text": "Leve o quadril para trás e incline o tronco, barra rente às coxas.", "u": 0.5 },
+        { "text": "Desça até sentir a parte de trás da coxa esticar, coluna neutra.", "u": 0 },
+        { "text": "Volte empurrando o quadril à frente até ficar em pé.", "u": 1 }
+      ],
+      "mistakes": [
+        "Barra se afasta das pernas: mantenha-a encostada nas coxas.",
+        "Costas arredondam no fundo: pare a descida antes.",
+        "Joelho dobra cada vez mais: o movimento é do quadril, não um agachamento."
+      ]
+    },
     "targets": [
       { "muscle": "semimembranosus", "role": "alvo" },
       { "muscle": "semitendinosus", "role": "alvo" },
@@ -50,10 +82,27 @@
   {
     "id": "hip_thrust",
     "name": "Elevação pélvica",
+    "aliases": ["hip thrust", "elevação de quadril", "ponte com barra"],
     "pattern": "dobradica",
     "equipment": ["barra", "banco"],
     "status": "consolidado",
     "summary": "Costas apoiadas no banco, barra sobre o quadril, estender o quadril até o tronco ficar alinhado com as coxas.",
+    "how": {
+      "setup": [
+        "Parte de cima das costas na borda do banco.",
+        "Barra sobre a dobra do quadril, com almofada.",
+        "Pés no chão na largura do quadril, canelas quase verticais no alto."
+      ],
+      "execution": [
+        { "text": "Comece com o quadril perto do chão.", "u": 0 },
+        { "text": "Empurre o chão com os calcanhares e suba o quadril.", "u": 0.5 },
+        { "text": "No alto, tronco alinhado com as coxas, queixo baixo.", "u": 1 }
+      ],
+      "mistakes": [
+        "Lombar arqueia no alto: pare quando o tronco alinhar com as coxas.",
+        "Pés longe demais: a parte de trás da coxa assume; traga os pés para perto."
+      ]
+    },
     "targets": [
       { "muscle": "gluteus_maximus", "role": "alvo" },
       { "muscle": "semimembranosus", "role": "sinergista" },
@@ -191,10 +240,24 @@
   {
     "id": "bench_press",
     "name": "Supino reto",
+    "aliases": ["supino", "bench press", "supino com barra"],
     "pattern": "empurrar_horizontal",
     "equipment": ["barra", "banco", "rack"],
     "status": "consolidado",
     "summary": "Deitado no banco, descer a barra até o peito e empurrar de volta, com os braços abertos entre 45° e 75° do tronco.",
+    "how": {
+      "setup": ["Olhos sob a barra no suporte.", "Pés firmes no chão, escápulas juntas e para baixo.", "Pegada um pouco mais larga que os ombros."],
+      "execution": [
+        { "text": "Tire a barra e leve-a acima dos ombros.", "u": 1 },
+        { "text": "Desça até tocar o meio do peito, cotovelos entre 45° e 75° do tronco.", "u": 0 },
+        { "text": "Empurre de volta até estender os cotovelos.", "u": 0.5 }
+      ],
+      "mistakes": [
+        "Cotovelos a 90° do tronco: feche um pouco para poupar o ombro.",
+        "Barra quica no peito: toque com controle.",
+        "Quadril sai do banco: mantenha os glúteos apoiados."
+      ]
+    },
     "targets": [
       { "muscle": "pectoralis_major", "role": "alvo" },
       { "muscle": "deltoid", "role": "sinergista", "parts": ["deltoid_ant"] },
@@ -210,10 +273,20 @@
   {
     "id": "overhead_press",
     "name": "Desenvolvimento em pé",
+    "aliases": ["ohp", "overhead press", "desenvolvimento militar", "press militar"],
     "pattern": "empurrar_vertical",
     "equipment": ["barra"],
     "status": "consolidado",
     "summary": "Em pé, empurrar a barra da altura dos ombros até acima da cabeça, com os braços estendidos.",
+    "how": {
+      "setup": ["Gancho na altura do peito.", "Barra na frente dos ombros, pegada um pouco mais larga que eles.", "Glúteos e abdome contraídos."],
+      "execution": [
+        { "text": "Comece com a barra nos ombros, antebraços verticais.", "u": 0 },
+        { "text": "Empurre para cima tirando a cabeça do caminho.", "u": 0.5 },
+        { "text": "Termine com a barra sobre o meio do pé, braços estendidos.", "u": 1 }
+      ],
+      "mistakes": ["Lombar arqueia para trás: contraia glúteos e abdome.", "Barra vai à frente: leve-a para cima da cabeça no alto."]
+    },
     "targets": [
       { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_ant", "deltoid_lat"] },
       { "muscle": "triceps_brachii", "role": "sinergista" },
@@ -270,10 +343,20 @@
   {
     "id": "incline_dumbbell_curl",
     "name": "Rosca no banco inclinado",
+    "aliases": ["incline curl", "rosca inclinada", "rosca alternada inclinada"],
     "pattern": "isolado",
     "equipment": ["halteres", "banco"],
     "status": "consolidado",
     "summary": "Sentado num banco inclinado, braços pendendo atrás do tronco, flexionar os cotovelos.",
+    "how": {
+      "setup": ["Encosto a uns 45°, costas e cabeça apoiadas.", "Braços pendurados atrás do tronco, palmas para a frente."],
+      "execution": [
+        { "text": "Comece com os cotovelos estendidos e o ombro alongado.", "u": 0 },
+        { "text": "Suba dobrando só o cotovelo, braço parado.", "u": 0.5 },
+        { "text": "Desça devagar até estender.", "u": 1 }
+      ],
+      "mistakes": ["Braço vai à frente na subida: deixe-o pendurado.", "Ombros saem do encosto: reduza a carga."]
+    },
     "targets": [
       { "muscle": "biceps_brachii", "role": "alvo" },
       { "muscle": "brachialis", "role": "sinergista" }
@@ -320,10 +403,27 @@
   {
     "id": "front_squat",
     "name": "Agachamento frontal",
+    "aliases": ["front squat", "agachamento pela frente"],
     "pattern": "agachamento",
     "equipment": ["barra", "rack"],
     "status": "consolidado",
     "summary": "Barra apoiada na frente dos ombros, cotovelos altos. A carga na frente deixa o tronco mais em pé que no agachamento com a barra nas costas.",
+    "how": {
+      "setup": [
+        "Gancho na altura do meio do peito.",
+        "Barra sobre a frente dos ombros, encostada no pescoço; dedos sob a barra, cotovelos altos.",
+        "Pés na largura dos ombros."
+      ],
+      "execution": [
+        { "text": "Desça com o tronco em pé e os cotovelos altos.", "u": 0.5 },
+        { "text": "Vá até o fundo que o tronco ereto permitir.", "u": 0 },
+        { "text": "Suba levando os cotovelos para cima junto.", "u": 1 }
+      ],
+      "mistakes": [
+        "Cotovelos caem e a barra escorrega: suba os cotovelos antes de cada repetição.",
+        "Tronco tomba à frente: reduza a carga ou eleve um pouco os calcanhares."
+      ]
+    },
     "targets": [
       { "muscle": "vastus_lateralis", "role": "alvo" },
       { "muscle": "vastus_medialis", "role": "alvo" },
@@ -343,10 +443,20 @@
   {
     "id": "goblet_squat",
     "name": "Agachamento goblet",
+    "aliases": ["goblet", "agachamento taça"],
     "pattern": "agachamento",
     "equipment": ["halteres"],
     "status": "consolidado",
     "summary": "Um halter seguro junto ao peito, pés um pouco abertos, descer entre os joelhos. Bom para aprender a profundidade.",
+    "how": {
+      "setup": ["Halter em pé junto ao peito, mãos sob a cabeça de cima.", "Pés um pouco mais abertos que os ombros, pontas para fora."],
+      "execution": [
+        { "text": "Desça entre os joelhos, tronco em pé.", "u": 0.5 },
+        { "text": "Vá até o fundo que a coluna neutra permitir.", "u": 0 },
+        { "text": "Suba empurrando o chão.", "u": 1 }
+      ],
+      "mistakes": ["Halter se afasta do peito: mantenha-o encostado.", "Joelhos fecham: empurre-os na direção da ponta do pé."]
+    },
     "targets": [
       { "muscle": "vastus_lateralis", "role": "alvo" },
       { "muscle": "vastus_medialis", "role": "alvo" },
@@ -428,10 +538,25 @@
   {
     "id": "bulgarian_split_squat",
     "name": "Agachamento búlgaro",
+    "aliases": ["bulgarian split squat", "búlgaro", "afundo búlgaro"],
+    "unilateral": true,
     "pattern": "agachamento",
     "equipment": ["halteres", "banco"],
     "status": "consolidado",
     "summary": "Pé de trás apoiado no banco, descer na perna da frente até a coxa ficar perto da horizontal.",
+    "how": {
+      "setup": [
+        "Peito do pé de trás sobre o banco.",
+        "Pé da frente longe o bastante para o joelho não passar muito da ponta.",
+        "Um halter em cada mão, ao lado do corpo."
+      ],
+      "execution": [
+        { "text": "Desça na perna da frente, tronco levemente inclinado.", "u": 0.5 },
+        { "text": "Vá até a coxa da frente perto da horizontal.", "u": 0 },
+        { "text": "Suba empurrando o chão com o pé da frente.", "u": 1 }
+      ],
+      "mistakes": ["Empurrar com a perna de trás: ela só equilibra.", "Joelho da frente fecha para dentro: alinhe com a ponta do pé."]
+    },
     "targets": [
       { "muscle": "vastus_lateralis", "role": "alvo" },
       { "muscle": "vastus_medialis", "role": "alvo" },
@@ -450,10 +575,21 @@
   {
     "id": "reverse_lunge",
     "name": "Avanço para trás",
+    "aliases": ["reverse lunge", "afundo para trás", "passada para trás"],
+    "unilateral": true,
     "pattern": "agachamento",
     "equipment": ["halteres"],
     "status": "consolidado",
     "summary": "Dar um passo para trás e descer até o joelho de trás quase tocar o chão; voltar empurrando com a perna da frente.",
+    "how": {
+      "setup": ["Em pé, um halter em cada mão."],
+      "execution": [
+        { "text": "Dê um passo para trás e desça.", "u": 0.5 },
+        { "text": "Pare com o joelho de trás perto do chão.", "u": 0 },
+        { "text": "Volte empurrando com a perna da frente.", "u": 1 }
+      ],
+      "mistakes": ["Passo curto demais: o joelho da frente passa muito da ponta do pé.", "Tronco tomba: mantenha-o firme."]
+    },
     "targets": [
       { "muscle": "vastus_lateralis", "role": "alvo" },
       { "muscle": "vastus_medialis", "role": "alvo" },
@@ -514,10 +650,23 @@
   {
     "id": "stiff_leg_deadlift",
     "name": "Stiff",
+    "aliases": ["stiff", "stiff leg deadlift", "levantamento terra com pernas estendidas"],
     "pattern": "dobradica",
     "equipment": ["barra"],
     "status": "consolidado",
     "summary": "Joelhos quase travados, descer a barra rente às pernas inclinando o tronco pelo quadril.",
+    "how": {
+      "setup": ["Em pé com a barra, pegada pronada na largura dos ombros.", "Joelhos quase estendidos."],
+      "execution": [
+        { "text": "Incline o tronco pelo quadril, barra descendo rente às pernas.", "u": 0.5 },
+        { "text": "Desça até onde a coluna fica neutra.", "u": 0 },
+        { "text": "Volte estendendo o quadril.", "u": 1 }
+      ],
+      "mistakes": [
+        "Coluna arredonda para alcançar mais baixo: desça só até onde ela se mantém neutra.",
+        "Barra longe das pernas: o peso sai do meio do pé e puxa a lombar."
+      ]
+    },
     "targets": [
       { "muscle": "semimembranosus", "role": "alvo" },
       { "muscle": "semitendinosus", "role": "alvo" },
@@ -537,10 +686,28 @@
   {
     "id": "deadlift",
     "name": "Levantamento terra",
+    "aliases": ["deadlift", "terra", "levantamento terra convencional"],
     "pattern": "dobradica",
     "equipment": ["barra"],
     "status": "consolidado",
     "summary": "Barra no chão junto às canelas, subir estendendo joelho e quadril ao mesmo tempo até ficar em pé.",
+    "how": {
+      "setup": [
+        "Barra no chão sobre o meio do pé, canela a dois dedos dela.",
+        "Pegada logo por fora das pernas, braços retos.",
+        "Quadril acima do joelho, peito para cima, costas neutras."
+      ],
+      "execution": [
+        { "text": "Tire a folga da barra e empurre o chão.", "u": 0 },
+        { "text": "Barra sobe rente às canelas e às coxas.", "u": 0.5 },
+        { "text": "Termine em pé, quadril e joelho estendidos juntos.", "u": 1 }
+      ],
+      "mistakes": [
+        "Quadril sobe antes da barra: empurre o chão com as pernas desde o início.",
+        "Costas arredondam: reduza a carga.",
+        "Inclinar para trás no topo: pare quando ficar em pé."
+      ]
+    },
     "targets": [
       { "muscle": "gluteus_maximus", "role": "alvo" },
       { "muscle": "adductor_magnus", "role": "alvo" },
@@ -560,10 +727,20 @@
   {
     "id": "good_morning",
     "name": "Good morning",
+    "aliases": ["good morning", "bom dia"],
     "pattern": "dobradica",
     "equipment": ["barra"],
     "status": "consolidado",
     "summary": "Barra nas costas, joelhos levemente dobrados, inclinar o tronco à frente pelo quadril e voltar.",
+    "how": {
+      "setup": ["Barra no trapézio, tirada da gaiola.", "Pés na largura do quadril, joelhos levemente dobrados."],
+      "execution": [
+        { "text": "Leve o quadril para trás e incline o tronco à frente.", "u": 0.5 },
+        { "text": "Desça até o tronco perto da horizontal, coluna neutra.", "u": 0 },
+        { "text": "Volte estendendo o quadril.", "u": 1 }
+      ],
+      "mistakes": ["Coluna arredonda: pare mais alto.", "Joelhos dobram demais: vira agachamento; mantenha o ângulo do joelho."]
+    },
     "targets": [
       { "muscle": "semimembranosus", "role": "alvo" },
       { "muscle": "semitendinosus", "role": "alvo" },
@@ -836,10 +1013,20 @@
   {
     "id": "dumbbell_side_bend",
     "name": "Inclinação lateral com halter",
+    "aliases": ["side bend", "flexão lateral", "inclinação lateral"],
+    "unilateral": true,
     "pattern": "core",
     "equipment": ["halteres"],
     "status": "consolidado",
     "summary": "Halter numa mão, inclinar o tronco para o lado do peso e voltar passando um pouco do centro.",
+    "how": {
+      "setup": ["Em pé, halter numa mão, braço estendido ao lado do corpo.", "Pés na largura do quadril."],
+      "execution": [
+        { "text": "Incline o tronco para o lado do halter.", "u": 0 },
+        { "text": "Volte e passe um pouco do centro para o outro lado.", "u": 1 }
+      ],
+      "mistakes": ["Inclinar o tronco à frente: o movimento é só para o lado.", "Dobrar o joelho para descer mais: pernas firmes."]
+    },
     "targets": [
       { "muscle": "quadratus_lumborum", "role": "alvo" },
       { "muscle": "external_oblique", "role": "alvo" },
@@ -855,10 +1042,20 @@
   {
     "id": "incline_bench_press",
     "name": "Supino inclinado",
+    "aliases": ["incline bench", "supino inclinado com barra"],
     "pattern": "empurrar_horizontal",
     "equipment": ["barra", "banco", "rack"],
     "status": "consolidado",
     "summary": "Banco a uns 40°, descer a barra até a parte alta do peito e empurrar para cima.",
+    "how": {
+      "setup": ["Encosto a uns 40°, suporte atrás do banco.", "Escápulas juntas, pés firmes.", "Pegada um pouco mais larga que os ombros."],
+      "execution": [
+        { "text": "Desça a barra até a parte alta do peito.", "u": 0 },
+        { "text": "Empurre para cima, antebraço vertical sob a barra.", "u": 0.5 },
+        { "text": "Termine com a barra acima dos ombros.", "u": 1 }
+      ],
+      "mistakes": ["Descer no meio do peito: aqui o toque é perto da clavícula.", "Arquear até o tronco virar reto: mantenha as costas no encosto."]
+    },
     "targets": [
       { "muscle": "pectoralis_major", "role": "alvo", "parts": ["pectoralis_major_clav", "pectoralis_major_stern"] },
       { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_ant"] },
@@ -875,10 +1072,20 @@
   {
     "id": "dumbbell_bench_press",
     "name": "Supino com halteres",
+    "aliases": ["dumbbell bench", "supino reto com halteres"],
     "pattern": "empurrar_horizontal",
     "equipment": ["halteres", "banco"],
     "status": "consolidado",
     "summary": "Deitado no banco, descer os halteres ao lado do peito, mais fundo que a barra permitiria, e empurrar.",
+    "how": {
+      "setup": ["Deitado no banco, halteres apoiados nas coxas ao deitar.", "Escápulas juntas, pés firmes."],
+      "execution": [
+        { "text": "Desça os halteres ao lado do peito, abaixo da linha do banco.", "u": 0 },
+        { "text": "Empurre para cima, antebraço vertical.", "u": 0.5 },
+        { "text": "Termine com os halteres acima dos ombros.", "u": 1 }
+      ],
+      "mistakes": ["Halteres se chocam no alto: pare acima dos ombros.", "Cotovelos a 90° do tronco: feche um pouco."]
+    },
     "targets": [
       { "muscle": "pectoralis_major", "role": "alvo" },
       { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_ant"] },
@@ -894,10 +1101,20 @@
   {
     "id": "incline_dumbbell_press",
     "name": "Supino inclinado com halteres",
+    "aliases": ["incline dumbbell press", "supino inclinado halteres"],
     "pattern": "empurrar_horizontal",
     "equipment": ["halteres", "banco"],
     "status": "consolidado",
     "summary": "Banco a uns 40°, descer os halteres ao lado da parte alta do peito e empurrar.",
+    "how": {
+      "setup": ["Encosto a uns 40°.", "Halteres na altura da parte alta do peito, escápulas juntas."],
+      "execution": [
+        { "text": "Desça os halteres ao lado da parte alta do peito.", "u": 0 },
+        { "text": "Empurre para cima, antebraço vertical.", "u": 0.5 },
+        { "text": "Termine com os halteres acima dos ombros.", "u": 1 }
+      ],
+      "mistakes": ["Encosto alto demais vira desenvolvimento: fique perto de 40°.", "Amplitude curta: desça até sentir o peito alongar."]
+    },
     "targets": [
       { "muscle": "pectoralis_major", "role": "alvo", "parts": ["pectoralis_major_clav", "pectoralis_major_stern"] },
       { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_ant"] },
@@ -913,10 +1130,20 @@
   {
     "id": "close_grip_bench_press",
     "name": "Supino fechado",
+    "aliases": ["close grip bench", "supino pegada fechada"],
     "pattern": "empurrar_horizontal",
     "equipment": ["barra", "banco", "rack"],
     "status": "consolidado",
     "summary": "Pegada na largura dos ombros, cotovelos perto do corpo, descer a barra na parte baixa do peito.",
+    "how": {
+      "setup": ["Pegada na largura dos ombros.", "Escápulas juntas, pés firmes."],
+      "execution": [
+        { "text": "Desça a barra até a parte baixa do peito, cotovelos junto ao corpo.", "u": 0 },
+        { "text": "Empurre estendendo os cotovelos.", "u": 0.5 },
+        { "text": "Termine com a barra acima dos ombros.", "u": 1 }
+      ],
+      "mistakes": ["Mãos muito juntas forçam o punho: use a largura dos ombros.", "Cotovelos abrem: mantenha-os perto do tronco."]
+    },
     "targets": [
       { "muscle": "triceps_brachii", "role": "alvo" },
       { "muscle": "pectoralis_major", "role": "alvo" },
@@ -1047,10 +1274,20 @@
   {
     "id": "chest_supported_row",
     "name": "Remada com peito apoiado",
+    "aliases": ["chest supported row", "remada apoiada", "remada no banco inclinado"],
     "pattern": "puxar_horizontal",
     "equipment": ["halteres", "banco"],
     "status": "consolidado",
     "summary": "Peito no banco inclinado, halteres pendurados, puxar até os cotovelos passarem do tronco.",
+    "how": {
+      "setup": ["Peito no encosto inclinado, pés no chão atrás do banco.", "Halteres pendurados, braços estendidos."],
+      "execution": [
+        { "text": "Comece com os ombros soltos para baixo e à frente.", "u": 0 },
+        { "text": "Puxe até os cotovelos passarem do tronco.", "u": 1 },
+        { "text": "Desça devagar até estender os braços.", "u": 0.5 }
+      ],
+      "mistakes": ["Peito sai do banco: o apoio é o que tira a lombar do esforço.", "Encolher os ombros: puxe os cotovelos para trás."]
+    },
     "targets": [
       { "muscle": "latissimus_dorsi", "role": "alvo" },
       { "muscle": "trapezius", "role": "alvo", "parts": ["trapezius_mid"] },
@@ -1132,10 +1369,20 @@
   {
     "id": "barbell_row",
     "name": "Remada curvada",
+    "aliases": ["barbell row", "remada com barra", "bent over row"],
     "pattern": "puxar_horizontal",
     "equipment": ["barra"],
     "status": "consolidado",
     "summary": "Tronco inclinado à frente uns 50° ou mais, puxar a barra até a barriga e descer até os braços estenderem.",
+    "how": {
+      "setup": ["Pegada pronada um pouco mais larga que os ombros.", "Tronco inclinado uns 50° ou mais, joelhos dobrados, costas neutras."],
+      "execution": [
+        { "text": "Comece com os braços estendidos e os ombros soltos para baixo.", "u": 0 },
+        { "text": "Puxe a barra até a barriga, cotovelos para trás.", "u": 0.5 },
+        { "text": "Junte as escápulas no alto e desça devagar.", "u": 1 }
+      ],
+      "mistakes": ["Tronco sobe a cada repetição: mantenha a inclinação.", "Puxar com balanço: reduza a carga."]
+    },
     "targets": [
       { "muscle": "latissimus_dorsi", "role": "alvo" },
       { "muscle": "trapezius", "role": "alvo", "parts": ["trapezius_mid"] },
@@ -1154,10 +1401,21 @@
   {
     "id": "one_arm_dumbbell_row",
     "name": "Remada unilateral com halter",
+    "aliases": ["one arm row", "serrote", "remada serrote"],
+    "unilateral": true,
     "pattern": "puxar_horizontal",
     "equipment": ["halteres", "banco"],
     "status": "consolidado",
     "summary": "Joelho e mão do mesmo lado no banco, puxar o halter com a outra mão até o quadril, cotovelo junto ao corpo.",
+    "how": {
+      "setup": ["Joelho e mão do mesmo lado no banco, outro pé no chão.", "Costas neutras, quase paralelas ao chão."],
+      "execution": [
+        { "text": "Comece com o braço estendido e o ombro solto para baixo.", "u": 0 },
+        { "text": "Puxe o halter em direção ao quadril, cotovelo junto ao corpo.", "u": 0.5 },
+        { "text": "Pare com o cotovelo além do tronco e desça devagar.", "u": 1 }
+      ],
+      "mistakes": ["Girar o tronco para subir: mantenha os ombros nivelados.", "Puxar para o peito: leve o cotovelo para trás, em direção ao quadril."]
+    },
     "targets": [
       { "muscle": "latissimus_dorsi", "role": "alvo" },
       { "muscle": "teres_major", "role": "sinergista" },
@@ -1195,10 +1453,20 @@
   {
     "id": "dumbbell_pullover",
     "name": "Pullover com halter",
+    "aliases": ["pullover"],
     "pattern": "isolado",
     "equipment": ["halteres", "banco"],
     "status": "hipotese",
     "summary": "Deitado no banco, halter acima do peito, levar os braços para trás da cabeça e voltar.",
+    "how": {
+      "setup": ["Deitado no banco, pés no chão.", "Um halter seguro com as duas mãos pela cabeça de cima.", "Cotovelos levemente dobrados e fixos."],
+      "execution": [
+        { "text": "Leve o halter para trás da cabeça num arco.", "u": 0 },
+        { "text": "Pare quando os braços estiverem na linha do tronco.", "u": 0.25 },
+        { "text": "Volte até o halter ficar acima do peito.", "u": 1 }
+      ],
+      "mistakes": ["Dobrar e estender o cotovelo: vira tríceps; mantenha o ângulo.", "Costelas sobem e a lombar arqueia: segure o abdome."]
+    },
     "targets": [
       { "muscle": "latissimus_dorsi", "role": "alvo" },
       { "muscle": "pectoralis_major", "role": "alvo", "parts": ["pectoralis_major_stern"] },
@@ -1216,10 +1484,20 @@
   {
     "id": "shrug",
     "name": "Encolhimento",
+    "aliases": ["shrug", "encolhimento de ombros"],
     "pattern": "isolado",
     "equipment": ["halteres"],
     "status": "consolidado",
     "summary": "Halteres ao lado do corpo, subir os ombros em direção às orelhas e descer devagar.",
+    "how": {
+      "setup": ["Em pé, um halter em cada mão ao lado do corpo."],
+      "execution": [
+        { "text": "Deixe os ombros descerem ao máximo.", "u": 0 },
+        { "text": "Suba os ombros em direção às orelhas.", "u": 0.5 },
+        { "text": "Segure um instante no alto e desça devagar.", "u": 1 }
+      ],
+      "mistakes": ["Girar os ombros: o movimento é para cima e para baixo.", "Dobrar os cotovelos: braços retos."]
+    },
     "targets": [
       { "muscle": "trapezius", "role": "alvo", "parts": ["trapezius_sup"] },
       { "muscle": "levator_scapulae", "role": "alvo" }
@@ -1234,10 +1512,20 @@
   {
     "id": "seated_dumbbell_press",
     "name": "Desenvolvimento com halteres",
+    "aliases": ["dumbbell shoulder press", "desenvolvimento sentado", "desenvolvimento halteres"],
     "pattern": "empurrar_vertical",
     "equipment": ["halteres", "banco"],
     "status": "consolidado",
     "summary": "Sentado com encosto, empurrar os halteres da altura das orelhas até acima da cabeça.",
+    "how": {
+      "setup": ["Encosto quase vertical, costas apoiadas.", "Halteres na altura das orelhas, antebraços verticais."],
+      "execution": [
+        { "text": "Comece com os halteres perto das orelhas.", "u": 0 },
+        { "text": "Empurre para cima.", "u": 0.5 },
+        { "text": "Termine com os braços estendidos acima da cabeça.", "u": 1 }
+      ],
+      "mistakes": ["Lombar sai do encosto: segure o abdome.", "Descer pouco: leve os halteres até a altura das orelhas."]
+    },
     "targets": [
       { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_ant", "deltoid_lat"] },
       { "muscle": "triceps_brachii", "role": "sinergista" },
@@ -1273,10 +1561,20 @@
   {
     "id": "lateral_raise",
     "name": "Elevação lateral",
+    "aliases": ["lateral raise", "elevação lateral com halteres"],
     "pattern": "isolado",
     "equipment": ["halteres"],
     "status": "consolidado",
     "summary": "Halteres ao lado do corpo, levantar os braços para os lados até a altura dos ombros.",
+    "how": {
+      "setup": ["Em pé, halteres ao lado do corpo, cotovelos levemente dobrados."],
+      "execution": [
+        { "text": "Comece com os braços junto ao corpo.", "u": 0 },
+        { "text": "Levante os braços para os lados.", "u": 0.5 },
+        { "text": "Pare na altura dos ombros e desça devagar.", "u": 1 }
+      ],
+      "mistakes": ["Encolher os ombros: mantenha-os baixos.", "Balançar o tronco: reduza a carga."]
+    },
     "targets": [
       { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_lat"] },
       { "muscle": "trapezius", "role": "sinergista", "parts": ["trapezius_sup"] },
@@ -1372,10 +1670,20 @@
   {
     "id": "incline_y_raise",
     "name": "Elevação em Y no banco inclinado",
+    "aliases": ["y raise", "elevação y"],
     "pattern": "isolado",
     "equipment": ["halteres", "banco"],
     "status": "hipotese",
     "summary": "Peito no banco inclinado, levantar os braços estendidos em Y até a linha do tronco.",
+    "how": {
+      "setup": ["Peito no encosto inclinado.", "Braços pendurados, polegares para cima."],
+      "execution": [
+        { "text": "Comece com os braços pendurados.", "u": 0 },
+        { "text": "Levante os braços estendidos em Y.", "u": 0.5 },
+        { "text": "Pare com os braços na linha do tronco.", "u": 1 }
+      ],
+      "mistakes": ["Encolher os ombros: puxe as escápulas para baixo.", "Carga alta tira a amplitude: use halteres leves."]
+    },
     "targets": [
       { "muscle": "trapezius", "role": "alvo", "parts": ["trapezius_inf"] },
       { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_lat", "deltoid_post"] },
@@ -1412,10 +1720,24 @@
   {
     "id": "preacher_curl",
     "name": "Rosca Scott",
+    "aliases": ["scott", "preacher curl", "rosca no banco scott"],
     "pattern": "isolado",
     "equipment": ["barra", "banco"],
     "status": "consolidado",
     "summary": "Braços apoiados no banco inclinado, descer até quase estender o cotovelo e subir.",
+    "how": {
+      "setup": [
+        "Assento numa altura em que a axila encosta no alto da almofada.",
+        "Parte de trás dos braços inteira na almofada.",
+        "Pegada supinada na largura dos ombros."
+      ],
+      "execution": [
+        { "text": "Desça até o cotovelo quase estender, sem soltar a tensão.", "u": 0 },
+        { "text": "Suba dobrando só o cotovelo.", "u": 0.5 },
+        { "text": "Pare antes do antebraço ficar vertical.", "u": 1 }
+      ],
+      "mistakes": ["Soltar o peso no fundo: desça devagar e pare logo antes de travar.", "Ombro sai da almofada para ajudar: reduza a carga."]
+    },
     "targets": [
       { "muscle": "biceps_brachii", "role": "alvo" },
       { "muscle": "brachialis", "role": "alvo" },
@@ -1432,10 +1754,20 @@
   {
     "id": "barbell_curl",
     "name": "Rosca direta",
+    "aliases": ["rosca direta com barra", "barbell curl", "rosca em pé"],
     "pattern": "isolado",
     "equipment": ["barra"],
     "status": "consolidado",
     "summary": "Em pé, braços ao lado do corpo, subir a barra dobrando os cotovelos.",
+    "how": {
+      "setup": ["Em pé, pegada supinada na largura dos ombros.", "Cotovelos ao lado do tronco."],
+      "execution": [
+        { "text": "Comece com os braços estendidos.", "u": 0 },
+        { "text": "Suba a barra dobrando os cotovelos, braço parado.", "u": 0.5 },
+        { "text": "Pare perto dos ombros e desça devagar.", "u": 1 }
+      ],
+      "mistakes": ["Balançar o tronco: reduza a carga.", "Cotovelos vão à frente no alto: mantenha-os ao lado do corpo."]
+    },
     "targets": [
       { "muscle": "biceps_brachii", "role": "alvo" },
       { "muscle": "brachialis", "role": "alvo" },
@@ -1451,10 +1783,20 @@
   {
     "id": "hammer_curl",
     "name": "Rosca martelo",
+    "aliases": ["hammer curl", "rosca neutra"],
     "pattern": "isolado",
     "equipment": ["halteres"],
     "status": "consolidado",
     "summary": "Pegada neutra (polegar para cima), subir os halteres dobrando os cotovelos.",
+    "how": {
+      "setup": ["Em pé, halteres ao lado do corpo, polegares para a frente."],
+      "execution": [
+        { "text": "Comece com os braços estendidos.", "u": 0 },
+        { "text": "Suba dobrando os cotovelos, pegada neutra.", "u": 0.5 },
+        { "text": "Pare perto dos ombros e desça devagar.", "u": 1 }
+      ],
+      "mistakes": ["Cotovelos vão à frente: deixe-os ao lado do corpo.", "Balanço: reduza a carga."]
+    },
     "targets": [
       { "muscle": "brachialis", "role": "alvo" },
       { "muscle": "brachioradialis", "role": "alvo" },
@@ -1470,10 +1812,20 @@
   {
     "id": "spider_curl",
     "name": "Rosca spider",
+    "aliases": ["spider curl", "rosca aranha"],
     "pattern": "isolado",
     "equipment": ["barra", "banco"],
     "status": "consolidado",
     "summary": "Peito apoiado no banco inclinado, braços pendurados na vertical, subir a barra.",
+    "how": {
+      "setup": ["Banco inclinado; peito no encosto, pés no chão atrás.", "Braços pendurados na vertical, pegada supinada."],
+      "execution": [
+        { "text": "Comece com os cotovelos estendidos.", "u": 0 },
+        { "text": "Suba dobrando os cotovelos, braços na vertical.", "u": 0.5 },
+        { "text": "Aperte no alto e desça devagar.", "u": 1 }
+      ],
+      "mistakes": ["Braços vão para trás na subida: mantenha-os na vertical.", "Peito sai do banco: reduza a carga."]
+    },
     "targets": [
       { "muscle": "biceps_brachii", "role": "alvo" },
       { "muscle": "brachialis", "role": "alvo" }
@@ -1488,10 +1840,20 @@
   {
     "id": "reverse_curl",
     "name": "Rosca inversa",
+    "aliases": ["reverse curl", "rosca pronada"],
     "pattern": "isolado",
     "equipment": ["barra"],
     "status": "consolidado",
     "summary": "Pegada pronada (palmas para baixo), subir a barra dobrando os cotovelos.",
+    "how": {
+      "setup": ["Em pé, pegada pronada (palmas para baixo) na largura dos ombros.", "Punho alinhado com o antebraço."],
+      "execution": [
+        { "text": "Comece com os braços estendidos.", "u": 0 },
+        { "text": "Suba dobrando os cotovelos, punho reto.", "u": 0.5 },
+        { "text": "Pare perto dos ombros e desça devagar.", "u": 1 }
+      ],
+      "mistakes": ["Punho dobra para trás: use menos carga.", "Balanço do tronco: cotovelos parados ao lado do corpo."]
+    },
     "targets": [
       { "muscle": "brachioradialis", "role": "alvo" },
       { "muscle": "brachialis", "role": "alvo" },
@@ -1508,10 +1870,20 @@
   {
     "id": "skull_crusher",
     "name": "Tríceps testa",
+    "aliases": ["skull crusher", "tríceps francês deitado", "testa"],
     "pattern": "isolado",
     "equipment": ["barra", "banco"],
     "status": "consolidado",
     "summary": "Deitado, braços apontando um pouco para trás, descer a barra até a testa dobrando só os cotovelos.",
+    "how": {
+      "setup": ["Deitado no banco, cabeça perto da ponta.", "Braços apontando um pouco para trás da vertical, pegada fechada."],
+      "execution": [
+        { "text": "Desça a barra para trás da cabeça dobrando só os cotovelos.", "u": 0 },
+        { "text": "Estenda os cotovelos sem mexer os braços.", "u": 0.5 },
+        { "text": "Pare com os cotovelos estendidos, barra acima da testa.", "u": 1 }
+      ],
+      "mistakes": ["Braços acompanham a barra: o movimento é só do cotovelo.", "Cotovelos abrem muito: aponte-os para o teto."]
+    },
     "targets": [{ "muscle": "triceps_brachii", "role": "alvo" }],
     "length": {
       "emphasis": "alongado",
@@ -1523,10 +1895,21 @@
   {
     "id": "overhead_dumbbell_extension",
     "name": "Tríceps francês unilateral",
+    "aliases": ["overhead extension", "tríceps francês", "tríceps unilateral acima da cabeça"],
+    "unilateral": true,
     "pattern": "isolado",
     "equipment": ["halteres", "banco"],
     "status": "consolidado",
     "summary": "Sentado, braço acima da cabeça, descer o halter atrás da cabeça e estender o cotovelo.",
+    "how": {
+      "setup": ["Sentado, coluna apoiada se possível.", "Halter numa mão, braço apontando para cima, cotovelo perto da cabeça."],
+      "execution": [
+        { "text": "Desça o halter atrás da cabeça dobrando o cotovelo.", "u": 0 },
+        { "text": "Estenda o cotovelo sem mexer o braço.", "u": 0.5 },
+        { "text": "Pare com o cotovelo estendido.", "u": 1 }
+      ],
+      "mistakes": ["Cotovelo abre para o lado: aponte-o para o teto.", "Lombar arqueia: segure o abdome."]
+    },
     "targets": [{ "muscle": "triceps_brachii", "role": "alvo", "parts": ["triceps_brachii_long", "triceps_brachii_lat", "triceps_brachii_med"] }],
     "length": {
       "emphasis": "alongado",
@@ -1557,10 +1940,20 @@
   {
     "id": "wrist_curl",
     "name": "Flexão de punho",
+    "aliases": ["wrist curl", "rosca punho", "flexão de punho com barra"],
     "pattern": "isolado",
     "equipment": ["barra", "banco"],
     "status": "consolidado",
     "summary": "Antebraços nas coxas, palmas para cima, dobrar o punho subindo a barra e descer até estender.",
+    "how": {
+      "setup": ["Sentado na ponta do banco, antebraços sobre as coxas.", "Punhos logo além dos joelhos, palmas para cima."],
+      "execution": [
+        { "text": "Deixe o punho estender e a barra rolar até os dedos.", "u": 0 },
+        { "text": "Feche a mão e dobre o punho subindo a barra.", "u": 0.5 },
+        { "text": "Pare no alto e desça devagar.", "u": 1 }
+      ],
+      "mistakes": ["Antebraço sai da coxa: só o punho se move.", "Amplitude curta: deixe a barra descer até o punho estender."]
+    },
     "targets": [{ "muscle": "forearm_flexors", "role": "alvo" }],
     "length": {
       "emphasis": "alongado",
@@ -1572,10 +1965,19 @@
   {
     "id": "reverse_wrist_curl",
     "name": "Extensão de punho",
+    "aliases": ["reverse wrist curl", "extensão de punho com barra"],
     "pattern": "isolado",
     "equipment": ["barra", "banco"],
     "status": "consolidado",
     "summary": "Antebraços nas coxas, palmas para baixo, levantar o dorso da mão e descer até o punho fletir.",
+    "how": {
+      "setup": ["Sentado na ponta do banco, antebraços sobre as coxas.", "Punhos logo além dos joelhos, palmas para baixo."],
+      "execution": [
+        { "text": "Deixe o punho fletir com a barra para baixo.", "u": 0 },
+        { "text": "Levante o dorso da mão até o punho estender.", "u": 1 }
+      ],
+      "mistakes": ["Antebraço sai da coxa: só o punho se move.", "Carga alta demais encurta a amplitude: use menos peso."]
+    },
     "targets": [
       { "muscle": "forearm_extensors", "role": "alvo" },
       { "muscle": "brachioradialis", "role": "sinergista" }

@@ -447,7 +447,11 @@ function solveFrame(c: CompiledClip, u: number, ankleOffset: number) {
           else if (tg.kind === 'attach') {
             const a = localOf(sk, tg.segment, tg.point, side);
             target = pointToWorld(pose, a.segment, a.local);
-          } else if (tg.kind === 'hang') target = sub(shoulder, [0, distance(shoulder, gripWorld(pose, side)), 0]);
+          } else if (tg.kind === 'hang') {
+            const len = distance(shoulder, gripWorld(pose, side));
+            const out = Math.min(tg.out ?? 0, len * 0.9);
+            target = add(shoulder, [side === 'r' ? -out : out, -Math.sqrt(len * len - out * out), 0]);
+          }
           else if (tg.kind === 'plumb') target = plumbTarget(c, pose, side, shoulder, distance(shoulder, gripWorld(pose, side)), tg.ahead ?? 0);
           else throw new Error(`Braço não aceita alvo "${tg.kind}" (${c.clip.id})`);
           const forearm = must(pose.world, `forearm_${side}`, 'segmento');
@@ -503,6 +507,8 @@ function resolveEquipment(c: CompiledClip, pose: Pose, grips: Readonly<Record<'r
       return [{ kind: 'swing', pivot: eq.pivot, end: pointToWorld(pose, a.segment, a.local) }];
     }
     case 'dumbbell':
+      // Um halter nas duas mãos: pendurado no prumo, a face de dentro da cabeça de cima apoiada nas palmas.
+      if (eq.hands === 'shared') return [{ kind: 'dumbbell', center: add(lerp(grips.r, grips.l, 0.5), [0, -0.085, 0]), axis: [0, 1, 0], style: eq.style ?? 'round' }];
       return (eq.hands === 'r' ? (['r'] as const) : (['r', 'l'] as const)).map((s) => ({
         kind: 'dumbbell',
         center: grips[s],

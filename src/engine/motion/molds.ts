@@ -183,6 +183,7 @@ export function curlClip(p: CurlParams): Base {
         center: [0, (seatY - 0.08) / 2, 0.02],
         size: [0.06, seatY - 0.08, 0.3],
       },
+      { kind: 'station', id: 'adjustable_bench' },
     ],
     load,
     tempo: p.tempo,
@@ -234,6 +235,13 @@ export function pressClip(p: PressParams): Base {
       : kind === 'dumbbell'
         ? [{ kind: 'dumbbell' }]
         : [{ kind: 'pad', segment: 'hand_r', point: [-0.27, 0.8, 0.03], lever: false, both: true }];
+  // Barra livre sai de um suporte: gaiola em pé, suporte atrás do banco deitado ou inclinado.
+  const rack: Equipment[] = kind !== 'barbell' ? [] : [
+          p.support === 'standing'
+            ? // Em pé a barra sai do gancho na altura da partida (a gaiola põe o gancho na barra mais alta).
+              { kind: 'station', id: 'power_rack', params: { hookY: (p.path[0]?.y ?? 1.4) - 0.04 } }
+            : { kind: 'station', id: 'bench_rack' },
+        ];
   const load: Load = kind === 'machine' ? { kind: 'guided' } : { kind: 'gravity' };
   if (p.support === 'incline' || p.support === 'seated') {
     const recline = p.recline ?? (p.support === 'seated' ? 10 : 45);
@@ -252,6 +260,7 @@ export function pressClip(p: PressParams): Base {
         { kind: 'block', role: 'seat', center: [0, seatY - 0.04, 0.04], size: [0.34, 0.08, 0.36] },
         { kind: 'block', role: 'back', center: back, size: [0.3, 0.86, 0.07], pitch },
         { kind: 'block', role: 'frame', center: [0, (seatY - 0.08) / 2, 0.02], size: [0.06, seatY - 0.08, 0.3] },
+        ...(kind === 'machine' ? [] : [{ kind: 'station', id: 'adjustable_bench' } as const, ...rack]),
       ],
       load,
       tempo: p.tempo,
@@ -266,7 +275,7 @@ export function pressClip(p: PressParams): Base {
       tracks: [],
       reach: [arms],
       balance: { massKg: p.loadKg ?? 40, rangeDeg: [-12, 12] },
-      equipment: bar,
+      equipment: [...bar, ...rack],
       load,
       tempo: p.tempo,
       view: p.view,
@@ -295,18 +304,21 @@ export function pressClip(p: PressParams): Base {
     ],
     equipment: [
       ...bar,
+      // Da cabeça até pouco depois do quadril: as coxas descem para os pés livres da ponta.
       {
         kind: 'block',
         role: 'bench',
-        center: [0, top - 0.04, 0.22],
-        size: [0.29, 0.08, 1.22],
+        center: [0, top - 0.04, 0.06],
+        size: [0.29, 0.08, 1.12],
       },
       {
         kind: 'block',
         role: 'frame',
-        center: [0, (top - 0.08) / 2, 0.22],
-        size: [0.07, top - 0.08, 1.0],
+        center: [0, (top - 0.08) / 2, 0.06],
+        size: [0.07, top - 0.08, 0.9],
       },
+      { kind: 'station', id: 'flat_bench' },
+      ...rack,
     ],
     load,
     tempo: p.tempo,
@@ -441,7 +453,8 @@ export function squatClip(p: SquatParams, ctx: MoldContext): Base {
   return {
     support: 'standing',
     root: { mode: 'plant' },
-    hold: { hip_abd: 6, hip_rot: -6, forearm_pro: 80, ...p.hold },
+    // Base aberta: joelho segue a ponta do pé, aberta uns 15° (a planta acompanha a rotação do quadril).
+    hold: { hip_abd: 10, hip_rot: -15, forearm_pro: 80, ...p.hold },
     tracks: [track('hip_flex', 'hip_flex_r'), track('knee_flex', 'knee_flex_r'), track('ankle_dorsi', 'ankle_dorsi_r'), track('lumbar_flex', 'lumbar_flex')],
     reach: [
       {
@@ -455,7 +468,9 @@ export function squatClip(p: SquatParams, ctx: MoldContext): Base {
         pole: p.pole,
       },
     ],
-    equipment: [p.implement === 'dumbbell' ? { kind: 'dumbbell', hands: 'r' } : { kind: 'barbell', plates: p.plates }],
+    // Goblet: as palmas aparam a cabeça de cima do halter, dedos meio fechados em volta dela.
+    ...(p.implement === 'dumbbell' ? { fingers: { r: 0.4, l: 0.4 } } : {}),
+    equipment: p.implement === 'dumbbell' ? [{ kind: 'dumbbell', hands: 'shared' }] : [{ kind: 'barbell', plates: p.plates }, { kind: 'station', id: 'power_rack' }],
     load: { kind: 'gravity' },
     tempo: p.tempo,
     view: p.view,

@@ -1,7 +1,8 @@
 /**
  * Bancos: a estrutura sob o estofado que o clipe já tem. `flat_bench`: longarina, duas pernas em T com borracha.
  * `adjustable_bench`: assento e encosto com regulagem à vista (escada de dentes, escora do encosto, pino do assento),
- * longarina no chão, rodízios na frente e alça atrás.
+ * longarina no chão, rodízios na frente e alça atrás. `preacher_bench` (Scott): assento numa coluna, almofada inclinada
+ * noutra à frente, apoio da barra acima da ponta alta da almofada.
  */
 import { Group } from 'three';
 import type { MotionFrame } from '@/engine/motion/evaluate';
@@ -112,4 +113,49 @@ export const adjustableBench: StationBuilder = ({ frames, kit }) => {
   for (const s of [-1, 1]) kit.beam(g, [x + s * 0.035, upper[1], upper[2]], [x + s * 0.035, ladderY + 0.035, notch], 0.022);
   kit.rod(g, [x - 0.05, ladderY + 0.035, notch], [x + 0.05, ladderY + 0.035, notch], 0.008, 'chrome');
   return { group: g, floor: [front, rear].map((z) => [x, 0, z] as Vec3) };
+};
+
+export const preacherBench: StationBuilder = ({ frames, kit }) => {
+  const g = new Group();
+  const all = blocks(frames);
+  const seat = all.find((e) => e.role === 'seat');
+  const pad = all.find((e) => e.role === 'bench' && Math.abs(e.pitch) >= 15);
+  if (!seat || !pad) return { group: g, floor: [] };
+  const x = pad.center[0];
+  const [w, h, d] = pad.size;
+  // Chapa sob a almofada, com o suporte no meio; ponta alta (lado da pessoa) leva o apoio da barra.
+  const under = toWorld(pad, [0, -h / 2 - 0.03, 0]);
+  const high = toWorld(pad, [0, h / 2, -d / 2]);
+  const yS = 0.06;
+  const zSeat = seat.center[2];
+  const zBack = zSeat - 0.22;
+  const zFront = under[2] + 0.18;
+  kit.beam(g, [x, yS, zBack], [x, yS, zFront], 0.07);
+  for (const z of [zBack, zFront]) {
+    kit.beam(g, [x - 0.28, 0.03, z], [x + 0.28, 0.03, z], 0.05);
+    foot(kit, g, x - 0.28, z);
+    foot(kit, g, x + 0.28, z);
+  }
+  // Assento: coluna com pino de regulagem.
+  const seatLow = seat.center[1] - seat.size[1] / 2 - 0.012;
+  kit.beam(g, [seat.center[0], seatLow, zSeat], [seat.center[0], yS, zSeat], 0.06);
+  const pinY = (seatLow + yS) / 2;
+  kit.rod(g, [seat.center[0] - 0.03, pinY, zSeat], [seat.center[0] - 0.075, pinY, zSeat], 0.007, 'chrome');
+  const knob = kit.mesh(kit.geo(ball(0.016)), kit.mat('rubber'), g);
+  knob.position.set(seat.center[0] - 0.085, pinY, zSeat);
+  // Almofada: coluna até a chapa, com mão-francesa para a base.
+  kit.beam(g, [x, yS, under[2]], [x, under[1], under[2]], 0.07);
+  kit.beam(g, [x, yS, zFront], [x, (yS + under[1]) / 2, under[2]], 0.045);
+  // Apoio da barra: dois braços da coluna até acima da ponta alta, cada um com um gancho em U por fora da almofada.
+  const restY = high[1] + 0.06;
+  const restZ = high[2] + 0.07;
+  const fork = (sx: number) => {
+    const rx = x + sx * (w / 2 + 0.04);
+    kit.beam(g, [x + sx * 0.05, under[1] - 0.05, under[2]], [rx, restY - 0.03, restZ], 0.035);
+    kit.rod(g, [rx, restY - 0.03, restZ - 0.035], [rx, restY - 0.03, restZ + 0.035], 0.012, 'chrome');
+    for (const dz of [-0.035, 0.035]) kit.rod(g, [rx, restY - 0.03, restZ + dz], [rx, restY + 0.02, restZ + dz], 0.008, 'chrome');
+  };
+  fork(-1);
+  fork(1);
+  return { group: g, floor: [zBack, zFront].map((z) => [x, 0, z] as Vec3) };
 };

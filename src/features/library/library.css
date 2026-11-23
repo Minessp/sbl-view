@@ -531,6 +531,48 @@
   font-weight: 520;
 }
 
+/* Como fazer: três listas curtas; o passo com instante é um botão que leva o corpo até ele. */
+.ex-how__label {
+  margin: var(--s-4) 0 var(--s-2);
+  font-size: var(--fs-2);
+  font-weight: 600;
+  color: var(--c-ink-2);
+}
+
+.ex-how__list {
+  display: grid;
+  gap: var(--s-2);
+  max-width: 62ch;
+  margin: 0;
+  padding-left: 1.2em;
+  font-size: var(--fs-3);
+  line-height: 1.5;
+}
+
+.ex-how__step {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-color: var(--c-edge);
+  text-underline-offset: 0.25em;
+  cursor: pointer;
+  transition: text-decoration-color var(--t-fast) var(--ease);
+}
+
+.ex-how__step:hover {
+  text-decoration-color: var(--c-accent);
+}
+
+@media (pointer: coarse) {
+  .ex-how__step {
+    min-height: 44px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .poster-card__frame {
     transition: none;

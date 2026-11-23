@@ -294,8 +294,18 @@ describe('clipes de movimento', () => {
 
   // Atravessamento (corpo × peças, chão, barra; mãos × coxas e tronco) em 9 amostras por clipe. Por ora só RELATA: a
   // lista é o trabalho das auditorias de execução; cada lote passa a falhar de verdade ao fechar (`COLLISION_ENFORCED`).
-  const COLLISION_ENFORCED = new Set<string>();
-  const COLLISION_EXCEPTIONS: Record<string, string> = {};
+  const COLLISION_ENFORCED = new Set<string>([
+    // Barra e halteres.
+    'squat', 'front_squat', 'romanian_deadlift', 'hip_thrust', 'stiff_leg_deadlift', 'deadlift', 'good_morning', 'preacher_curl',
+    'barbell_curl', 'spider_curl', 'reverse_curl', 'skull_crusher', 'wrist_curl', 'reverse_wrist_curl', 'bench_press',
+    'incline_bench_press', 'close_grip_bench_press', 'overhead_press', 'barbell_row', 'goblet_squat', 'bulgarian_split_squat',
+    'reverse_lunge', 'incline_dumbbell_curl', 'dumbbell_pullover', 'shrug', 'lateral_raise', 'incline_y_raise', 'hammer_curl',
+    'overhead_dumbbell_extension', 'dumbbell_bench_press', 'incline_dumbbell_press', 'seated_dumbbell_press', 'chest_supported_row',
+    'one_arm_dumbbell_row', 'dumbbell_side_bend',
+  ]);
+  const COLLISION_EXCEPTIONS: Record<string, string> = {
+    preacher_curl: 'peito encostado no alto da almofada, como deve; a cápsula do tronco é centrada na coluna e acusa ~12 cm',
+  };
 
   it('atravessamento: nada passa do limite fora dos contatos declarados (relato)', () => {
     expect(() => BodyVolumes.parse(bodyVolumesJson)).not.toThrow();
@@ -327,6 +337,7 @@ describe('clipes de movimento', () => {
     front_squat: 'apoio frontal: a barra sobre os deltoides pede extensão do punho que o clipe não tem',
     cable_pullover: 'braços acima da cabeça: a rotação do ombro que o IK escolhe não deixa a pronação alinhar',
     chin_up: 'no alto da barra a supinação completa ainda deixa o punho desviado',
+    reverse_wrist_curl: 'antebraços em diagonal sobre as coxas: nem a pronação no limite (160°) alinha a palma com a barra',
   };
 
   it('pegada na barra: palma ao longo da barra (supinada ou pronada)', () => {

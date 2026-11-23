@@ -7,7 +7,7 @@ import type { StationId } from '@/data/schema/motion';
 import type { MotionFrame } from '@/engine/motion/evaluate';
 import type { Vec3 } from '@/engine/math/vec';
 import type { GearKit } from '../kit';
-import { adjustableBench, flatBench } from './bench';
+import { adjustableBench, flatBench, preacherBench } from './bench';
 import { benchRack, powerRack } from './rack';
 
 export interface StationContext {
@@ -30,10 +30,11 @@ export const STATIONS: Readonly<Record<StationId, StationBuilder>> = {
   bench_rack: benchRack,
   flat_bench: flatBench,
   adjustable_bench: adjustableBench,
+  preacher_bench: preacherBench,
 };
 
 /** Estações que desenham a estrutura do banco: a peça do clipe fica só com o estofado. */
-export const BENCH_STATIONS: ReadonlySet<StationId> = new Set(['flat_bench', 'adjustable_bench']);
+export const BENCH_STATIONS: ReadonlySet<StationId> = new Set(['flat_bench', 'adjustable_bench', 'preacher_bench']);
 
 export function buildStation(id: StationId, ctx: StationContext, params: Readonly<Record<string, number>> = {}, at?: Vec3, yaw = 0): StationView {
   const v = STATIONS[id](ctx, params);

@@ -58,6 +58,8 @@ export type BodyUniforms = Rig & {
   uGlass: IUniform<number>;
   /** Mão que fecha: direita, esquerda (0 aberta … 1 fechada). Um objeto por instância. */
   uGrip: IUniform<Vector2>;
+  /** Pronação de cada lado (rad, giro em Y da mão no antebraço), repartida ao longo do antebraço. Um objeto por instância. */
+  uTwist: IUniform<Vector2>;
 };
 
 /** Funções de luz compartilhadas (corpo e equipamento). */
@@ -175,10 +177,14 @@ function gripGlsl(): string {
 }
 const GRIP_GLSL = gripGlsl();
 
-const vertex = (joints: number, hands: readonly [number, number]) => /* glsl */ `
+const vertex = (joints: number, h: HandJoints) => /* glsl */ `
   #define JOINTS ${joints}
-  #define HAND_R ${hands[0].toFixed(1)}
-  #define HAND_L ${hands[1].toFixed(1)}
+  #define HAND_R ${h.hand[0].toFixed(1)}
+  #define HAND_L ${h.hand[1].toFixed(1)}
+  #define FORE_R ${h.fore[0]}
+  #define FORE_L ${h.fore[1]}
+  const vec3 WRIST_R = ${v(h.wrist)};
+  const float ELBOW_Y = ${f(h.elbowY)};
   attribute vec4 skinIndex;
   attribute vec4 skinWeight;
   attribute float aSlot;
@@ -196,6 +202,7 @@ const vertex = (joints: number, hands: readonly [number, number]) => /* glsl */ 
   uniform sampler2D uState;
   uniform float uStateW;
   uniform vec2 uGrip;
+  uniform vec2 uTwist;
   varying vec3 vN;
   varying vec3 vView;
   varying vec3 vW;
@@ -205,6 +212,14 @@ const vertex = (joints: number, hands: readonly [number, number]) => /* glsl */ 
   varying vec4 vS1;
   varying float vSlot;
   ${GRIP_GLSL}
+  // Pronação repartida: o termo do antebraço gira em Y pelo punho, de 0 no cotovelo à pronação inteira no punho (a mão
+  // leva a pronação toda; sem isto a pele do punho torcia num ponto só e rasgava).
+  mat4 twist(float y, vec3 w, float a) {
+    float t = a * clamp((ELBOW_Y - y) / (ELBOW_Y - w.y), 0.0, 1.0);
+    float c = cos(t), s = sin(t);
+    vec3 o = w - vec3(c * w.x + s * w.z, w.y, -s * w.x + c * w.z);
+    return mat4(c, 0.0, -s, 0.0, 0.0, 1.0, 0.0, 0.0, s, 0.0, c, 0.0, o, 1.0);
+  }
 
   void main() {
     vec3 pos = position;
@@ -225,6 +240,12 @@ const vertex = (joints: number, hands: readonly [number, number]) => /* glsl */ 
     }
     mat4 M = uJoints[int(skinIndex.x)] * skinWeight.x + uJoints[int(skinIndex.y)] * skinWeight.y
            + uJoints[int(skinIndex.z)] * skinWeight.z + uJoints[int(skinIndex.w)] * skinWeight.w;
+    #if FORE_R >= 0
+    float fr = dot(skinWeight, vec4(equal(skinIndex, vec4(float(FORE_R)))));
+    float fl = dot(skinWeight, vec4(equal(skinIndex, vec4(float(FORE_L)))));
+    if (fr > 0.0 && uTwist.x != 0.0) M += uJoints[FORE_R] * (twist(pos.y, WRIST_R, uTwist.x) - mat4(1.0)) * fr;
+    if (fl > 0.0 && uTwist.y != 0.0) M += uJoints[FORE_L] * (twist(pos.y, WRIST_R * vec3(-1.0, 1.0, 1.0), uTwist.y) - mat4(1.0)) * fl;
+    #endif
     float u = (aSlot + 0.5) / uStateW;
     vS0 = texture2D(uState, vec2(u, 0.25));
     vS1 = texture2D(uState, vec2(u, 0.75));
@@ -464,14 +485,24 @@ const fragment = /* glsl */ `
   }
 `;
 
+export interface HandJoints {
+  /** Índices das juntas `hand_r`, `hand_l`. */
+  readonly hand: readonly [number, number];
+  /** Índices de `forearm_r`, `forearm_l`. */
+  readonly fore: readonly [number, number];
+  /** Centro do punho direito e altura do cotovelo na ligação (o esquerdo é o espelho em X). */
+  readonly wrist: readonly [number, number, number];
+  readonly elbowY: number;
+}
+
 export interface BodyMaterialOptions {
   joints: number;
   muscle: boolean;
   translucent: boolean;
   pick: boolean;
   glass?: boolean;
-  /** Índices das juntas `hand_r` e `hand_l` (−1 = sem mão). */
-  hands: readonly [number, number];
+  /** Juntas da mão e do antebraço (−1 = sem) e o punho e cotovelo na ligação. */
+  hands: HandJoints;
   uniforms: BodyUniforms;
 }
 

@@ -282,6 +282,7 @@ export const ptBRApp = {
     notFound: 'Exercício não encontrado.',
     hypothesisNote: 'Hipótese: a razão para escolher este exercício ainda não foi testada de forma direta.',
     execution: 'Execução',
+    how: { title: 'Como fazer', setup: 'Posição', steps: 'Movimento', mistakes: 'Erros comuns', show: 'Mostrar este instante no corpo' },
     player: {
       figure: (name: string) => `${name}: execução animada no corpo anatômico.`,
       roledesc: 'animação 3D',

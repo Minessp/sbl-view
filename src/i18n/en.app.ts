@@ -284,6 +284,7 @@ export const enApp: AppStrings = {
     notFound: 'Exercise not found.',
     hypothesisNote: 'Hypothesis: the reason for choosing this exercise has not been tested directly yet.',
     execution: 'Execution',
+    how: { title: 'How to do it', setup: 'Setup', steps: 'Movement', mistakes: 'Common mistakes', show: 'Show this moment on the body' },
     player: {
       figure: (name: string) => `${name}: animated execution on the anatomical body.`,
       roledesc: '3D animation',

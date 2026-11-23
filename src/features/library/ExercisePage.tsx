@@ -10,6 +10,7 @@ import { EmphasisMark } from './EmphasisMark';
 import { compiledClip } from './motion';
 import { LengthChart, Player } from './player/Player';
 import { usePlayer } from './player/store';
+import { timeAtU } from '@/engine/motion/keys';
 import '@/features/atlas/explorer/explorer.css';
 import './library.css';
 import '@/ui/target-list.css';
@@ -114,6 +115,50 @@ export default function ExercisePage({ id }: { id: string }) {
       <div className="ex-plate">
         <div className="sheet ex-plate__inner">
           <p className="ex-plate__lead prose">{e.summary}</p>
+
+          {e.how && (
+            <section className="section ex-how" aria-labelledby="ex-how">
+              <header className="section__head">
+                <h2 id="ex-how">{E.how.title}</h2>
+              </header>
+              <h3 className="ex-how__label">{E.how.setup}</h3>
+              <ul className="ex-how__list">
+                {e.how.setup.map((x) => (
+                  <li key={x}>{x}</li>
+                ))}
+              </ul>
+              <h3 className="ex-how__label">{E.how.steps}</h3>
+              <ol className="ex-how__list ex-how__steps">
+                {e.how.execution.map((s) => (
+                  <li key={s.text}>
+                    {clip && s.u !== undefined ? (
+                      // Passo com instante: leva o corpo até ele, parado.
+                      <button
+                        type="button"
+                        className="ex-how__step"
+                        title={E.how.show}
+                        onClick={() => {
+                          const st = usePlayer.getState();
+                          st.setPlaying(false);
+                          st.setTime(timeAtU(clip.clip.tempo, s.u ?? 0));
+                        }}
+                      >
+                        {s.text}
+                      </button>
+                    ) : (
+                      s.text
+                    )}
+                  </li>
+                ))}
+              </ol>
+              <h3 className="ex-how__label">{E.how.mistakes}</h3>
+              <ul className="ex-how__list">
+                {e.how.mistakes.map((x) => (
+                  <li key={x}>{x}</li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           <section className="section" aria-labelledby="ex-targets">
             <header className="section__head">

@@ -54,7 +54,7 @@ export type RootSpec = z.infer<typeof RootSpec>;
  * tornozelo).
  * - path: caminho no mundo por quadros-chave (lado direito).
  * - attach: ponto de outro segmento (barra nas costas, barra no quadril).
- * - hang: braço solto na vertical, abaixo do ombro.
+ * - hang: braço solto na vertical, abaixo do ombro; `out` (m) afasta a mão para fora (halter que passaria pela coxa).
  * - plumb: barra no prumo do meio do pé (+ `ahead`, m), rente às pernas: a pegada desce na vertical sobre o meio do pé
  *   e, onde a coxa ou a canela estão mais à frente, encosta nelas por fora (terra, terra romeno, stiff).
  * - ball: perna com a cabeça dos metatarsos presa num ponto (ou num caminho: plataforma do leg press) e o pé com inclinação
@@ -66,7 +66,7 @@ export const ReachTarget = z.discriminatedUnion('kind', [
     keys: z.array(z.object({ u: z.number().min(0).max(1), p: Vec3 })).min(1),
   }),
   z.object({ kind: z.literal('attach'), segment: z.string(), point: Vec3 }),
-  z.object({ kind: z.literal('hang') }),
+  z.object({ kind: z.literal('hang'), out: z.number().min(0).max(0.3).optional() }),
   z.object({ kind: z.literal('plumb'), ahead: z.number().optional() }),
   z.object({ kind: z.literal('ball'), point: Place, pitch: Angle.optional(), yaw: Angle.optional() }),
 ]);
@@ -92,7 +92,7 @@ export const Balance = z.object({
 });
 
 /** Estação: estrutura desenhada a partir das peças do próprio clipe (`scene/motion/gear/stations/`). */
-export const StationId = z.enum(['power_rack', 'bench_rack', 'flat_bench', 'adjustable_bench']);
+export const StationId = z.enum(['power_rack', 'bench_rack', 'flat_bench', 'adjustable_bench', 'preacher_bench']);
 export type StationId = z.infer<typeof StationId>;
 
 export const Equipment = z.discriminatedUnion('kind', [
@@ -105,8 +105,11 @@ export const Equipment = z.discriminatedUnion('kind', [
     plates: z.number().int().min(0).max(4),
     bar: z.enum(['olympic', 'curl', 'fixed']).optional(),
   }),
-  /** Halter em cada mão, ou só na direita (`hands: 'r'`); cabeça redonda (padrão) ou sextavada. */
-  z.object({ kind: z.literal('dumbbell'), hands: z.enum(['both', 'r']).optional(), style: z.enum(['round', 'hex']).optional() }),
+  /**
+   * Halter em cada mão, só na direita (`hands: 'r'`) ou um só nas duas (`shared`: em pé, as palmas sob a cabeça de cima,
+   * como no goblet e no pullover); cabeça redonda (padrão) ou sextavada.
+   */
+  z.object({ kind: z.literal('dumbbell'), hands: z.enum(['both', 'r', 'shared']).optional(), style: z.enum(['round', 'hex']).optional() }),
   /**
    * Cabo da pegada (média das mãos) até a roldana. `single` = pegador de uma mão (só a direita). `mirror` = um cabo por
    * mão, cada um na sua roldana (a esquerda espelhada): crucifixo, cross-over.

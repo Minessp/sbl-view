@@ -20,8 +20,9 @@ import {
 } from 'three';
 import { skinMatrices, skinPoint, type SkinMatrixOptions } from '@/engine/kinematics/skinning';
 import type { EngineSkeleton, Pose } from '@/engine/kinematics/types';
+import { quatConj, quatMul } from '@/engine/math/vec';
 import type { Palette, PaletteKey } from '../palette';
-import { createBodyMaterial, STATE_ROWS, type BodyUniforms } from './material';
+import { createBodyMaterial, STATE_ROWS, type BodyUniforms, type HandJoints } from './material';
 import { rig } from './rig';
 import { detailFor, screenHeightPx, type Detail } from '../anatomy/lod';
 import { LAYERS, mergeBoxes, type Box, type BodyLayer, type BodyModel } from './model';
@@ -66,6 +67,8 @@ export class BodyInstance {
   readonly glass = { value: 0 };
   /** Mão que fecha: direita (x), esquerda (y). */
   readonly grip = { value: new Vector2(0, 0) };
+  /** Pronação repartida no antebraço: direita (x), esquerda (y), rad. */
+  readonly twist = { value: new Vector2(0, 0) };
   readonly layers: Readonly<Record<BodyLayer, BodyUniforms>>;
   private readonly state: Float32Array;
   private readonly texture: DataTexture;
@@ -126,8 +129,16 @@ export class BodyInstance {
       uGrow: this.grow,
       uGlass: this.glass,
       uGrip: this.grip,
+      uTwist: this.twist,
     });
-    const hands = [model.jointIds.indexOf('hand_r'), model.jointIds.indexOf('hand_l')] as const;
+    const at = (id: string) => model.jointIds.indexOf(id);
+    const wrist = this.bind.get('hand_r') ?? [0, 0, 0];
+    const hands: HandJoints = {
+      hand: [at('hand_r'), at('hand_l')],
+      fore: [at('forearm_r'), at('forearm_l')],
+      wrist: [wrist[0], wrist[1], wrist[2]],
+      elbowY: this.bind.get('forearm_r')?.[1] ?? wrist[1] + 0.26,
+    };
     this.layers = Object.fromEntries(LAYERS.map((l) => [l, mk(l)])) as Record<BodyLayer, BodyUniforms>;
     const mat = (l: BodyLayer, pick: boolean) =>
       createBodyMaterial({ joints: model.jointIds.length, muscle: l === 'deep' || l === 'superficial', translucent: l === 'skin', pick, hands, uniforms: this.layers[l] });
@@ -205,6 +216,14 @@ export class BodyInstance {
   setPose(sk: EngineSkeleton, pose: Pose, opts: Omit<SkinMatrixOptions, 'bind'> = {}) {
     const M = skinMatrices(sk, pose, this.model.jointIds, { ...opts, bind: this.bind });
     this.matrices = M;
+    // Pronação = giro em Y da mão no frame do antebraço (troca-giro em torno de Y; na ligação os frames são o mundo).
+    for (const [k, s] of [['x', 'r'], ['y', 'l']] as const) {
+      const f = pose.world.get(`forearm_${s}`)?.rotation;
+      const h = pose.world.get(`hand_${s}`)?.rotation;
+      if (!f || !h) continue;
+      const q = quatMul(quatConj(f), h);
+      this.twist.value[k] = 2 * Math.atan2(Math.sign(q[3] || 1) * q[1], Math.abs(q[3]));
+    }
     this.joints.forEach((m, j) => {
       const o = j * 12;
       const g = (k: number) => M[o + k] ?? 0;

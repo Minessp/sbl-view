@@ -187,8 +187,8 @@
           "segment": "pelvis",
           "point": [
             -0.22,
-            0.88,
-            0.17
+            0.97,
+            0.15
           ]
         },
         "pole": [
@@ -1371,7 +1371,7 @@
       "hold": {
         "hip_abd": 12,
         "hip_rot": -10,
-        "forearm_pro": 70
+        "forearm_pro": 20
       },
       "tempo": {
         "eccentric": 2.2,
@@ -1954,7 +1954,8 @@
         "limb": "arm",
         "side": "both",
         "target": {
-          "kind": "hang"
+          "kind": "hang",
+          "out": 0.05
         },
         "pole": [
           -0.3,
@@ -2107,7 +2108,8 @@
         "limb": "arm",
         "side": "both",
         "target": {
-          "kind": "hang"
+          "kind": "hang",
+          "out": 0.05
         },
         "pole": [
           -0.3,
@@ -2511,7 +2513,7 @@
         "keys": [
           {
             "u": 0,
-            "deg": 12
+            "deg": 16
           },
           {
             "u": 1,
@@ -2524,7 +2526,7 @@
         "keys": [
           {
             "u": 0,
-            "deg": -10
+            "deg": -16
           },
           {
             "u": 1,
@@ -2581,9 +2583,9 @@
       "note": "Pose e caminho autorais, conferidos no modelo; não é captura de movimento."
     },
     "grip": [
-      -0.2858,
-      0.7736,
-      0.0845
+      -0.283,
+      0.7929,
+      0.0745
     ]
   },
   {
@@ -2669,6 +2671,10 @@
       {
         "kind": "barbell",
         "plates": 1
+      },
+      {
+        "kind": "station",
+        "id": "power_rack"
       }
     ],
     "load": {
@@ -4293,9 +4299,11 @@
     "hold": {
       "hip_abd": 6,
       "forearm_pro": 80,
-      "shoulder_abd_l": 40,
-      "elbow_flex_l": 100,
-      "shoulder_rot_l": -20
+      "shoulder_abd_l": 6,
+      "elbow_flex_l": 8,
+      "shoulder_rot_l": 0,
+      "shoulder_abd_r": 8,
+      "elbow_flex_r": 5
     },
     "tracks": [
       {
@@ -4325,20 +4333,7 @@
         ]
       }
     ],
-    "reach": [
-      {
-        "limb": "arm",
-        "side": "r",
-        "target": {
-          "kind": "hang"
-        },
-        "pole": [
-          -0.3,
-          0,
-          -1
-        ]
-      }
-    ],
+    "reach": [],
     "equipment": [
       {
         "kind": "dumbbell",
@@ -5136,7 +5131,7 @@
       ],
       "at": [
         0,
-        0.89,
+        0.99,
         0.12
       ],
       "pitch": 50
@@ -5156,9 +5151,9 @@
           "point": [
             -0.13,
             0.012,
-            -0.44
+            -0.38
           ],
-          "pitch": 25
+          "pitch": 20
         },
         "pole": [
           0,
@@ -5176,7 +5171,7 @@
               "u": 0,
               "p": [
                 -0.22,
-                0.52,
+                0.62,
                 0.28
               ]
             },
@@ -5184,7 +5179,7 @@
               "u": 1,
               "p": [
                 -0.24,
-                0.82,
+                0.9199999999999999,
                 0.02
               ]
             }
@@ -5206,7 +5201,7 @@
         "role": "bench",
         "center": [
           0,
-          0.79,
+          0.89,
           0.2
         ],
         "size": [
@@ -5221,12 +5216,12 @@
         "role": "frame",
         "center": [
           0,
-          0.32,
+          0.37,
           0
         ],
         "size": [
           0.07,
-          0.64,
+          0.74,
           0.5
         ]
       }
@@ -5746,6 +5741,10 @@
           0.4,
           1.25
         ]
+      },
+      {
+        "kind": "station",
+        "id": "flat_bench"
       }
     ],
     "load": {
@@ -5881,47 +5880,7 @@
       "forearm_pro": 80,
       "neck_flex": 0
     },
-    "tracks": [
-      {
-        "dof": "shoulder_flex",
-        "keys": [
-          {
-            "u": 0,
-            "deg": 160
-          },
-          {
-            "u": 1,
-            "deg": 85
-          }
-        ]
-      },
-      {
-        "dof": "clav_elev",
-        "keys": [
-          {
-            "u": 0,
-            "deg": 12
-          },
-          {
-            "u": 1,
-            "deg": 0
-          }
-        ]
-      },
-      {
-        "dof": "scap_uprot",
-        "keys": [
-          {
-            "u": 0,
-            "deg": 20
-          },
-          {
-            "u": 1,
-            "deg": 0
-          }
-        ]
-      }
-    ],
+    "tracks": [],
     "reach": [
       {
         "limb": "leg",
@@ -5939,12 +5898,50 @@
           1,
           0.4
         ]
+      },
+      {
+        "limb": "arm",
+        "side": "both",
+        "target": {
+          "kind": "path",
+          "keys": [
+            {
+              "u": 0,
+              "p": [
+                -0.045,
+                0.6,
+                -0.64
+              ]
+            },
+            {
+              "u": 0.5,
+              "p": [
+                -0.045,
+                0.92,
+                -0.55
+              ]
+            },
+            {
+              "u": 1,
+              "p": [
+                -0.045,
+                1.1,
+                -0.24
+              ]
+            }
+          ]
+        },
+        "pole": [
+          -1,
+          0.2,
+          0
+        ]
       }
     ],
     "equipment": [
       {
         "kind": "dumbbell",
-        "hands": "r"
+        "hands": "shared"
       },
       {
         "kind": "block",
@@ -5952,12 +5949,12 @@
         "center": [
           0,
           0.4,
-          0.22
+          0.06
         ],
         "size": [
           0.29,
           0.08,
-          1.22
+          1.12
         ]
       },
       {
@@ -5966,13 +5963,17 @@
         "center": [
           0,
           0.18,
-          0.22
+          0.06
         ],
         "size": [
           0.07,
           0.36,
-          1
+          0.9
         ]
+      },
+      {
+        "kind": "station",
+        "id": "flat_bench"
       }
     ],
     "load": {
@@ -6217,6 +6218,10 @@
           0.39999999999999997,
           0.3
         ]
+      },
+      {
+        "kind": "station",
+        "id": "adjustable_bench"
       }
     ],
     "load": {
@@ -6880,7 +6885,7 @@
       ],
       "at": [
         0,
-        0.89,
+        0.99,
         0.12
       ],
       "pitch": 50
@@ -6954,9 +6959,9 @@
           "point": [
             -0.13,
             0.012,
-            -0.44
+            -0.38
           ],
-          "pitch": 25
+          "pitch": 20
         },
         "pole": [
           0,
@@ -6974,7 +6979,7 @@
         "role": "bench",
         "center": [
           0,
-          0.79,
+          0.89,
           0.2
         ],
         "size": [
@@ -6989,12 +6994,12 @@
         "role": "frame",
         "center": [
           0,
-          0.32,
+          0.37,
           0
         ],
         "size": [
           0.07,
-          0.64,
+          0.74,
           0.5
         ]
       }
@@ -7073,11 +7078,11 @@
       "lean": 15,
       "elbow": [
         12,
-        130
+        120
       ],
       "arm": {
         "flex": 45,
-        "abd": 10
+        "abd": 4
       },
       "pronation": 10,
       "implement": {
@@ -7089,15 +7094,19 @@
           "role": "bench",
           "center": [
             0,
-            1.05,
-            0.22
+            0.975,
+            0.264
           ],
           "size": [
             0.5,
             0.05,
             0.3
           ],
-          "pitch": 45
+          "pitch": 48
+        },
+        {
+          "kind": "station",
+          "id": "preacher_bench"
         }
       ],
       "tempo": {
@@ -7215,12 +7224,12 @@
           "role": "bench",
           "center": [
             0,
-            1.06,
-            0.34
+            1.11,
+            0.39
           ],
           "size": [
             0.32,
-            0.8,
+            0.66,
             0.06
           ],
           "pitch": 45
@@ -7255,7 +7264,7 @@
         125
       ],
       "arm": {
-        "flex": 0,
+        "flex": 6,
         "abd": 6
       },
       "pronation": 155,
@@ -7300,8 +7309,8 @@
       "pitch": -90
     },
     "hold": {
-      "shoulder_flex": 108,
-      "shoulder_abd": 6,
+      "shoulder_flex": 126,
+      "shoulder_abd": 0,
       "forearm_pro": 100,
       "neck_flex": 0
     },
@@ -7311,7 +7320,7 @@
         "keys": [
           {
             "u": 0,
-            "deg": 125
+            "deg": 120
           },
           {
             "u": 1,
@@ -7350,12 +7359,12 @@
         "center": [
           0,
           0.4,
-          0.22
+          0.06
         ],
         "size": [
           0.29,
           0.08,
-          1.22
+          1.12
         ]
       },
       {
@@ -7364,13 +7373,17 @@
         "center": [
           0,
           0.18,
-          0.22
+          0.06
         ],
         "size": [
           0.07,
           0.36,
-          1
+          0.9
         ]
+      },
+      {
+        "kind": "station",
+        "id": "flat_bench"
       }
     ],
     "load": {
@@ -7497,15 +7510,15 @@
         0.5,
         0
       ],
-      "pitch": 25
+      "pitch": 40
     },
     "hold": {
-      "hip_flex": 105,
-      "shoulder_flex": 30,
-      "shoulder_abd": 6,
-      "elbow_flex": 95,
+      "hip_flex": 120,
+      "shoulder_flex": 40,
+      "shoulder_abd": -22,
+      "elbow_flex": 100,
       "forearm_pro": 0,
-      "lumbar_flex": 6
+      "lumbar_flex": 30
     },
     "tracks": [
       {
@@ -7552,13 +7565,17 @@
         "center": [
           0,
           0.44,
-          0
+          -0.35
         ],
         "size": [
           0.3,
           0.08,
           1
         ]
+      },
+      {
+        "kind": "station",
+        "id": "flat_bench"
       }
     ],
     "load": {
@@ -7598,15 +7615,15 @@
         0.5,
         0
       ],
-      "pitch": 25
+      "pitch": 40
     },
     "hold": {
-      "hip_flex": 105,
-      "shoulder_flex": 30,
-      "shoulder_abd": 6,
-      "elbow_flex": 95,
+      "hip_flex": 120,
+      "shoulder_flex": 40,
+      "shoulder_abd": -22,
+      "elbow_flex": 100,
       "forearm_pro": 160,
-      "lumbar_flex": 6
+      "lumbar_flex": 30
     },
     "tracks": [
       {
@@ -7653,13 +7670,17 @@
         "center": [
           0,
           0.44,
-          0
+          -0.35
         ],
         "size": [
           0.3,
           0.08,
           1
         ]
+      },
+      {
+        "kind": "station",
+        "id": "flat_bench"
       }
     ],
     "load": {
