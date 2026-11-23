@@ -81,14 +81,15 @@ function applyLook(body: BodyInstance, model: BodyModel) {
   body.fill('hidden', 0);
   body.layer('skin', { visible: st.skin, alpha: SKIN_ALPHA });
   for (const l of ['superficial', 'deep', 'bone'] as const) body.layer(l, { showAbove: -99, visible: true });
-  // Calor: músculo em repouso em grafite quente (o `bg-3` azulado virava piche), sem pele; o calor acende por cima.
-  const muscle = st.heat ? 'gear-pad' : 'body-muscle';
-  body.color('superficial', muscle);
-  body.color('deep', muscle);
+  // Calor: músculo na cor normal, sem pele; o volume acende por cima (calor + brilho do destaque).
   body.fill('heat', 0);
   if (st.heat) {
     body.layer('skin', { visible: false, alpha: SKIN_ALPHA });
-    for (const [id, v] of Object.entries(st.heat)) body.fill('heat', v, model.byMuscle.get(id) ?? []);
+    for (const [id, v] of Object.entries(st.heat)) {
+      const slots = model.byMuscle.get(id) ?? [];
+      body.fill('heat', v, slots);
+      body.fill('highlight', v, slots);
+    }
   } else if (st.xray) {
     // Raio X como dissecação: osso inteiro e só os alvos; o resto some (vulto por transparência pontilhava).
     const keep = new Set(slotsOf(model, st.isolate ? [st.isolate] : [...primary, ...st.targets.synergist]));

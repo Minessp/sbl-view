@@ -32,7 +32,7 @@
   flex-direction: column;
   max-height: min(70svh, 620px);
   border: var(--lw-hair) solid var(--c-edge);
-  border-radius: var(--r-2);
+  border-radius: 16px;
   background: var(--c-scrim);
   backdrop-filter: blur(18px) saturate(1.2);
   box-shadow: var(--shadow-pop);
