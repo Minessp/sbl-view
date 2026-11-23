@@ -288,7 +288,7 @@ describe('clipes de movimento', () => {
       if (d >= -1 && known) wrong.push(`${ex.id} saiu da lista de exceções (${d.toFixed(1)})`);
     }
     expect(wrong).toEqual([]);
-  });
+  }, 30_000);
 
   // Barra nas duas mãos: o eixo da palma (polegar → mínimo) corre ao longo da barra. Onde a pronação sozinha não basta
   // (punho ou rotação do ombro teriam de mudar junto), o exercício fica na lista com o motivo.

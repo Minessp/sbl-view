@@ -6,40 +6,12 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--s-2);
-  padding: var(--s-2) 0;
+  padding: var(--s-2) var(--s-4);
 }
 
 .compare-bar__views {
   display: flex;
   gap: 4px;
-}
-
-.compare-slot__cap {
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  row-gap: 0;
-  white-space: normal;
-}
-
-.compare-slot__cap .view-slot__name {
-  flex: 1 1 8ch;
-  min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.compare-slot__actions {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-@media (max-width: 699px) {
-  .lab--compare .lab__views[data-count='2'] .compare-slot__read dd,
-  .lab--compare .lab__views[data-count='3'] .compare-slot__read dd {
-    font-size: var(--fs-2);
-  }
 }
 
 .compare-act {
@@ -59,46 +31,6 @@
 .compare-act:hover {
   color: var(--c-ink);
   background: var(--c-hover);
-}
-
-.lab--compare .view-slot {
-  grid-template-rows: auto auto auto auto;
-  align-content: start;
-}
-
-.lab--compare .view-slot__stage {
-  height: 30svh;
-  min-height: 200px;
-}
-
-.compare-slot__read {
-  display: flex;
-  flex-wrap: wrap;
-  column-gap: var(--s-4);
-  row-gap: 0;
-  margin: 0;
-  padding: 4px 2px 0;
-}
-
-.compare-slot__read div {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-}
-
-.compare-slot__read dt {
-  font-size: var(--fs-1);
-  font-stretch: var(--wd-cond);
-  color: var(--c-ink-2);
-}
-
-.compare-slot__read dd {
-  margin: 0;
-  font-size: var(--fs-3);
-  font-weight: 420;
-  font-stretch: var(--wd-max);
-  font-variant-numeric: tabular-nums;
-  color: var(--c-accent);
 }
 
 .compare-vars {
@@ -142,12 +74,6 @@
   color: var(--c-ink-2);
 }
 
-@media (min-width: 1000px) {
-  .lab--compare .view-slot__stage {
-    height: min(46svh, calc(100svh - var(--header-h) - var(--scrub-h) - 260px));
-  }
-}
-
 @media (pointer: coarse) {
   .compare-vars .chip--small {
     min-height: 44px;
@@ -157,4 +83,221 @@
 /* Legenda da cor sob as vistas. */
 .compare-legend {
   margin-top: var(--s-2);
+}
+
+/* ---------- Raias: palco pleno, uma por exercício, separadas por um fio de luz ---------- */
+.compare-lanes {
+  display: grid;
+  grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr));
+  height: max(440px, calc(100svh - var(--header-h) - var(--scrub-h) - 56px));
+}
+
+.compare-lanes[data-count='2'] {
+  --n: 2;
+}
+
+.compare-lanes[data-count='3'] {
+  --n: 3;
+}
+
+.lane {
+  position: relative;
+  min-width: 0;
+  margin: 0;
+}
+
+.lane + .lane::before {
+  content: '';
+  position: absolute;
+  inset-block: 6%;
+  left: 0;
+  width: 1px;
+  background: linear-gradient(transparent, color-mix(in oklch, var(--c-glow) 60%, transparent) 30%, color-mix(in oklch, var(--c-glow) 60%, transparent) 70%, transparent);
+  pointer-events: none;
+}
+
+/* Sem moldura: só a luz de cima; o fundo é o da página (as raias não viram caixas). */
+:root .lane__stage.viewport {
+  position: absolute;
+  inset: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: radial-gradient(ellipse 70% 55% at 50% 8%, color-mix(in oklch, var(--c-light-key) 9%, transparent), transparent 70%);
+}
+
+/* Legenda e leituras por cima do canvas (que fica na frente do conteúdo). */
+.lane__cap {
+  position: absolute;
+  z-index: var(--z-over-stage);
+  top: var(--s-3);
+  left: var(--s-4);
+  right: var(--s-3);
+  display: grid;
+  justify-items: start;
+  gap: var(--s-2);
+  /* O equipamento pode passar atrás do texto: halo na cor do fundo. */
+  text-shadow: 0 0 2px var(--c-bg), 0 0 10px var(--c-bg);
+}
+
+.lane__row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  width: 100%;
+}
+
+.lane__name {
+  flex: 1 1 8ch;
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--fs-3);
+  font-weight: 460;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.lane__actions {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.lane__read {
+  display: flex;
+  column-gap: var(--s-5);
+  margin: 0;
+}
+
+.lane__read div {
+  display: grid;
+}
+
+.lane__read dt {
+  font-size: var(--fs-1);
+  font-stretch: var(--wd-cond);
+  color: var(--c-ink-2);
+}
+
+.lane__read dd {
+  margin: 0;
+  font-size: var(--fs-6);
+  font-weight: 300;
+  font-stretch: var(--wd-max);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--c-accent);
+}
+
+.compare-body {
+  display: grid;
+  padding: 0 var(--s-4);
+}
+
+/* Desktop: sem as duas colunas do agachamento; raias na largura toda e leitura numa coluna. */
+@media (min-width: 1000px) {
+  .lab.lab--compare {
+    display: block;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .lab--compare .lab__head {
+    padding-left: var(--s-6);
+    padding-right: var(--s-6);
+  }
+
+  .lab--compare .compare-bar,
+  .compare-body {
+    padding-left: var(--s-6);
+    padding-right: var(--s-6);
+  }
+
+  .compare-body {
+    max-width: 1200px;
+  }
+}
+
+/* Celular: uma raia por tela, deslize para o lado. */
+@media (max-width: 699px) {
+  .compare-lanes {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 100%;
+    height: max(420px, 70svh);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+
+  .lane {
+    scroll-snap-align: center;
+  }
+
+  .lane__read dd {
+    font-size: var(--fs-5);
+  }
+}
+
+/* Chips sobre o corpo: fundo de vidro (translúcido, o osso claro apagava o texto). */
+.lane__cap .chip {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.lane__cap .chip[aria-pressed='true'] {
+  background: linear-gradient(var(--c-accent-soft), var(--c-accent-soft)), var(--glass);
+}
+
+/* Gráficos: painel de vidro recolhível, como a telemetria do exercício. */
+.compare-panel {
+  margin-top: var(--s-5);
+  padding: 0 var(--s-4) var(--s-2);
+  border-radius: var(--r-2);
+  background: var(--glass);
+  box-shadow: var(--glass-edge);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+.compare-panel__head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-height: 48px;
+  font-size: var(--fs-2);
+  font-weight: 520;
+  font-stretch: var(--wd-cond);
+  color: var(--c-ink-2);
+  cursor: pointer;
+  list-style: none;
+}
+
+.compare-panel__head::-webkit-details-marker {
+  display: none;
+}
+
+.compare-panel__head::after {
+  content: '';
+  width: 7px;
+  height: 7px;
+  margin-left: auto;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  rotate: 45deg;
+  transition: rotate var(--t-fast) var(--ease);
+}
+
+.compare-panel[open] > .compare-panel__head::after {
+  rotate: -135deg;
+}
+
+.compare-panel__head:hover {
+  color: var(--c-ink);
+}
+
+/* O SVG escala com a largura: no painel largo o texto do eixo ficava enorme. */
+.compare-panel .chart {
+  max-width: 640px;
 }

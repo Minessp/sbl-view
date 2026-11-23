@@ -905,6 +905,7 @@ export const enApp: AppStrings = {
     scrubValue: (pct: number) => `${pct}% of the way from lengthened to shortened`,
     noDof: 'None of this muscle’s modeled actions change in this exercise.',
     readLength: 'Length',
+    panel: 'Rep charts',
     readLoad: 'Load',
     sections: {
       length: 'Target length',

@@ -142,25 +142,48 @@ function VariationControls({ slot }: { slot: Slot }) {
   );
 }
 
-function ViewSlot({ slot, index, analysis, u }: { slot: Slot; index: number; analysis: Analysis | null; u: number }) {
-  const setSlot = useCompareSlots((s) => s.setSlot);
-  const duplicate = useCompare((s) => s.duplicate);
-  const remove = useCompare((s) => s.remove);
-  const count = useCompare((s) => s.specs.length);
-  const ref = useRef<HTMLDivElement>(null);
-  const name = specLabel(slot);
-  useEffect(() => {
-    setSlot(slot.key, ref.current);
-    return () => setSlot(slot.key, null);
-  }, [slot.key, setSlot]);
+function Readout({ analysis, u }: { analysis: Analysis | null; u: number }) {
   const len = analysis ? valueAt(analysis.u, analysis.length, u) : null;
   const load = analysis?.dof ? valueAt(analysis.u, analysis.profile, u) : null;
   return (
-    <figure className="view-slot compare-slot">
-      <figcaption className="view-slot__cap compare-slot__cap">
-        <PatternKey i={index} />
-        <span className="view-slot__name">{exerciseById(slot.exercise)?.name ?? slot.exercise}</span>
-        <span className="compare-slot__actions">
+    <dl className="lane__read" aria-live="off">
+      <div>
+        <dt>{C.readLength}</dt>
+        <dd>{len === null ? '–' : `${len >= 0 ? '+' : ''}${fmt.n0(len)}%`}</dd>
+      </div>
+      <div>
+        <dt>{C.readLoad}</dt>
+        <dd>{load === null ? '–' : fmt.n1(load)}</dd>
+      </div>
+    </dl>
+  );
+}
+
+/** Recorte onde o palco desenha a raia. */
+function useLaneSlot(key: string) {
+  const setSlot = useCompareSlots((s) => s.setSlot);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    setSlot(key, ref.current);
+    return () => setSlot(key, null);
+  }, [key, setSlot]);
+  return ref;
+}
+
+function Lane({ slot, index, analysis, u }: { slot: Slot; index: number; analysis: Analysis | null; u: number }) {
+  const duplicate = useCompare((s) => s.duplicate);
+  const remove = useCompare((s) => s.remove);
+  const count = useCompare((s) => s.specs.length);
+  const ref = useLaneSlot(slot.key);
+  const name = specLabel(slot);
+  return (
+    <figure className="lane">
+      <div ref={ref} className="lane__stage viewport" role="img" aria-label={C.viewFigure(name)} />
+      <figcaption className="lane__cap">
+        <span className="lane__row">
+          <PatternKey i={index} />
+          <span className="lane__name">{exerciseById(slot.exercise)?.name ?? slot.exercise}</span>
+          <span className="lane__actions">
           {variationsFor(slot.exercise).length > 0 && count < MAX_EXERCISES && (
             <button type="button" className="compare-act" aria-label={C.duplicateLabel(name)} onClick={() => duplicate(slot.key)}>
               {C.duplicate}
@@ -171,21 +194,24 @@ function ViewSlot({ slot, index, analysis, u }: { slot: Slot; index: number; ana
               {C.remove}
             </button>
           )}
+          </span>
         </span>
+        <Readout analysis={analysis} u={u} />
+        <VariationControls slot={slot} />
       </figcaption>
-      <div ref={ref} className="view-slot__stage viewport" role="img" aria-label={C.viewFigure(name)} />
-      <dl className="compare-slot__read" aria-live="off">
-        <div>
-          <dt>{C.readLength}</dt>
-          <dd>{len === null ? '–' : `${len >= 0 ? '+' : ''}${fmt.n0(len)}%`}</dd>
-        </div>
-        <div>
-          <dt>{C.readLoad}</dt>
-          <dd>{load === null ? '–' : fmt.n1(load)}</dd>
-        </div>
-      </dl>
-      <VariationControls slot={slot} />
     </figure>
+  );
+}
+
+type Item = { slot: Slot; a: Analysis | null; label: string };
+
+function Lanes({ items, u }: { items: readonly Item[]; u: number }) {
+  return (
+    <div className="compare-lanes" data-count={items.length}>
+      {items.map(({ slot, a }, i) => (
+        <Lane key={slot.key} slot={slot} index={i} analysis={a} u={u} />
+      ))}
+    </div>
   );
 }
 
@@ -283,7 +309,7 @@ function describe(title: string, rows: { label: string; v: readonly number[] }[]
   return `${title}: ${rows.map((r) => `${t.sr.goes(r.label, fmt.n0(r.v[0] ?? 0), fmt.n0(r.v[r.v.length - 1] ?? 0), unit)}, ${t.sr.max(fmt.n0(Math.max(...r.v)))}`).join('; ')}`;
 }
 
-function Charts({ items, u }: { items: { slot: Slot; a: Analysis | null; label: string }[]; u: number }) {
+function Charts({ items, u }: { items: Item[]; u: number }) {
   const withA = items.flatMap((it, i) => (it.a ? [{ ...it, a: it.a, i }] : []));
   const withDof = withA.filter((x) => x.a.dof);
   const ser = (list: typeof withA, pick: (a: Analysis) => readonly number[]): ChartSeries[] =>
@@ -388,7 +414,7 @@ function Charts({ items, u }: { items: { slot: Slot; a: Analysis | null; label: 
   );
 }
 
-function Summary({ items }: { items: { slot: Slot; a: Analysis | null; label: string }[] }) {
+function Summary({ items }: { items: Item[] }) {
   const T = C.table;
   const range = (v: readonly number[]) => C.table.rangeOf(fmt.n0(Math.min(...v)), fmt.n0(Math.max(...v)));
   return (
@@ -426,7 +452,7 @@ function Summary({ items }: { items: { slot: Slot; a: Analysis | null; label: st
   );
 }
 
-function Notes({ items }: { items: { slot: Slot; a: Analysis | null; label: string }[] }) {
+function Notes({ items }: { items: Item[] }) {
   const vars = useMemo(() => [...new Map(items.flatMap(({ slot }) => variationsFor(slot.exercise)).map((v) => [`${v.exercise}/${v.id}`, v])).values()], [items]);
   const refIds = useMemo(() => {
     const ids = new Set<string>(['zanatomy', 'statics_textbook', 'sbl_authored']);
@@ -524,7 +550,7 @@ export default function Compare() {
     useCompare.getState().setView(clipView(first));
   }, [muscle]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const items = useMemo(() => specs.map((slot) => ({ slot, a: analyze(slot, muscle), label: specLabel(slot) })), [specs, muscle]);
+  const items = useMemo<Item[]>(() => specs.map((slot) => ({ slot, a: analyze(slot, muscle), label: specLabel(slot) })), [specs, muscle]);
 
   return (
     <main id="conteudo" className="lab lab--compare">
@@ -536,26 +562,19 @@ export default function Compare() {
         </div>
       </header>
 
-      <div className="lab__analysis">
-        <div className="lab__stage-block">
-          <ViewBar />
-          <div className="lab__views" data-count={specs.length}>
-            {items.map(({ slot, a }, i) => (
-              <ViewSlot key={slot.key} slot={slot} index={i} analysis={a} u={u} />
-            ))}
-          </div>
-          <LengthLegend className="compare-legend" />
+      <ViewBar />
+      <Lanes items={items} u={u} />
+      <div className="compare-body">
+        <LengthLegend className="compare-legend" />
+        <div className="compare-pick">
+          <TargetPicker />
+          <ExercisePicker />
         </div>
-        <div className="lab__body">
-          <div className="compare-pick">
-            <TargetPicker />
-            <ExercisePicker />
-          </div>
+        <details className="compare-panel" open>
+          <summary className="compare-panel__head">{C.panel}</summary>
           <Charts items={items} u={u} />
-          <Summary items={items} />
-        </div>
-      </div>
-      <div className="lab__after">
+        </details>
+        <Summary items={items} />
         <Notes items={items} />
       </div>
       <Transport />

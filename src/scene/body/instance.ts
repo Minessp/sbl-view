@@ -59,6 +59,10 @@ export class BodyInstance {
   readonly meshes: Readonly<Record<BodyLayer, Mesh>>;
   /** Material do pré-passe de profundidade da pele (descartado junto no `dispose`). */
   private skinDepth: ShaderMaterial | undefined;
+  /** Passe de vidro de cada camada sólida (filho da malha; só visível com `setGlass(true)`). */
+  private readonly glassMeshes: Mesh[] = [];
+  /** Opacidade abaixo de 1 vira vidro em vez de pontilhado. */
+  readonly glass = { value: 0 };
   readonly layers: Readonly<Record<BodyLayer, BodyUniforms>>;
   private readonly state: Float32Array;
   private readonly texture: DataTexture;
@@ -117,6 +121,7 @@ export class BodyInstance {
       uLensK: { value: 0 },
       uLensIn: { value: 0 },
       uGrow: this.grow,
+      uGlass: this.glass,
     });
     this.layers = Object.fromEntries(LAYERS.map((l) => [l, mk(l)])) as Record<BodyLayer, BodyUniforms>;
     const mat = (l: BodyLayer, pick: boolean) =>
@@ -142,6 +147,14 @@ export class BodyInstance {
           pre.renderOrder = 3;
           m.add(pre);
           this.skinDepth = depth;
+        } else {
+          // Depois das camadas sólidas e antes do pré-passe da pele (a pele por cima tapa o vidro de dentro).
+          const g = new Mesh(model.geometry[l], createBodyMaterial({ joints: model.jointIds.length, muscle: l !== 'bone', translucent: false, pick: false, glass: true, uniforms: this.layers[l] }));
+          g.frustumCulled = false;
+          g.renderOrder = 2.5;
+          g.visible = false;
+          m.add(g);
+          this.glassMeshes.push(g);
         }
         m.onBeforeRender = (renderer, _scene, camera) => this.checkDetail(renderer, camera);
         return [l, m];
@@ -314,8 +327,26 @@ export class BodyInstance {
     return mergeBoxes(boxes);
   }
 
+  /** Vidro no lugar do pontilhado (opacidade abaixo de 1). */
+  setGlass(on: boolean) {
+    this.glass.value = on ? 1 : 0;
+    for (const g of this.glassMeshes) g.visible = on;
+  }
+
+  /** Seleção e silhueta não podem misturar cor: o vidro sai durante o passe. */
+  private withoutGlass(run: () => void) {
+    const on = this.glass.value > 0.5;
+    for (const g of this.glassMeshes) g.visible = false;
+    run();
+    for (const g of this.glassMeshes) g.visible = on;
+  }
+
   /** Silhueta do corpo (material de seleção, sem lente) no alvo atual: mapa de sombra. */
   renderSilhouette(gl: WebGLRenderer, camera: Camera) {
+    this.withoutGlass(() => this.silhouette(gl, camera));
+  }
+
+  private silhouette(gl: WebGLRenderer, camera: Camera) {
     for (const l of LAYERS) this.meshes[l].material = this.picking[l];
     const r = this.lens.value.z;
     this.lens.value.z = 0;
@@ -380,6 +411,10 @@ export class BodyInstance {
   }
 
   private pickPass(gl: WebGLRenderer, camera: Camera, target: WebGLRenderTarget, read: () => void) {
+    this.withoutGlass(() => this.pickPassRaw(gl, camera, target, read));
+  }
+
+  private pickPassRaw(gl: WebGLRenderer, camera: Camera, target: WebGLRenderTarget, read: () => void) {
     for (const l of LAYERS) this.meshes[l].material = this.picking[l];
     const skinVisible = this.meshes.skin.visible;
     this.meshes.skin.visible = false;
@@ -431,6 +466,7 @@ export class BodyInstance {
     }
     this.lens.value.set(0, 0, 0);
     this.grow.value = 9;
+    this.setGlass(false);
   }
 
   dispose() {
@@ -439,6 +475,7 @@ export class BodyInstance {
       this.picking[l].dispose();
     }
     this.skinDepth?.dispose();
+    for (const g of this.glassMeshes) (g.material as ShaderMaterial).dispose();
     this.texture.dispose();
     this.target?.dispose();
     this.grid?.dispose();

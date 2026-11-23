@@ -905,6 +905,7 @@ export const ptBRApp = {
     scrubValue: (pct: number) => `${pct}% do caminho do alongado ao encurtado`,
     noDof: 'Nenhuma ação modelada deste músculo muda neste exercício.',
     readLength: 'Comprimento',
+    panel: 'Gráficos da repetição',
     readLoad: 'Carga',
     sections: {
       length: 'Comprimento do alvo',

@@ -129,13 +129,13 @@ await step('lab: comparar abre pela aba, troca alvo, duplica e muda a variação
   await page.getByRole('link', { name: 'Comparar exercícios' }).click();
   await page.getByRole('heading', { level: 1, name: 'Comparar exercícios' }).waitFor();
   await page.waitForSelector('.stage[data-ready="true"]', { timeout: 20000 });
-  if ((await page.locator('.compare-slot').count()) !== 3) throw new Error('rosca: esperava três vistas');
+  if ((await page.locator('.lane').count()) !== 3) throw new Error('rosca: esperava três raias');
   await page.locator('.compare-target select').selectOption('pectoralis_major');
   await page.waitForFunction(() => new URLSearchParams(location.search).get('alvo') === 'pectoralis_major');
   // Variação contra variação: o crucifixo duplicado, com a polia alta numa das vistas.
   await page.goto(`${base}/lab/comparar?alvo=pectoralis_major&ex=cable_fly`, { waitUntil: 'networkidle' });
   await page.getByRole('button', { name: /Duplicar Crucifixo na polia/ }).click();
-  await page.locator('.compare-slot').nth(1).getByRole('button', { name: 'alta' }).click();
+  await page.locator('.lane').nth(1).getByRole('button', { name: 'alta' }).click();
   await page.waitForFunction(() => /pulley%3Dhigh/.test(location.search));
   const lines = await page.locator('section:has(#cmp-load) .chart__line').count();
   if (lines < 2) throw new Error(`só ${lines} curvas de carga`);

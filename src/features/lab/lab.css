@@ -44,7 +44,7 @@
 .lab__views {
   display: grid;
   grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr));
-  gap: var(--s-2);
+  gap: 0;
 }
 
 .lab__views[data-count='2'] {
@@ -81,6 +81,32 @@
 .view-slot__stage {
   height: 36svh;
   min-height: 220px;
+}
+
+/* Raias: sem moldura, só a luz de cima; um fio de luz separa as variações. */
+:root .view-slot__stage.viewport {
+  border-radius: 0;
+  box-shadow: none;
+  background: radial-gradient(ellipse 70% 55% at 50% 8%, color-mix(in oklch, var(--c-light-key) 9%, transparent), transparent 70%);
+}
+
+.view-slot {
+  position: relative;
+}
+
+.view-slot + .view-slot::before {
+  content: '';
+  position: absolute;
+  top: 12%;
+  bottom: 6%;
+  left: 0;
+  width: 1px;
+  background: linear-gradient(transparent, color-mix(in oklch, var(--c-glow) 60%, transparent) 30%, color-mix(in oklch, var(--c-glow) 60%, transparent) 70%, transparent);
+  pointer-events: none;
+}
+
+.view-slot + .view-slot .view-slot__cap {
+  padding-left: var(--s-3);
 }
 
 .view-overlay {

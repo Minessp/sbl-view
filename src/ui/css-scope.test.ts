@@ -11,9 +11,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 /** Classe montada em runtime ou estilizada por CSS que chega por outro caminho (com o motivo). */
-const EXCEPTIONS: Record<string, string> = {
-  'view-slot__name': 'compare.css só a estiliza dentro de .compare-slot__cap; no Lab segue o texto de .view-slot',
-};
+const EXCEPTIONS: Record<string, string> = {};
 
 const SRC = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const EXTS = ['', '.ts', '.tsx', '/index.ts', '/index.tsx'];

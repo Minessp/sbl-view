@@ -1,7 +1,7 @@
 /**
- * Lab de comparação: uma vista recortada por exercício, todas no mesmo ponto da repetição (u do store). O alvo muda de
- * cor pelo comprimento (tungstênio = mais curto que em pé, aço = mais comprido); o equipamento e o vetor da carga
- * acompanham. Estado em `useCompare` (sem three.js); aqui só se aplica.
+ * Lab de comparação: uma raia por exercício, todas no mesmo ponto da repetição (u do store). O alvo muda de
+ * cor pelo comprimento (tungstênio = mais curto que em pé, aço = mais comprido) e o resto do corpo vira vidro; o
+ * equipamento, o vetor da carga e o arco da articulação principal acompanham. Estado em `useCompare` (sem three.js).
  */
 import { PerspectiveCamera } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
@@ -12,7 +12,7 @@ import { evaluateClip, type MotionFrame } from '@/engine/motion/evaluate';
 import type { Vec3 } from '@/engine/math/vec';
 import { strainOf } from '@/features/atlas/explorer/demo';
 import { fitDistance, FOV_DEG, orbitPosition } from '@/features/atlas/explorer/orbit';
-import { compiledFor, type CompareSpec } from '@/features/lab/compare/analysis';
+import { compiledFor, mainJoint, type CompareSpec } from '@/features/lab/compare/analysis';
 import { uAtPhase, useCompare, useCompareSlots, type CompareView } from '@/features/lab/compare/store';
 import { useTheme } from '@/ui/theme';
 import { ContactShadow } from '../body/ContactShadow';
@@ -24,6 +24,7 @@ import { StageView, useDirector } from '../director/StageView';
 import { useStage } from '../stageStore';
 import { EquipmentView } from '../motion/equipment';
 import { clipBox } from '../motion/MotionScene';
+import { Telemetry } from '../hud/telemetry';
 
 /** Guinada e arfagem de cada vista (rad), como no player. Perfil pelo lado direito, o lado medido. */
 const VIEWS: Readonly<Record<CompareView, { yaw: number; pitch: number }>> = {
@@ -37,11 +38,12 @@ function applyLook(body: BodyInstance, model: BodyModel, muscle: string, skin: b
   body.fill('highlight', 0);
   body.fill('opacity', 1);
   body.fill('hidden', 0);
+  body.setGlass(true);
   body.layer('skin', { visible: skin, alpha: 0.2 });
   for (const l of ['superficial', 'deep', 'bone'] as const) body.layer(l, { showAbove: -99, visible: true });
   const keep = new Set(model.byMuscle.get(muscle) ?? []);
-  // O alvo em foco: o resto do corpo vira vulto, osso fica.
-  for (const s of model.slots) if (s.layer !== 'bone' && !keep.has(s.index)) body.set(s.index, 'opacity', 0.16);
+  // Alvo e osso sólidos, o resto em vidro.
+  for (const s of model.slots) if (s.layer !== 'bone' && !keep.has(s.index)) body.set(s.index, 'opacity', 0.45);
   body.fill('highlight', 0.3, [...keep]);
   body.commit();
 }
@@ -82,6 +84,17 @@ function CompareBody({ spec, model, main }: { spec: CompareSpec; model: BodyMode
     });
     return () => cancelAnimationFrame(id);
   }, [equipment, resolved, invalidate]);
+  // Arco da articulação principal e rastro da carga.
+  const [hud, setHud] = useState<Telemetry | null>(null);
+  useEffect(() => {
+    const h = new Telemetry(clip);
+    setHud(h);
+    return () => {
+      h.dispose();
+      setHud((cur) => (cur === h ? null : cur));
+    };
+  }, [clip]);
+  const dof = useMemo(() => mainJoint(clip, muscle), [clip, muscle]);
 
   useEffect(() => {
     if (!body) return;
@@ -92,6 +105,8 @@ function CompareBody({ spec, model, main }: { spec: CompareSpec; model: BodyMode
     useStage.getState().setReady(true);
     invalidate();
   }, [body, model, clip, muscle, skin, invalidate]);
+  // A instância volta ao fundo sem vidro (outra cena pode herdá-la).
+  useEffect(() => () => body?.setGlass(false), [body]);
 
   useFrame(() => {
     const cam = camRef.current;
@@ -113,6 +128,7 @@ function CompareBody({ spec, model, main }: { spec: CompareSpec; model: BodyMode
     }
     if (frame.current) equipment?.update(frame.current, true);
     dir.skin(body, st.skin, 0.2);
+    if (hud && frame.current) hud.update({ frame: frame.current, u, dof, paths: [], showLoad: false, target: null, full: false }, cam, dir.rect);
 
     // Câmera parada no quadro do clipe inteiro: os corpos não pulam enquanto a repetição anda.
     const aspect = dir.rect.w / dir.rect.h;
@@ -131,6 +147,7 @@ function CompareBody({ spec, model, main }: { spec: CompareSpec; model: BodyMode
       {body && <ContactShadow feet={getFeet} />}
       {body && <primitive object={body.group} />}
       {equipment && <primitive object={equipment.group} />}
+      {hud && <primitive object={hud.group} />}
     </>
   );
 }
@@ -144,13 +161,14 @@ export function CompareScene() {
   useEffect(() => {
     const unsubs = [useCompare.subscribe(() => invalidate()), useCompareSlots.subscribe(() => invalidate())];
     const onMove = () => invalidate();
-    window.addEventListener('scroll', onMove, { passive: true });
+    // Captura: a rolagem horizontal das raias (celular) também move os recortes.
+    window.addEventListener('scroll', onMove, { passive: true, capture: true });
     window.addEventListener('resize', onMove);
     const ro = new ResizeObserver(onMove);
     Object.values(slots).forEach((el) => el && ro.observe(el));
     return () => {
       unsubs.forEach((u) => u());
-      window.removeEventListener('scroll', onMove);
+      window.removeEventListener('scroll', onMove, { capture: true });
       window.removeEventListener('resize', onMove);
       ro.disconnect();
     };

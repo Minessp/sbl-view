@@ -6,7 +6,8 @@
  *   linha 0: destaque, opacidade, calor, ativação (0..1)
  *   linha 1: oculto (> 0,5), volume (fração radial somada ao ventre), deformação (−1 alongado … +1 encurtado), pontas
  *   (origem e inserção acesas, 0..1)
- * Opacidade abaixo de 1 vira pontilhado (sem ordenar transparência); a pele é a única camada com mistura.
+ * Opacidade abaixo de 1 vira pontilhado (sem ordenar transparência); com `uGlass`, vira vidro: o material normal
+ * descarta e um passe de vidro (GLASS: mistura, sem escrever profundidade, só a silhueta acesa) desenha por cima.
  *
  * Luz (rig.ts): fluxo linear, key de tungstênio com difusão envolvente (luz atravessa a borda: vermelho no músculo),
  * contraluz fria, hemisfério; ACES e pontilhado de 8 bits no fim ("pós-processamento" dentro do material: o palco
@@ -51,6 +52,8 @@ export type BodyUniforms = Rig & {
   uLensIn: IUniform<number>;
   /** Montagem das fibras: cada músculo cresce da origem à inserção até este parâmetro (≥ 2 = inteiro). Um objeto por instância. */
   uGrow: IUniform<number>;
+  /** > 0,5: opacidade abaixo de 1 é vidro, não pontilhado. Um objeto por instância. */
+  uGlass: IUniform<number>;
 };
 
 /** Funções de luz compartilhadas (corpo e equipamento). */
@@ -176,6 +179,7 @@ const fragment = /* glsl */ `
   uniform float uLensK;
   uniform float uLensIn;
   uniform float uGrow;
+  uniform float uGlass;
   varying vec3 vN;
   varying vec3 vView;
   varying vec3 vW;
@@ -245,8 +249,10 @@ const fragment = /* glsl */ `
       float id = floor(vSlot + 0.5) + 1.0;
       gl_FragColor = vec4(mod(id, 256.0) / 255.0, floor(id / 256.0) / 255.0, 0.0, 1.0);
     #else
-      #ifndef TRANSLUCENT
-      if (a < 0.999 && ign(gl_FragCoord.xy) > a) discard;
+      #if defined(GLASS)
+      if (a >= 0.999 || a <= 0.001) discard;
+      #elif !defined(TRANSLUCENT)
+      if (a < 0.999 && (uGlass > 0.5 || ign(gl_FragCoord.xy) > a)) discard;
       #endif
       vec3 n = dot(vN, vN) > 1e-12 ? normalize(vN) : vec3(0.0, 0.0, 1.0);
       if (!gl_FrontFacing) n = -n;
@@ -349,7 +355,14 @@ const fragment = /* glsl */ `
       #endif
       col += emit;
 
-      #ifdef TRANSLUCENT
+      #if defined(GLASS)
+        // Vidro: transparente de frente, a silhueta acende fria (no claro, escurece no pigmento). O que está aceso (destaque,
+        // deformação) segue na cor dele.
+        float edge = pow(1.0 - clamp(abs(dot(n, v)), 0.0, 1.0), 2.2);
+        vec3 cold = toLinear(uRimColor) * mix(1.4, 0.35, uRimMode);
+        vec3 gc = mix(cold, col, clamp(lit + 0.25, 0.0, 1.0));
+        gl_FragColor = vec4(finish(gc * (0.35 + 1.3 * edge)), clamp(a * (0.1 + 1.6 * edge), 0.0, 0.9));
+      #elif defined(TRANSLUCENT)
         float fres = pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 2.0);
         // Translúcida (vulto, mais opaca na silhueta) até a metade; dali até 1 vai junto para opaca. Antes o alfa pulava
         // de ~0,4 para 1 no fim da entrada da pele (uAlpha 0,998 → 1).
@@ -367,6 +380,7 @@ export interface BodyMaterialOptions {
   muscle: boolean;
   translucent: boolean;
   pick: boolean;
+  glass?: boolean;
   uniforms: BodyUniforms;
 }
 
@@ -375,14 +389,16 @@ export function createBodyMaterial(o: BodyMaterialOptions): ShaderMaterial {
   if (o.muscle) defines.MUSCLE = '';
   if (o.translucent && !o.pick) defines.TRANSLUCENT = '';
   if (o.pick) defines.PICK = '';
+  if (o.glass) defines.GLASS = '';
+  const blend = (o.translucent || !!o.glass) && !o.pick;
   return new ShaderMaterial({
     vertexShader: vertex(o.joints),
     fragmentShader: fragment,
     defines,
     uniforms: o.uniforms,
-    side: o.translucent ? FrontSide : DoubleSide,
-    transparent: o.translucent && !o.pick,
-    depthWrite: !(o.translucent && !o.pick),
+    side: blend ? FrontSide : DoubleSide,
+    transparent: blend,
+    depthWrite: !blend,
   });
 }
 
