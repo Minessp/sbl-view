@@ -12,6 +12,7 @@ import { palette } from '../body/rig';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { GearKit, orient, stretch } from './gear/kit';
 import { BENCH_STATIONS, buildStation } from './gear/stations';
+import { weightStack } from './gear/stack';
 import { type Finish, type GearMaterial, type Pattern } from './gear/material';
 import { ball, dHandleGeometry, dumbbellHeadGeometry, padGeometry, plateGeometry, rod, rollerGeometry, sheaveGeometry } from './gear/parts';
 
@@ -41,7 +42,7 @@ export class EquipmentView {
   private readonly arrowShaft: Mesh;
   private readonly arrowHead: Mesh;
   private readonly unit: BufferGeometry;
-  /** Uma estação desenha a estrutura do banco: a peça do clipe fica só com o estofado e o quadro `frame` some. */
+  /** Uma estação desenha a estrutura do banco: a peça do clipe fica só com o estofado. */
   private benchStation = false;
   /** Topo da primeira coluna de um par espelhado: a segunda fecha a travessa do cross-over. */
   private crossTop: Vec3 | null = null;
@@ -304,50 +305,13 @@ export class EquipmentView {
     const holesGeo = mergeGeometries(holeParts);
     for (const p of holeParts) p.dispose();
     if (holesGeo) this.mesh(this.geo(holesGeo), this.mat('rubber'), tower);
-    // Pilha atrás da coluna, entre duas guias que vão da base à travessa; o pino escolhe a placa: dela para cima tudo
-    // sobe com o cabo, as de baixo ficam na base.
-    const PLATES = 12;
-    const PIN = 7;
-    const plateY = (i: number) => 0.07 + i * 0.026;
+    // Pilha atrás da coluna; o cabo que sai da roldana sobe a parte presa no pino.
     const guideTop = H - 0.25;
-    for (const x of [-0.1, 0.1]) {
-      const guide = this.mesh(this.geo(rod(0.008, guideTop - 0.04, 12)), this.mat('chrome'), tower);
-      guide.position.set(x, (guideTop + 0.04) / 2, 0.2);
-    }
     const arm = this.mesh(this.geo(padGeometry(0.04, 0.04, 0.3, 0.008)), this.mat('steel'), tower);
     arm.position.set(0, guideTop, 0.17);
-    const yoke = this.mesh(this.geo(padGeometry(0.32, 0.04, 0.05, 0.008)), this.mat('steel'), tower);
-    yoke.position.set(0, guideTop, 0.2);
-    for (let i = 0; i < PIN; i++) {
-      const pl = this.mesh(this.geo(padGeometry(0.24, 0.022, 0.11, 0.004)), this.mat('iron'), tower);
-      pl.position.set(0, plateY(i), 0.2);
-    }
-    const stack = new Group();
-    stack.position.set(0, 0, 0.2);
-    tower.add(stack);
-    for (let i = PIN; i < PLATES; i++) {
-      const pl = this.mesh(this.geo(padGeometry(0.24, 0.022, 0.11, 0.004)), this.mat('iron'), stack);
-      pl.position.y = plateY(i);
-    }
-    const top = this.mesh(this.geo(padGeometry(0.24, 0.03, 0.11, 0.006)), this.mat('chrome'), stack);
-    top.position.y = plateY(PLATES) + 0.004;
-    const stem = this.mesh(this.geo(rod(0.007, 0.36, 10)), this.mat('chrome'), stack);
-    stem.position.y = plateY(PLATES) - 0.17;
-    const pin = this.mesh(this.geo(rod(0.006, 0.1, 10)), this.mat('chrome'), stack);
-    pin.rotation.x = Math.PI / 2;
-    pin.position.set(0, plateY(PIN), -0.06);
-    const pinHead = this.mesh(this.geo(ball(0.012)), this.mat('rubber'), stack);
-    pinHead.position.set(0, plateY(PIN), -0.11);
-    const stackTop = plateY(PLATES) + 0.02;
-    // Capa: chapa atrás da pilha e montantes laterais do chão à travessa (a pilha segue à vista pelos lados).
-    const shroud = this.mesh(this.geo(padGeometry(0.3, guideTop, 0.012, 0.004)), this.mat('steel'), tower);
-    shroud.position.set(0, guideTop / 2, 0.32);
-    for (const x of [-0.15, 0.15]) {
-      const post = this.mesh(this.geo(padGeometry(0.03, guideTop, 0.03, 0.006)), this.mat('steel'), tower);
-      post.position.set(x, guideTop / 2, 0.31);
-    }
-    const bumper = this.mesh(this.geo(padGeometry(0.26, 0.05, 0.13, 0.01)), this.mat('rubber'), tower);
-    bumper.position.set(0, 0.045, 0.2);
+    const stack = weightStack(this.kit, tower, guideTop);
+    stack.root.position.z = 0.2;
+    const stackTop = stack.top;
     // Roldanas: a do carro (move só no plano do cabo) e duas fixas no topo.
     const wheel = new Group();
     this.group.add(wheel);
@@ -385,7 +349,7 @@ export class EquipmentView {
     this.updaters.push((r, i) => {
       if (r.kind !== 'cable' || i !== index) return;
       const lift = Math.min(0.5, Math.max(0, cableLength(r) - Lmin));
-      stack.position.y = lift;
+      stack.lift(lift);
       const knot = link(handle.update(r), P);
       // Roda no plano que o cabo faz com a vertical, tangente ao cabo que sobe pela coluna.
       tA.set(knot[0] - P[0], knot[1] - P[1], knot[2] - P[2]).normalize();
@@ -539,10 +503,6 @@ export class EquipmentView {
     place(e.center, e.pitch);
     g.updateMatrixWorld();
     const role = e.role;
-    if (role === 'frame' && this.benchStation && !e.moving) {
-      g.removeFromParent();
-      return;
-    }
     if ((role === 'bench' || role === 'seat' || role === 'back') && dpt < h && dpt <= 0.1) {
       // Encosto fino em Z (a pessoa apoia na face +Z): espuma inteira e chapa de aço atrás.
       this.mesh(this.geo(padGeometry(w, h, dpt, 0.025)), this.mat('pad'), g);
@@ -699,7 +659,7 @@ export class EquipmentView {
     const axles = e.centers.map(() => this.mesh(this.geo(rod(0.012, len + 0.06, 12)), this.mat('chrome')));
     const lever = this.mesh(this.geo(padGeometry(1, 1, 1, 0.12)), this.mat('steel'));
     const hub = this.mesh(this.geo(rod(0.055, 0.06, 28)), this.mat('chrome'));
-    const horn = this.mesh(this.geo(rod(0.025, 0.2, 18)), this.mat('chrome'));
+    const horn = this.mesh(this.geo(rod(0.025, 0.16, 18)), this.mat('chrome'));
     const plate = this.mesh(this.geo(plateGeometry(0.3, 0.03)), this.mat('iron'));
     this.updaters.push((r) => {
       if (r.kind !== 'pad') return;
@@ -723,11 +683,11 @@ export class EquipmentView {
       lever.quaternion.setFromUnitVectors(UP, tB.clone().normalize());
       lever.scale.set(0.05, L + 0.05, 0.035);
       orient(hub, [p0.x, p0.y, p0.z], [1, 0, 0]);
-      // Chifre de carga do outro lado do eixo, com uma anilha.
+      // Chifre de carga do outro lado do eixo, só por fora do braço (por dentro passa a torre da estação), com uma anilha.
       tB.normalize();
-      const hornAt: Vec3 = [p0.x - 0.04, p0.y - tB.y * 0.12, p0.z - tB.z * 0.12];
+      const hornAt: Vec3 = [p0.x - 0.11, p0.y - tB.y * 0.12, p0.z - tB.z * 0.12];
       orient(horn, hornAt, [1, 0, 0]);
-      orient(plate, [hornAt[0] - 0.06, hornAt[1], hornAt[2]], [1, 0, 0]);
+      orient(plate, [hornAt[0] - 0.03, hornAt[1], hornAt[2]], [1, 0, 0]);
       tB.set(c0[0] - off, c0[1], c0[2]);
       tA.set(c0[0], c0[1], c0[2]);
       stretch(axles[0] as Mesh, tB, tA.clone().add(new Vector3(len / 2 + 0.02, 0, 0)), 0.012);

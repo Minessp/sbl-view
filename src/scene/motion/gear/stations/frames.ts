@@ -1,7 +1,7 @@
 /**
  * Estações de peso corporal e de polia com assento. Todas leem as peças e a pose do próprio clipe:
  * - `lat_tower` (puxada): coluna do assento até a longarina no chão que vai à torre (a torre e a lança são do cabo) e
- *   rolos de coxa no lugar do bloco `frame`, num poste entre os joelhos.
+ *   rolos sobre as coxas (pela pose), num poste entre os joelhos.
  * - `row_station` (remada sentada): longarina baixa do assento à coluna da polia, poste do assento, escoras do apoio dos pés.
  * - `dip_station` (paralelas): duas barras sob as mãos, montantes e base no chão.
  * - `hyper_bench` (extensão a 45°): longarina da plataforma à almofada, pernas em T e rolo atrás dos tornozelos.
@@ -53,10 +53,11 @@ export const latTower: StationBuilder = ({ frames, kit }) => {
   const knob = kit.mesh(kit.geo(rod(0.014, 0.06, 12)), kit.mat('rubber'), g);
   knob.rotation.z = Math.PI / 2;
   knob.position.set(x + 0.06, y - 0.2, z);
-  // Rolos de coxa no lugar do bloco `frame`, num poste entre os joelhos até a longarina.
-  const thigh = all.find((e) => e.role === 'frame');
-  if (thigh) {
-    const [tx, ty, tz] = thigh.center;
+  // Rolos sobre as coxas, logo atrás do joelho (pela pose), num poste entre os joelhos até a longarina.
+  const f = frames[0];
+  if (f) {
+    const at = add(scale(jointPosition(f.pose, 'thigh_r'), 0.2), scale(jointPosition(f.pose, 'shank_r'), 0.8));
+    const [tx, ty, tz] = [0, at[1] + 0.13, at[2]];
     for (const s of [-1, 1]) roller(kit, g, [tx + s * 0.11, ty, tz], 0.17, 0.05);
     kit.beam(g, [tx, ty, tz], [tx, 0.06, tz], 0.05);
     const collar = kit.mesh(kit.geo(padGeometry(0.07, 0.08, 0.07, 0.01)), kit.mat('steel'), g);

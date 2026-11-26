@@ -28,7 +28,7 @@ export function toWorld(b: Block, l: Vec3): Vec3 {
   return [b.center[0] + l[0], b.center[1] + l[1] * c - l[2] * s, b.center[2] + l[1] * s + l[2] * c];
 }
 
-function foot(kit: GearKit, g: Group, x: number, z: number, w = 0.07) {
+export function foot(kit: GearKit, g: Group, x: number, z: number, w = 0.07) {
   const f = kit.mesh(kit.geo(padGeometry(w, 0.02, 0.06, 0.006)), kit.mat('rubber'), g);
   f.position.set(x, 0.01, z);
 }

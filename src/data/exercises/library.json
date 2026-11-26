@@ -119,10 +119,20 @@
   {
     "id": "leg_extension",
     "name": "Cadeira extensora",
+    "aliases": ["extensora", "cadeira extensora", "leg extension", "extensão de joelho"],
     "pattern": "isolado",
     "equipment": ["maquina"],
     "status": "consolidado",
     "summary": "Sentado, estender o joelho contra o rolo. Isola o quadríceps; o encosto deixa o quadril fletido perto de 90°.",
+    "how": {
+      "setup": ["Costas no encosto, joelho alinhado com o eixo da máquina.", "Rolo apoiado na frente da canela, logo acima do tornozelo; mãos nos pegadores."],
+      "execution": [
+        { "text": "Comece com o joelho dobrado e a coxa firme no assento.", "u": 0 },
+        { "text": "Estenda o joelho levantando o rolo.", "u": 0.5 },
+        { "text": "Pare com a perna estendida e desça devagar.", "u": 1 }
+      ],
+      "mistakes": ["Tirar o quadril do assento para chutar o peso.", "Eixo da máquina acima ou abaixo do joelho."]
+    },
     "targets": [
       { "muscle": "vastus_lateralis", "role": "alvo" },
       { "muscle": "vastus_medialis", "role": "alvo" },
@@ -140,10 +150,20 @@
   {
     "id": "reclined_leg_extension",
     "name": "Cadeira extensora reclinada",
+    "aliases": ["extensora reclinada", "extensora deitada", "leg extension reclinada"],
     "pattern": "isolado",
     "equipment": ["maquina"],
     "status": "consolidado",
     "summary": "A mesma cadeira com o encosto bem inclinado para trás, quadril perto de 40°. Muda o comprimento do reto femoral, não o dos vastos.",
+    "how": {
+      "setup": ["Encosto reclinado: quadril mais estendido que na extensora comum.", "Joelho no eixo da máquina, rolo acima do tornozelo, mãos nos pegadores."],
+      "execution": [
+        { "text": "Comece com o joelho dobrado e as costas apoiadas.", "u": 0 },
+        { "text": "Estenda o joelho sem tirar as costas do encosto.", "u": 0.5 },
+        { "text": "Pare com a perna estendida e desça devagar.", "u": 1 }
+      ],
+      "mistakes": ["Desencostar o tronco e perder o quadril estendido.", "Usar impulso no começo da subida."]
+    },
     "targets": [
       { "muscle": "rectus_femoris", "role": "alvo" },
       { "muscle": "vastus_lateralis", "role": "alvo" },
@@ -161,10 +181,23 @@
   {
     "id": "seated_leg_curl",
     "name": "Mesa flexora sentada",
+    "aliases": ["flexora sentada", "cadeira flexora", "mesa flexora sentado", "seated leg curl"],
     "pattern": "isolado",
     "equipment": ["maquina"],
     "status": "consolidado",
     "summary": "Sentado, flexionar o joelho contra o rolo. Com o quadril fletido, os isquiotibiais começam bem alongados.",
+    "how": {
+      "setup": [
+        "Joelho alinhado com o eixo; rolo de trava sobre as coxas, logo atrás do joelho.",
+        "Rolo da alavanca atrás da canela, acima do tornozelo; mãos nos pegadores."
+      ],
+      "execution": [
+        { "text": "Comece com as pernas quase estendidas.", "u": 0 },
+        { "text": "Dobre os joelhos puxando o rolo para baixo e para trás.", "u": 0.5 },
+        { "text": "Pare com o joelho bem dobrado e volte devagar.", "u": 1 }
+      ],
+      "mistakes": ["Rolo de trava frouxo: a coxa sobe do assento.", "Voltar rápido e perder o trecho alongado."]
+    },
     "targets": [
       { "muscle": "semimembranosus", "role": "alvo" },
       { "muscle": "semitendinosus", "role": "alvo" },
@@ -182,10 +215,23 @@
   {
     "id": "lying_leg_curl",
     "name": "Mesa flexora deitada",
+    "aliases": ["flexora deitada", "mesa flexora", "lying leg curl", "flexora"],
     "pattern": "isolado",
     "equipment": ["maquina"],
     "status": "consolidado",
     "summary": "Deitado de bruços, flexionar o joelho contra o rolo. O quadril fica estendido.",
+    "how": {
+      "setup": [
+        "Deitado de bruços, joelhos logo depois da ponta do banco, no eixo da máquina.",
+        "Rolo atrás da canela, acima do tornozelo; mãos nos pegadores da frente."
+      ],
+      "execution": [
+        { "text": "Comece com as pernas estendidas e o quadril no banco.", "u": 0 },
+        { "text": "Dobre os joelhos trazendo o rolo em direção ao glúteo.", "u": 0.5 },
+        { "text": "Pare no alto e desça devagar até estender.", "u": 1 }
+      ],
+      "mistakes": ["Levantar o quadril do banco no fim da subida.", "Joelho apoiado no banco, fora do eixo."]
+    },
     "targets": [
       { "muscle": "semimembranosus", "role": "alvo" },
       { "muscle": "semitendinosus", "role": "alvo" },
@@ -202,10 +248,20 @@
   {
     "id": "standing_calf_raise",
     "name": "Panturrilha em pé",
+    "aliases": ["panturrilha em pé", "gêmeos em pé", "elevação de panturrilha", "calf raise"],
     "pattern": "isolado",
     "equipment": ["maquina"],
     "status": "consolidado",
     "summary": "Em pé, joelho estendido, ponta do pé no degrau: descer o calcanhar abaixo do degrau e subir na ponta.",
+    "how": {
+      "setup": ["Ombros sob as ombreiras, mãos nos pegadores.", "Ponta dos pés na borda do degrau, joelhos quase estendidos."],
+      "execution": [
+        { "text": "Desça o calcanhar abaixo do degrau até alongar a panturrilha.", "u": 0 },
+        { "text": "Suba na ponta dos pés empurrando com o dedão.", "u": 0.5 },
+        { "text": "Pare no alto, segure um instante e desça devagar.", "u": 1 }
+      ],
+      "mistakes": ["Dobrar os joelhos para subir.", "Quicar no fundo em vez de pausar alongado."]
+    },
     "targets": [
       { "muscle": "gastrocnemius", "role": "alvo" },
       { "muscle": "soleus", "role": "alvo" }
@@ -221,10 +277,20 @@
   {
     "id": "seated_calf_raise",
     "name": "Panturrilha sentado",
+    "aliases": ["panturrilha sentado", "gêmeos sentado", "sóleo", "seated calf"],
     "pattern": "isolado",
     "equipment": ["maquina"],
     "status": "consolidado",
     "summary": "Sentado, joelho fletido perto de 90°, apoio sobre a coxa: subir e descer o calcanhar.",
+    "how": {
+      "setup": ["Sentado, rolo da alavanca sobre as coxas, perto dos joelhos.", "Ponta dos pés na borda do degrau, mãos na barra do rolo."],
+      "execution": [
+        { "text": "Desça o calcanhar até alongar.", "u": 0 },
+        { "text": "Suba na ponta dos pés levantando o rolo.", "u": 0.5 },
+        { "text": "Pare no alto e desça devagar.", "u": 1 }
+      ],
+      "mistakes": ["Puxar a barra com os braços para ajudar.", "Amplitude curta, só no meio do movimento."]
+    },
     "targets": [
       { "muscle": "soleus", "role": "alvo" },
       { "muscle": "gastrocnemius", "role": "sinergista" }
@@ -514,10 +580,20 @@
   {
     "id": "hack_squat",
     "name": "Agachamento hack",
+    "aliases": ["hack", "hack machine", "agachamento no hack", "hack squat"],
     "pattern": "agachamento",
     "equipment": ["maquina"],
     "status": "consolidado",
     "summary": "Costas no encosto do trenó, pés na plataforma, descer ao longo do trilho. A máquina dá o equilíbrio e o esforço fica nas pernas.",
+    "how": {
+      "setup": ["Costas e quadril apoiados no encosto, ombros sob as ombreiras.", "Pés na plataforma na largura do quadril, um pouco à frente do corpo."],
+      "execution": [
+        { "text": "Desça dobrando joelhos e quadril até as coxas passarem da paralela.", "u": 0 },
+        { "text": "Empurre a plataforma com o pé inteiro, joelhos na direção dos pés.", "u": 0.5 },
+        { "text": "Pare pouco antes de travar os joelhos e desça controlando.", "u": 1 }
+      ],
+      "mistakes": ["Tirar o quadril do encosto no fundo.", "Subir o calcanhar ou deixar os joelhos caírem para dentro."]
+    },
     "targets": [
       { "muscle": "vastus_lateralis", "role": "alvo" },
       { "muscle": "vastus_medialis", "role": "alvo" },
@@ -535,10 +611,20 @@
   {
     "id": "pendulum_squat",
     "name": "Agachamento pêndulo",
+    "aliases": ["pêndulo", "pendulum", "agachamento pendular", "pendulum squat"],
     "pattern": "agachamento",
     "equipment": ["maquina"],
     "status": "hipotese",
     "summary": "Máquina de braço em arco: o corpo desce num pêndulo, com o joelho indo bem à frente e o tronco quase parado.",
+    "how": {
+      "setup": ["Ombros sob as ombreiras e costas no encosto.", "Pés na plataforma inclinada, na largura do quadril."],
+      "execution": [
+        { "text": "Desça deixando os joelhos passarem à frente dos pés, tronco quase de pé.", "u": 0 },
+        { "text": "Empurre a plataforma com o pé inteiro; o braço da máquina sobe em arco.", "u": 0.5 },
+        { "text": "Pare antes de travar os joelhos e desça devagar até o fundo.", "u": 1 }
+      ],
+      "mistakes": ["Encurtar a descida e perder a parte alongada do quadríceps.", "Tirar as costas do encosto para empurrar."]
+    },
     "targets": [
       { "muscle": "vastus_lateralis", "role": "alvo" },
       { "muscle": "vastus_medialis", "role": "alvo" },
@@ -556,10 +642,20 @@
   {
     "id": "leg_press",
     "name": "Leg press 45°",
+    "aliases": ["leg 45", "leg press 45", "leg horizontal", "prensa de pernas", "leg"],
     "pattern": "agachamento",
     "equipment": ["maquina"],
     "status": "consolidado",
     "summary": "Sentado e reclinado, empurrar a plataforma no trilho de 45° até quase estender os joelhos e descer até o quadril fechar.",
+    "how": {
+      "setup": ["Costas e quadril no encosto, mãos nos pegadores do assento.", "Pés no meio da plataforma, na largura do quadril."],
+      "execution": [
+        { "text": "Desça a plataforma dobrando os joelhos até o quadril quase sair do encosto.", "u": 0 },
+        { "text": "Empurre com o pé inteiro, joelhos alinhados com os pés.", "u": 0.5 },
+        { "text": "Pare antes de travar os joelhos e volte controlando.", "u": 1 }
+      ],
+      "mistakes": ["Descer tanto que a lombar arredonda e o quadril sai do assento.", "Travar os joelhos no alto."]
+    },
     "targets": [
       { "muscle": "vastus_lateralis", "role": "alvo" },
       { "muscle": "vastus_medialis", "role": "alvo" },
@@ -913,10 +1009,20 @@
   {
     "id": "seated_hip_abduction",
     "name": "Abdutora sentada",
+    "aliases": ["abdutora", "cadeira abdutora", "abdução de quadril", "hip abduction"],
     "pattern": "isolado",
     "equipment": ["maquina"],
     "status": "consolidado",
     "summary": "Sentado, joelhos contra as almofadas, abrir as coxas para os lados e voltar devagar.",
+    "how": {
+      "setup": ["Sentado com as costas no encosto, apoios por fora dos joelhos.", "Pés nos apoios, mãos nos pegadores do assento."],
+      "execution": [
+        { "text": "Comece com os joelhos juntos.", "u": 0 },
+        { "text": "Afaste as pernas empurrando os apoios para fora.", "u": 0.5 },
+        { "text": "Pare com as pernas abertas e feche devagar.", "u": 1 }
+      ],
+      "mistakes": ["Jogar o tronco para a frente e para trás para abrir.", "Deixar o peso bater na volta."]
+    },
     "targets": [
       { "muscle": "gluteus_medius", "role": "alvo" },
       { "muscle": "gluteus_minimus", "role": "alvo" },
@@ -933,10 +1039,20 @@
   {
     "id": "leaned_hip_abduction",
     "name": "Abdutora inclinada",
+    "aliases": ["abdutora inclinada", "abdutora com tronco à frente", "abdutora inclinado"],
     "pattern": "isolado",
     "equipment": ["maquina"],
     "status": "hipotese",
     "summary": "Na abdutora, inclinar o tronco à frente sobre as coxas e abrir. A inclinação flexiona mais o quadril.",
+    "how": {
+      "setup": ["Sentado na abdutora, tronco inclinado à frente e mãos nos pegadores da frente.", "Apoios por fora dos joelhos, pés nos apoios."],
+      "execution": [
+        { "text": "Comece com os joelhos juntos e o tronco parado.", "u": 0 },
+        { "text": "Afaste as pernas sem mudar a inclinação.", "u": 0.5 },
+        { "text": "Pare aberto e feche devagar.", "u": 1 }
+      ],
+      "mistakes": ["Variar a inclinação do tronco durante a série.", "Abrir com impulso."]
+    },
     "targets": [
       { "muscle": "gluteus_medius", "role": "alvo" },
       { "muscle": "gluteus_maximus", "role": "alvo" },
@@ -953,10 +1069,20 @@
   {
     "id": "seated_hip_adduction",
     "name": "Adutora sentada",
+    "aliases": ["adutora", "cadeira adutora", "adução de quadril", "hip adduction"],
     "pattern": "isolado",
     "equipment": ["maquina"],
     "status": "consolidado",
     "summary": "Sentado, joelhos por dentro das almofadas abertas, fechar as coxas e voltar abrindo devagar.",
+    "how": {
+      "setup": ["Sentado com as costas no encosto, apoios por dentro dos joelhos.", "Abertura inicial que ainda é confortável; mãos nos pegadores."],
+      "execution": [
+        { "text": "Comece com as pernas abertas.", "u": 0 },
+        { "text": "Feche as pernas apertando os apoios.", "u": 0.5 },
+        { "text": "Pare com os joelhos juntos e abra devagar.", "u": 1 }
+      ],
+      "mistakes": ["Começar mais aberto do que o quadril aguenta.", "Soltar o peso na volta."]
+    },
     "targets": [
       { "muscle": "adductor_longus", "role": "alvo" },
       { "muscle": "adductor_brevis", "role": "alvo" },
@@ -974,10 +1100,20 @@
   {
     "id": "leg_press_calf_raise",
     "name": "Panturrilha no leg press",
+    "aliases": ["panturrilha no leg", "gêmeos no leg press", "calf press"],
     "pattern": "isolado",
     "equipment": ["maquina"],
     "status": "consolidado",
     "summary": "No leg press com as pernas estendidas, empurrar a plataforma só com a ponta dos pés e descer o calcanhar o máximo.",
+    "how": {
+      "setup": ["No leg press, ponta dos pés na borda de baixo da plataforma.", "Joelhos quase estendidos (sem travar), trava de segurança à mão."],
+      "execution": [
+        { "text": "Deixe a plataforma descer até o calcanhar alongar.", "u": 0 },
+        { "text": "Empurre com a ponta dos pés estendendo o tornozelo.", "u": 0.5 },
+        { "text": "Pare com o tornozelo estendido e volte devagar.", "u": 1 }
+      ],
+      "mistakes": ["Dobrar os joelhos e transformar em leg press curto.", "Pés escorregando para fora da borda."]
+    },
     "targets": [
       { "muscle": "gastrocnemius", "role": "alvo" },
       { "muscle": "soleus", "role": "alvo" }
@@ -1313,10 +1449,20 @@
   {
     "id": "machine_chest_press",
     "name": "Supino máquina",
+    "aliases": ["supino sentado", "chest press", "supino na máquina", "peitoral máquina"],
     "pattern": "empurrar_horizontal",
     "equipment": ["maquina"],
     "status": "consolidado",
     "summary": "Sentado, empurrar os pegadores à frente e voltar até as mãos ficarem ao lado do peito.",
+    "how": {
+      "setup": ["Assento com os pegadores na altura do meio do peito.", "Costas no encosto, pegada neutra."],
+      "execution": [
+        { "text": "Comece com as mãos perto do peito e os cotovelos atrás do tronco.", "u": 0 },
+        { "text": "Empurre os pegadores para a frente.", "u": 0.5 },
+        { "text": "Pare antes de travar os cotovelos e volte devagar.", "u": 1 }
+      ],
+      "mistakes": ["Assento baixo ou alto demais: a mão sai da linha do peito.", "Desencostar as costas no fim."]
+    },
     "targets": [
       { "muscle": "pectoralis_major", "role": "alvo" },
       { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_ant"] },
@@ -1389,10 +1535,20 @@
   {
     "id": "pec_deck",
     "name": "Voador (peck deck)",
+    "aliases": ["voador", "peck deck", "pec deck", "crucifixo máquina", "fly máquina"],
     "pattern": "isolado",
     "equipment": ["maquina"],
     "status": "consolidado",
     "summary": "Sentado, braços abertos nos pegadores, fechar à frente do peito e abrir devagar.",
+    "how": {
+      "setup": ["Assento com as mãos na altura do peito; costas no encosto.", "Ombro sob o eixo dos braços da máquina, cotovelo levemente dobrado."],
+      "execution": [
+        { "text": "Comece com os braços abertos e o peito alongado.", "u": 0 },
+        { "text": "Feche os braços em arco à frente do peito.", "u": 0.5 },
+        { "text": "Pare com as mãos perto uma da outra e abra devagar.", "u": 1 }
+      ],
+      "mistakes": ["Abrir além do que o ombro aguenta.", "Tirar as costas do encosto para fechar."]
+    },
     "targets": [
       { "muscle": "pectoralis_major", "role": "alvo", "parts": ["pectoralis_major_stern", "pectoralis_major_clav"] },
       { "muscle": "deltoid", "role": "sinergista", "parts": ["deltoid_ant"] }
@@ -1780,10 +1936,20 @@
   {
     "id": "machine_shoulder_press",
     "name": "Desenvolvimento máquina",
+    "aliases": ["desenvolvimento na máquina", "shoulder press", "desenvolvimento sentado máquina", "press de ombro"],
     "pattern": "empurrar_vertical",
     "equipment": ["maquina"],
     "status": "consolidado",
     "summary": "Sentado, empurrar os pegadores para cima e voltar até a altura dos ombros.",
+    "how": {
+      "setup": ["Assento com os pegadores na altura das orelhas.", "Costas no encosto, pés firmes no chão."],
+      "execution": [
+        { "text": "Comece com os cotovelos abertos e as mãos perto das orelhas.", "u": 0 },
+        { "text": "Empurre para cima; as alavancas sobem em arco.", "u": 0.5 },
+        { "text": "Pare com os braços quase estendidos e desça devagar.", "u": 1 }
+      ],
+      "mistakes": ["Arquear a lombar para empurrar.", "Cortar a descida antes das orelhas."]
+    },
     "targets": [
       { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_ant", "deltoid_lat"] },
       { "muscle": "triceps_brachii", "role": "sinergista" },
@@ -1859,10 +2025,20 @@
   {
     "id": "reverse_pec_deck",
     "name": "Crucifixo inverso na máquina",
+    "aliases": ["voador inverso", "crucifixo inverso máquina", "reverse fly", "peck deck invertido"],
     "pattern": "isolado",
     "equipment": ["maquina"],
     "status": "consolidado",
     "summary": "Peito contra o encosto, braços à frente, abrir para trás até a linha dos ombros.",
+    "how": {
+      "setup": ["Sentado de frente para a máquina, peito no apoio.", "Mãos nos pegadores à frente, na altura dos ombros."],
+      "execution": [
+        { "text": "Comece com os braços à frente.", "u": 0 },
+        { "text": "Abra os braços para trás em arco, cotovelo levemente dobrado.", "u": 0.5 },
+        { "text": "Pare com os braços na linha dos ombros e volte devagar.", "u": 1 }
+      ],
+      "mistakes": ["Encolher os ombros durante a abertura.", "Tirar o peito do apoio."]
+    },
     "targets": [
       { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_post"] },
       { "muscle": "trapezius", "role": "sinergista", "parts": ["trapezius_mid"] },

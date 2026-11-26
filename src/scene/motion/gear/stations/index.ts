@@ -10,6 +10,7 @@ import type { GearKit } from '../kit';
 import { adjustableBench, flatBench, preacherBench } from './bench';
 import { benchRack, powerRack } from './rack';
 import { dipStation, hyperBench, latTower, nordicAnchor, rowStation } from './frames';
+import { calfSeated, calfStanding, chestPress, hackSquat, hipAbductor, legCurlLying, legCurlSeated, legExtension, legPress, pecDeck, pendulum, shoulderPress } from './machines';
 
 export interface StationContext {
   /** Primeiro quadro e outras amostras do clipe (u crescente). */
@@ -35,6 +36,18 @@ export const STATIONS: Readonly<Record<StationId, StationBuilder>> = {
   dip_station: dipStation,
   hyper_bench: hyperBench,
   nordic_anchor: nordicAnchor,
+  leg_extension: legExtension,
+  leg_curl_seated: legCurlSeated,
+  leg_curl_lying: legCurlLying,
+  hack_squat: hackSquat,
+  pendulum,
+  leg_press: legPress,
+  calf_standing: calfStanding,
+  calf_seated: calfSeated,
+  hip_abductor: hipAbductor,
+  pec_deck: pecDeck,
+  chest_press: chestPress,
+  shoulder_press: shoulderPress,
 };
 
 /** Estações que desenham a estrutura do banco: a peça do clipe fica só com o estofado. */
@@ -45,6 +58,31 @@ export const BENCH_STATIONS: ReadonlySet<StationId> = new Set([
   'lat_tower',
   'row_station',
   'hyper_bench',
+  'leg_extension',
+  'leg_curl_seated',
+  'leg_curl_lying',
+  'leg_press',
+  'calf_seated',
+  'hip_abductor',
+  'pec_deck',
+  'chest_press',
+  'shoulder_press',
+]);
+
+/** Máquinas: a estrutura entra inteira na caixa do clipe (enquadramento do player). */
+export const FRAMED_STATIONS: ReadonlySet<StationId> = new Set([
+  'leg_extension',
+  'leg_curl_seated',
+  'leg_curl_lying',
+  'hack_squat',
+  'pendulum',
+  'leg_press',
+  'calf_standing',
+  'calf_seated',
+  'hip_abductor',
+  'pec_deck',
+  'chest_press',
+  'shoulder_press',
 ]);
 
 export function buildStation(id: StationId, ctx: StationContext, params: Readonly<Record<string, number>> = {}, at?: Vec3, yaw = 0): StationView {

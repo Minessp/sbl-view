@@ -15,6 +15,7 @@ import { createSquatSolver } from '../exercises/squat';
 import type { EngineSkeleton } from '../kinematics/types';
 import type { Vec3 } from '../math/vec';
 import type { PointMass } from '../statics/mass';
+import { FINGERS } from './evaluate';
 
 type View = MotionClip['view'];
 type Base = Omit<MotionClip, 'id' | 'evidence'>;
@@ -139,7 +140,6 @@ export function curlClip(p: CurlParams): Base {
       equipment: [
         ...equipment,
         { kind: 'block', role: 'seat', center: [0, seatY - 0.04, 0.04], size: [0.34, 0.08, 0.36] },
-        { kind: 'block', role: 'frame', center: [0, (seatY - 0.08) / 2, 0.02], size: [0.06, seatY - 0.08, 0.3] },
       ],
       load,
       tempo: p.tempo,
@@ -176,12 +176,6 @@ export function curlClip(p: CurlParams): Base {
         center: back,
         size: [0.32, 0.8, 0.07],
         pitch,
-      },
-      {
-        kind: 'block',
-        role: 'frame',
-        center: [0, (seatY - 0.08) / 2, 0.02],
-        size: [0.06, seatY - 0.08, 0.3],
       },
       { kind: 'station', id: 'adjustable_bench' },
     ],
@@ -228,13 +222,9 @@ export function pressClip(p: PressParams): Base {
     pole: p.pole,
   };
   const kind = p.implement ?? 'barbell';
-  // Máquina: pegadores como rolos nas mãos; a carga segue o caminho deles.
+  // Máquina: a estação põe os pegadores nas mãos e as alavancas até o eixo; a carga segue o caminho deles.
   const bar: Equipment[] =
-    kind === 'barbell'
-      ? [{ kind: 'barbell', plates: p.plates }]
-      : kind === 'dumbbell'
-        ? [{ kind: 'dumbbell' }]
-        : [{ kind: 'pad', segment: 'hand_r', point: [-0.27, 0.8, 0.03], lever: false, both: true }];
+    kind === 'barbell' ? [{ kind: 'barbell', plates: p.plates }] : kind === 'dumbbell' ? [{ kind: 'dumbbell' }] : [{ kind: 'station', id: 'chest_press' }];
   // Barra livre sai de um suporte: gaiola em pé, suporte atrás do banco deitado ou inclinado.
   const rack: Equipment[] = kind !== 'barbell' ? [] : [
           p.support === 'standing'
@@ -255,11 +245,11 @@ export function pressClip(p: PressParams): Base {
       hold: { forearm_pro: 85, wrist_flex: -10, hip_flex: thighLevel(pitch) - 5, hip_abd: 8, neck_flex: recline > 30 ? 20 : 0, ...p.hold },
       tracks: [],
       reach: [feetOnFloor(0.56, -0.2), arms],
+      ...(kind === 'machine' ? { fingers: { r: FINGERS.grip, l: FINGERS.grip } } : {}),
       equipment: [
         ...bar,
         { kind: 'block', role: 'seat', center: [0, seatY - 0.04, 0.04], size: [0.34, 0.08, 0.36] },
         { kind: 'block', role: 'back', center: back, size: [0.3, 0.86, 0.07], pitch },
-        { kind: 'block', role: 'frame', center: [0, (seatY - 0.08) / 2, 0.02], size: [0.06, seatY - 0.08, 0.3] },
         ...(kind === 'machine' ? [] : [{ kind: 'station', id: 'adjustable_bench' } as const, ...rack]),
       ],
       load,
@@ -310,12 +300,6 @@ export function pressClip(p: PressParams): Base {
         role: 'bench',
         center: [0, top - 0.04, 0.06],
         size: [0.29, 0.08, 1.12],
-      },
-      {
-        kind: 'block',
-        role: 'frame',
-        center: [0, (top - 0.08) / 2, 0.06],
-        size: [0.07, top - 0.08, 0.9],
       },
       { kind: 'station', id: 'flat_bench' },
       ...rack,

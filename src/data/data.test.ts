@@ -135,6 +135,18 @@ describe('biblioteca de exercícios', () => {
   it('hipótese nunca se apoia em "estabelecido"', () => {
     for (const e of lib) if (e.status === 'hipotese') expect(e.length.confidence).not.toBe('estabelecido');
   });
+
+  it('todo exercício tem "como fazer" (posição, movimento com u nas duas pontas, erros) e apelidos', () => {
+    for (const e of lib) {
+      expect(e.how, `${e.id} sem how`).toBeDefined();
+      expect(e.how?.setup.length, e.id).toBeGreaterThan(0);
+      expect(e.how?.mistakes.length, e.id).toBeGreaterThan(0);
+      const us = e.how?.execution.map((s) => s.u) ?? [];
+      expect(us, `${e.id}: passo em u = 0`).toContain(0);
+      expect(us, `${e.id}: passo em u = 1`).toContain(1);
+      expect(e.aliases?.length, `${e.id} sem apelidos`).toBeGreaterThan(0);
+    }
+  });
 });
 
 describe('ações articulares', () => {
@@ -308,6 +320,10 @@ describe('clipes de movimento', () => {
     'single_arm_pulldown', 'seated_cable_row', 'face_pull', 'cable_crunch', 'pallof_press', 'cable_woodchop', 'cable_pull_through',
     'sissy_squat', 'back_extension', 'reverse_nordic', 'nordic_curl', 'tibialis_raise', 'push_up', 'chest_dip', 'pull_up', 'chin_up',
     'crunch', 'hanging_leg_raise',
+    // Máquinas.
+    'hack_squat', 'pendulum_squat', 'leg_press', 'leg_extension', 'reclined_leg_extension', 'seated_leg_curl', 'lying_leg_curl',
+    'standing_calf_raise', 'seated_calf_raise', 'seated_hip_abduction', 'leaned_hip_abduction', 'seated_hip_adduction',
+    'leg_press_calf_raise', 'pec_deck', 'reverse_pec_deck', 'machine_chest_press', 'machine_shoulder_press',
   ]);
   const COLLISION_EXCEPTIONS: Record<string, string> = {
     preacher_curl: 'peito encostado no alto da almofada, como deve; a cápsula do tronco é centrada na coluna e acusa ~12 cm',

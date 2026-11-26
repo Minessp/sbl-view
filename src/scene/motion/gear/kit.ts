@@ -34,6 +34,16 @@ export function orient(m: Object3D, center: Vec3, axis: Vec3) {
   m.position.set(center[0], center[1], center[2]);
 }
 
+/** Viga de `GearKit.beam` (re)posta entre dois pontos: as peças que andam a cada quadro. */
+export function placeBeam(m: Object3D, a: Vec3, b: Vec3, w: number) {
+  tA.set(a[0], a[1], a[2]);
+  tB.set(b[0] - a[0], b[1] - a[1], b[2] - a[2]);
+  const len = tB.length();
+  m.position.copy(tA).addScaledVector(tB, 0.5);
+  if (len > 1e-6) m.quaternion.setFromUnitVectors(UP, tB.normalize());
+  m.scale.set(w, Math.max(len, 1e-3), w);
+}
+
 export class GearKit {
   private readonly geos: BufferGeometry[] = [];
   private readonly mats: GearMaterial[] = [];
@@ -81,12 +91,7 @@ export class GearKit {
   /** Tubo quadrado entre dois pontos (caixa arredondada esticada no eixo Y). */
   beam(parent: Object3D, a: Vec3, b: Vec3, w = 0.06, finish: Finish = 'steel'): Mesh {
     const m = this.mesh(this.geo(padGeometry(1, 1, 1, 0.12)), this.mat(finish), parent);
-    tA.set(a[0], a[1], a[2]);
-    tB.set(b[0] - a[0], b[1] - a[1], b[2] - a[2]);
-    const len = tB.length();
-    m.position.copy(tA).addScaledVector(tB, 0.5);
-    m.quaternion.setFromUnitVectors(UP, tB.normalize());
-    m.scale.set(w, Math.max(len, 1e-3), w);
+    placeBeam(m, a, b, w);
     return m;
   }
 

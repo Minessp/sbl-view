@@ -6,7 +6,7 @@
 import { PerspectiveCamera } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { Camera, PerspectiveCamera as PerspCam, WebGLRenderer } from 'three';
+import { Box3, type Camera, type PerspectiveCamera as PerspCam, type WebGLRenderer } from 'three';
 import { forwardKinematics, pointToWorld } from '@/engine/kinematics/fk';
 import { blendDeg, blendRoot } from '@/engine/motion/blend';
 import { evaluateClip, type CompiledClip, type MotionFrame } from '@/engine/motion/evaluate';
@@ -28,6 +28,8 @@ import { Telemetry } from '../hud/telemetry';
 import { useStage } from '../stageStore';
 import { EquipmentView } from './equipment';
 import { gearAppear } from './gear/material';
+import { GearKit } from './gear/kit';
+import { buildStation, FRAMED_STATIONS } from './gear/stations';
 
 const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 /** Alfa da pele ligada no player. */
@@ -43,8 +45,10 @@ const easeOut = (k: number) => 1 - (1 - k) ** 3;
 export function clipBox(c: CompiledClip): Box {
   const boxes: Box[] = [];
   const pt = (p: Vec3, s = 0.12): Box => ({ center: p, size: [s, s, s] });
+  const frames: MotionFrame[] = [];
   for (let i = 0; i <= 8; i++) {
     const f = evaluateClip(c, i / 8);
+    frames.push(f);
     for (const seg of c.sk.segments) {
       boxes.push(pt(pointToWorld(f.pose, seg.id, [0, 0, 0]), 0.2));
       boxes.push(pt(pointToWorld(f.pose, seg.id, seg.tip), 0.16));
@@ -64,6 +68,23 @@ export function clipBox(c: CompiledClip): Box {
       }
       else if (e.kind === 'swing') boxes.push(pt(e.pivot, 0.2));
     }
+  }
+  // Máquina: a estrutura inteira no quadro (montada uma vez fora da cena e medida em todas as amostras).
+  const machines = frames[0]?.equipment.filter((e) => e.kind === 'station' && FRAMED_STATIONS.has(e.id)) ?? [];
+  if (machines.length) {
+    const kit = new GearKit();
+    const b = new Box3();
+    for (const e of machines) {
+      if (e.kind !== 'station') continue;
+      const v = buildStation(e.id, { frames, kit }, e.params, e.at, e.yaw);
+      for (const f of frames) {
+        v.update?.(f);
+        v.group.updateMatrixWorld(true);
+        b.expandByObject(v.group);
+      }
+    }
+    kit.dispose();
+    if (!b.isEmpty()) boxes.push({ center: [(b.min.x + b.max.x) / 2, (b.min.y + b.max.y) / 2, (b.min.z + b.max.z) / 2], size: [b.max.x - b.min.x, b.max.y - b.min.y, b.max.z - b.min.z] });
   }
   const m = mergeBoxes(boxes) ?? { center: [0, 0.9, 0], size: [0.6, 1.8, 0.4] };
   // Chão sempre no quadro.

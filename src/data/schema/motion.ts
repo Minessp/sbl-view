@@ -103,6 +103,18 @@ export const StationId = z.enum([
   'dip_station',
   'hyper_bench',
   'nordic_anchor',
+  'leg_extension',
+  'leg_curl_seated',
+  'leg_curl_lying',
+  'hack_squat',
+  'pendulum',
+  'leg_press',
+  'calf_standing',
+  'calf_seated',
+  'hip_abductor',
+  'pec_deck',
+  'chest_press',
+  'shoulder_press',
 ]);
 export type StationId = z.infer<typeof StationId>;
 
@@ -137,7 +149,7 @@ export const Equipment = z.discriminatedUnion('kind', [
    */
   z.object({
     kind: z.literal('block'),
-    role: z.enum(['bench', 'seat', 'back', 'step', 'platform', 'frame']),
+    role: z.enum(['bench', 'seat', 'back', 'step', 'platform']),
     center: Vec3,
     size: Vec3,
     pitch: z.number().optional(),
