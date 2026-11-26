@@ -25,10 +25,10 @@ import { applyPatches } from '@/engine/motion/patch';
 import { ClipFile, MotionClip } from './schema/motion';
 import { compileClip, evaluateClip } from '@/engine/motion/evaluate';
 import { PENETRATION_LIMIT, penetrations } from '@/engine/motion/collide';
-import { angleBetween, DEG, normalize, rotate, scale, sub } from '@/engine/math/vec';
+import { add, angleBetween, DEG, dot, normalize, rotate, scale, sub } from '@/engine/math/vec';
 import { pointToWorld } from '@/engine/kinematics/fk';
 import { readJoints } from '@/engine/kinematics/limits';
-import { must } from '@/engine/math/arr';
+import { at, must } from '@/engine/math/arr';
 import { expandEntry, motionMasses } from '@/features/library/motion';
 import { lengthCurves } from '@/features/library/player/lengths';
 import { PlanningFile, TrainingFile } from './schema/planning';
@@ -353,10 +353,60 @@ describe('clipes de movimento', () => {
     expect(wrong).toEqual([]);
   }, 60_000);
 
+  // Pose plausível em 49 amostras: pé plantado parado no chão, joelho no rumo da ponta do pé, nenhum segmento que
+  // "estala" entre amostras vizinhas (salto de ramo do IK) e cabeça alinhada ao tronco. Exceção só com motivo.
+  const POSE_EXCEPTIONS: Record<string, string> = {};
+
+  it('pose plausível: pé parado, joelho × ponta do pé, sem estalo, cabeça no tronco', () => {
+    const qAngle = (a: readonly number[], b: readonly number[]) =>
+      (2 * Math.acos(Math.min(1, Math.abs((a[0] ?? 0) * (b[0] ?? 0) + (a[1] ?? 0) * (b[1] ?? 0) + (a[2] ?? 0) * (b[2] ?? 0) + (a[3] ?? 0) * (b[3] ?? 0))))) / DEG;
+    const flat = (v: readonly number[]) => normalize([v[0] ?? 0, 0, v[2] ?? 0]);
+    const wrong: string[] = [];
+    for (const ex of lib) {
+      const c = compiled(ex.id);
+      const frames = Array.from({ length: 49 }, (_, i) => evaluateClip(c, i / 48));
+      const bad: string[] = [];
+      const planted = c.clip.root.mode === 'plant' ? (['r', 'l'] as const).filter((s) => !c.legs.some((r) => r.sides.includes(s))) : [];
+      for (const s of ['r', 'l'] as const) {
+        const foot = must(sk.byId, `foot_${s}`, 'segmento');
+        const tips = frames.map((f) => pointToWorld(f.pose, foot.id, foot.tip));
+        if (planted.includes(s)) {
+          const t0 = at(tips, 0);
+          const slide = Math.max(...tips.map((t) => Math.hypot(t[0] - t0[0], t[2] - t0[2])));
+          if (slide > 0.005) bad.push(`pé ${s} desliza ${(slide * 100).toFixed(1)} cm`);
+        }
+        let knee = 0;
+        frames.forEach((f, i) => {
+          const tip = at(tips, i);
+          const ankle = must(f.pose.world, foot.id, 'segmento').position;
+          const kn = must(f.pose.world, `shank_${s}`, 'segmento').position;
+          const hip = must(f.pose.world, `thigh_${s}`, 'segmento').position;
+          if (Math.min(tip[1], ankle[1]) > 0.12 || kn[1] < ankle[1] + 0.2 || (f.deg[`knee_flex_${s}`] ?? 0) < 30) return;
+          const ha = sub(ankle, hip);
+          const k = dot(sub(kn, hip), ha) / dot(ha, ha);
+          knee = Math.max(knee, angleBetween(flat(sub(kn, add(hip, scale(ha, k)))), flat(sub(tip, ankle))) / DEG);
+        });
+        if (knee > 20) bad.push(`joelho ${s} fora da ponta do pé ${knee.toFixed(0)}°`);
+      }
+      for (const seg of sk.segments) {
+        const steps = frames.slice(1).map((f, i) => qAngle(at(frames, i).pose.world.get(seg.id)?.rotation ?? [], f.pose.world.get(seg.id)?.rotation ?? []));
+        const med = [...steps].sort((a, b) => a - b)[24] ?? 0;
+        const i = steps.reduce((b, x, j) => (x > (steps[b] ?? 0) ? j : b), 0);
+        const step = steps[i] ?? 0;
+        if (step > Math.max(2 * med, 3) + 4) bad.push(`${seg.id} estala ${step.toFixed(0)}° em u ${(i / 48).toFixed(2)}`);
+      }
+      const head = Math.max(...frames.map((f) => angleBetween(rotate(must(f.pose.world, 'head', 'segmento').rotation, [0, 1, 0]), rotate(must(f.pose.world, 'trunk', 'segmento').rotation, [0, 1, 0])) / DEG));
+      if (head > 60) bad.push(`cabeça ${head.toFixed(0)}° fora do tronco`);
+      const known = ex.id in POSE_EXCEPTIONS;
+      if (bad.length && !known) wrong.push(`${ex.id}: ${bad.join('; ')}`);
+      if (!bad.length && known) wrong.push(`${ex.id} saiu da lista de exceções`);
+    }
+    expect(wrong).toEqual([]);
+  }, 60_000);
+
   // Barra nas duas mãos: o eixo da palma (polegar → mínimo) corre ao longo da barra. Onde a pronação sozinha não basta
   // (punho ou rotação do ombro teriam de mudar junto), o exercício fica na lista com o motivo.
   const GRIP_EXCEPTIONS: Record<string, string> = {
-    front_squat: 'apoio frontal: a barra sobre os deltoides pede extensão do punho que o clipe não tem',
     chin_up: 'no alto da barra a supinação completa ainda deixa o punho desviado',
     reverse_wrist_curl: 'antebraços em diagonal sobre as coxas: nem a pronação no limite (160°) alinha a palma com a barra',
   };

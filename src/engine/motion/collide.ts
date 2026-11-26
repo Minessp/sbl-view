@@ -22,7 +22,7 @@ export interface Penetration {
   readonly depthM: number;
 }
 
-interface Capsule {
+export interface Capsule {
   readonly id: string;
   readonly p: Vec3;
   readonly q: Vec3;
@@ -46,7 +46,7 @@ const SUPPORT: Readonly<Record<string, readonly string[]>> = {
 const both = (id: string) => (id.endsWith('_r') || id.endsWith('_l') ? [id, mirrorId(id)] : [id]);
 
 /** Segmentos que podem encostar em peça e chão, e os que podem encostar na barra. */
-function declared(clip: CompiledClip, frame: MotionFrame) {
+export function declared(clip: CompiledClip, frame: MotionFrame) {
   const c = clip.clip;
   const rest = new Set<string>(SUPPORT[c.support] ?? []);
   if (c.root.mode === 'pin') rest.add(c.root.segment);
@@ -68,7 +68,7 @@ function declared(clip: CompiledClip, frame: MotionFrame) {
   return { rest, bar };
 }
 
-function capsulesOf(clip: CompiledClip, frame: MotionFrame, volumes: BodyVolumes): Capsule[] {
+export function capsulesOf(clip: CompiledClip, frame: MotionFrame, volumes: BodyVolumes = defaultVolumes): Capsule[] {
   const out: Capsule[] = [];
   for (const seg of clip.sk.segments) {
     const v = volumes.segments[seg.id.replace(/_l$/, '_r')];

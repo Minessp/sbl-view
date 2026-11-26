@@ -398,6 +398,8 @@ export interface SquatParams {
   readonly loadKg: number;
   /** Halter seguro no peito (goblet) em vez da barra. */
   readonly implement?: 'barbell' | 'dumbbell';
+  /** Braços só por FK pelo `hold` (apoio frontal): a barra segue as mãos. O IK com a mão colada no ombro não tem ramo estável. */
+  readonly fkArms?: boolean;
   readonly hold?: Readonly<Record<string, number>>;
   readonly tempo: Tempo;
   readonly view: View;
@@ -440,18 +442,20 @@ export function squatClip(p: SquatParams, ctx: MoldContext): Base {
     // Base aberta: joelho segue a ponta do pé, aberta uns 15° (a planta acompanha a rotação do quadril).
     hold: { hip_abd: 10, hip_rot: -15, forearm_pro: 80, ...p.hold },
     tracks: [track('hip_flex', 'hip_flex_r'), track('knee_flex', 'knee_flex_r'), track('ankle_dorsi', 'ankle_dorsi_r'), track('lumbar_flex', 'lumbar_flex')],
-    reach: [
-      {
-        limb: 'arm',
-        side: 'both',
-        target: {
-          kind: 'attach',
-          segment: 'trunk',
-          point: [-p.halfWidth, p.bar[1], p.bar[2]],
-        },
-        pole: p.pole,
-      },
-    ],
+    reach: p.fkArms
+      ? []
+      : [
+          {
+            limb: 'arm',
+            side: 'both',
+            target: {
+              kind: 'attach',
+              segment: 'trunk',
+              point: [-p.halfWidth, p.bar[1], p.bar[2]],
+            },
+            pole: p.pole,
+          },
+        ],
     // Goblet: as palmas aparam a cabeça de cima do halter, dedos meio fechados em volta dela.
     ...(p.implement === 'dumbbell' ? { fingers: { r: 0.4, l: 0.4 } } : {}),
     equipment: p.implement === 'dumbbell' ? [{ kind: 'dumbbell', hands: 'shared' }] : [{ kind: 'barbell', plates: p.plates }, { kind: 'station', id: 'power_rack' }],

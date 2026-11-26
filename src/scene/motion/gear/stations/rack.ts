@@ -43,7 +43,8 @@ function holes(kit: GearKit, g: Group, posts: readonly Vec3[], from: number, to:
   }
   const merged = mergeGeometries(parts);
   for (const p of parts) p.dispose();
-  if (merged) kit.mesh(kit.geo(merged), kit.mat('rubber'), g);
+  // Enfeite rente ao montante: fora do teste de atravessamento (a caixa da geometria fundida cobriria a gaiola).
+  if (merged) kit.mesh(kit.geo(merged), kit.mat('rubber'), g).userData.decor = true;
 }
 
 /** Gancho J preso ao montante, apontando para `dir` (unitário horizontal), com o topo do braço sob a barra. */
@@ -75,7 +76,8 @@ export const powerRack: StationBuilder = ({ frames, kit }, params) => {
   const hookTop = (params.hookY ?? top?.center[1] ?? 1.4) - BAR_R;
   const H = params.height ?? 2.3;
   const X = params.width ?? 0.58;
-  const front = z0 + 0.075;
+  // Ganchos um passo à frente da barra (a série é feita depois de tirar a barra e recuar): a barra não raspa neles.
+  const front = z0 + 0.075 + (params.walkout ?? 0.12);
   const back = front - (params.depth ?? 1.1);
   const posts: Vec3[] = [
     [x0 - X, 0, front],
@@ -135,7 +137,8 @@ export const benchRack: StationBuilder = ({ frames, kit }, params) => {
   }
   const [p0, p1] = posts as [Vec3, Vec3];
   kit.beam(g, [p0[0] + hd[0] * 0.3, 0.05, p0[2] + hd[1] * 0.3], [p1[0] + hd[0] * 0.3, 0.05, p1[2] + hd[1] * 0.3], 0.06);
-  kit.beam(g, [p0[0], 0.55, p0[2]], [p1[0], 0.55, p1[2]], 0.05);
+  // Travessa entre os montantes abaixo da cabeça de quem deita (a 0,55 m ela passava pelo pescoço).
+  kit.beam(g, [p0[0], 0.3, p0[2]], [p1[0], 0.3, p1[2]], 0.05);
   holes(kit, g, posts, 0.75, hookTop + 0.1);
   return { group: g };
 };

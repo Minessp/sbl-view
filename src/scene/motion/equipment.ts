@@ -66,7 +66,10 @@ export class EquipmentView {
     for (const e of first.equipment) {
       const i = seen.get(e.kind) ?? 0;
       seen.set(e.kind, i + 1);
+      const n = this.group.children.length;
       this.build(e, i, frames);
+      // Dono de cada malha (teste de atravessamento e folha): tipo e índice, ou o id da estação.
+      for (const o of this.group.children.slice(n)) o.userData.item = e.kind === 'station' ? e.id : `${e.kind}${i}`;
     }
   }
 
@@ -304,7 +307,8 @@ export class EquipmentView {
     }
     const holesGeo = mergeGeometries(holeParts);
     for (const p of holeParts) p.dispose();
-    if (holesGeo) this.mesh(this.geo(holesGeo), this.mat('rubber'), tower);
+    // Furação é enfeite rente à chapa: fora do teste de atravessamento (a caixa da geometria fundida cobriria a coluna).
+    if (holesGeo) this.mesh(this.geo(holesGeo), this.mat('rubber'), tower).userData.decor = true;
     // Pilha atrás da coluna; o cabo que sai da roldana sobe a parte presa no pino.
     const guideTop = H - 0.25;
     const arm = this.mesh(this.geo(padGeometry(0.04, 0.04, 0.3, 0.008)), this.mat('steel'), tower);

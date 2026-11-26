@@ -123,9 +123,13 @@ export function solveTwoBone(
   const c = eF > 1e-9 ? (K - c0) / eF : 1;
   const clipped = c > 1 || c < -1;
   const ac = Math.acos(clamp(c, -1, 1));
-  // Dois φ possíveis; o ângulo do DOF é φ / sinal. Fica o que cabe na amplitude (empate: o menor).
+  // Dois φ possíveis; o ângulo do DOF é φ / sinal. Fica o que cabe na amplitude; empate: o mais perto do ângulo pedido
+  // (perto de estendido o "menor" virava hiperextensão e o joelho estalava entre quadros vizinhos).
+  // Sem pedido de hiperextensão, a dobra para trás perde o empate.
+  const ref = prev?.[knee.id] ?? 0;
+  const cost = (v: number) => Math.abs(v - ref) + (v < 0 && ref >= 0 ? Math.PI : 0);
   const cands = [delta + ac, delta - ac].map((phi) => fit(wrap(phi) / knee.sign, knee));
-  cands.sort((a, b) => a.over - b.over || Math.abs(a.v) - Math.abs(b.v));
+  cands.sort((a, b) => a.over - b.over || cost(a.v) - cost(b.v));
   const bend = clamp(cands[0]?.v ?? 0, knee.min, knee.max);
   const phi = bend * knee.sign;
   const cp = Math.cos(phi),

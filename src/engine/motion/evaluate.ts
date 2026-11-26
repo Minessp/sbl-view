@@ -357,7 +357,36 @@ function plumbTarget(c: CompiledClip, pose: Pose, side: 'r' | 'l', shoulder: Vec
   return [shoulder[0], y, z];
 }
 
-function solveFrame(c: CompiledClip, u: number, ankleOffset: number) {
+/** Pé plantado sem alvo: ponta e abertura no chão, tiradas do quadro de joelhos mais estendidos (fica parado na repetição). */
+interface PlantedFoot {
+  readonly tip: Vec3;
+  readonly q: Quat;
+}
+const plantedCache = new WeakMap<CompiledClip, Partial<Record<'r' | 'l', PlantedFoot>>>();
+
+function plantedFeet(c: CompiledClip): Partial<Record<'r' | 'l', PlantedFoot>> {
+  const hit = plantedCache.get(c);
+  if (hit) return hit;
+  const out: Partial<Record<'r' | 'l', PlantedFoot>> = {};
+  plantedCache.set(c, out);
+  let best = 0;
+  let bend = Infinity;
+  for (let i = 0; i <= 8; i++) {
+    const deg: Record<string, number> = { ...c.hold };
+    for (const t of c.tracks) deg[t.dof] = evalCurve(t.curve, i / 8);
+    const k = Math.abs(deg.knee_flex_r ?? deg.knee_flex ?? 0) + Math.abs(deg.knee_flex_l ?? deg.knee_flex ?? 0);
+    if (k < bend - 1e-6) [bend, best] = [k, i / 8];
+  }
+  const fr = solveFrame(c, best, 0, false);
+  for (const side of ['r', 'l'] as const) {
+    if (c.legs.some((r) => r.sides.includes(side))) continue;
+    const foot = must(c.sk.byId, `foot_${side}`, 'segmento');
+    out[side] = { tip: pointToWorld(fr.pose, foot.id, foot.tip), q: must(fr.pose.world, foot.id, 'segmento').rotation };
+  }
+  return out;
+}
+
+function solveFrame(c: CompiledClip, u: number, ankleOffset: number, pinFeet = true) {
   const sk = c.sk;
   const deg: Record<string, number> = { ...c.hold };
   for (const t of c.tracks) deg[t.dof] = evalCurve(t.curve, u);
@@ -424,7 +453,25 @@ function solveFrame(c: CompiledClip, u: number, ankleOffset: number) {
   // ponta fechava ao agachar ----
   if (c.clip.root.mode === 'plant') {
     const free = (['r', 'l'] as const).filter((s) => !feet.some((f) => f.side === s));
-    for (const side of free) {
+    const pinned = pinFeet ? plantedFeet(c) : {};
+    // Pé parado no chão: a perna vai por IK até a ponta e a abertura do quadro de referência, o joelho no plano do pé
+    // (com abdução e rotação fixas, o FK arrastava o pé pelo chão ao fletir o quadril).
+    const held = free.flatMap((side) => {
+      const ref = pinned[side];
+      if (!ref) return [];
+      const foot = must(sk.byId, `foot_${side}`, 'segmento');
+      const fwd = rotate(ref.q, [0, 0, 1]);
+      return [{ side, ref, foot, chain: chainOf(sk, `thigh_${side}`, `shank_${side}`), ankle: sub(ref.tip, rotate(ref.q, foot.tip)), pole: [fwd[0], 0, fwd[2]] as Vec3 }];
+    });
+    for (let it = 0; it < (held.length ? 4 : 0); it++) {
+      for (const h of held) Object.assign(rad, solveTwoBone(h.chain, pose, h.foot.jointOffset, h.ankle, h.pole, rad, rotate(h.ref.q, [1, 0, 0])).angles);
+      pose = fk();
+      for (const h of held) Object.assign(rad, anglesFromRotation(h.foot, quatMul(quatConj(must(pose.world, `shank_${h.side}`, 'segmento').rotation), h.ref.q)));
+      pose = fk();
+      for (const h of held) h.ankle = add(h.ankle, sub(h.ref.tip, pointToWorld(pose, h.foot.id, h.foot.tip)));
+    }
+    for (const h of held) error = Math.max(error, distance(pointToWorld(pose, h.foot.id, h.foot.tip), h.ref.tip));
+    for (const side of free.filter((s) => !held.some((h) => h.side === s))) {
       const upright = forwardKinematics(sk, { ...rad, [`hip_flex_${side}`]: 0, [`knee_flex_${side}`]: 0 }, { clampToRom: false, root });
       const fwd = rotate(must(upright.world, `foot_${side}`, 'segmento').rotation, [0, 0, 1]);
       const flat = quatFromAxisAngle([0, 1, 0], Math.atan2(fwd[0], fwd[2]));
