@@ -16,7 +16,6 @@ import { strainOf } from '@/features/atlas/explorer/demo';
 import { dampOrbit, fitDistance, FOV_DEG, orbitPosition, orbitsClose, screenAxes, type Orbit } from '@/features/atlas/explorer/orbit';
 import { usePlayer, VIEW_ANGLES } from '@/features/library/player/store';
 import { useTheme } from '@/ui/theme';
-import { ContactShadow } from '../body/ContactShadow';
 import type { BodyInstance } from '../body/instance';
 import { mergeBoxes, type Box, type BodyModel } from '../body/model';
 import { STANDING } from '../body/poses';
@@ -137,8 +136,6 @@ export function PlayerBody({ main = false, hud: withHud = main }: { main?: boole
   const rest = useRef<Float32Array | null>(null);
   const frame = useRef<MotionFrame | null>(null);
   const lastTime = useRef<number | null>(null);
-  const feet = useRef<Vec3[]>([]);
-  const getFeet = useMemo(() => () => feet.current, []);
   const box = useMemo(() => (clip ? clipBox(clip) : null), [clip]);
   const cur = useRef<Orbit | null>(null);
 
@@ -258,7 +255,6 @@ export function PlayerBody({ main = false, hud: withHud = main }: { main?: boole
         }
         body.commit();
       }
-      feet.current = [...f.contacts, ...(equipment?.floor ?? [])].slice(0, 8);
     }
     if (frame.current) equipment?.update(frame.current, st.showLoad);
     if (main) gearAppear.value = Math.min(dir.e(...SCENE_IN), sw ? easeOut(Math.min(1, (now - sw.at) / GEAR_S)) : 1);
@@ -323,7 +319,6 @@ export function PlayerBody({ main = false, hud: withHud = main }: { main?: boole
     <>
       <PerspectiveCamera ref={camRef} makeDefault manual fov={FOV_DEG} near={0.05} far={30} position={[0, 1, 4]} />
       <Studio body={body} cx={box?.center[0] ?? 0} cz={box?.center[2] ?? 0} shadowCasters={casters} />
-      {body && <ContactShadow feet={getFeet} />}
       {body && <primitive object={body.group} />}
       {equipment && <primitive object={equipment.group} />}
       {hud && <primitive object={hud.group} />}

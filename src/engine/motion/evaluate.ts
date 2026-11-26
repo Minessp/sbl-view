@@ -419,12 +419,14 @@ function solveFrame(c: CompiledClip, u: number, ankleOffset: number) {
   }
   for (const f of feet) error = Math.max(error, distance(pointToWorld(pose, `foot_${f.side}`, tipOf(f.side)), f.ball));
 
-  // ---- Pés plantados sem alvo: a planta assenta no chão (sem rolar com a abdução), a ponta segue a rotação do quadril ----
+  // ---- Pés plantados sem alvo: a planta assenta no chão (sem rolar com a abdução). A ponta aponta para onde apontaria com a
+  // perna estendida (quadril e joelho a 0): com o quadril fletido a mesma rotação não gira mais em torno da vertical, e a
+  // ponta fechava ao agachar ----
   if (c.clip.root.mode === 'plant') {
     const free = (['r', 'l'] as const).filter((s) => !feet.some((f) => f.side === s));
     for (const side of free) {
-      const foot = must(pose.world, `foot_${side}`, 'segmento');
-      const fwd = rotate(foot.rotation, [0, 0, 1]);
+      const upright = forwardKinematics(sk, { ...rad, [`hip_flex_${side}`]: 0, [`knee_flex_${side}`]: 0 }, { clampToRom: false, root });
+      const fwd = rotate(must(upright.world, `foot_${side}`, 'segmento').rotation, [0, 0, 1]);
       const flat = quatFromAxisAngle([0, 1, 0], Math.atan2(fwd[0], fwd[2]));
       const shank = must(pose.world, `shank_${side}`, 'segmento');
       Object.assign(rad, anglesFromRotation(must(sk.byId, `foot_${side}`, 'segmento'), quatMul(quatConj(shank.rotation), flat)));

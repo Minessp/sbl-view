@@ -23,13 +23,12 @@ import { CUT_OFF, EXPLODE_SLOT, EXPLODE_SPACING, EXPLODE_YAW, explodeAt, introFr
 import { usePlayer } from '@/features/library/player/store';
 import { anchors } from '../annotations';
 import { structuresOf } from '../atlas/AtlasScene';
-import { ContactShadow } from '../body/ContactShadow';
 import { claimMain, releaseMain } from '../cinema/state';
 import { restRoot, STANDING_DEG, StageView, useDirector } from '../director/StageView';
 import { Studio } from '../set/Studio';
 import type { BodyInstance } from '../body/instance';
 import type { Box, BodyModel } from '../body/model';
-import { footContacts, STANDING } from '../body/poses';
+import { STANDING } from '../body/poses';
 import { pulse } from '../body/rig';
 import { useBodyInstance, useBodyModel } from '../body/useBody';
 import { PlayerBody } from '../motion/MotionScene';
@@ -38,8 +37,6 @@ import { useStage } from '../stageStore';
 const sk = buildSkeleton(skeletonDef);
 const standing = forwardKinematics(sk, STANDING);
 const rest = restRoot(sk);
-const feet = footContacts(sk, standing);
-const ankles = feet.filter((_, i) => i % 2 === 0);
 const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const PITCH = 0.04;
 const TAN = Math.tan((FOV_DEG * Math.PI) / 360);
@@ -79,20 +76,6 @@ function HeroBody() {
   const lensCur = useRef({ x: 0, y: 0, r: 0 });
   const leave = useRef({ k: 0, goal: null as Orbit | null, key: '' });
   const spread = useRef({ ex: 0, right: [1, 0, 0] as Vec3 });
-  const shadowPts = useMemo(() => [] as Vec3[], []);
-  const getFeet = useMemo(
-    () => () => {
-      const { ex, right } = spread.current;
-      if (ex < 0.01) return feet;
-      shadowPts.length = 0;
-      for (const l of LAYER_IDS) {
-        const o = EXPLODE_SLOT[l] * EXPLODE_SPACING * ex;
-        for (const a of ankles) shadowPts.push([a[0] + right[0] * o, 0, a[2] + right[2] * o]);
-      }
-      return shadowPts;
-    },
-    [shadowPts],
-  );
   const tmp = useMemo(() => new Vector3(), []);
   const clock = useRef(0);
 
@@ -308,7 +291,6 @@ function HeroBody() {
     <>
       <PerspectiveCamera ref={camRef} makeDefault manual fov={FOV_DEG} near={0.05} far={30} position={[0, 1, 4]} />
       <Studio body={body} boxes />
-      {body && <ContactShadow feet={getFeet} />}
       {body && <primitive object={body.group} />}
     </>
   );
