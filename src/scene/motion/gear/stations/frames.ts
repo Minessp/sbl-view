@@ -42,7 +42,7 @@ export const latTower: StationBuilder = ({ frames, kit }) => {
   const all = blocks(frames);
   const seat = all.find((e) => e.role === 'seat');
   const cable = cableOf(frames);
-  if (!seat || !cable) return { group: g, floor: [] };
+  if (!seat || !cable) return { group: g };
   const [x, y, z] = seat.center;
   const rear = z - 0.28;
   // Pé da torre: a coluna fica 0,55 m à frente da roldana (`EquipmentView.buildCable`).
@@ -53,7 +53,6 @@ export const latTower: StationBuilder = ({ frames, kit }) => {
   const knob = kit.mesh(kit.geo(rod(0.014, 0.06, 12)), kit.mat('rubber'), g);
   knob.rotation.z = Math.PI / 2;
   knob.position.set(x + 0.06, y - 0.2, z);
-  const floor: Vec3[] = [[x, 0, rear], [tower[0], 0, tower[2]]];
   // Rolos de coxa no lugar do bloco `frame`, num poste entre os joelhos até a longarina.
   const thigh = all.find((e) => e.role === 'frame');
   if (thigh) {
@@ -63,7 +62,7 @@ export const latTower: StationBuilder = ({ frames, kit }) => {
     const collar = kit.mesh(kit.geo(padGeometry(0.07, 0.08, 0.07, 0.01)), kit.mat('steel'), g);
     collar.position.set(tx, ty - 0.14, tz);
   }
-  return { group: g, floor };
+  return { group: g };
 };
 
 export const rowStation: StationBuilder = ({ frames, kit }) => {
@@ -72,7 +71,7 @@ export const rowStation: StationBuilder = ({ frames, kit }) => {
   const seat = all.find((e) => e.role === 'seat');
   const plate = all.find((e) => e.role === 'platform');
   const cable = cableOf(frames);
-  if (!seat || !cable) return { group: g, floor: [] };
+  if (!seat || !cable) return { group: g };
   const [x, y, z] = seat.center;
   const rear = z - 0.32;
   const front = cable.pulley[2] - 0.05;
@@ -87,14 +86,13 @@ export const rowStation: StationBuilder = ({ frames, kit }) => {
     kit.beam(g, lo, [x, rail, lo[2]], 0.05);
     kit.beam(g, hi, [x, rail, hi[2] + 0.18], 0.05);
   }
-  return { group: g, floor: [[x, 0, rear], [x, 0, front]] };
+  return { group: g };
 };
 
 export const dipStation: StationBuilder = ({ frames, kit }) => {
   const g = new Group();
   const f = frames[0];
-  if (!f) return { group: g, floor: [] };
-  const floor: Vec3[] = [];
+  if (!f) return { group: g };
   const ends: Vec3[][] = [];
   for (const p of [f.grips.r, f.grips.l]) {
     const back: Vec3 = [p[0], p[1], p[2] - 0.32];
@@ -104,7 +102,6 @@ export const dipStation: StationBuilder = ({ frames, kit }) => {
     kit.rod(g, [p[0], p[1], p[2] - 0.07], [p[0], p[1], p[2] + 0.07], 0.025, 'rubber');
     for (const e of [back, fwd]) {
       kit.beam(g, [e[0], e[1] + 0.02, e[2]], [e[0], 0.04, e[2]], 0.06);
-      floor.push([e[0], 0, e[2]]);
     }
     kit.beam(g, [p[0], 0.03, back[2] - 0.08], [p[0], 0.03, fwd[2] + 0.08], 0.06);
     ends.push([back, fwd]);
@@ -122,7 +119,7 @@ export const dipStation: StationBuilder = ({ frames, kit }) => {
       b = l[1];
     if (a && b) kit.beam(g, [a[0], a[1] * 0.45, a[2]], [b[0], b[1] * 0.45, b[2]], 0.05);
   }
-  return { group: g, floor };
+  return { group: g };
 };
 
 export const hyperBench: StationBuilder = ({ frames, kit }) => {
@@ -131,7 +128,7 @@ export const hyperBench: StationBuilder = ({ frames, kit }) => {
   const pad = all.find((e) => e.role === 'bench');
   const plate = all.find((e) => e.role === 'platform');
   const f = frames[0];
-  if (!pad || !plate || !f) return { group: g, floor: [] };
+  if (!pad || !plate || !f) return { group: g };
   const a = toWorld(plate, [0, -plate.size[1] / 2 - 0.03, 0]);
   const b = toWorld(pad, [0, -pad.size[1] / 2 - 0.04, 0]);
   kit.beam(g, a, b, 0.07);
@@ -149,7 +146,7 @@ export const hyperBench: StationBuilder = ({ frames, kit }) => {
     roller(kit, g, c, 0.36, 0.045);
     kit.beam(g, [0, c[1], c[2]], nearestOn(a, b, c), 0.04);
   }
-  return { group: g, floor: [[b[0], 0, b[2]], [a[0], 0, a[2]]] };
+  return { group: g };
 };
 
 export const nordicAnchor: StationBuilder = ({ frames, kit }) => {
@@ -157,7 +154,7 @@ export const nordicAnchor: StationBuilder = ({ frames, kit }) => {
   const pad = padOf(frames);
   const c = pad?.centers[0];
   const base = blocks(frames).find((e) => e.role === 'platform');
-  if (!c) return { group: g, floor: [] };
+  if (!c) return { group: g };
   const top = base ? base.center[1] + base.size[1] / 2 : 0;
   for (const s of [-1, 1]) {
     const x = c[0] + s * 0.23;
@@ -166,5 +163,5 @@ export const nordicAnchor: StationBuilder = ({ frames, kit }) => {
     foot.position.set(x, top + 0.006, c[2] - 0.02);
   }
   kit.rod(g, [c[0] - 0.23, c[1], c[2]], [c[0] + 0.23, c[1], c[2]], 0.012, 'chrome');
-  return { group: g, floor: [] };
+  return { group: g };
 };

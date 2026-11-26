@@ -1,6 +1,6 @@
 /**
  * Cenário do estúdio, dentro de uma vista: chão escuro que some na penumbra, com a sombra projetada da key (mapa de
- * profundidade desenhado pela luz, penumbra que abre com a distância ao pé, estilo PCSS) e o reflexo do corpo (passe
+ * profundidade desenhado pela luz, penumbra que abre com a distância ao pé, estilo PCSS) e o reflexo do corpo e do equipamento (passe
  * espelhado em resolução cheia, desfocado e apagado com a distância ao chão); softboxes ao fundo, longe o bastante para a profundidade
  * de campo as abrir em luz desfocada. A key (rig.uKeyDir) mora no espaço da câmera: a sombra acompanha a vista.
  */
@@ -172,6 +172,8 @@ const BOXES = [
 
 export interface ShadowCaster {
   render(gl: WebGLRenderer, camera: Camera): void;
+  /** Passe espelhado do reflexo no chão (o que reflete de verdade além do corpo). */
+  renderMirror?(gl: WebGLRenderer, camera: Camera): void;
 }
 
 /** `boxes`: softboxes ao fundo. Só no herói da home: no quadro do player, com a câmera afastada, viravam névoa clara. */
@@ -348,6 +350,7 @@ export function Studio({
       gl.setClearColor(0x000000, 0);
       gl.clear(true, true, false);
       body.renderMirror(gl, camera);
+      for (const c of shadowCasters?.() ?? []) c.renderMirror?.(gl, camera);
     }
     gl.setClearAlpha(clear);
     gl.setRenderTarget(prev);

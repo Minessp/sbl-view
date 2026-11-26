@@ -99,7 +99,7 @@ export const powerRack: StationBuilder = ({ frames, kit }, params) => {
   // Barras de segurança: atravessam os montantes, abaixo do ponto mais baixo da barra.
   const safety = Math.max(0.3, (Number.isFinite(low) ? low : 0.9) - 0.09);
   for (const s of [-1, 1]) kit.rod(g, [x0 + s * X, safety, front + 0.14], [x0 + s * X, safety, back - 0.14], 0.022, 'chrome');
-  return { group: g, floor: posts.map((p) => [p[0], 0, p[2]] as Vec3) };
+  return { group: g };
 };
 
 export const benchRack: StationBuilder = ({ frames, kit }, params) => {
@@ -137,5 +137,5 @@ export const benchRack: StationBuilder = ({ frames, kit }, params) => {
   kit.beam(g, [p0[0] + hd[0] * 0.3, 0.05, p0[2] + hd[1] * 0.3], [p1[0] + hd[0] * 0.3, 0.05, p1[2] + hd[1] * 0.3], 0.06);
   kit.beam(g, [p0[0], 0.55, p0[2]], [p1[0], 0.55, p1[2]], 0.05);
   holes(kit, g, posts, 0.75, hookTop + 0.1);
-  return { group: g, floor: posts.map((p) => [p[0], 0, p[2]] as Vec3) };
+  return { group: g };
 };

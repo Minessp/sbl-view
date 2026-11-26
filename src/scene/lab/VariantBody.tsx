@@ -9,8 +9,6 @@ import { relativeCapacity } from '@/engine/muscle/capacity';
 import { capacityCurves, getLabBody, makeSolver, variantById } from '@/features/lab/model';
 import { useLab } from '@/features/lab/store';
 import type { BodyModel } from '../body/model';
-import { ContactShadow } from '../body/ContactShadow';
-import { footContacts } from '../body/poses';
 import { createPropMaterial } from '../body/prop';
 import { palette } from '../body/rig';
 import { useBodyInstance } from '../body/useBody';
@@ -85,8 +83,6 @@ export function VariantBody({ variantId, slot, overlay, model }: { variantId: st
   );
 
   const barRef = useRef<Group>(null);
-  const feet = useRef<readonly Vec3[]>([]);
-  const getFeet = useMemo(() => () => feet.current, []);
   const tmp = useMemo(() => new Vector3(), []);
 
   useFrame(() => {
@@ -108,7 +104,6 @@ export function VariantBody({ variantId, slot, overlay, model }: { variantId: st
     };
     for (const g of tinted) body.fill('activation', 0.1 + 0.85 * Math.min(1, effort[g.joint]), g.slots);
     body.setPose(lab.sk, f.pose, { scale });
-    feet.current = footContacts(lab.sk, f.pose);
 
     if (barRef.current) barRef.current.position.set(0, f.load[1], f.load[2]);
 
@@ -128,7 +123,6 @@ export function VariantBody({ variantId, slot, overlay, model }: { variantId: st
   return (
     <>
       <OrthographicCamera ref={camRef} makeDefault position={[-4, TARGET.y, TARGET.z]} near={0.1} far={20} onUpdate={(c) => c.lookAt(TARGET)} />
-      {body && <ContactShadow feet={getFeet} />}
       {body && <primitive object={body.group} />}
       <group ref={barRef}>
         <mesh geometry={bar.barGeo} material={bar.iron} />

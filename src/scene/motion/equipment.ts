@@ -5,7 +5,7 @@
  * com quadro de aço e pés no chão, plataformas de chapa xadrez, trilhos e braço pendular das máquinas, rolos e alavancas.
  * Montado uma vez por clipe; cada quadro só move as peças. Medidas de catálogo (barra de 2,2 m, anilha de 45 cm).
  */
-import { BoxGeometry, type BufferGeometry, CylinderGeometry, Group, TorusGeometry, type Material, Mesh, MeshBasicMaterial, type Object3D, Quaternion, SRGBColorSpace, Vector3 } from 'three';
+import { BoxGeometry, type BufferGeometry, type Camera, CylinderGeometry, Group, TorusGeometry, type Material, Mesh, MeshBasicMaterial, type Object3D, Quaternion, SRGBColorSpace, Vector3, type WebGLRenderer } from 'three';
 import type { MotionFrame, ResolvedEquipment } from '@/engine/motion/evaluate';
 import type { Vec3 } from '@/engine/math/vec';
 import { palette } from '../body/rig';
@@ -41,8 +41,6 @@ export class EquipmentView {
   private readonly arrowShaft: Mesh;
   private readonly arrowHead: Mesh;
   private readonly unit: BufferGeometry;
-  /** Pontos no chão sob as peças fixas (sombra). */
-  readonly floor: Vec3[] = [];
   /** Uma estação desenha a estrutura do banco: a peça do clipe fica só com o estofado e o quadro `frame` some. */
   private benchStation = false;
   /** Topo da primeira coluna de um par espelhado: a segunda fecha a travessa do cross-over. */
@@ -77,6 +75,18 @@ export class EquipmentView {
 
   private mat(f: Finish, pattern: Pattern = 0, scale = 1, size: readonly [number, number, number] = [1, 1, 1]): GearMaterial {
     return this.kit.mat(f, pattern, scale, size);
+  }
+
+  /** Passes do estúdio (sombra e reflexo espelhado em Y): só as peças, sem o vetor da carga (sobreposição). */
+  renderGear(gl: WebGLRenderer, camera: Camera, mirror = false) {
+    const arrow = this.arrowShaft.visible;
+    this.arrowShaft.visible = this.arrowHead.visible = false;
+    this.group.scale.y = mirror ? -1 : 1;
+    this.group.updateMatrixWorld();
+    gl.render(this.group, camera);
+    this.group.scale.y = 1;
+    this.group.updateMatrixWorld();
+    this.arrowShaft.visible = this.arrowHead.visible = arrow;
   }
 
   /** Cores da paleta (troca de tema). */
@@ -120,7 +130,6 @@ export class EquipmentView {
       case 'station': {
         const v = buildStation(e.id, { frames, kit: this.kit }, e.params, e.at, e.yaw);
         this.group.add(v.group);
-        this.floor.push(...v.floor);
         if (v.update) {
           const up = v.update;
           this.updaters.push((_r, _i, f) => up(f));
@@ -220,7 +229,6 @@ export class EquipmentView {
       cap.position.set(end[0], e.center[1] + 0.13, end[2]);
       const sock = this.mesh(this.geo(rod(0.03, 0.08, 20)), this.mat('steel'));
       orient(sock, [e.center[0] + e.axis[0] * 0.64 * s, e.center[1], e.center[2] + e.axis[2] * 0.64 * s], e.axis);
-      this.floor.push([end[0], 0, end[2]]);
     }
   }
 
@@ -369,7 +377,6 @@ export class EquipmentView {
       sy = Math.sin(yaw);
     const towerPt = (x: number, y: number, z: number) => new Vector3(tower.position.x + x * cy + z * sy, y, tower.position.z - x * sy + z * cy);
     const topWorld = towerPt(0, H - 0.04, 0.07);
-    this.floor.push([tower.position.x, 0, tower.position.z]);
     if (e.mirror) {
       const t: Vec3 = [tower.position.x, H + 0.06, tower.position.z];
       if (this.crossTop) this.beam(this.crossTop, t, 0.08);
@@ -545,7 +552,6 @@ export class EquipmentView {
         const back = new Vector3(0, -h * 0.25, -dpt / 2 - 0.03).applyMatrix4(g.matrixWorld);
         this.beam([back.x, back.y, back.z], [back.x, 0.03, back.z], 0.05);
         this.beam([back.x, 0.025, back.z - 0.25], [back.x, 0.025, back.z + 0.25], 0.045);
-        this.floor.push([back.x, 0, back.z]);
       }
     } else if (role === 'bench' || role === 'seat' || role === 'back') {
       // Estofado: o topo da caixa (até 8 cm) é a espuma; o resto embaixo, quadro de aço.
@@ -579,7 +585,7 @@ export class EquipmentView {
         if (r.kind !== 'block' || i !== index) return;
         place(r.center, r.pitch);
       });
-    } else if (e.center[1] - h / 2 < 0.25) this.floor.push([e.center[0], 0, e.center[2]]);
+    }
   }
 
   /** Quadro sob o estofado: longarina, pernas até o chão com pés de borracha; banco inclinado ganha escora e régua. */
@@ -628,7 +634,6 @@ export class EquipmentView {
         const cap = this.mesh(this.geo(rod(0.026, 0.02, 14)), this.mat('rubber'));
         cap.position.set(p[0] + (ax[0] ?? 0) * s, 0.01, p[2] + (ax[2] ?? 0) * s);
       }
-      this.floor.push([p[0], 0, p[2]]);
     }
   }
 
@@ -653,7 +658,6 @@ export class EquipmentView {
       if (lowP.y > 0.05) this.beam([lowP.x, lowP.y, lowP.z], [lowP.x, 0.03, lowP.z], 0.07);
       this.beam([highP.x, highP.y, highP.z], [highP.x, 0.03, highP.z], 0.07);
       this.beam([lowP.x, 0.03, lowP.z], [highP.x, 0.03, highP.z], 0.07);
-      this.floor.push([highP.x, 0, highP.z]);
     }
     // Travessas entre os trilhos.
     for (const k of [0.02, 0.98]) {
@@ -672,7 +676,6 @@ export class EquipmentView {
       this.beam([e.pivot[0] + s * X, e.pivot[1] + 0.06, e.pivot[2]], [e.pivot[0] + s * X, 0.03, e.pivot[2]], 0.09);
     }
     this.beam([e.pivot[0] - X, 0.03, e.pivot[2]], [e.pivot[0] + X, 0.03, e.pivot[2]], 0.08);
-    this.floor.push([e.pivot[0], 0, e.pivot[2]]);
     this.updaters.push((r) => {
       if (r.kind !== 'swing') return;
       arms.forEach((m, i) => {

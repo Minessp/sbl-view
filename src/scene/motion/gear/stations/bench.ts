@@ -44,7 +44,7 @@ export function tLeg(kit: GearKit, g: Group, x: number, z: number, top: number, 
 export const flatBench: StationBuilder = ({ frames, kit }) => {
   const g = new Group();
   const b = blocks(frames).find((e) => e.role === 'bench' && Math.abs(e.pitch) < 10 && e.size[2] > e.size[1]);
-  if (!b) return { group: g, floor: [] };
+  if (!b) return { group: g };
   const [w, h, L] = b.size;
   const spine = b.center[1] + h / 2 - Math.min(h, PAD_H) - 0.045;
   const z0 = b.center[2] - L / 2 + 0.14;
@@ -53,7 +53,7 @@ export const flatBench: StationBuilder = ({ frames, kit }) => {
   for (const z of [z0, z1]) tLeg(kit, g, b.center[0], z, spine, Math.max(0.2, w * 0.8));
   // Alça de carregar na ponta de trás.
   kit.rod(g, [b.center[0], spine, z0 - 0.06], [b.center[0], spine - 0.02, z0 - 0.16], 0.012, 'chrome');
-  return { group: g, floor: [z0, z1].map((z) => [b.center[0], 0, z] as Vec3) };
+  return { group: g };
 };
 
 export const adjustableBench: StationBuilder = ({ frames, kit }) => {
@@ -112,7 +112,7 @@ export const adjustableBench: StationBuilder = ({ frames, kit }) => {
   const notch = Math.min(Math.max(upper[2] - dir * 0.05, Math.min(l0, l1)), Math.max(l0, l1));
   for (const s of [-1, 1]) kit.beam(g, [x + s * 0.035, upper[1], upper[2]], [x + s * 0.035, ladderY + 0.035, notch], 0.022);
   kit.rod(g, [x - 0.05, ladderY + 0.035, notch], [x + 0.05, ladderY + 0.035, notch], 0.008, 'chrome');
-  return { group: g, floor: [front, rear].map((z) => [x, 0, z] as Vec3) };
+  return { group: g };
 };
 
 export const preacherBench: StationBuilder = ({ frames, kit }) => {
@@ -120,7 +120,7 @@ export const preacherBench: StationBuilder = ({ frames, kit }) => {
   const all = blocks(frames);
   const seat = all.find((e) => e.role === 'seat');
   const pad = all.find((e) => e.role === 'bench' && Math.abs(e.pitch) >= 15);
-  if (!seat || !pad) return { group: g, floor: [] };
+  if (!seat || !pad) return { group: g };
   const x = pad.center[0];
   const [w, h, d] = pad.size;
   // Chapa sob a almofada, com o suporte no meio; ponta alta (lado da pessoa) leva o apoio da barra.
@@ -157,5 +157,5 @@ export const preacherBench: StationBuilder = ({ frames, kit }) => {
   };
   fork(-1);
   fork(1);
-  return { group: g, floor: [zBack, zFront].map((z) => [x, 0, z] as Vec3) };
+  return { group: g };
 };

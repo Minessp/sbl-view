@@ -12,8 +12,7 @@ import { buildSkeleton } from '@/engine/kinematics/skeleton';
 import { heatLevel, HEAT_GLOW } from '@/features/heat/levels';
 import { useHeat, type HeatView } from '@/features/heat/store';
 import type { BodyModel } from '../body/model';
-import { ContactShadow } from '../body/ContactShadow';
-import { footContacts, STANDING } from '../body/poses';
+import { STANDING } from '../body/poses';
 import { useBodyInstance, useBodyModel } from '../body/useBody';
 import { StageView } from '../director/StageView';
 import { useStage } from '../stageStore';
@@ -22,8 +21,6 @@ const H = 1.92;
 const CY = 0.9;
 const sk = buildSkeleton(skeletonDef);
 const pose = forwardKinematics(sk, STANDING);
-const feet = footContacts(sk, pose);
-const getFeet = () => feet;
 
 function HeatBody({ view, slot, model }: { view: HeatView; slot: HTMLElement; model: BodyModel }) {
   const camRef = useRef<OrthoCam>(null);
@@ -59,7 +56,6 @@ function HeatBody({ view, slot, model }: { view: HeatView; slot: HTMLElement; mo
   return (
     <>
       <OrthographicCamera ref={camRef} makeDefault near={0.1} far={20} position={[0, CY, 4]} />
-      {body && <ContactShadow feet={getFeet} />}
       {body && <primitive object={body.group} />}
     </>
   );

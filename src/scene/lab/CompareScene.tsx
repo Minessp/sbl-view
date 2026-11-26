@@ -9,13 +9,11 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { PerspectiveCamera as PerspCam } from 'three';
 import { forwardKinematics } from '@/engine/kinematics/fk';
 import { evaluateClip, type MotionFrame } from '@/engine/motion/evaluate';
-import type { Vec3 } from '@/engine/math/vec';
 import { strainOf } from '@/features/atlas/explorer/demo';
 import { fitDistance, FOV_DEG, orbitPosition } from '@/features/atlas/explorer/orbit';
 import { compiledFor, mainJoint, type CompareSpec } from '@/features/lab/compare/analysis';
 import { uAtPhase, useCompare, useCompareSlots, type CompareView } from '@/features/lab/compare/store';
 import { useTheme } from '@/ui/theme';
-import { ContactShadow } from '../body/ContactShadow';
 import type { BodyInstance } from '../body/instance';
 import type { BodyModel } from '../body/model';
 import { STANDING } from '../body/poses';
@@ -63,8 +61,6 @@ function CompareBody({ spec, model, main }: { spec: CompareSpec; model: BodyMode
   const rest = useRef<Float32Array | null>(null);
   const lastU = useRef<number | null>(null);
   const frame = useRef<MotionFrame | null>(null);
-  const feet = useRef<Vec3[]>([]);
-  const getFeet = useMemo(() => () => feet.current, []);
 
   // Criado no efeito: no StrictMode a limpeza roda entre as duas montagens e precisa de um equipamento novo.
   const [equipment, setEquipment] = useState<EquipmentView | null>(null);
@@ -125,7 +121,6 @@ function CompareBody({ spec, model, main }: { spec: CompareSpec; model: BodyMode
         for (const i of model.byMuscle.get(st.muscle) ?? []) body.set(i, 'strain', strainOf(body.lengths[i] ?? 0, base[i] ?? 0));
         body.commit();
       }
-      feet.current = [...f.contacts, ...(equipment?.floor ?? [])].slice(0, 8);
     }
     if (frame.current) equipment?.update(frame.current, true);
     dir.skin(body, st.skin, 0.2);
@@ -145,7 +140,6 @@ function CompareBody({ spec, model, main }: { spec: CompareSpec; model: BodyMode
   return (
     <>
       <PerspectiveCamera ref={camRef} makeDefault manual fov={FOV_DEG} near={0.05} far={30} position={[0, 1, 4]} />
-      {body && <ContactShadow feet={getFeet} />}
       {body && <primitive object={body.group} />}
       {equipment && <primitive object={equipment.group} />}
       {hud && <primitive object={hud.group} />}

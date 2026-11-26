@@ -5,7 +5,7 @@
  */
 import { PerspectiveCamera } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Vector3, type PerspectiveCamera as PerspCam } from 'three';
 import { muscleDefs, skeletonDef } from '@/data';
 import { forwardKinematics, pointToWorld } from '@/engine/kinematics/fk';
@@ -18,10 +18,9 @@ import { BODY_BOX, dampOrbit, fitDistance, FOV_DEG, orbitPosition, orbitsClose, 
 import { keyOf, LAYER_ORDER, samePick, useAtlas, useLabelFeed, type BodyLayerId, type DemoSpec, type LabelFeedItem, type LayerMode, type Pick, type StructureInfo } from '@/features/atlas/store';
 import { choose, HOLD_MS, settle, type Hold, type LabelCandidate } from '@/features/atlas/explorer/labels';
 import { REGIONS } from '@/features/library/catalog';
-import { ContactShadow } from '../body/ContactShadow';
 import type { BodyInstance } from '../body/instance';
 import { layerOf, mergeBoxes, type Box, type BodyModel } from '../body/model';
-import { footContacts, STANDING } from '../body/poses';
+import { STANDING } from '../body/poses';
 import { pulse } from '../body/rig';
 import { useBodyInstance, useBodyModel } from '../body/useBody';
 import { radToDeg, restRoot, STANDING_DEG, StageView, useDirector } from '../director/StageView';
@@ -121,14 +120,6 @@ function ExplorerBody() {
   const explode = useRef(0);
   /** Eixo lateral em que as camadas abrem (fixo enquanto abertas; segue a vista pedida). */
   const spreadAxis = useRef<Vec3>([1, 0, 0]);
-  const feet = useRef<Vec3[]>(footContacts(sk, standing));
-  const getFeet = useMemo(() => () => {
-    const e = explode.current;
-    if (e < 0.01) return feet.current;
-    const a = spreadAxis.current;
-    const slots = spreadSlots(useAtlas.getState().layers);
-    return LAYER_ORDER.flatMap((l) => feet.current.filter((_, i) => i % 2 === 0).map((f): Vec3 => [f[0] + a[0] * slots[l] * EXPLODE_SPACING * e, 0, f[2] + a[2] * slots[l] * EXPLODE_SPACING * e]));
-  }, []);
   const demoSpec = useRef<string | null>(null);
   /** Entrada da demonstração (0 = em pé, 1 = na pose da ação) e a demonstração a que ela se refere. */
   const enter = useRef(1);
@@ -471,7 +462,6 @@ function ExplorerBody() {
       ownDeg.current = angles ? radToDeg(angles) : STANDING_DEG;
       const pose: Pose = angles ? forwardKinematics(sk, angles) : standing;
       body.setPose(sk, pose);
-      feet.current = footContacts(sk, pose);
       const base = rest.current;
       if (spec && st.selection && base) {
         for (const i of keySlots(model, st.selection)) body.set(i, 'strain', strainOf(body.lengths[i] ?? 0, base[i] ?? 0));
@@ -554,7 +544,6 @@ function ExplorerBody() {
   return (
     <>
       <PerspectiveCamera ref={camRef} makeDefault manual fov={FOV_DEG} near={0.05} far={30} position={[0, 1, 4]} />
-      {body && <ContactShadow feet={getFeet} />}
       {body && <primitive object={body.group} />}
     </>
   );

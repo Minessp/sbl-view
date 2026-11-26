@@ -20,8 +20,6 @@ export interface StationContext {
 export interface StationView {
   readonly group: Object3D;
   update?(f: MotionFrame): void;
-  /** Pontos no chão sob os pés da estação (sombra de contato). */
-  readonly floor: Vec3[];
 }
 
 export type StationBuilder = (ctx: StationContext, params: Readonly<Record<string, number>>) => StationView;
@@ -56,8 +54,5 @@ export function buildStation(id: StationId, ctx: StationContext, params: Readonl
   g.add(v.group);
   if (at) g.position.set(at[0], at[1], at[2]);
   g.rotation.y = (yaw * Math.PI) / 180;
-  const c = Math.cos(g.rotation.y);
-  const s = Math.sin(g.rotation.y);
-  const o = at ?? [0, 0, 0];
-  return { group: g, ...(v.update ? { update: v.update } : {}), floor: v.floor.map((p) => [o[0] + p[0] * c + p[2] * s, 0, o[2] - p[0] * s + p[2] * c] as Vec3) };
+  return { group: g, ...(v.update ? { update: v.update } : {}) };
 }

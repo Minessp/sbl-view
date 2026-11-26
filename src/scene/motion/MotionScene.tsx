@@ -313,7 +313,10 @@ export function PlayerBody({ main = false, hud: withHud = main }: { main?: boole
     return () => usePlayer.getState().setPick(null);
   }, [main, body, model, gl, dir]);
 
-  const casters = useMemo(() => () => (equipment ? [{ render: (r: WebGLRenderer, c: Camera) => r.render(equipment.group, c) }] : []), [equipment]);
+  const casters = useMemo(
+    () => () => (equipment ? [{ render: (r: WebGLRenderer, c: Camera) => equipment.renderGear(r, c), renderMirror: (r: WebGLRenderer, c: Camera) => equipment.renderGear(r, c, true) }] : []),
+    [equipment],
+  );
 
   return (
     <>
