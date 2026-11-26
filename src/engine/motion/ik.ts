@@ -5,7 +5,7 @@
  *    |E + Rx(φ)·F|² = D²  ⇒  c₀ + A·cos(φ − δ) = (D² − |E|² − |F|²)/2.
  * 2. Raiz (três DOFs na ordem X, Z, Y): a rotação que leva a ponta ao alvo, com o eixo da dobra alinhado ao plano que o
  *    polo pede, decomposta em ângulos de Euler XZY. Dos dois ramos da decomposição fica o que respeita a amplitude; se
- *    nenhum couber, o plano da dobra gira em passos de 5° em torno da linha raiz–alvo até caber.
+ *    nenhum couber, o plano da dobra gira em torno da linha raiz–alvo até a borda da amplitude (passos de 5°, depois bisseção).
  *
  * Determinístico, sem iteração numérica. O que passa da amplitude é preso no limite (e a ponta erra o alvo: o teste mede).
  */
@@ -115,22 +115,23 @@ export function solveTwoBone(
   if (!knee) throw new Error(`Dobra sem DOF: ${mid.id}`);
 
   // ---- Dobra ----
-  const D = length(T);
   const eF = Math.hypot(E[1] * F[1] + E[2] * F[2], E[2] * F[1] - E[1] * F[2]);
   const delta = Math.atan2(E[2] * F[1] - E[1] * F[2], E[1] * F[1] + E[2] * F[2]);
   const c0 = E[0] * F[0];
+  const D = length(T);
   const K = (D * D - dot(E, E) - dot(F, F)) / 2;
   const c = eF > 1e-9 ? (K - c0) / eF : 1;
   const clipped = c > 1 || c < -1;
   const ac = Math.acos(clamp(c, -1, 1));
   // Dois φ possíveis; o ângulo do DOF é φ / sinal. Fica o que cabe na amplitude; empate: o mais perto do ângulo pedido
   // (perto de estendido o "menor" virava hiperextensão e o joelho estalava entre quadros vizinhos).
-  // Sem pedido de hiperextensão, a dobra para trás perde o empate.
-  const ref = prev?.[knee.id] ?? 0;
-  const cost = (v: number) => Math.abs(v - ref) + (v < 0 && ref >= 0 ? Math.PI : 0);
+  // Sem ângulo pedido, fica o ramo fletido. Sem pedido de hiperextensão, o ramo que passaria do zero fica no zero (a ponta
+  // erra milímetros) em vez de pular para o outro ramo, o que faz o joelho estalar entre quadros vizinhos.
+  const ref = prev?.[knee.id];
   const cands = [delta + ac, delta - ac].map((phi) => fit(wrap(phi) / knee.sign, knee));
-  cands.sort((a, b) => a.over - b.over || cost(a.v) - cost(b.v));
-  const bend = clamp(cands[0]?.v ?? 0, knee.min, knee.max);
+  cands.sort((a, b) => a.over - b.over || (ref === undefined ? b.v - a.v : Math.abs(a.v - ref) - Math.abs(b.v - ref)));
+  const v0 = cands[0]?.v ?? 0;
+  const bend = clamp(v0 < 0 && (ref ?? 0) >= 0 ? 0 : v0, knee.min, knee.max);
   const phi = bend * knee.sign;
   const cp = Math.cos(phi),
     sp = Math.sin(phi);
@@ -163,24 +164,65 @@ export function solveTwoBone(
   const side0 = cross(Tn, hd0);
 
   const [dx, dz, dy] = top.dofs as readonly [EngineDof, EngineDof, EngineDof];
-  // Giro em torno da linha raiz–alvo: começa no que o polo pede e abre aos poucos até caber na amplitude.
-  let best: { a: [number, number, number]; over: number; dist: number } | null = null;
-  for (const deg of SWIVEL) {
+  type Sol = { a: [number, number, number]; over: number; dist: number };
+  const solveAt = (deg: number): Sol => {
     const sw = (deg * Math.PI) / 180;
     const hd = add(scale(hd0, Math.cos(sw)), scale(side0, Math.sin(sw)));
     const R = frameToFrame(A, [Tn, hd, cross(Tn, hd)]);
+    let best: Sol = { a: [0, 0, 0], over: Infinity, dist: Infinity };
     for (const [al, be, ga] of eulerXZY(R)) {
       const fx = fit(al / dx.sign, dx),
         fz = fit(be / dz.sign, dz),
         fy = fit(ga / dy.sign, dy);
       const over = fx.over + fz.over + fy.over;
       const dist = prev ? Math.abs(fx.v - (prev[dx.id] ?? 0)) + Math.abs(fz.v - (prev[dz.id] ?? 0)) + Math.abs(fy.v - (prev[dy.id] ?? 0)) : 0;
-      if (!best || over < best.over - 1e-9 || (Math.abs(over - best.over) <= 1e-9 && deg === 0 && dist < best.dist))
-        best = { a: [fx.v, fz.v, fy.v], over, dist };
+      if (over < best.over - 1e-9 || (Math.abs(over - best.over) <= 1e-9 && deg === 0 && dist < best.dist)) best = { a: [fx.v, fz.v, fy.v], over, dist };
     }
-    if (best && best.over <= 1e-9) break;
+    return best;
+  };
+  const fits = (x: Sol) => x.over <= 1e-9;
+  // Giro em torno da linha raiz–alvo: abre do polo até caber, e a borda sai por bisseção entre o último passo que não cabe
+  // e o primeiro que cabe (passo seco faz o braço saltar entre quadros vizinhos).
+  const edge = (out: number, inside: number): { deg: number; sol: Sol } => {
+    let sol = solveAt(inside);
+    for (let i = 0; i < 14; i++) {
+      const mid = (out + inside) / 2;
+      const m = solveAt(mid);
+      if (fits(m)) [inside, sol] = [mid, m];
+      else out = mid;
+    }
+    return { deg: inside, sol };
+  };
+  let pick: { deg: number; sol: Sol } | null = null;
+  let closest: { deg: number; sol: Sol } | null = null;
+  for (const deg of SWIVEL) {
+    const sol = solveAt(deg);
+    if (fits(sol)) {
+      if (deg === 0) pick = { deg, sol };
+      else {
+        // O outro lado do mesmo passo pode caber mais perto do polo.
+        const step = 5 * Math.sign(deg);
+        const here = edge(deg - step, deg);
+        const there = fits(solveAt(-deg)) ? edge(-deg + step, -deg) : null;
+        pick = there && Math.abs(there.deg) < Math.abs(here.deg) ? there : here;
+      }
+      break;
+    }
+    if (!closest || sol.over < closest.sol.over - 1e-9) closest = { deg, sol };
   }
-  const a = best?.a ?? [0, 0, 0];
+  if (!pick && closest) {
+    // Nada cabe: o menor excesso, refinado em volta do melhor passo (sem saltar de passo em passo).
+    let [lo, hi] = [closest.deg - 5, closest.deg + 5];
+    for (let i = 0; i < 20; i++) {
+      const m1 = lo + (hi - lo) / 3,
+        m2 = hi - (hi - lo) / 3;
+      if (solveAt(m1).over < solveAt(m2).over) hi = m2;
+      else lo = m1;
+    }
+    const sol = solveAt((lo + hi) / 2);
+    pick = sol.over < closest.sol.over ? { deg: (lo + hi) / 2, sol } : closest;
+  }
+  const a = pick?.sol.a ?? [0, 0, 0];
   return {
     angles: {
       [dx.id]: clamp(a[0], dx.min, dx.max),

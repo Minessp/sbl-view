@@ -402,6 +402,41 @@ describe('clipes de movimento', () => {
     expect(wrong).toEqual([]);
   }, 60_000);
 
+  // Suavidade em 97 amostras: a velocidade angular de cada segmento (mundo) não salta entre amostras vizinhas. Pega o
+  // microtravamento que o teste de estalo deixa passar (braço que para de repente, joelho que trava reto).
+  const SMOOTH_EXCEPTIONS: Record<string, string> = {
+    tibialis_raise: 'o alvo da ponta do pé passa do alcance: o joelho trava reto em u 0,70 (clipe a refazer pelo dossiê)',
+    barbell_row: 'o alvo da pegada começa além do alcance: o cotovelo sai do zero de uma vez em u 0,07 (clipe a refazer)',
+    low_to_high_cable_fly: 'o caminho da pegada passa do alcance no fim: o cotovelo chega reto e para em u 0,93 (clipe a refazer)',
+    deadlift: 'equilíbrio: o tornozelo oscila 0,6° quando a barra passa do joelho (u 0,41)',
+  };
+
+  it('suavidade: velocidade angular sem salto entre amostras vizinhas', () => {
+    const N = 96;
+    const wrong: string[] = [];
+    for (const ex of lib) {
+      const c = compiled(ex.id);
+      const frames = Array.from({ length: N + 1 }, (_, i) => evaluateClip(c, i / N));
+      let bad = '';
+      for (const seg of sk.segments) {
+        const w = frames.slice(1).map((f, i) => {
+          const a = at(frames, i).pose.world.get(seg.id)?.rotation ?? [0, 0, 0, 1];
+          const b = f.pose.world.get(seg.id)?.rotation ?? [0, 0, 0, 1];
+          return (2 * Math.acos(Math.min(1, Math.abs(a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3])))) / DEG;
+        });
+        const peak = Math.max(...w);
+        for (let i = 1; i < w.length; i++) {
+          const d = Math.abs(at(w, i) - at(w, i - 1));
+          if (d > Math.max(0.3 * peak, 0.5)) bad ||= `${seg.id} em u ${(i / N).toFixed(2)}: ${at(w, i - 1).toFixed(2)} → ${at(w, i).toFixed(2)}°/amostra`;
+        }
+      }
+      const known = ex.id in SMOOTH_EXCEPTIONS;
+      if (bad && !known) wrong.push(`${ex.id}: ${bad}`);
+      if (!bad && known) wrong.push(`${ex.id} saiu da lista de exceções`);
+    }
+    expect(wrong).toEqual([]);
+  }, 90_000);
+
   // Barra nas duas mãos: o eixo da palma (polegar → mínimo) corre ao longo da barra. Onde a pronação sozinha não basta
   // (punho ou rotação do ombro teriam de mudar junto), o exercício fica na lista com o motivo.
   const GRIP_EXCEPTIONS: Record<string, string> = {

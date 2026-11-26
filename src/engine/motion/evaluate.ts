@@ -44,7 +44,19 @@ export function defaultGrip(sk: EngineSkeleton): Vec3 {
  * Ritmo escapuloumeral: depois de 30° de elevação do braço, a cintura escapular soma 0,4° por grau (a relação clássica de
  * ~2:1 entre glenoumeral e escapulotorácica; Ludewig 2009, a verificar), metade na clavícula e metade na escápula.
  */
-export const RHYTHM = { startDeg: 30, ratio: 0.4 } as const;
+export const RHYTHM = { startDeg: 30, ratio: 0.4, kneeDeg: 10 } as const;
+
+/** max(0, x) com a quina arredondada em ±w (parábola de mesma derivada nas pontas): a escápula não arranca de repente. */
+/** Teto de passadas do IK dos braços: para quando os ângulos assentam, senão o resto da iteração salta entre quadros. */
+const ARM_PASSES = 12;
+
+/** 0 em a, 1 em b, curva suave entre os dois (a > b também vale). */
+const smoothstep = (a: number, b: number, x: number) => {
+  const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
+  return t * t * (3 - 2 * t);
+};
+
+const smoothRamp = (x: number, w: number) => (x <= -w ? 0 : x >= w ? x : ((x + w) * (x + w)) / (4 * w));
 
 const curveOf = (a: Angle): Curve => makeCurve(typeof a === 'number' ? [{ u: 0, v: a }] : a.map((k) => ({ u: k.u, v: k.deg })));
 
@@ -335,10 +347,13 @@ function legFront(pose: Pose, side: 'r' | 'l', y: number): number {
     if ((y - a[1]) * (y - b[1]) > 0 || Math.abs(a[1] - b[1]) < 1e-6) continue;
     const k = (y - a[1]) / (b[1] - a[1]);
     const [r0, r1] = LEG_FRONT[seg];
-    z = Math.max(z, a[2] + (b[2] - a[2]) * k + r0 + (r1 - r0) * k);
+    z = softMax(z, a[2] + (b[2] - a[2]) * k + r0 + (r1 - r0) * k);
   }
   return z;
 }
+
+/** Máximo com a quina arredondada (~1 cm): a barra passa da canela à coxa e da perna ao prumo sem tranco. */
+const softMax = (a: number, b: number, k = 0.02) => (Number.isFinite(a) && Number.isFinite(b) ? (a + b + Math.hypot(a - b, k)) / 2 : Math.max(a, b));
 
 /**
  * Pegada no prumo: na vertical sobre o meio do pé, à distância do ombro que o braço tem; se a perna estiver mais à
@@ -352,7 +367,7 @@ function plumbTarget(c: CompiledClip, pose: Pose, side: 'r' | 'l', shoulder: Vec
   for (let i = 0; i < 4; i++) {
     const dz = z - shoulder[2];
     y = shoulder[1] - Math.sqrt(Math.max(0, reach * reach - dz * dz));
-    z = Math.max(z0, legFront(pose, side, y) + BAR_CLEAR);
+    z = softMax(z0, legFront(pose, side, y) + BAR_CLEAR);
   }
   return [shoulder[0], y, z];
 }
@@ -377,7 +392,7 @@ function plantedFeet(c: CompiledClip): Partial<Record<'r' | 'l', PlantedFoot>> {
     const k = Math.abs(deg.knee_flex_r ?? deg.knee_flex ?? 0) + Math.abs(deg.knee_flex_l ?? deg.knee_flex ?? 0);
     if (k < bend - 1e-6) [bend, best] = [k, i / 8];
   }
-  const fr = solveFrame(c, best, 0, false);
+  const fr = frameAt(c, best, false);
   for (const side of ['r', 'l'] as const) {
     if (c.legs.some((r) => r.sides.includes(side))) continue;
     const foot = must(c.sk.byId, `foot_${side}`, 'segmento');
@@ -392,7 +407,7 @@ function solveFrame(c: CompiledClip, u: number, ankleOffset: number, pinFeet = t
   for (const t of c.tracks) deg[t.dof] = evalCurve(t.curve, u);
   if (ankleOffset !== 0) for (const s of ['r', 'l']) deg[`ankle_dorsi_${s}`] = (deg[`ankle_dorsi_${s}`] ?? 0) + ankleOffset;
   const rad: Record<string, number> = toRad(deg);
-  const root = placeRoot(c, rad, u);
+  let root = placeRoot(c, rad, u);
   const fk = () => forwardKinematics(sk, rad, { clampToRom: false, root });
   let pose = fk();
   let error = 0;
@@ -463,6 +478,20 @@ function solveFrame(c: CompiledClip, u: number, ankleOffset: number, pinFeet = t
       const fwd = rotate(ref.q, [0, 0, 1]);
       return [{ side, ref, foot, chain: chainOf(sk, `thigh_${side}`, `shank_${side}`), ankle: sub(ref.tip, rotate(ref.q, foot.tip)), pole: [fwd[0], 0, fwd[2]] as Vec3 }];
     });
+    // Perto de estendido, a pelve vai à altura em que o joelho do clipe alcança o pé preso (senão ele trava reto antes do
+    // topo); no fundo não, onde a pelve mais baixa passaria da flexão do quadril e o IK fecharia os joelhos.
+    if (held.length) {
+      let dy = 0;
+      for (const h of held) {
+        const hip = must(pose.world, `thigh_${h.side}`, 'segmento').position;
+        const len = distance(hip, must(pose.world, h.foot.id, 'segmento').position);
+        const flat = Math.hypot(h.ankle[0] - hip[0], h.ankle[2] - hip[2]);
+        const w = smoothstep(60, 20, deg[`knee_flex_${h.side}`] ?? deg.knee_flex ?? 0);
+        dy += w * (h.ankle[1] + Math.sqrt(Math.max(0, len * len - flat * flat)) - hip[1]);
+      }
+      root = { ...root, position: add(root.position, [0, dy / held.length, 0]) };
+      pose = fk();
+    }
     for (let it = 0; it < (held.length ? 4 : 0); it++) {
       for (const h of held) Object.assign(rad, solveTwoBone(h.chain, pose, h.foot.jointOffset, h.ankle, h.pole, rad, rotate(h.ref.q, [1, 0, 0])).angles);
       pose = fk();
@@ -481,18 +510,21 @@ function solveFrame(c: CompiledClip, u: number, ankleOffset: number, pinFeet = t
     if (free.length) pose = fk();
   }
 
-  // ---- Braços: duas passadas (a cintura escapular acompanha a elevação e o IK refaz) ----
+  // ---- Braços: passadas até assentar (a cintura escapular acompanha a elevação e o IK refaz) ----
   const gripWorld = (p: Pose, side: 'r' | 'l') => pointToWorld(p, `hand_${side}`, c.grip[side]);
   const targets: { side: 'r' | 'l'; target: Vec3 }[] = [];
   if (c.arms.length) {
     const girdle0: Record<string, number> = {};
     for (const s of ['r', 'l']) for (const d of [`clav_elev_${s}`, `scap_uprot_${s}`]) girdle0[d] = rad[d] ?? 0;
-    for (let pass = 0; pass < 3; pass++) {
+    let before: Record<string, number> = { ...rad };
+    for (let pass = 0; pass < ARM_PASSES; pass++) {
       targets.length = 0;
       for (const r of c.arms) {
         for (const side of r.sides) {
           const tg = r.spec.target;
           const shoulder = must(pose.world, `upperarm_${side}`, 'segmento').position;
+          const forearm = must(pose.world, `forearm_${side}`, 'segmento');
+          const endLocal = rotate(quatConj(forearm.rotation), sub(gripWorld(pose, side), forearm.position));
           let target: Vec3;
           if (tg.kind === 'path' && r.path) target = side === 'l' ? mirrorX(evalPath(r.path, u)) : evalPath(r.path, u);
           else if (tg.kind === 'attach') {
@@ -503,23 +535,23 @@ function solveFrame(c: CompiledClip, u: number, ankleOffset: number, pinFeet = t
             const out = Math.min(tg.out ?? 0, len * 0.9);
             target = add(shoulder, [side === 'r' ? -out : out, -Math.sqrt(len * len - out * out), 0]);
           }
-          else if (tg.kind === 'plumb') target = plumbTarget(c, pose, side, shoulder, distance(shoulder, gripWorld(pose, side)), tg.ahead ?? 0);
+          // Alcance do cotovelo reto: a distância do quadro realimenta a dobra e o cotovelo pisca.
+          else if (tg.kind === 'plumb') target = plumbTarget(c, pose, side, shoulder, length(r.chains[side].mid.jointOffset) + length(endLocal), tg.ahead ?? 0);
           else throw new Error(`Braço não aceita alvo "${tg.kind}" (${c.clip.id})`);
-          const forearm = must(pose.world, `forearm_${side}`, 'segmento');
-          const endLocal = rotate(quatConj(forearm.rotation), sub(gripWorld(pose, side), forearm.position));
           const pole = side === 'l' ? mirrorX(r.spec.pole) : r.spec.pole;
           Object.assign(rad, solveTwoBone(r.chains[side], pose, endLocal, target, pole, rad).angles);
           targets.push({ side, target });
         }
       }
       pose = fk();
-      if (pass === 2) break;
+      if (pass === ARM_PASSES - 1 || (pass > 0 && Object.entries(rad).every(([k, v]) => Math.abs(v - (before[k] ?? 0)) < 1e-5))) break;
+      before = { ...rad };
       // Ritmo: elevação do braço em relação ao tórax.
       for (const { side } of targets) {
         const arm = sub(must(pose.world, `forearm_${side}`, 'segmento').position, must(pose.world, `upperarm_${side}`, 'segmento').position);
         const down = rotate(must(pose.world, 'trunk', 'segmento').rotation, [0, -1, 0]);
         const elev = angleBetween(arm, down) / DEG;
-        const extra = Math.max(0, elev - RHYTHM.startDeg) * RHYTHM.ratio * 0.5 * DEG;
+        const extra = smoothRamp(elev - RHYTHM.startDeg, RHYTHM.kneeDeg) * RHYTHM.ratio * 0.5 * DEG;
         rad[`clav_elev_${side}`] = (girdle0[`clav_elev_${side}`] ?? 0) + extra;
         rad[`scap_uprot_${side}`] = (girdle0[`scap_uprot_${side}`] ?? 0) + extra;
       }
@@ -645,9 +677,9 @@ function contactsOf(sk: EngineSkeleton, pose: Pose): Vec3[] {
   return out;
 }
 
-function frameAt(c: CompiledClip, u: number): ReturnType<typeof solveFrame> {
+function frameAt(c: CompiledClip, u: number, pinFeet = true): ReturnType<typeof solveFrame> {
   const bal = c.clip.balance;
-  if (!bal || c.clip.root.mode !== 'plant') return solveFrame(c, u, 0);
+  if (!bal || c.clip.root.mode !== 'plant') return solveFrame(c, u, 0, pinFeet);
   // Equilíbrio: o centro de massa (corpo + carga nas mãos) sobre o meio do pé. Mais dorsiflexão = corpo à frente.
   const k = c.sk.stature / 1.75;
   const target = must(c.sk.neutralOrigin, 'foot_r', 'segmento')[2] + MIDFOOT_AHEAD_OF_ANKLE * k;
@@ -662,7 +694,7 @@ function frameAt(c: CompiledClip, u: number): ReturnType<typeof solveFrame> {
       : [];
   const ms = [...c.masses, ...load];
   const f = (off: number) => {
-    const fr = solveFrame(c, u, off);
+    const fr = solveFrame(c, u, off, pinFeet);
     return { fr, z: centerOfMass(fr.pose, ms)[2] - target };
   };
   let [lo, hi] = bal.rangeDeg;
