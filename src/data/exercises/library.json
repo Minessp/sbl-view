@@ -883,38 +883,6 @@
     }
   },
   {
-    "id": "good_morning",
-    "name": "Good morning",
-    "aliases": ["good morning", "bom dia"],
-    "pattern": "dobradica",
-    "equipment": ["barra"],
-    "status": "consolidado",
-    "summary": "Barra nas costas, joelhos levemente dobrados, inclinar o tronco à frente pelo quadril e voltar.",
-    "how": {
-      "setup": ["Barra no trapézio, tirada da gaiola.", "Pés na largura do quadril, joelhos levemente dobrados."],
-      "execution": [
-        { "text": "Leve o quadril para trás e incline o tronco à frente.", "u": 0.5 },
-        { "text": "Desça até o tronco perto da horizontal, coluna neutra.", "u": 0 },
-        { "text": "Volte estendendo o quadril.", "u": 1 }
-      ],
-      "mistakes": ["Coluna arredonda: pare mais alto.", "Joelhos dobram demais: vira agachamento; mantenha o ângulo do joelho."]
-    },
-    "targets": [
-      { "muscle": "semimembranosus", "role": "alvo" },
-      { "muscle": "semitendinosus", "role": "alvo" },
-      { "muscle": "biceps_femoris", "role": "alvo", "parts": ["biceps_femoris_long"] },
-      { "muscle": "gluteus_maximus", "role": "alvo" },
-      { "muscle": "erector_spinae", "role": "sinergista" },
-      { "muscle": "adductor_magnus", "role": "sinergista" }
-    ],
-    "length": {
-      "emphasis": "alongado",
-      "text": "A barra fica longe do quadril (no alto das costas): o braço de momento é máximo com o tronco perto da horizontal, quando os isquiotibiais estão longos.",
-      "source": [{ "refId": "sbl_reasoning" }],
-      "confidence": "especulativo"
-    }
-  },
-  {
     "id": "back_extension",
     "name": "Extensão lombar 45°",
     "aliases": ["45 degree back extension", "hiperextensão", "banco romano"],
@@ -974,36 +942,6 @@
       "source": [{ "refId": "morin2025_hamstrings" }, { "refId": "bourne2017" }],
       "confidence": "provavel",
       "note": "Dois estudos (36 não treinados; 30 atletas recreativos). Excêntrica pura: carga alta perto da extensão do joelho."
-    }
-  },
-  {
-    "id": "cable_pull_through",
-    "name": "Pull-through na polia",
-    "aliases": ["pull through", "pull-through", "extensão de quadril na polia"],
-    "pattern": "dobradica",
-    "equipment": ["polia"],
-    "status": "consolidado",
-    "summary": "De costas para a polia baixa, corda entre as pernas, inclinar à frente pelo quadril e voltar empurrando o quadril.",
-    "how": {
-      "setup": ["De costas para a polia baixa, corda entre as pernas, nas duas mãos.", "Um passo à frente, pés um pouco mais abertos que o quadril."],
-      "execution": [
-        { "text": "Comece em pé, quadril estendido e glúteos contraídos.", "u": 1 },
-        { "text": "Leve o quadril para trás, tronco à frente, joelhos levemente dobrados.", "u": 0.5 },
-        { "text": "Pare com o tronco perto da horizontal e volte empurrando o quadril.", "u": 0 }
-      ],
-      "mistakes": ["Agachar em vez de levar o quadril para trás.", "Puxar a corda com os braços: eles só seguram."]
-    },
-    "targets": [
-      { "muscle": "gluteus_maximus", "role": "alvo" },
-      { "muscle": "semimembranosus", "role": "sinergista" },
-      { "muscle": "biceps_femoris", "role": "sinergista" },
-      { "muscle": "adductor_magnus", "role": "sinergista" }
-    ],
-    "length": {
-      "emphasis": "intermediario",
-      "text": "O cabo puxa para trás e para baixo: a resistência é mais horizontal que a da barra e fica alta também perto da extensão do quadril.",
-      "source": [{ "refId": "sbl_reasoning" }],
-      "confidence": "especulativo"
     }
   },
   {
@@ -1235,96 +1173,6 @@
     "length": {
       "emphasis": "intermediario",
       "text": "Os flexores de quadril levantam a perna; o reto do abdome só entra de verdade quando a pelve enrola no fim.",
-      "source": [{ "refId": "sbl_reasoning" }],
-      "confidence": "especulativo"
-    }
-  },
-  {
-    "id": "pallof_press",
-    "name": "Pallof press",
-    "aliases": ["pallof press", "antirrotação na polia", "press pallof"],
-    "unilateral": true,
-    "pattern": "core",
-    "equipment": ["polia"],
-    "status": "consolidado",
-    "summary": "De lado para a polia, pegador no peito, estender os braços à frente sem deixar o tronco girar.",
-    "how": {
-      "setup": ["De lado para a polia na altura do peito, pegador nas duas mãos.", "Pés na largura do quadril, joelhos levemente dobrados."],
-      "execution": [
-        { "text": "Comece com o pegador junto ao peito.", "u": 0 },
-        { "text": "Estenda os braços à frente sem deixar o tronco girar para a polia.", "u": 0.5 },
-        { "text": "Segure um instante com os braços estendidos e volte ao peito.", "u": 1 }
-      ],
-      "mistakes": ["Deixar o tronco girar: é o que o exercício treina a impedir.", "Ficar perto demais da polia, sem tensão no cabo."]
-    },
-    "targets": [
-      { "muscle": "external_oblique", "role": "alvo" },
-      { "muscle": "internal_oblique", "role": "alvo" },
-      { "muscle": "rectus_abdominis", "role": "sinergista" },
-      { "muscle": "quadratus_lumborum", "role": "sinergista" }
-    ],
-    "length": {
-      "emphasis": "intermediario",
-      "text": "Antirrotação: os oblíquos seguram o tronco parado; o torque cresce quando os braços se afastam do corpo.",
-      "source": [{ "refId": "sbl_reasoning" }],
-      "confidence": "especulativo"
-    }
-  },
-  {
-    "id": "cable_woodchop",
-    "name": "Lenhador na polia",
-    "aliases": ["woodchop", "cable chop", "lenhador"],
-    "unilateral": true,
-    "pattern": "core",
-    "equipment": ["polia"],
-    "status": "consolidado",
-    "summary": "Puxar o cabo da polia alta, de um lado, em diagonal até o quadril do outro lado, girando o tronco.",
-    "how": {
-      "setup": ["De lado para a polia alta, pegador nas duas mãos acima do ombro.", "Pés afastados, joelhos soltos."],
-      "execution": [
-        { "text": "Comece com os braços no alto, do lado da polia, tronco girado para ela.", "u": 0 },
-        { "text": "Puxe em diagonal, girando o tronco e o quadril juntos.", "u": 0.5 },
-        { "text": "Pare com as mãos ao lado do quadril oposto e volte devagar.", "u": 1 }
-      ],
-      "mistakes": ["Puxar só com os braços, sem girar o tronco.", "Arredondar a lombar no fim da diagonal."]
-    },
-    "targets": [
-      { "muscle": "external_oblique", "role": "alvo" },
-      { "muscle": "internal_oblique", "role": "alvo" },
-      { "muscle": "rectus_abdominis", "role": "sinergista" }
-    ],
-    "length": {
-      "emphasis": "intermediario",
-      "text": "Rotação com flexão: os oblíquos de um lado e do outro trocam de comprimento ao longo do giro.",
-      "source": [{ "refId": "sbl_reasoning" }],
-      "confidence": "especulativo"
-    }
-  },
-  {
-    "id": "dumbbell_side_bend",
-    "name": "Inclinação lateral com halter",
-    "aliases": ["side bend", "flexão lateral", "inclinação lateral"],
-    "unilateral": true,
-    "pattern": "core",
-    "equipment": ["halteres"],
-    "status": "consolidado",
-    "summary": "Halter numa mão, inclinar o tronco para o lado do peso e voltar passando um pouco do centro.",
-    "how": {
-      "setup": ["Em pé, halter numa mão, braço estendido ao lado do corpo.", "Pés na largura do quadril."],
-      "execution": [
-        { "text": "Incline o tronco para o lado do halter.", "u": 0 },
-        { "text": "Volte e passe um pouco do centro para o outro lado.", "u": 1 }
-      ],
-      "mistakes": ["Inclinar o tronco à frente: o movimento é só para o lado.", "Dobrar o joelho para descer mais: pernas firmes."]
-    },
-    "targets": [
-      { "muscle": "quadratus_lumborum", "role": "alvo" },
-      { "muscle": "external_oblique", "role": "alvo" },
-      { "muscle": "internal_oblique", "role": "alvo" }
-    ],
-    "length": {
-      "emphasis": "alongado",
-      "text": "Os músculos do lado oposto ao halter alongam na descida e é ali que o braço de momento do peso é maior.",
       "source": [{ "refId": "sbl_reasoning" }],
       "confidence": "especulativo"
     }
@@ -2374,35 +2222,6 @@
       "source": [{ "refId": "maeo2023_triceps" }],
       "confidence": "provavel",
       "note": "O estudo usou cabo. Com halter e braço na vertical, o torque é máximo com o antebraço na horizontal e cai no fundo, quando o antebraço desce atrás da cabeça."
-    }
-  },
-  {
-    "id": "cable_kickback",
-    "name": "Tríceps coice na polia",
-    "aliases": ["cable kickback", "coice no cabo", "tríceps kickback na polia"],
-    "unilateral": true,
-    "pattern": "isolado",
-    "equipment": ["polia"],
-    "status": "consolidado",
-    "summary": "Tronco inclinado, braço junto ao corpo, estender o cotovelo para trás contra o cabo da polia baixa.",
-    "how": {
-      "setup": ["De frente para a polia baixa, pegador numa mão.", "Tronco inclinado à frente, braço colado ao corpo e paralelo ao chão."],
-      "execution": [
-        { "text": "Comece com o cotovelo dobrado a cerca de 90°.", "u": 0 },
-        { "text": "Estenda o cotovelo levando a mão para trás.", "u": 0.5 },
-        { "text": "Pare com o braço todo estendido e volte devagar.", "u": 1 }
-      ],
-      "mistakes": ["Deixar o braço cair: só o antebraço se move.", "Balançar o tronco para estender."]
-    },
-    "targets": [
-      { "muscle": "triceps_brachii", "role": "alvo" },
-      { "muscle": "deltoid", "role": "sinergista", "parts": ["deltoid_post"] }
-    ],
-    "length": {
-      "emphasis": "encurtado",
-      "text": "Com o ombro estendido a cabeça longa fica curta; o exercício carrega o tríceps perto da extensão completa.",
-      "source": [{ "refId": "sbl_reasoning" }],
-      "confidence": "especulativo"
     }
   },
   {

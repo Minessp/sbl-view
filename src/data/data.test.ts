@@ -285,8 +285,6 @@ describe('clipes de movimento', () => {
     reverse_wrist_curl: 'extensores do punho com o punho fletido',
     shrug: 'levantador da escápula: caminho frágil na escápula elevada',
     reverse_nordic: 'reto femoral e vasto medial com o joelho além de 120°',
-    dumbbell_side_bend: 'carga na mão direita: o alvo é o lado esquerdo, e a curva mede o direito',
-    cable_woodchop: 'oblíquos em lâmina larga numa linha central só (rotação)',
   };
 
   it('u = 0 é a ponta alongada: os alvos não ficam mais curtos lá que em u = 1', () => {
@@ -308,16 +306,16 @@ describe('clipes de movimento', () => {
   // lista é o trabalho das auditorias de execução; cada lote passa a falhar de verdade ao fechar (`COLLISION_ENFORCED`).
   const COLLISION_ENFORCED = new Set<string>([
     // Barra e halteres.
-    'squat', 'front_squat', 'romanian_deadlift', 'hip_thrust', 'stiff_leg_deadlift', 'deadlift', 'good_morning', 'preacher_curl',
+    'squat', 'front_squat', 'romanian_deadlift', 'hip_thrust', 'stiff_leg_deadlift', 'deadlift', 'preacher_curl',
     'barbell_curl', 'spider_curl', 'reverse_curl', 'skull_crusher', 'wrist_curl', 'reverse_wrist_curl', 'bench_press',
     'incline_bench_press', 'close_grip_bench_press', 'overhead_press', 'barbell_row', 'goblet_squat', 'bulgarian_split_squat',
     'reverse_lunge', 'incline_dumbbell_curl', 'dumbbell_pullover', 'shrug', 'lateral_raise', 'incline_y_raise', 'hammer_curl',
     'overhead_dumbbell_extension', 'dumbbell_bench_press', 'incline_dumbbell_press', 'seated_dumbbell_press', 'chest_supported_row',
-    'one_arm_dumbbell_row', 'dumbbell_side_bend',
+    'one_arm_dumbbell_row',
     // Cabos e peso corporal.
     'overhead_triceps_extension', 'triceps_pushdown', 'cable_fly', 'low_to_high_cable_fly', 'cable_pullover',
-    'behind_back_cable_lateral_raise', 'cable_external_rotation', 'bayesian_curl', 'cable_kickback', 'lat_pulldown',
-    'single_arm_pulldown', 'seated_cable_row', 'face_pull', 'cable_crunch', 'pallof_press', 'cable_woodchop', 'cable_pull_through',
+    'behind_back_cable_lateral_raise', 'cable_external_rotation', 'bayesian_curl', 'lat_pulldown',
+    'single_arm_pulldown', 'seated_cable_row', 'face_pull', 'cable_crunch',
     'sissy_squat', 'back_extension', 'reverse_nordic', 'nordic_curl', 'tibialis_raise', 'push_up', 'chest_dip', 'pull_up', 'chin_up',
     'crunch', 'hanging_leg_raise',
     // Máquinas.
