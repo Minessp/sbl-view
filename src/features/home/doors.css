@@ -123,8 +123,11 @@
     padding: calc(var(--header-h) + var(--s-5)) var(--s-7) var(--s-5);
   }
 
+  /* Absoluto na área da linha das faixas: a cena (gaiola, chão) é enquadrada e recortada dentro dos cartões. */
   .worlds__view {
     position: absolute;
+    grid-row: 2;
+    grid-column: 1;
     inset: 0;
     height: auto;
   }
