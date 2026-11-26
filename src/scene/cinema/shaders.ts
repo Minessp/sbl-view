@@ -206,43 +206,6 @@ export const BLOOM_UP_FS = /* glsl */ `
 `;
 
 /**
- * Feixe: o ar atrás do corpo brilha perto da fonte e o corpo faz sombra nele (desfoque radial rumo à fonte,
- * Mitchell 2007). Meia resolução. Só onde não há corpo na frente fica o brilho direto; os raios passam pelas frestas.
- */
-export const RAYS_FS = /* glsl */ `
-  uniform sampler2D tColor;
-  uniform vec2 uLight;
-  uniform float uAspect;
-  uniform float uSpread;
-  uniform vec3 uTint;
-  uniform float uStrength;
-  uniform vec4 uRect;
-  uniform vec2 uFull;
-  varying vec2 vUv;
-  float ign(vec2 p) { return fract(52.9829189 * fract(dot(p, vec2(0.06711056, 0.00583715)))); }
-  float source(vec2 uv) {
-    vec2 p = uv * uFull;
-    if (p.x < uRect.x || p.y < uRect.y || p.x > uRect.x + uRect.z || p.y > uRect.y + uRect.w) return 0.0;
-    vec2 d = (uv - uLight) * vec2(uAspect, 1.0);
-    float glow = exp(-dot(d, d) / (uSpread * uSpread));
-    return glow * (1.0 - texture2D(tColor, uv).a);
-  }
-  void main() {
-    const int N = 56;
-    vec2 delta = (vUv - uLight) / float(N) * 0.92;
-    vec2 uv = vUv - delta * ign(gl_FragCoord.xy);
-    float acc = 0.0;
-    float w = 1.0;
-    for (int i = 0; i < N; i++) {
-      acc += source(uv) * w;
-      w *= 0.975;
-      uv -= delta;
-    }
-    gl_FragColor = vec4(uTint * acc * uStrength / float(N) * 3.0, 1.0);
-  }
-`;
-
-/**
  * Composição final na tela: profundidade de campo (mistura nítido/desfocado pelo círculo de confusão), aberração
  * cromática de borda, oclusão, bloom, feixe; tom (AgX), sRGB, vinheta e grão sobre a cena, pontilhado de 8 bits.
  */
@@ -251,11 +214,9 @@ export const COMPOSITE_FS = /* glsl */ `
   uniform sampler2D tDof;
   uniform sampler2D tAo;
   uniform sampler2D tBloom;
-  uniform sampler2D tRays;
   uniform float uUseDof;
   uniform float uUseAo;
   uniform float uUseBloom;
-  uniform float uUseRays;
   uniform float uBloom;
   uniform float uCA;
   uniform float uGrain;
@@ -311,7 +272,6 @@ export const COMPOSITE_FS = /* glsl */ `
     vec3 light = vec3(0.0);
     if (uUseBloom > 0.5) light += texture2D(tBloom, vUv).rgb * uBloom;
     // Raios só dentro da vista principal (fora dela vazavam pela página ao rolar).
-    if (uUseRays > 0.5 && inMain(vUv)) light += texture2D(tRays, vUv).rgb;
     col.rgb += light;
     vec3 rgb = agx(col.rgb);
     // Pré-multiplicado: luz sobre o fundo transparente cobre o fundo na medida do próprio brilho.

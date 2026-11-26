@@ -69,7 +69,7 @@ export type PlanPriority = 'priorizar' | 'manter' | 'fora';
  */
 export interface Plan extends Entity {
   name: string;
-  /** Divisão. Planos da Fase 5 não tinham: `migratePlan` deduz pelo número de dias. */
+  /** Divisão. Planos antigos não tinham: `migratePlan` deduz pelo número de dias. */
   split: SplitId;
   weeks: number;
   deload: boolean;
@@ -141,7 +141,7 @@ export interface Measure extends Entity {
 
 /**
  * Arquivo de backup. Versão sobe quando o formato muda; a leitura aceita as anteriores.
- * v1 (Fases 4–13): sessões, séries, planos. v2 (Fase 14): + preferências e medidas; plano com divisão.
+ * v1: sessões, séries, planos. v2: + preferências e medidas; plano com divisão.
  */
 export const BACKUP_APP = 'sbl-view';
 export const BACKUP_VERSION = 2;
@@ -151,7 +151,7 @@ export interface Backup {
   exportedAt: number;
   sessions: Session[];
   sets: SetEntry[];
-  /** Ausente em backups anteriores à Fase 5. */
+  /** Ausente nos backups anteriores aos planos. */
   plans?: Plan[];
   /** Ausentes em backups v1. */
   settings?: Setting[];

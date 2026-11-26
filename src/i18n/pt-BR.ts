@@ -2,14 +2,12 @@
  * Textos de interface, PT-BR. A voz: técnica, direta, sem promessa.
  * Novo idioma = novo arquivo com o mesmo tipo (`Strings`).
  */
-export const ptBR = {
+const ptBR = {
   meta: {
     name: 'SBL View',
     tagline: 'Atlas de biomecânica para quem treina',
   },
   nav: {
-    label: 'Navegação principal',
-    home: 'Início',
     atlas: 'Atlas',
     library: 'Exercícios',
     lab: 'Lab',

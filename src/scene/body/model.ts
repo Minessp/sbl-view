@@ -212,6 +212,3 @@ export function buildBodyModel(pack: AnatomyPack, muscles: readonly MuscleDef[])
     },
   };
 }
-
-/** Caixa de um conjunto de vagas na pose de ligação. */
-export const boxOfSlots = (model: BodyModel, idx: readonly number[]): Box | null => mergeBoxes(idx.flatMap((i) => model.slots[i]?.box ?? []));

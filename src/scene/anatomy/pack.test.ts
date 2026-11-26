@@ -172,7 +172,7 @@ describe('linhas centrais do motor (muscle-paths.json) = as do pacote', () => {
     }
   });
 
-  // Fase 19: nenhuma malha muscular do pacote fica sem músculo (seleção, nome, ações e fonte vêm do muscles.json).
+  // Nenhuma malha muscular do pacote fica sem músculo (seleção, nome, ações e fonte vêm do muscles.json).
   it('toda malha muscular do pacote pertence a uma parte do muscles.json', () => {
     const owned = new Set(musclesJson.flatMap((m) => m.parts.flatMap((p) => p.mesh)));
     const orphans = packs.lo.pack.parts.filter((p) => p.kind === 'muscle' && !owned.has(p.id)).map((p) => p.id);
@@ -181,7 +181,7 @@ describe('linhas centrais do motor (muscle-paths.json) = as do pacote', () => {
 });
 
 // mid: malhas originais simplificadas; ultra: densificadas, com pesos interpolados.
-describe.each(['mid', 'ultra'] as const)('deformação do corpo inteiro nas poses de referência (critério da Fase 7; %s)', (lod) => {
+describe.each(['mid', 'ultra'] as const)('deformação do corpo inteiro nas poses de referência (%s)', (lod) => {
   const { pack } = packs[lod];
   const soft = pack.parts.filter((p) => p.kind !== 'bone');
 
@@ -201,8 +201,8 @@ describe.each(['mid', 'ultra'] as const)('deformação do corpo inteiro nas pose
         if (original) expect(quantile(r, 1), p.id).toBeLessThan(12);
         expect(info.maxGrowth, p.id).toBeLessThan(0.05);
         expect(areaQuantile(r, info.area ?? r, 0.999), p.id).toBeLessThan(3.5);
-        // Compressão nas dobras fundas (joelho a 140°, axila com o braço acima, virilha): 0,13 a 0,15 medido depois de
-        // tirar o peso errado da mão na coxa (antes a coxa seguia o braço e esticava em vez de dobrar).
+        // Compressão nas dobras fundas (joelho a 140°, axila com o braço acima, virilha): 0,13 a 0,15 medido; abaixo
+        // disso a coxa volta a seguir o braço (peso da mão na coxa) e estica em vez de dobrar.
         expect(areaQuantile(r, info.area ?? r, 0.0005), p.id).toBeGreaterThan(0.12);
       } else {
         if (original) expect(quantile(r, 1), p.id).toBeLessThan(25);

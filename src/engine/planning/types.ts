@@ -1,13 +1,12 @@
 /** Tipos do planejador. Puro: sem dado importado, tudo chega por parâmetro. */
 
 export type Priority = 'priorizar' | 'manter' | 'fora';
-export const PRIORITIES: readonly Priority[] = ['priorizar', 'manter', 'fora'];
 
 /** Região que decide em quais dias da divisão legada (sem `split`) o grupo pode entrar. */
 export type Region = 'upper' | 'lower' | 'trunk';
 
 /**
- * Foco do dia. Os da divisão legada são `full | upper | lower`; as divisões da Fase 14 trazem
+ * Foco do dia. Os da divisão legada são `full | upper | lower`; as divisões explícitas trazem
  * empurrar/puxar/pernas, Arnold, tronco/membros, por grupo e o dia personalizado.
  */
 export type DayFocus =

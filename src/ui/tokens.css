@@ -145,7 +145,7 @@
   --lw-curve: 2px;
   --lw-active: 3px;
 
-  /* Movimento (Fase 20). Quatro tempos de interface, um de entrada, um de luz. Saída sempre exponencial; quem sai
+  /* Movimento. Quatro tempos de interface, um de entrada, um de luz. Saída sempre exponencial; quem sai
      é mais rápido que quem entra (~70%). Escalonamento curto: lista inteira entra em menos de meio segundo. */
   --t-fast: 120ms;   /* toque, cor, pressão */
   --t-mid: 220ms;    /* estado: hover, aba, interruptor */

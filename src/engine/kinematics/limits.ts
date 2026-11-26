@@ -1,17 +1,9 @@
 /**
- * Limites articulares por plano, medidos na rotação composta e não DOF a DOF. Cada DOF pode estar dentro da amplitude e
- * a combinação (flexão grande com abdução grande, por exemplo) ainda torcer o osso de um jeito que nenhuma articulação
- * faz. A rotação local de cada articulação vira balanço (para onde o osso aponta) + torção (giro em torno do próprio
- * eixo, Shoemake/Baerlocher): a torção tem faixa própria e o balanço, um limite por plano — sagital (à frente / atrás) e
- * frontal (para fora / para dentro), interpolado entre os quatro por uma superelipse (expoente 4: a combinação de dois
- * planos chega quase ao limite de cada um, como sentar de pernas abertas).
- *
- * Só as articulações de três DOFs grandes (coluna, pescoço, ombro, quadril): nas dobradiças (cotovelo, joelho) o DOF único
- * já é a amplitude, e o eixo delas não é perpendicular ao osso (ângulo de carregamento), o que faria a torção vazar.
- * Perto de 180° de balanço a torção perde sentido (singularidade do balanço–torção); acima de `twistUntil` só o balanço vale.
- *
- * Puro. Números de amplitude no estilo dos DOFs (`skeleton.json`) com folga para o que a composição soma; servem de
- * guarda contra pose absurda, não de medida clínica.
+ * Limites articulares por plano, na rotação composta: cada DOF pode caber na amplitude e a combinação ainda torcer o osso.
+ * Rotação local = balanço + torção (Shoemake/Baerlocher); balanço limitado por plano e interpolado por superelipse
+ * (expoente 4: dois planos juntos chegam quase ao limite de cada um).
+ * Só coluna, pescoço, ombro e quadril: nas dobradiças o eixo inclinado faria a torção vazar. Acima de `twistUntil` de
+ * balanço só ele vale (singularidade). Puro; guarda contra pose absurda, não medida clínica.
  */
 import { must } from '../math/arr';
 import { cross, DEG, dot, length, normalize, quatConj, quatMul, rotate, type Quat, type Vec3 } from '../math/vec';

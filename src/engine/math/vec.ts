@@ -6,7 +6,6 @@ export type Quat = readonly [number, number, number, number];
 
 export const DEG = Math.PI / 180;
 
-export const v3 = (x = 0, y = 0, z = 0): Vec3 => [x, y, z];
 export const add = (a: Vec3, b: Vec3): Vec3 => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
 export const sub = (a: Vec3, b: Vec3): Vec3 => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
 export const scale = (a: Vec3, s: number): Vec3 => [a[0] * s, a[1] * s, a[2] * s];
@@ -69,8 +68,6 @@ export interface Transform {
   readonly position: Vec3;
   readonly rotation: Quat;
 }
-
-export const IDENTITY: Transform = { position: [0, 0, 0], rotation: QUAT_IDENTITY };
 
 /** Leva um ponto do frame local para o frame pai. */
 export const applyTransform = (t: Transform, p: Vec3): Vec3 => add(t.position, rotate(t.rotation, p));

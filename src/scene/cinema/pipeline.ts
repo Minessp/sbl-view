@@ -19,14 +19,14 @@ import {
   ShaderMaterial,
   UnsignedIntType,
   Vector2,
-  Vector3,
+  type Vector3,
   Vector4,
   WebGLRenderTarget,
   type IUniform,
   type WebGLRenderer,
 } from 'three';
 import type { Effects } from '../perf/tiers';
-import { AO_BLUR_FS, AO_FS, BLOOM_DOWN_FS, BLOOM_UP_FS, COMPOSITE_FS, DOF_FS, FXAA_FS, QUAD_VS, RAYS_FS } from './shaders';
+import { AO_BLUR_FS, AO_FS, BLOOM_DOWN_FS, BLOOM_UP_FS, COMPOSITE_FS, DOF_FS, FXAA_FS, QUAD_VS } from './shaders';
 import { cinema } from './state';
 
 const BLOOM_LEVELS = 6;
@@ -68,7 +68,6 @@ export class CinemaPipeline {
   private dof: WebGLRenderTarget | null = null;
   private ao: WebGLRenderTarget | null = null;
   private aoBlur: WebGLRenderTarget | null = null;
-  private rays: WebGLRenderTarget | null = null;
   private ldr: WebGLRenderTarget | null = null;
   private readonly fxaaM: ShaderMaterial;
   private readonly fxaaSrc = { value: null as unknown };
@@ -80,7 +79,6 @@ export class CinemaPipeline {
   private readonly empty = new Scene();
   private readonly qcam = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
   private readonly size = new Vector2();
-  private readonly tmp = new Vector3();
   private readonly projInv = new Matrix4();
 
   private readonly depthU = {
@@ -104,20 +102,13 @@ export class CinemaPipeline {
     upSrc: { value: null as unknown },
     upTexel: { value: new Vector2() },
     upWeight: { value: 0.85 },
-    raysColor: { value: null as unknown },
-    raysLight: { value: new Vector2(0.5, 0.9) },
-    raysAspect: { value: 1 },
-    raysTint: { value: new Vector3(1, 0.8, 0.6) },
-    raysStrength: { value: 0 },
     cColor: { value: null as unknown },
     cDof: { value: null as unknown },
     cAo: { value: null as unknown },
     cBloom: { value: null as unknown },
-    cRays: { value: null as unknown },
     useDof: { value: 0 },
     useAo: { value: 0 },
     useBloom: { value: 0 },
-    useRays: { value: 0 },
     bloomK: { value: 0.3 },
     time: { value: 0 },
     lightTheme: { value: 0 },
@@ -127,7 +118,6 @@ export class CinemaPipeline {
   private readonly aoBlurM: ShaderMaterial;
   private readonly downM: ShaderMaterial;
   private readonly upM: ShaderMaterial;
-  private readonly raysM: ShaderMaterial;
   private readonly compM: ShaderMaterial;
 
   constructor(private readonly msaa: number) {
@@ -143,16 +133,6 @@ export class CinemaPipeline {
     this.aoBlurM = pass(AO_BLUR_FS, { tAo: u.aoTex, tDepth: d.tDepth, uHalf: u.aoHalf });
     this.downM = pass(BLOOM_DOWN_FS, { tSrc: u.downSrc, uSrcTexel: u.downTexel, uFirst: u.downFirst, uThreshold: { value: new Vector2(1.35, 0.5) } });
     this.upM = pass(BLOOM_UP_FS, { tSrc: u.upSrc, uSrcTexel: u.upTexel, uRadius: { value: 1 }, uWeight: u.upWeight }, true);
-    this.raysM = pass(RAYS_FS, {
-      tColor: u.raysColor,
-      uLight: u.raysLight,
-      uAspect: u.raysAspect,
-      uSpread: { value: 0.14 },
-      uTint: u.raysTint,
-      uStrength: u.raysStrength,
-      uRect: d.uRect,
-      uFull: d.uFull,
-    });
     this.fxaaM = pass(FXAA_FS, { tSrc: this.fxaaSrc, uTexel: this.fxaaTexel });
     this.compM = pass(COMPOSITE_FS, {
       ...d,
@@ -160,11 +140,9 @@ export class CinemaPipeline {
       tDof: u.cDof,
       tAo: u.cAo,
       tBloom: u.cBloom,
-      tRays: u.cRays,
       uUseDof: u.useDof,
       uUseAo: u.useAo,
       uUseBloom: u.useBloom,
-      uUseRays: u.useRays,
       uBloom: u.bloomK,
       uCA: { value: 0.0025 },
       uGrain: { value: 0.035 },
@@ -183,7 +161,6 @@ export class CinemaPipeline {
     this.dof = target(hw, hh);
     this.ao = target(hw, hh);
     this.aoBlur = target(hw, hh);
-    this.rays = target(hw, hh);
     this.ldr = new WebGLRenderTarget(w, h, { minFilter: LinearFilter, magFilter: LinearFilter, depthBuffer: false });
     this.bloom = [];
     let bw = hw, bh = hh;
@@ -235,8 +212,8 @@ export class CinemaPipeline {
 
   /** Fim do quadro: passes e composição na tela. */
   end(gl: WebGLRenderer, p: FrameParams) {
-    const scene = this.scene, dof = this.dof, ao = this.ao, aoBlur = this.aoBlur, rays = this.rays;
-    if (!scene || !dof || !ao || !aoBlur || !rays) return;
+    const scene = this.scene, dof = this.dof, ao = this.ao, aoBlur = this.aoBlur;
+    if (!scene || !dof || !ao || !aoBlur) return;
     const fx = { ...p.fx, ...cinema.force };
     const autoClear = gl.autoClear;
     // Resolve o MSAA inteiro (cada vista resolveu só dentro da própria tesoura).
@@ -271,7 +248,6 @@ export class CinemaPipeline {
     }
     const dofOn = fx.dof && !!main;
     const aoOn = fx.ao && !!main;
-    const raysOn = fx.rays && !!main && cinema.beamK > 0.01 && !p.lightTheme;
 
     const u = this.u;
     if (dofOn) {
@@ -311,31 +287,15 @@ export class CinemaPipeline {
       }
       gl.autoClear = true;
     }
-    if (raysOn && main) {
-      const cam = main.camera;
-      const v = this.tmp.set(...cinema.beam).project(cam);
-      const r = main.rect;
-      // Da vista para o alvo cheio (uv).
-      const lx = ((r.x + (v.x * 0.5 + 0.5) * r.w) * p.dpr) / this.w;
-      const ly = (ph - (r.y + (1 - (v.y * 0.5 + 0.5)) * r.h) * p.dpr) / this.h;
-      u.raysLight.value.set(lx, ly);
-      u.raysAspect.value = this.w / this.h;
-      u.raysColor.value = scene.texture;
-      u.raysStrength.value = 0.16 * cinema.beamK;
-      u.raysTint.value.copy(p.keyColor).lerp(p.rimColor, 0.35);
-      this.draw(gl, this.raysM, rays);
-    }
 
     u.cColor.value = scene.texture;
     u.cDof.value = dof.texture;
     u.cAo.value = aoBlur.texture;
     u.cBloom.value = this.bloom[0]?.texture ?? null;
-    u.cRays.value = rays.texture;
     u.useDof.value = dofOn ? 1 : 0;
     u.useAo.value = aoOn ? 1 : 0;
     // Claro: luz somada sobre o ciclorama vira véu branco na silhueta.
     u.useBloom.value = fx.bloom && !p.lightTheme ? 1 : 0;
-    u.useRays.value = raysOn ? 1 : 0;
     u.bloomK.value = p.lightTheme ? 0.1 : 0.24;
     u.time.value = p.time;
     u.lightTheme.value = p.lightTheme ? 1 : 0;
@@ -351,7 +311,7 @@ export class CinemaPipeline {
   }
 
   private disposeTargets() {
-    for (const t of [this.scene, this.dof, this.ao, this.aoBlur, this.rays, this.ldr, ...this.bloom]) {
+    for (const t of [this.scene, this.dof, this.ao, this.aoBlur, this.ldr, ...this.bloom]) {
       t?.depthTexture?.dispose();
       t?.dispose();
     }
@@ -363,6 +323,6 @@ export class CinemaPipeline {
     this.unpatch = null;
     this.disposeTargets();
     this.quad.geometry.dispose();
-    for (const m of [this.dofM, this.aoM, this.aoBlurM, this.downM, this.upM, this.raysM, this.compM, this.fxaaM]) m.dispose();
+    for (const m of [this.dofM, this.aoM, this.aoBlurM, this.downM, this.upM, this.compM, this.fxaaM]) m.dispose();
   }
 }

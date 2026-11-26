@@ -271,7 +271,7 @@
   }
 }
 
-/* Análise (Fase 15): número com régua de luz atrás; régua cheia = topo da faixa. */
+/* Análise: número com régua de luz atrás; régua cheia = topo da faixa. */
 .analysis__bar,
 .analysis__meter {
   display: inline-block;

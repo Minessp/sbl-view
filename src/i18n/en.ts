@@ -7,8 +7,6 @@ export const en: Strings = {
     tagline: 'A biomechanics atlas for people who train',
   },
   nav: {
-    label: 'Main navigation',
-    home: 'Home',
     atlas: 'Atlas',
     library: 'Exercises',
     lab: 'Lab',

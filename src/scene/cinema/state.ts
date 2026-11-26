@@ -25,21 +25,16 @@ export const cinema = {
   apertureGoal: 0.55,
   /** Puxada de foco da transição de rota (0 = nítido, 1 = tudo desfocado). */
   pull: 0,
-  /** Ponto do mundo de onde vem o feixe (atrás e acima do corpo). */
-  beam: [0.35, 2.15, -1.6] as [number, number, number],
-  /** Força do feixe (0..1), por cena. */
-  beamK: 1,
   /** Só desenvolvimento: força efeitos ligados/desligados (`window.__cinema.force = { ao: false }`). */
-  force: {} as Partial<Record<'bloom' | 'ao' | 'dof' | 'rays' | 'shadow' | 'reflect', boolean>>,
+  force: {} as Partial<Record<'bloom' | 'ao' | 'dof' | 'shadow' | 'reflect', boolean>>,
 };
 
 if (import.meta.env.DEV && typeof window !== 'undefined') (window as unknown as { __cinema: typeof cinema }).__cinema = cinema;
 
 /**
- * A cena principal se declara no quadro (chamar no useFrame dela). `focus` = distância da câmera ao assunto. `beam`: força
- * do feixe volumétrico (o player passa 0: no quadro menor, com a câmera afastada, o feixe virava névoa sobre o corpo).
+ * A cena principal se declara no quadro (chamar no useFrame dela). `focus` = distância da câmera ao assunto.
  */
-export function claimMain(camera: PerspectiveCamera, slot: HTMLElement, canvas: HTMLCanvasElement, focus: number, aperture = 0.55, beam = 1) {
+export function claimMain(camera: PerspectiveCamera, slot: HTMLElement, canvas: HTMLCanvasElement, focus: number, aperture = 0.55) {
   const s = slot.getBoundingClientRect();
   const c = canvas.getBoundingClientRect();
   const rect = { x: s.left - c.left, y: s.top - c.top, w: s.width, h: s.height };
@@ -48,7 +43,6 @@ export function claimMain(camera: PerspectiveCamera, slot: HTMLElement, canvas: 
   cinema.seen = performance.now();
   cinema.focusGoal = focus;
   cinema.apertureGoal = aperture;
-  cinema.beamK = beam;
 }
 
 export function releaseMain(camera: PerspectiveCamera | null) {

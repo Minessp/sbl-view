@@ -31,9 +31,9 @@ export class SblDb extends Dexie {
       sessions: 'id, startedAt, mesocycleId, updatedAt',
       sets: 'id, sessionId, exerciseId, [exerciseId+createdAt], createdAt, updatedAt',
     });
-    // Fase 5: tabela nova, nada a migrar.
+    // Tabela de planos, nada a migrar.
     this.version(2).stores({ plans: 'id, updatedAt, startedAt' });
-    // Fase 14: preferências e medidas; plano ganha a divisão (deduzida pelo número de dias).
+    // Preferências e medidas; plano ganha a divisão (deduzida pelo número de dias).
     this.version(3)
       .stores({ settings: 'id, updatedAt', measures: 'id, at, updatedAt' })
       .upgrade((tx) =>

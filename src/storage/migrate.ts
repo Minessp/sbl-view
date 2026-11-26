@@ -5,7 +5,7 @@
 import { legacySplit } from '@/engine/planning/splits';
 import type { Plan } from './types';
 
-/** Plano da Fase 5 (sem `split`): a divisão sai do número de dias, como o gerador antigo fazia. Não mexe em `updatedAt`. */
+/** Plano antigo (sem `split`): a divisão sai do número de dias, como o gerador antigo fazia. Não mexe em `updatedAt`. */
 export function migratePlan<T extends Omit<Plan, 'split'> & { split?: Plan['split'] }>(p: T): Plan {
   return p.split ? (p as Plan) : { ...p, split: legacySplit(p.days.length) };
 }

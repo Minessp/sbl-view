@@ -35,7 +35,7 @@ export const groupsOfExercise = (id: string): string[] => {
 
 const LOWER: ReadonlySet<string> = new Set(REGIONS.filter((r) => r.id === 'hip' || r.id === 'leg').flatMap((r) => r.groups));
 const UPPER: ReadonlySet<string> = new Set(REGIONS.find((r) => r.id === 'upper')?.groups ?? []);
-export const regionOf = (g: string): Region => (LOWER.has(g) ? 'lower' : UPPER.has(g) ? 'upper' : 'trunk');
+const regionOf = (g: string): Region => (LOWER.has(g) ? 'lower' : UPPER.has(g) ? 'upper' : 'trunk');
 
 /** Grupos que algum exercício da biblioteca tem como alvo, na ordem do Atlas. */
 export const plannableGroups: MuscleGroup[] = REGIONS.flatMap((r) => r.groups).filter((g) => catalogList.some((e) => targetGroups(e).includes(g)));
@@ -62,7 +62,7 @@ export function initialPriorities(): Record<string, Priority> {
   return Object.fromEntries(plannableGroups.map((g) => [g, 'manter' as Priority]));
 }
 
-// ---- Fase 14: divisões, prescrição, substituição ----
+// ---- Divisões, prescrição, substituição ----
 
 const TRUNK: readonly string[] = REGIONS.find((r) => r.id === 'trunk')?.groups ?? [];
 const UPPER_G = [...UPPER];

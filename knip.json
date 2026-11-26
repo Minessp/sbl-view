@@ -1,0 +1,20 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": [
+    "src/pwa/sw.js",
+    "scripts/*.{mjs,ts}"
+  ],
+  "project": [
+    "src/**/*.{ts,tsx,js}",
+    "scripts/**/*.{mjs,ts}"
+  ],
+  "ignoreExportsUsedInFile": true,
+  "ignore": [
+    "src/i18n/en*.ts",
+    "src/i18n/legal.en.ts",
+    "src/build.d.ts"
+  ],
+  "ignoreDependencies": [
+    "@fontsource-variable/archivo"
+  ]
+}

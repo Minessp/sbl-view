@@ -1,32 +1,17 @@
 /**
- * Material do corpo anatômico. Skinning linear na GPU (reproduz `engine/kinematics/skinning.ts`), estado por vaga
- * lido de uma textura, plano de corte por camada e passe de seleção (a cor codifica o índice da vaga).
+ * Material do corpo: skinning linear na GPU (espelha `engine/kinematics/skinning.ts`), estado por vaga numa textura,
+ * corte por camada e passe de seleção (cor = índice da vaga).
  *
- * Estado (2 texels por vaga, RGBA float):
+ * Estado (2 texels RGBA float por vaga):
  *   linha 0: destaque, opacidade, calor, ativação (0..1)
- *   linha 1: oculto (> 0,5), volume (fração radial somada ao ventre), deformação (−1 alongado … +1 encurtado), pontas
- *   (origem e inserção acesas, 0..1)
- * Opacidade abaixo de 1 vira pontilhado (sem ordenar transparência); com `uGlass`, vira vidro: o material normal
- * descarta e um passe de vidro (GLASS: mistura, sem escrever profundidade, só a silhueta acesa) desenha por cima.
- *
- * Luz (rig.ts): fluxo linear, key de tungstênio com difusão envolvente (luz atravessa a borda: vermelho no músculo),
- * contraluz fria, hemisfério; ACES e pontilhado de 8 bits no fim ("pós-processamento" dentro do material: o palco
- * desenha várias vistas recortadas, um compositor por vista custaria caro).
- * Músculo: brilho anisotrópico ao longo da fibra (Kajiya-Kay; direção da fibra = atributo por vértice, a linha central
- * projetada na superfície), estrias em relevo (fascículos e fibras: ruído 3D esticado ao longo da fibra, na pose de
- * ligação, gradiente analítico levado à superfície posada) e transição para o tendão pela fração tendínea do vértice, com borda
- * irregular. O relevo some antes de o padrão ficar menor que alguns pixels. Osso: marfim fosco, poroso de perto.
- * Pele: translúcida, mais opaca na silhueta (Fresnel), microrrelevo de perto.
- * Destaque, calor e ativação acendem o músculo (incandescência na cor --c-glow). Deformação: encurtar acende em
- * tungstênio (--c-glow), alongar em aço (--c-stretch).
- * Corte: plano de normal `uCutN` (mundo); do lado positivo, a camada vira fantasma. Padrão = horizontal (altura).
- * Lente (página inicial): círculo na tela; cada camada é tirada dentro de uma fração do raio (anéis em degrau, borda
- * acesa em tungstênio). Montagem: o músculo cresce da origem à inserção com uma frente incandescente.
+ *   linha 1: oculto (> 0,5), volume (fração radial no ventre), deformação (−1 alongado … +1 encurtado), pontas (0..1)
+ * Opacidade < 1 vira pontilhado (sem ordenar transparência); com `uGlass`, um passe de vidro desenha por cima.
+ * Tom e pontilhado ficam dentro do material: o palco desenha várias vistas recortadas e um compositor por vista custaria caro.
  */
 import { DoubleSide, FrontSide, ShaderMaterial, type DataTexture, type IUniform, type Matrix4, type Vector2, type Vector3 } from 'three';
 import { skeletonDef } from '@/data';
 import { FOLD_HALF, gripRig, handSpec, THUMB_MASK } from '@/engine/kinematics/grip';
-import { rig, type Rig } from './rig';
+import type { Rig } from './rig';
 
 export const STATE_ROWS = 2;
 
@@ -522,9 +507,4 @@ export function createBodyMaterial(o: BodyMaterialOptions): ShaderMaterial {
     transparent: blend,
     depthWrite: !blend,
   });
-}
-
-/** Uniforms de luz para quem não é corpo (equipamento). */
-export function rigUniforms(): Rig {
-  return rig;
 }

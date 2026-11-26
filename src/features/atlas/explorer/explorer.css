@@ -294,7 +294,6 @@ fieldset.panel-block > legend + * {
 }
 
 .explorer input[type='range'],
-.atlas-stage input[type='range'],
 .curve input[type='range'] {
   width: 100%;
   min-height: 36px;

@@ -441,14 +441,6 @@
   min-height: 40svh;
 }
 
-.home-eyebrow {
-  font-size: var(--fs-1);
-  font-stretch: var(--wd-cond);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--c-glow);
-}
-
 @media (max-width: 899px) {
   .home-pin-only {
     display: none;

@@ -285,7 +285,7 @@ export function PlayerBody({ main = false, hud: withHud = main }: { main?: boole
     cam.near = Math.max(0.05, Math.min(drawn, cur.current.dist) * 0.05);
     cam.far = Math.max(drawn, cur.current.dist) + 12;
     cam.updateProjectionMatrix();
-    if (main) claimMain(cam, slot, gl.domElement, drawn, 0.3, 0);
+    if (main) claimMain(cam, slot, gl.domElement, drawn, 0.3);
 
     // ---- Telemetria (rótulos no DOM precisam da câmera já posta) ----
     if (hud) {

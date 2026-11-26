@@ -29,8 +29,6 @@ export interface Pick {
 }
 export const keyOf = (p: Pick): string => `${p.kind}:${p.id}${p.part ? `/${p.part}` : ''}`;
 export const samePick = (a: Pick | null, b: Pick | null) => (a && b ? a.kind === b.kind && a.id === b.id && a.part === b.part : a === b);
-/** Mesma estrutura, qualquer parte (o músculo da página continua o mesmo). */
-export const sameStructure = (a: Pick | null, b: Pick | null) => (a && b ? a.kind === b.kind && a.id === b.id : a === b);
 
 /** Parte do pacote, registrada pela cena quando o modelo carrega (busca e nome do que não tem página). */
 export interface StructureInfo {

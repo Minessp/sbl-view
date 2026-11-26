@@ -8,7 +8,7 @@ import { join } from 'node:path';
 import { gzipSync } from 'node:zlib';
 
 const dist = process.argv[2] ?? 'dist';
-// 84 KB desde a Fase 31 (rotas por idioma e link de troca): a shell PT mediu 80,3 KB; o aviso de versão lazy piorava.
+// 84 KB: rotas por idioma e link de troca levaram a shell PT a 80,3 KB; o aviso de versão lazy piorava.
 const LIMIT_JS = 84 * 1024;
 const LIMIT_CSS = 12 * 1024;
 

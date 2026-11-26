@@ -224,11 +224,6 @@
   color: var(--c-accent);
 }
 
-.logger__recent-title {
-  font-size: var(--fs-3);
-  font-weight: 620;
-}
-
 .logger__empty {
   font-size: var(--fs-2);
   color: var(--c-ink-2);
@@ -317,29 +312,6 @@
   color: var(--c-ink-2);
 }
 
-.sheet__plate--link {
-  min-height: 36px;
-  text-decoration: none;
-}
-
-.sheet__plate--link::before {
-  content: '';
-  width: 7px;
-  height: 7px;
-  border-left: 1.5px solid currentColor;
-  border-bottom: 1.5px solid currentColor;
-  transform: rotate(45deg);
-  transition: transform var(--t-fast) var(--ease);
-}
-
-.sheet__plate--link:hover {
-  color: var(--c-ink);
-}
-
-.sheet__plate--link:hover::before {
-  transform: translateX(-3px) rotate(45deg);
-}
-
 .sheet__title {
   font-size: var(--fs-8);
   font-weight: var(--display-weight);
@@ -353,12 +325,6 @@
   font-size: var(--fs-4);
   line-height: 1.5;
   color: color-mix(in oklch, var(--c-ink) 85%, var(--c-ink-2));
-}
-
-.sheet__count {
-  font-size: var(--fs-2);
-  font-stretch: var(--wd-cond);
-  color: var(--c-ink-2);
 }
 
 .sheet__actions {
@@ -520,7 +486,7 @@ html[data-stage='loading'] .viewport::after {
   }
 }
 
-/* ---------- Microinterações (Fase 20) ----------
+/* ---------- Microinterações ----------
  * Luz como resposta: a lâmpada segue o ponteiro sobre o que se aperta (--lamp, ui/pointerLight.ts), a seleção acende um
  * anel, o foco "puxa" o contorno para perto e o polegar do interruptor estica no caminho. Tudo em --t-fast/--t-mid. */
 .chip:hover {
@@ -606,7 +572,6 @@ html[data-stage='loading'] .viewport::after {
   :root .seg__btn,
   :root .compare-act,
   :root .home-lens__btn,
-  :root .sheet__plate--link,
   :root summary.chip {
     min-height: 44px;
   }

@@ -5,7 +5,7 @@
  * A vista `main` é a protagonista: registra a captura do palco (o que está desenhando agora: recorte, câmera, pose, pele)
  * e, ao montar ou ao receber um plano novo, voa a partir dele. As cenas leem o diretor (`useDirector`) e passam câmera,
  * pose e pele por ele: fora do voo nada muda; no voo, ele mistura com o plano de saída. Sem plano ou com redução de
- * movimento: corte seco, como antes.
+ * movimento: corte seco.
  */
 import { View } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';

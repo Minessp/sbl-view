@@ -131,3 +131,20 @@ describe('CSS no chunk da rota', () => {
     });
   }
 });
+
+function allCode(dir: string): string[] {
+  return readdirSync(dir).flatMap((n) => {
+    const p = join(dir, n);
+    if (statSync(p).isDirectory()) return allCode(p);
+    return /\.(ts|tsx)$/.test(p) && !/\.test\.tsx?$/.test(p) ? [p] : [];
+  });
+}
+
+describe('CSS sem classe órfã', () => {
+  // Busca o nome em qualquer texto de código (classe montada por template também conta se o nome inteiro aparecer).
+  const code = [...allCode(SRC), join(SRC, '../index.html')].map(read).join('\n');
+  it('toda classe definida aparece no código', () => {
+    const orphans = [...definedAnywhere].filter(([b]) => !code.includes(b) && !(b in EXCEPTIONS)).map(([b, w]) => `.${b} (${w.join(', ')})`);
+    expect(orphans).toEqual([]);
+  });
+});

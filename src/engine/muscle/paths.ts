@@ -86,13 +86,6 @@ export function pathWorldPoints(pose: Pose, path: MusclePath): Vec3[] {
   return path.points.map((pt) => pointToWorld(pose, pt.segment, pt.local));
 }
 
-/** Comprimento como polilinha pelos pontos de passagem (m). */
-export function polylineLength(points: readonly Vec3[]): number {
-  let L = 0;
-  for (let i = 1; i < points.length; i++) L += distance(at(points, i - 1), at(points, i));
-  return L;
-}
-
 /**
  * Comprimento músculo-tendão (m): polilinha pelos pontos de passagem, com contorno de cilindro
  * no trecho indicado. Modelo geométrico simplificado, não medição.

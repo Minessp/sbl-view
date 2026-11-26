@@ -8,7 +8,6 @@ export function at<T>(arr: ArrayLike<T>, i: number): T {
   return v;
 }
 
-export const first = <T>(arr: ArrayLike<T>): T => at(arr, 0);
 export const last = <T>(arr: ArrayLike<T>): T => at(arr, arr.length - 1);
 
 /** Map.get que falha alto. */

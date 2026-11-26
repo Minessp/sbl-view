@@ -1,10 +1,10 @@
 /**
- * Poses de referência do pipeline anatômico (graus). As duas primeiras são o critério de saída da Fase 7:
+ * Poses de referência do pipeline anatômico (graus). As duas primeiras são o critério de deformação do pacote:
  * o corpo inteiro não pode rasgar em agachamento fundo nem com o braço acima da cabeça.
  *
  * Braço acima da cabeça pelo plano frontal: a cintura escapular gira em torno de Z (frontal), o que compõe com
  * a abdução. Flexão grande com a cintura elevada cruza o braço na frente do rosto, porque os DOFs do ombro
- * ficam no frame da escápula. O ritmo escapuloumeral dependente do plano de elevação é tarefa da Fase 11.
+ * ficam no frame da escápula. O ritmo escapuloumeral fica no motor de movimento.
  */
 import { bilateral } from '@/engine/kinematics/skeleton';
 

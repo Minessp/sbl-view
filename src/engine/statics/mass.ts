@@ -35,8 +35,6 @@ export function segmentMasses(sk: EngineSkeleton, input: AnthropometryInput, bod
   return out;
 }
 
-export const totalMass = (ms: readonly PointMass[]) => ms.reduce((a, m) => a + m.mass, 0);
-
 /** Centro de massa (mundo) de um conjunto de massas pontuais. */
 export function centerOfMass(pose: Pose, ms: readonly PointMass[]): Vec3 {
   let acc: Vec3 = [0, 0, 0];

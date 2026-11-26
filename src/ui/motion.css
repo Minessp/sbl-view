@@ -1,16 +1,10 @@
 /*
  * Linguagem de movimento.
- * - Troca de rota = corte de cinema (900 ms, App.tsx). O palco (`view-transition-name: stage`) fica fora da foto da
- *   página: a imagem nova dele é viva, o WebGL segue desenhando e o corpo voa do plano de saída ao da página nova
- *   (scene/director). Com palco nas duas páginas (`html.vt-live`) a foto velha do palco some; sem palco novo, ela apaga.
- *   A página que sai desce 16 px e perde o foco (0–280 ms); a nova entra por cima dela a partir de 140 ms, em foco, com os
- *   blocos subindo 16 px em cascata (`html.cut-in`); um risco de luz cruza o quadro na diagonal. Mesma curva expo do voo. O cabeçalho fica parado, o nome da seção troca
- *   pela penumbra.
- * - Troca de tema: a luz nova se espalha em círculo a partir do interruptor (ThemeSwitch.tsx).
- * - Sem suporte: entrada por CSS (só `backwards`, para não deixar transform no elemento: viraria bloco de contenção e
- *   mexeria nas vistas 3D).
- * - Redução de movimento: as durações zeram nos tokens, a troca de rota vira fusão de 150 ms (`html.vt-dry`, sem voo) e a
- *   do tema desliga (ThemeSwitch.tsx).
+ * - Troca de rota = corte de cinema (900 ms, App.tsx): o palco fica fora da foto da página e o corpo voa entre os planos
+ *   (scene/director). A página que sai desce 16 px e perde o foco; a nova entra por cima a partir de 140 ms, em cascata.
+ * - Tema: a luz nova se espalha em círculo a partir do interruptor (ThemeSwitch.tsx).
+ * - Sem View Transitions: entrada só com `backwards` (transform ativo viraria bloco de contenção e mexeria nas vistas 3D).
+ * - Redução de movimento: durações zeram nos tokens; a troca de rota vira fusão de 150 ms (`html.vt-dry`).
  */
 
 .site-header {

@@ -257,8 +257,7 @@ function HeroBody() {
     cam.far = Math.max(drawn, c.dist) + 14;
     cam.updateProjectionMatrix();
     cam.updateMatrixWorld();
-    // Herói fora da tela (o leitor desceu ao "Ao vivo"): sem feixe, que lavava a vitrine.
-    claimMain(cam, slot, gl.domElement, drawn, 0.35, rect.top + rect.height > 1 ? 1 : 0);
+    claimMain(cam, slot, gl.domElement, drawn, 0.35);
 
     // ---- Camadas lado a lado no eixo lateral da câmera ----
     const ax = screenAxes(c).right;
