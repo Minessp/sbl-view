@@ -9,6 +9,7 @@ import type { Vec3 } from '@/engine/math/vec';
 import type { GearKit } from '../kit';
 import { adjustableBench, flatBench, preacherBench } from './bench';
 import { benchRack, powerRack } from './rack';
+import { dipStation, hyperBench, latTower, nordicAnchor, rowStation } from './frames';
 
 export interface StationContext {
   /** Primeiro quadro e outras amostras do clipe (u crescente). */
@@ -31,10 +32,22 @@ export const STATIONS: Readonly<Record<StationId, StationBuilder>> = {
   flat_bench: flatBench,
   adjustable_bench: adjustableBench,
   preacher_bench: preacherBench,
+  lat_tower: latTower,
+  row_station: rowStation,
+  dip_station: dipStation,
+  hyper_bench: hyperBench,
+  nordic_anchor: nordicAnchor,
 };
 
 /** Estações que desenham a estrutura do banco: a peça do clipe fica só com o estofado. */
-export const BENCH_STATIONS: ReadonlySet<StationId> = new Set(['flat_bench', 'adjustable_bench', 'preacher_bench']);
+export const BENCH_STATIONS: ReadonlySet<StationId> = new Set([
+  'flat_bench',
+  'adjustable_bench',
+  'preacher_bench',
+  'lat_tower',
+  'row_station',
+  'hyper_bench',
+]);
 
 export function buildStation(id: StationId, ctx: StationContext, params: Readonly<Record<string, number>> = {}, at?: Vec3, yaw = 0): StationView {
   const v = STATIONS[id](ctx, params);

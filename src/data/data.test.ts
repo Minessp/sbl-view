@@ -302,6 +302,12 @@ describe('clipes de movimento', () => {
     'reverse_lunge', 'incline_dumbbell_curl', 'dumbbell_pullover', 'shrug', 'lateral_raise', 'incline_y_raise', 'hammer_curl',
     'overhead_dumbbell_extension', 'dumbbell_bench_press', 'incline_dumbbell_press', 'seated_dumbbell_press', 'chest_supported_row',
     'one_arm_dumbbell_row', 'dumbbell_side_bend',
+    // Cabos e peso corporal.
+    'overhead_triceps_extension', 'triceps_pushdown', 'cable_fly', 'low_to_high_cable_fly', 'cable_pullover',
+    'behind_back_cable_lateral_raise', 'cable_external_rotation', 'bayesian_curl', 'cable_kickback', 'lat_pulldown',
+    'single_arm_pulldown', 'seated_cable_row', 'face_pull', 'cable_crunch', 'pallof_press', 'cable_woodchop', 'cable_pull_through',
+    'sissy_squat', 'back_extension', 'reverse_nordic', 'nordic_curl', 'tibialis_raise', 'push_up', 'chest_dip', 'pull_up', 'chin_up',
+    'crunch', 'hanging_leg_raise',
   ]);
   const COLLISION_EXCEPTIONS: Record<string, string> = {
     preacher_curl: 'peito encostado no alto da almofada, como deve; a cápsula do tronco é centrada na coluna e acusa ~12 cm',
@@ -335,7 +341,6 @@ describe('clipes de movimento', () => {
   // (punho ou rotação do ombro teriam de mudar junto), o exercício fica na lista com o motivo.
   const GRIP_EXCEPTIONS: Record<string, string> = {
     front_squat: 'apoio frontal: a barra sobre os deltoides pede extensão do punho que o clipe não tem',
-    cable_pullover: 'braços acima da cabeça: a rotação do ombro que o IK escolhe não deixa a pronação alinhar',
     chin_up: 'no alto da barra a supinação completa ainda deixa o punho desviado',
     reverse_wrist_curl: 'antebraços em diagonal sobre as coxas: nem a pronação no limite (160°) alinha a palma com a barra',
   };

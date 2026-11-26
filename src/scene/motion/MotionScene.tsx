@@ -54,7 +54,15 @@ export function clipBox(c: CompiledClip): Box {
       if (e.kind === 'block') boxes.push({ center: e.center, size: e.size });
       else if (e.kind === 'barbell') for (const k of [-0.72, 0.72]) boxes.push(pt([e.center[0] + e.axis[0] * k, e.center[1] + e.axis[1] * k, e.center[2] + e.axis[2] * k], 0.45));
       else if (e.kind === 'dumbbell') boxes.push(pt(e.center, 0.3));
-      else if (e.kind === 'cable') boxes.push(pt(e.pulley, 0.1));
+      else if (e.kind === 'cable') {
+        // Coluna atrás da roldana (mesma conta do `EquipmentView`): do chão ao topo, com a pilha.
+        const [x, y, z] = e.pulley;
+        const r = Math.hypot(x, z);
+        const near = r < 0.45 && y > 1.6;
+        const back = near ? 0.75 : 0.3;
+        const d = near || r < 0.05 ? [0, 1] : [x / r, z / r];
+        boxes.push(pt(e.pulley, 0.1), { center: [x + (d[0] ?? 0) * back, 1.2, z + (d[1] ?? 0) * back], size: [0.35, 2.4, 0.35] });
+      }
       else if (e.kind === 'swing') boxes.push(pt(e.pivot, 0.2));
     }
   }

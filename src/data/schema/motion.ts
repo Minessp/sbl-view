@@ -92,7 +92,18 @@ export const Balance = z.object({
 });
 
 /** Estação: estrutura desenhada a partir das peças do próprio clipe (`scene/motion/gear/stations/`). */
-export const StationId = z.enum(['power_rack', 'bench_rack', 'flat_bench', 'adjustable_bench', 'preacher_bench']);
+export const StationId = z.enum([
+  'power_rack',
+  'bench_rack',
+  'flat_bench',
+  'adjustable_bench',
+  'preacher_bench',
+  'lat_tower',
+  'row_station',
+  'dip_station',
+  'hyper_bench',
+  'nordic_anchor',
+]);
 export type StationId = z.infer<typeof StationId>;
 
 export const Equipment = z.discriminatedUnion('kind', [

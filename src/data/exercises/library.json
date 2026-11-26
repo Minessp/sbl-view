@@ -302,11 +302,20 @@
   {
     "id": "lat_pulldown",
     "name": "Puxada alta",
-    "aliases": ["pulldown", "puxador", "lat pull"],
+    "aliases": ["pulldown", "puxador", "lat pull", "lat pulldown", "puxada frontal", "pulley costas"],
     "pattern": "puxar_vertical",
     "equipment": ["polia"],
     "status": "consolidado",
     "summary": "Sentado, puxar a barra da polia de cima até a altura do queixo, levando os cotovelos para baixo e para trás.",
+    "how": {
+      "setup": ["Sentado, coxas presas sob os rolos, pés no chão.", "Barra com pegada pronada um pouco mais larga que os ombros."],
+      "execution": [
+        { "text": "Comece com os braços estendidos no alto e os ombros subindo com a barra.", "u": 0 },
+        { "text": "Puxe levando os cotovelos para baixo e para trás.", "u": 0.5 },
+        { "text": "Pare com a barra perto do queixo e suba devagar até estender.", "u": 1 }
+      ],
+      "mistakes": ["Jogar o tronco para trás e puxar com o peso do corpo.", "Parar a subida antes de estender os braços."]
+    },
     "targets": [
       { "muscle": "latissimus_dorsi", "role": "alvo" },
       { "muscle": "trapezius", "role": "sinergista", "parts": ["trapezius_inf"] },
@@ -323,10 +332,20 @@
   {
     "id": "seated_cable_row",
     "name": "Remada sentada na polia",
+    "aliases": ["seated cable row", "remada baixa", "remada no triângulo"],
     "pattern": "puxar_horizontal",
     "equipment": ["polia"],
     "status": "consolidado",
     "summary": "Sentado, pés apoiados, puxar o triângulo até o abdome e aproximar as escápulas.",
+    "how": {
+      "setup": ["Sentado no banco, pés no apoio, joelhos levemente dobrados.", "Triângulo nas duas mãos, braços estendidos."],
+      "execution": [
+        { "text": "Comece com os braços estendidos e o tronco um pouco à frente.", "u": 0 },
+        { "text": "Puxe o triângulo em direção ao abdome, tronco subindo até a vertical.", "u": 0.5 },
+        { "text": "Pare com as mãos no abdome e as escápulas juntas; volte devagar.", "u": 1 }
+      ],
+      "mistakes": ["Balançar o tronco para trás e para a frente a cada repetição.", "Erguer os ombros durante a puxada."]
+    },
     "targets": [
       { "muscle": "latissimus_dorsi", "role": "alvo" },
       { "muscle": "trapezius", "role": "alvo", "parts": ["trapezius_mid"] },
@@ -372,10 +391,20 @@
   {
     "id": "overhead_triceps_extension",
     "name": "Tríceps acima da cabeça",
+    "aliases": ["overhead cable extension", "tríceps francês na polia", "extensão de tríceps acima da cabeça"],
     "pattern": "isolado",
     "equipment": ["polia"],
     "status": "consolidado",
     "summary": "Braços acima da cabeça, estender os cotovelos a partir da posição fletida atrás da nuca.",
+    "how": {
+      "setup": ["De costas para a polia, corda nas duas mãos atrás da cabeça.", "Braços erguidos ao lado da cabeça, tronco levemente inclinado à frente."],
+      "execution": [
+        { "text": "Comece com os cotovelos bem dobrados e as mãos atrás da nuca.", "u": 0 },
+        { "text": "Estenda os cotovelos sem baixar os braços.", "u": 0.5 },
+        { "text": "Pare com os braços estendidos acima da cabeça e volte devagar.", "u": 1 }
+      ],
+      "mistakes": ["Abrir os cotovelos para os lados: mantenha-os apontando para cima.", "Arquear a lombar para subir: firme o abdome."]
+    },
     "targets": [{ "muscle": "triceps_brachii", "role": "alvo" }],
     "length": {
       "emphasis": "alongado",
@@ -388,10 +417,20 @@
   {
     "id": "triceps_pushdown",
     "name": "Tríceps na polia",
+    "aliases": ["pushdown", "tríceps pulley", "tríceps barra na polia"],
     "pattern": "isolado",
     "equipment": ["polia"],
     "status": "consolidado",
     "summary": "Em pé, cotovelos junto ao corpo, estender o cotovelo empurrando a barra da polia para baixo.",
+    "how": {
+      "setup": ["De frente para a polia alta, barra nas duas mãos com pegada pronada.", "Cotovelos junto ao corpo, tronco levemente inclinado."],
+      "execution": [
+        { "text": "Comece com os cotovelos dobrados e a barra na altura do peito.", "u": 0 },
+        { "text": "Empurre a barra para baixo sem afastar os cotovelos do corpo.", "u": 0.5 },
+        { "text": "Pare com os cotovelos estendidos e suba devagar.", "u": 1 }
+      ],
+      "mistakes": ["Levar os cotovelos à frente na subida: só o antebraço se move.", "Jogar o peso do tronco sobre a barra."]
+    },
     "targets": [{ "muscle": "triceps_brachii", "role": "alvo" }],
     "length": {
       "emphasis": "encurtado",
@@ -608,10 +647,23 @@
   {
     "id": "sissy_squat",
     "name": "Agachamento sissy",
+    "aliases": ["sissy squat", "agachamento sissy", "sissy"],
     "pattern": "agachamento",
     "equipment": ["peso_corporal"],
     "status": "hipotese",
     "summary": "Quadril estendido e calcanhares subindo; os joelhos vão à frente e o corpo inclina para trás numa linha só.",
+    "how": {
+      "setup": ["Em pé, pés na largura do quadril, braços à frente para equilibrar.", "Quadril estendido do início ao fim."],
+      "execution": [
+        { "text": "Comece em pé, joelhos estendidos.", "u": 1 },
+        { "text": "Suba os calcanhares e leve os joelhos à frente, corpo inclinando para trás numa linha.", "u": 0.5 },
+        { "text": "Pare com os joelhos bem dobrados e volte empurrando pelos joelhos.", "u": 0 }
+      ],
+      "mistakes": [
+        "Dobrar o quadril: aí vira agachamento comum e o reto femoral não alonga.",
+        "Descer rápido demais no fim, onde o joelho fica mais carregado."
+      ]
+    },
     "targets": [
       { "muscle": "rectus_femoris", "role": "alvo" },
       { "muscle": "vastus_lateralis", "role": "alvo" },
@@ -629,10 +681,20 @@
   {
     "id": "reverse_nordic",
     "name": "Nórdica reversa",
+    "aliases": ["reverse nordic", "nórdico reverso", "reverse nordic curl"],
     "pattern": "isolado",
     "equipment": ["peso_corporal"],
     "status": "hipotese",
     "summary": "Ajoelhado, quadril estendido, inclinar o corpo inteiro para trás dobrando só os joelhos e voltar.",
+    "how": {
+      "setup": ["Ajoelhado sobre um apoio macio, joelhos na largura do quadril.", "Tronco ereto, quadril estendido, mãos no peito."],
+      "execution": [
+        { "text": "Comece ajoelhado com o corpo reto.", "u": 1 },
+        { "text": "Incline o corpo inteiro para trás dobrando só os joelhos.", "u": 0.5 },
+        { "text": "Pare onde ainda controla e volte puxando pelas coxas.", "u": 0 }
+      ],
+      "mistakes": ["Dobrar o quadril para facilitar: o corpo fica numa linha.", "Cair no fim da descida."]
+    },
     "targets": [
       { "muscle": "rectus_femoris", "role": "alvo" },
       { "muscle": "vastus_lateralis", "role": "alvo" },
@@ -759,10 +821,20 @@
   {
     "id": "back_extension",
     "name": "Extensão lombar 45°",
+    "aliases": ["45 degree back extension", "hiperextensão", "banco romano"],
     "pattern": "dobradica",
     "equipment": ["banco"],
     "status": "consolidado",
     "summary": "Quadril no apoio do banco de 45°, descer o tronco dobrando no quadril e subir até alinhar com as pernas.",
+    "how": {
+      "setup": ["No banco de 45°, quadril logo acima da almofada.", "Calcanhares presos sob o rolo, mãos no peito."],
+      "execution": [
+        { "text": "Comece com o tronco descido, dobrado no quadril.", "u": 0 },
+        { "text": "Suba o tronco estendendo o quadril.", "u": 0.5 },
+        { "text": "Pare com o tronco alinhado às pernas e desça devagar.", "u": 1 }
+      ],
+      "mistakes": ["Passar da linha das pernas arqueando a lombar.", "Apoiar a barriga na almofada e travar o quadril."]
+    },
     "targets": [
       { "muscle": "gluteus_maximus", "role": "alvo" },
       { "muscle": "semimembranosus", "role": "alvo" },
@@ -781,10 +853,20 @@
   {
     "id": "nordic_curl",
     "name": "Flexão nórdica",
+    "aliases": ["nordic hamstring curl", "nordic curl", "flexão nórdica"],
     "pattern": "isolado",
     "equipment": ["peso_corporal"],
     "status": "consolidado",
     "summary": "Ajoelhado com os tornozelos presos, descer o corpo à frente o mais devagar possível, freando com a parte de trás da coxa.",
+    "how": {
+      "setup": ["Ajoelhado na plataforma, tornozelos presos sob o rolo.", "Quadril estendido, tronco alinhado às coxas."],
+      "execution": [
+        { "text": "Comece ajoelhado com o corpo reto.", "u": 1 },
+        { "text": "Desça à frente o mais devagar possível, freando com a parte de trás da coxa.", "u": 0.5 },
+        { "text": "Apoie as mãos no chão no fim e volte empurrando de leve.", "u": 0 }
+      ],
+      "mistakes": ["Dobrar o quadril para encurtar a alavanca.", "Soltar o corpo no meio da descida."]
+    },
     "targets": [
       { "muscle": "semimembranosus", "role": "alvo" },
       { "muscle": "semitendinosus", "role": "alvo" },
@@ -801,10 +883,20 @@
   {
     "id": "cable_pull_through",
     "name": "Pull-through na polia",
+    "aliases": ["pull through", "pull-through", "extensão de quadril na polia"],
     "pattern": "dobradica",
     "equipment": ["polia"],
     "status": "consolidado",
     "summary": "De costas para a polia baixa, corda entre as pernas, inclinar à frente pelo quadril e voltar empurrando o quadril.",
+    "how": {
+      "setup": ["De costas para a polia baixa, corda entre as pernas, nas duas mãos.", "Um passo à frente, pés um pouco mais abertos que o quadril."],
+      "execution": [
+        { "text": "Comece em pé, quadril estendido e glúteos contraídos.", "u": 1 },
+        { "text": "Leve o quadril para trás, tronco à frente, joelhos levemente dobrados.", "u": 0.5 },
+        { "text": "Pare com o tronco perto da horizontal e volte empurrando o quadril.", "u": 0 }
+      ],
+      "mistakes": ["Agachar em vez de levar o quadril para trás.", "Puxar a corda com os braços: eles só seguram."]
+    },
     "targets": [
       { "muscle": "gluteus_maximus", "role": "alvo" },
       { "muscle": "semimembranosus", "role": "sinergista" },
@@ -901,10 +993,20 @@
   {
     "id": "tibialis_raise",
     "name": "Elevação de tibial",
+    "aliases": ["tibialis raise", "elevação de tibial anterior", "dorsiflexão na parede"],
     "pattern": "isolado",
     "equipment": ["peso_corporal"],
     "status": "consolidado",
     "summary": "Costas na parede, pés à frente, levantar a ponta dos pés o máximo e descer devagar.",
+    "how": {
+      "setup": ["Costas apoiadas na parede, pés a um passo dela.", "Joelhos estendidos, calcanhares no chão."],
+      "execution": [
+        { "text": "Comece com a sola toda no chão.", "u": 0 },
+        { "text": "Levante a ponta dos pés o máximo, calcanhares no chão.", "u": 0.5 },
+        { "text": "Pare no alto e desça devagar.", "u": 1 }
+      ],
+      "mistakes": ["Dobrar os joelhos para levantar os pés.", "Deixar os pés caírem rápido."]
+    },
     "targets": [{ "muscle": "tibialis_anterior", "role": "alvo" }],
     "length": {
       "emphasis": "intermediario",
@@ -916,10 +1018,20 @@
   {
     "id": "crunch",
     "name": "Abdominal no chão",
+    "aliases": ["crunch", "abdominal", "abdominal supra"],
     "pattern": "core",
     "equipment": ["peso_corporal"],
     "status": "consolidado",
     "summary": "Deitado, joelhos dobrados, enrolar a coluna tirando as escápulas do chão e voltar.",
+    "how": {
+      "setup": ["Deitado de costas, joelhos dobrados, pés no chão.", "Mãos atrás da cabeça, sem puxar o pescoço."],
+      "execution": [
+        { "text": "Comece com as costas no chão.", "u": 0 },
+        { "text": "Enrole a coluna tirando as escápulas do chão.", "u": 0.5 },
+        { "text": "Pare com as escápulas no alto e volte devagar.", "u": 1 }
+      ],
+      "mistakes": ["Puxar a cabeça com as mãos.", "Subir o tronco inteiro pelo quadril em vez de enrolar."]
+    },
     "targets": [
       { "muscle": "rectus_abdominis", "role": "alvo" },
       { "muscle": "external_oblique", "role": "sinergista" },
@@ -935,10 +1047,20 @@
   {
     "id": "cable_crunch",
     "name": "Abdominal na polia",
+    "aliases": ["cable crunch", "abdominal ajoelhado na polia", "crunch na corda"],
     "pattern": "core",
     "equipment": ["polia"],
     "status": "consolidado",
     "summary": "Ajoelhado de frente para a polia alta, corda junto à cabeça, enrolar a coluna para baixo sem mexer o quadril.",
+    "how": {
+      "setup": ["Ajoelhado de frente para a polia alta, corda junto às laterais da cabeça.", "Quadril sobre os joelhos e fixo."],
+      "execution": [
+        { "text": "Comece com o tronco ereto e o abdome alongado.", "u": 0 },
+        { "text": "Enrole a coluna para baixo, levando os cotovelos em direção às coxas.", "u": 0.5 },
+        { "text": "Pare com a coluna toda enrolada e suba devagar.", "u": 1 }
+      ],
+      "mistakes": ["Sentar sobre os calcanhares: o movimento é da coluna, não do quadril.", "Puxar a corda com os braços."]
+    },
     "targets": [
       { "muscle": "rectus_abdominis", "role": "alvo" },
       { "muscle": "external_oblique", "role": "sinergista" },
@@ -954,10 +1076,20 @@
   {
     "id": "hanging_leg_raise",
     "name": "Elevação de pernas na barra",
+    "aliases": ["hanging leg raise", "elevação de joelhos na barra", "abdominal pendurado"],
     "pattern": "core",
     "equipment": ["peso_corporal"],
     "status": "consolidado",
     "summary": "Pendurado na barra, levantar os joelhos até o quadril passar de 90° enrolando a pelve.",
+    "how": {
+      "setup": ["Pendurado na barra fixa, braços estendidos.", "Pernas juntas, corpo parado."],
+      "execution": [
+        { "text": "Comece com as pernas estendidas para baixo.", "u": 0 },
+        { "text": "Suba os joelhos à frente, enrolando a pelve.", "u": 0.5 },
+        { "text": "Pare com o quadril além de 90° e desça devagar.", "u": 1 }
+      ],
+      "mistakes": ["Balançar o corpo para subir as pernas.", "Levantar só as coxas sem enrolar a pelve."]
+    },
     "targets": [
       { "muscle": "iliopsoas", "role": "alvo" },
       { "muscle": "rectus_abdominis", "role": "alvo" },
@@ -974,10 +1106,21 @@
   {
     "id": "pallof_press",
     "name": "Pallof press",
+    "aliases": ["pallof press", "antirrotação na polia", "press pallof"],
+    "unilateral": true,
     "pattern": "core",
     "equipment": ["polia"],
     "status": "consolidado",
     "summary": "De lado para a polia, pegador no peito, estender os braços à frente sem deixar o tronco girar.",
+    "how": {
+      "setup": ["De lado para a polia na altura do peito, pegador nas duas mãos.", "Pés na largura do quadril, joelhos levemente dobrados."],
+      "execution": [
+        { "text": "Comece com o pegador junto ao peito.", "u": 0 },
+        { "text": "Estenda os braços à frente sem deixar o tronco girar para a polia.", "u": 0.5 },
+        { "text": "Segure um instante com os braços estendidos e volte ao peito.", "u": 1 }
+      ],
+      "mistakes": ["Deixar o tronco girar: é o que o exercício treina a impedir.", "Ficar perto demais da polia, sem tensão no cabo."]
+    },
     "targets": [
       { "muscle": "external_oblique", "role": "alvo" },
       { "muscle": "internal_oblique", "role": "alvo" },
@@ -994,10 +1137,21 @@
   {
     "id": "cable_woodchop",
     "name": "Lenhador na polia",
+    "aliases": ["woodchop", "cable chop", "lenhador"],
+    "unilateral": true,
     "pattern": "core",
     "equipment": ["polia"],
     "status": "consolidado",
     "summary": "Puxar o cabo da polia alta, de um lado, em diagonal até o quadril do outro lado, girando o tronco.",
+    "how": {
+      "setup": ["De lado para a polia alta, pegador nas duas mãos acima do ombro.", "Pés afastados, joelhos soltos."],
+      "execution": [
+        { "text": "Comece com os braços no alto, do lado da polia, tronco girado para ela.", "u": 0 },
+        { "text": "Puxe em diagonal, girando o tronco e o quadril juntos.", "u": 0.5 },
+        { "text": "Pare com as mãos ao lado do quadril oposto e volte devagar.", "u": 1 }
+      ],
+      "mistakes": ["Puxar só com os braços, sem girar o tronco.", "Arredondar a lombar no fim da diagonal."]
+    },
     "targets": [
       { "muscle": "external_oblique", "role": "alvo" },
       { "muscle": "internal_oblique", "role": "alvo" },
@@ -1178,10 +1332,20 @@
   {
     "id": "cable_fly",
     "name": "Crucifixo na polia",
+    "aliases": ["cable crossover", "crossover", "crucifixo no cross"],
     "pattern": "isolado",
     "equipment": ["polia"],
     "status": "consolidado",
     "summary": "Entre duas polias na altura do ombro, braços abertos e cotovelos levemente dobrados, fechar à frente do peito.",
+    "how": {
+      "setup": ["Entre as duas polias na altura do ombro, um pegador em cada mão.", "Pés firmes, cotovelos levemente dobrados e fixos."],
+      "execution": [
+        { "text": "Comece com os braços abertos e o peito alongado, mãos um pouco atrás do tronco.", "u": 0 },
+        { "text": "Feche os braços num arco à frente do peito.", "u": 0.5 },
+        { "text": "Pare com as mãos juntas à frente do peito e abra devagar.", "u": 1 }
+      ],
+      "mistakes": ["Dobrar e esticar os cotovelos: o movimento é só no ombro.", "Abrir pouco: a parte alongada é a que mais importa aqui."]
+    },
     "targets": [
       { "muscle": "pectoralis_major", "role": "alvo", "parts": ["pectoralis_major_stern", "pectoralis_major_clav"] },
       { "muscle": "deltoid", "role": "sinergista", "parts": ["deltoid_ant"] }
@@ -1196,10 +1360,20 @@
   {
     "id": "low_to_high_cable_fly",
     "name": "Crucifixo de baixo para cima",
+    "aliases": ["low to high fly", "crucifixo baixo para cima", "crossover de baixo para cima"],
     "pattern": "isolado",
     "equipment": ["polia"],
     "status": "hipotese",
     "summary": "Polias baixas, braços abertos embaixo, fechar subindo até as mãos se encontrarem na altura do queixo.",
+    "how": {
+      "setup": ["Entre as polias baixas, um pegador em cada mão.", "Braços abertos e baixos, cotovelos levemente dobrados."],
+      "execution": [
+        { "text": "Comece com os braços abertos ao lado das coxas.", "u": 0 },
+        { "text": "Suba as mãos em diagonal, para a frente e para cima.", "u": 0.5 },
+        { "text": "Pare com as mãos juntas na altura do queixo e desça devagar.", "u": 1 }
+      ],
+      "mistakes": ["Puxar com os bíceps: os cotovelos ficam no mesmo ângulo.", "Erguer os ombros em direção às orelhas."]
+    },
     "targets": [
       { "muscle": "pectoralis_major", "role": "alvo", "parts": ["pectoralis_major_clav"] },
       { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_ant"] }
@@ -1233,10 +1407,20 @@
   {
     "id": "chest_dip",
     "name": "Paralelas (peito)",
+    "aliases": ["chest dip", "dips", "mergulho nas paralelas"],
     "pattern": "empurrar_vertical",
     "equipment": ["peso_corporal"],
     "status": "consolidado",
     "summary": "Nas barras paralelas, tronco inclinado à frente, descer até os ombros ficarem abaixo dos cotovelos e subir.",
+    "how": {
+      "setup": ["Nas paralelas, braços estendidos, pernas dobradas atrás.", "Tronco inclinado à frente."],
+      "execution": [
+        { "text": "Comece no alto, braços estendidos.", "u": 1 },
+        { "text": "Desça dobrando os cotovelos, tronco à frente.", "u": 0.5 },
+        { "text": "Pare com os ombros abaixo dos cotovelos e suba.", "u": 0 }
+      ],
+      "mistakes": ["Ficar com o tronco vertical: aí o trabalho vai mais para o tríceps.", "Descer encolhendo os ombros para as orelhas."]
+    },
     "targets": [
       { "muscle": "pectoralis_major", "role": "alvo", "parts": ["pectoralis_major_stern", "pectoralis_major_abd"] },
       { "muscle": "triceps_brachii", "role": "alvo" },
@@ -1252,10 +1436,20 @@
   {
     "id": "push_up",
     "name": "Flexão de braço",
+    "aliases": ["push up", "push-up", "flexão", "apoio"],
     "pattern": "empurrar_horizontal",
     "equipment": ["peso_corporal"],
     "status": "consolidado",
     "summary": "Corpo reto apoiado nas mãos e nas pontas dos pés, descer o peito até perto do chão e subir.",
+    "how": {
+      "setup": ["Mãos no chão um pouco mais abertas que os ombros, apoio nas pontas dos pés.", "Corpo reto da cabeça aos calcanhares."],
+      "execution": [
+        { "text": "Comece com o peito perto do chão, cotovelos dobrados.", "u": 0 },
+        { "text": "Empurre o chão estendendo os cotovelos.", "u": 0.5 },
+        { "text": "Pare com os braços estendidos e desça devagar.", "u": 1 }
+      ],
+      "mistakes": ["Deixar o quadril cair ou subir.", "Abrir os cotovelos a 90° do tronco: mantenha cerca de 45°."]
+    },
     "targets": [
       { "muscle": "pectoralis_major", "role": "alvo" },
       { "muscle": "triceps_brachii", "role": "alvo" },
@@ -1306,10 +1500,21 @@
   {
     "id": "single_arm_pulldown",
     "name": "Puxada unilateral",
+    "aliases": ["single arm lat pulldown", "puxada com um braço", "puxada unilateral na polia"],
+    "unilateral": true,
     "pattern": "puxar_vertical",
     "equipment": ["polia"],
     "status": "hipotese",
     "summary": "Sentado, um braço de cada vez, puxar o pegador do alto até o lado do peito, deixando o ombro subir no começo.",
+    "how": {
+      "setup": ["Sentado sob a polia alta, coxas presas sob os rolos.", "Pegador numa mão, braço estendido no alto."],
+      "execution": [
+        { "text": "Comece com o braço estendido e o ombro subindo no alto.", "u": 0 },
+        { "text": "Puxe o cotovelo para baixo, junto ao lado do corpo.", "u": 0.5 },
+        { "text": "Pare com a mão ao lado do peito e suba devagar.", "u": 1 }
+      ],
+      "mistakes": ["Girar o tronco para puxar mais baixo.", "Encurtar a subida: o alongamento no alto faz parte."]
+    },
     "targets": [
       { "muscle": "latissimus_dorsi", "role": "alvo" },
       { "muscle": "teres_major", "role": "alvo" },
@@ -1327,10 +1532,20 @@
   {
     "id": "pull_up",
     "name": "Barra fixa pronada",
+    "aliases": ["pull up", "pull-up", "barra fixa", "barra pronada"],
     "pattern": "puxar_vertical",
     "equipment": ["peso_corporal"],
     "status": "consolidado",
     "summary": "Pendurado com pegada aberta, puxar até o queixo passar a barra e descer até os braços estenderem.",
+    "how": {
+      "setup": ["Pendurado na barra, pegada pronada mais aberta que os ombros.", "Joelhos levemente dobrados, pés fora do chão."],
+      "execution": [
+        { "text": "Comece com os braços estendidos e os ombros subindo.", "u": 0 },
+        { "text": "Puxe levando os cotovelos para baixo e para trás.", "u": 0.5 },
+        { "text": "Pare com o queixo acima da barra e desça até estender.", "u": 1 }
+      ],
+      "mistakes": ["Balançar as pernas para subir.", "Parar a descida antes de estender os braços."]
+    },
     "targets": [
       { "muscle": "latissimus_dorsi", "role": "alvo" },
       { "muscle": "teres_major", "role": "alvo" },
@@ -1349,10 +1564,20 @@
   {
     "id": "chin_up",
     "name": "Barra fixa supinada",
+    "aliases": ["chin up", "chin-up", "barra supinada"],
     "pattern": "puxar_vertical",
     "equipment": ["peso_corporal"],
     "status": "consolidado",
     "summary": "Pegada supinada na largura dos ombros, puxar até o queixo passar a barra.",
+    "how": {
+      "setup": ["Pendurado na barra, pegada supinada na largura dos ombros.", "Joelhos levemente dobrados, pés fora do chão."],
+      "execution": [
+        { "text": "Comece com os braços estendidos.", "u": 0 },
+        { "text": "Puxe levando os cotovelos para baixo, junto ao corpo.", "u": 0.5 },
+        { "text": "Pare com o queixo acima da barra e desça até estender.", "u": 1 }
+      ],
+      "mistakes": ["Esticar o pescoço para passar o queixo.", "Encurtar a descida."]
+    },
     "targets": [
       { "muscle": "latissimus_dorsi", "role": "alvo" },
       { "muscle": "biceps_brachii", "role": "alvo" },
@@ -1433,10 +1658,23 @@
   {
     "id": "cable_pullover",
     "name": "Pullover na polia",
+    "aliases": ["straight arm pulldown", "pulldown braços estendidos", "pullover na polia alta"],
     "pattern": "isolado",
     "equipment": ["polia"],
     "status": "consolidado",
     "summary": "De frente para a polia alta, braços quase estendidos, levar a barra do alto até as coxas.",
+    "how": {
+      "setup": [
+        "De frente para a polia alta, barra nas duas mãos na largura dos ombros.",
+        "Quadril um pouco para trás, tronco inclinado, braços quase estendidos."
+      ],
+      "execution": [
+        { "text": "Comece com os braços acima da cabeça e as costas alongadas.", "u": 0 },
+        { "text": "Leve a barra para baixo num arco, braços quase retos.", "u": 0.5 },
+        { "text": "Pare com a barra junto às coxas e volte devagar.", "u": 1 }
+      ],
+      "mistakes": ["Dobrar os cotovelos e virar uma remada.", "Encurtar o arco no alto, onde o dorsal mais alonga."]
+    },
     "targets": [
       { "muscle": "latissimus_dorsi", "role": "alvo" },
       { "muscle": "teres_major", "role": "alvo" },
@@ -1590,10 +1828,21 @@
   {
     "id": "behind_back_cable_lateral_raise",
     "name": "Elevação lateral na polia por trás",
+    "aliases": ["behind the back lateral raise", "elevação lateral cabo por trás", "lateral na polia por trás"],
+    "unilateral": true,
     "pattern": "isolado",
     "equipment": ["polia"],
     "status": "hipotese",
     "summary": "De lado para a polia baixa, cabo passando por trás do corpo, levantar o braço para o lado.",
+    "how": {
+      "setup": ["De lado para a polia baixa, pegador na mão de fora.", "O cabo passa por trás do corpo; a outra mão fica solta ao lado."],
+      "execution": [
+        { "text": "Comece com a mão atrás do quadril e o ombro alongado.", "u": 0 },
+        { "text": "Levante o braço para o lado, cotovelo levemente dobrado.", "u": 0.5 },
+        { "text": "Pare com o braço na altura do ombro e desça devagar.", "u": 1 }
+      ],
+      "mistakes": ["Inclinar o tronco para longe da polia para ajudar a subir.", "Subir com o ombro encolhido."]
+    },
     "targets": [
       { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_lat"] },
       { "muscle": "supraspinatus", "role": "sinergista" },
@@ -1630,10 +1879,20 @@
   {
     "id": "face_pull",
     "name": "Face pull",
+    "aliases": ["face pull", "puxada para o rosto", "face pull na corda"],
     "pattern": "puxar_horizontal",
     "equipment": ["polia"],
     "status": "consolidado",
     "summary": "Corda na polia alta, puxar em direção ao rosto abrindo os cotovelos e girando os ombros para fora.",
+    "how": {
+      "setup": ["De frente para a polia na altura do rosto, corda nas duas mãos.", "Um passo para trás, braços estendidos à frente."],
+      "execution": [
+        { "text": "Comece com os braços estendidos na direção da polia.", "u": 0 },
+        { "text": "Puxe a corda abrindo os cotovelos para os lados.", "u": 0.5 },
+        { "text": "Pare com as mãos ao lado das orelhas, ombros girados para fora; volte devagar.", "u": 1 }
+      ],
+      "mistakes": ["Puxar baixo, para o peito: a corda vem até o rosto.", "Inclinar o tronco para trás."]
+    },
     "targets": [
       { "muscle": "deltoid", "role": "alvo", "parts": ["deltoid_post"] },
       { "muscle": "infraspinatus", "role": "alvo" },
@@ -1651,10 +1910,21 @@
   {
     "id": "cable_external_rotation",
     "name": "Rotação externa na polia",
+    "aliases": ["external rotation", "rotação externa no cabo", "manguito na polia"],
+    "unilateral": true,
     "pattern": "isolado",
     "equipment": ["polia"],
     "status": "consolidado",
     "summary": "Cotovelo junto ao corpo a 90°, girar o antebraço para fora contra o cabo que vem do outro lado.",
+    "how": {
+      "setup": ["De lado para a polia na altura do cotovelo, pegador na mão de fora.", "Cotovelo dobrado a 90° e preso ao lado do tronco."],
+      "execution": [
+        { "text": "Comece com o antebraço cruzado à frente do abdome.", "u": 0 },
+        { "text": "Gire o antebraço para fora, cotovelo parado junto ao corpo.", "u": 0.5 },
+        { "text": "Pare com a mão apontando para fora e volte devagar.", "u": 1 }
+      ],
+      "mistakes": ["Afastar o cotovelo do corpo para ganhar amplitude.", "Girar o tronco junto com o braço."]
+    },
     "targets": [
       { "muscle": "infraspinatus", "role": "alvo" },
       { "muscle": "teres_minor", "role": "alvo" },
@@ -1700,10 +1970,21 @@
   {
     "id": "bayesian_curl",
     "name": "Rosca bayesiana",
+    "aliases": ["bayesian cable curl", "rosca de costas para a polia", "rosca bayesian"],
+    "unilateral": true,
     "pattern": "isolado",
     "equipment": ["polia"],
     "status": "hipotese",
     "summary": "De costas para a polia, braço estendido para trás, dobrar o cotovelo sem trazer o braço à frente.",
+    "how": {
+      "setup": ["De costas para a polia baixa, pegador numa mão.", "Braço estendido e um pouco atrás do tronco."],
+      "execution": [
+        { "text": "Comece com o cotovelo estendido e o bíceps alongado.", "u": 0 },
+        { "text": "Dobre o cotovelo sem trazer o braço à frente.", "u": 0.5 },
+        { "text": "Pare com o cotovelo bem dobrado e estenda devagar.", "u": 1 }
+      ],
+      "mistakes": ["Levar o cotovelo à frente: o braço fica atrás do tronco.", "Inclinar o corpo para a frente a cada repetição."]
+    },
     "targets": [
       { "muscle": "biceps_brachii", "role": "alvo" },
       { "muscle": "brachialis", "role": "sinergista" },
@@ -1922,10 +2203,21 @@
   {
     "id": "cable_kickback",
     "name": "Tríceps coice na polia",
+    "aliases": ["cable kickback", "coice no cabo", "tríceps kickback na polia"],
+    "unilateral": true,
     "pattern": "isolado",
     "equipment": ["polia"],
     "status": "consolidado",
     "summary": "Tronco inclinado, braço junto ao corpo, estender o cotovelo para trás contra o cabo da polia baixa.",
+    "how": {
+      "setup": ["De frente para a polia baixa, pegador numa mão.", "Tronco inclinado à frente, braço colado ao corpo e paralelo ao chão."],
+      "execution": [
+        { "text": "Comece com o cotovelo dobrado a cerca de 90°.", "u": 0 },
+        { "text": "Estenda o cotovelo levando a mão para trás.", "u": 0.5 },
+        { "text": "Pare com o braço todo estendido e volte devagar.", "u": 1 }
+      ],
+      "mistakes": ["Deixar o braço cair: só o antebraço se move.", "Balançar o tronco para estender."]
+    },
     "targets": [
       { "muscle": "triceps_brachii", "role": "alvo" },
       { "muscle": "deltoid", "role": "sinergista", "parts": ["deltoid_post"] }

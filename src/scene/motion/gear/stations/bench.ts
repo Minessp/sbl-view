@@ -16,12 +16,12 @@ type Block = Extract<MotionFrame['equipment'][number], { kind: 'block' }>;
 const PAD_H = 0.08;
 const DEG = Math.PI / 180;
 
-function blocks(frames: readonly MotionFrame[]): Block[] {
+export function blocks(frames: readonly MotionFrame[]): Block[] {
   return (frames[0]?.equipment ?? []).filter((e): e is Block => e.kind === 'block' && !e.moving);
 }
 
 /** Ponto local da peça (centro, inclinação em X) no mundo. */
-function toWorld(b: Block, l: Vec3): Vec3 {
+export function toWorld(b: Block, l: Vec3): Vec3 {
   const a = b.pitch * DEG;
   const c = Math.cos(a);
   const s = Math.sin(a);
@@ -34,7 +34,7 @@ function foot(kit: GearKit, g: Group, x: number, z: number, w = 0.07) {
 }
 
 /** Perna em T: coluna da longarina ao chão e travessa no chão com borracha nas pontas. */
-function tLeg(kit: GearKit, g: Group, x: number, z: number, top: number, half = 0.24) {
+export function tLeg(kit: GearKit, g: Group, x: number, z: number, top: number, half = 0.24) {
   kit.beam(g, [x, top, z], [x, 0.045, z], 0.06);
   kit.beam(g, [x - half, 0.03, z], [x + half, 0.03, z], 0.05);
   foot(kit, g, x - half, z);

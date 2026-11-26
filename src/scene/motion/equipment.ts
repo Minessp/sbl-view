@@ -5,10 +5,11 @@
  * com quadro de aço e pés no chão, plataformas de chapa xadrez, trilhos e braço pendular das máquinas, rolos e alavancas.
  * Montado uma vez por clipe; cada quadro só move as peças. Medidas de catálogo (barra de 2,2 m, anilha de 45 cm).
  */
-import { type BufferGeometry, CylinderGeometry, Group, TorusGeometry, type Material, Mesh, MeshBasicMaterial, type Object3D, Quaternion, SRGBColorSpace, Vector3 } from 'three';
+import { BoxGeometry, type BufferGeometry, CylinderGeometry, Group, TorusGeometry, type Material, Mesh, MeshBasicMaterial, type Object3D, Quaternion, SRGBColorSpace, Vector3 } from 'three';
 import type { MotionFrame, ResolvedEquipment } from '@/engine/motion/evaluate';
 import type { Vec3 } from '@/engine/math/vec';
 import { palette } from '../body/rig';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { GearKit, orient, stretch } from './gear/kit';
 import { BENCH_STATIONS, buildStation } from './gear/stations';
 import { type Finish, type GearMaterial, type Pattern } from './gear/material';
@@ -44,6 +45,8 @@ export class EquipmentView {
   readonly floor: Vec3[] = [];
   /** Uma estação desenha a estrutura do banco: a peça do clipe fica só com o estofado e o quadro `frame` some. */
   private benchStation = false;
+  /** Topo da primeira coluna de um par espelhado: a segunda fecha a travessa do cross-over. */
+  private crossTop: Vec3 | null = null;
 
   /** `frames`: o primeiro quadro do clipe e outras amostras (o curso da pilha de pesos sai delas). */
   constructor(frames: readonly MotionFrame[]) {
@@ -211,6 +214,10 @@ export class EquipmentView {
       const end: Vec3 = [e.center[0] + e.axis[0] * 0.68 * s, e.center[1], e.center[2] + e.axis[2] * 0.68 * s];
       this.beam([end[0], e.center[1] + 0.12, end[2]], [end[0], 0, end[2]], 0.07);
       this.beam([end[0], 0.025, end[2] - 0.55], [end[0], 0.025, end[2] + 0.45], 0.05);
+      // Mãos-francesas do montante ao pé, na frente e atrás (a estação não balança com o corpo pendurado).
+      for (const dz of [-0.5, 0.4]) this.beam([end[0], e.center[1] * 0.5, end[2]], [end[0], 0.04, end[2] + dz], 0.045);
+      const cap = this.mesh(this.geo(padGeometry(0.09, 0.02, 0.09, 0.005)), this.mat('rubber'));
+      cap.position.set(end[0], e.center[1] + 0.13, end[2]);
       const sock = this.mesh(this.geo(rod(0.03, 0.08, 20)), this.mat('steel'));
       orient(sock, [e.center[0] + e.axis[0] * 0.64 * s, e.center[1], e.center[2] + e.axis[2] * 0.64 * s], e.axis);
       this.floor.push([end[0], 0, end[2]]);
@@ -242,12 +249,13 @@ export class EquipmentView {
 
   private buildCable(e: Extract<ResolvedEquipment, { kind: 'cable' }>, index: number, frames: readonly MotionFrame[]) {
     const P = e.pulley;
-    const d = outward(P);
+    // Coluna atrás da roldana, do chão a 2,35 m; o carro corre em dois trilhos do lado do corpo.
+    // Roldana perto do corpo e no alto (puxada): a coluna fica à frente (sempre +Z, onde a torre tem o assento) e uma
+    // lança leva a roldana até sobre a cabeça.
+    const near = Math.hypot(P[0], P[2]) < 0.45 && P[1] > 1.6;
+    const d = near ? Z.clone() : outward(P);
     const side = new Vector3(-d.z, 0, d.x);
     const yaw = Math.atan2(d.x, d.z);
-    // Coluna atrás da roldana, do chão a 2,35 m; o carro corre em dois trilhos do lado do corpo.
-    // Roldana perto do corpo e no alto (puxada): a coluna fica à frente e uma lança leva a roldana até sobre a cabeça.
-    const near = Math.hypot(P[0], P[2]) < 0.45 && P[1] > 1.6;
     const off = near ? 0.55 : 0.11;
     const tower = new Group();
     tower.position.set(P[0] + d.x * off, 0, P[2] + d.z * off);
@@ -278,29 +286,60 @@ export class EquipmentView {
       knob.rotation.x = Math.PI / 2;
       knob.position.set(0.05, carY + 0.05, -0.1);
     }
-    // Pilha de pesos atrás da coluna, entre duas guias.
+    // Furação de regulagem do carro entre os trilhos (uma geometria só).
+    const holeParts: BufferGeometry[] = [];
+    for (let y = 0.2; y < H - 0.15; y += 0.045) {
+      const b = new BoxGeometry(0.018, 0.012, 0.004);
+      b.translate(0, y, -0.041);
+      holeParts.push(b);
+    }
+    const holesGeo = mergeGeometries(holeParts);
+    for (const p of holeParts) p.dispose();
+    if (holesGeo) this.mesh(this.geo(holesGeo), this.mat('rubber'), tower);
+    // Pilha atrás da coluna, entre duas guias que vão da base à travessa; o pino escolhe a placa: dela para cima tudo
+    // sobe com o cabo, as de baixo ficam na base.
+    const PLATES = 12;
+    const PIN = 7;
+    const plateY = (i: number) => 0.07 + i * 0.026;
+    const guideTop = H - 0.25;
+    for (const x of [-0.1, 0.1]) {
+      const guide = this.mesh(this.geo(rod(0.008, guideTop - 0.04, 12)), this.mat('chrome'), tower);
+      guide.position.set(x, (guideTop + 0.04) / 2, 0.2);
+    }
+    const arm = this.mesh(this.geo(padGeometry(0.04, 0.04, 0.3, 0.008)), this.mat('steel'), tower);
+    arm.position.set(0, guideTop, 0.17);
+    const yoke = this.mesh(this.geo(padGeometry(0.32, 0.04, 0.05, 0.008)), this.mat('steel'), tower);
+    yoke.position.set(0, guideTop, 0.2);
+    for (let i = 0; i < PIN; i++) {
+      const pl = this.mesh(this.geo(padGeometry(0.24, 0.022, 0.11, 0.004)), this.mat('iron'), tower);
+      pl.position.set(0, plateY(i), 0.2);
+    }
     const stack = new Group();
     stack.position.set(0, 0, 0.2);
     tower.add(stack);
-    for (const x of [-0.1, 0.1]) {
-      const guide = this.mesh(this.geo(rod(0.008, 1.25, 12)), this.mat('chrome'), tower);
-      guide.position.set(x, 0.66, 0.2);
-    }
-    const PLATES = 12;
-    for (let i = 0; i < PLATES; i++) {
+    for (let i = PIN; i < PLATES; i++) {
       const pl = this.mesh(this.geo(padGeometry(0.24, 0.022, 0.11, 0.004)), this.mat('iron'), stack);
-      pl.position.y = 0.07 + i * 0.026;
+      pl.position.y = plateY(i);
     }
     const top = this.mesh(this.geo(padGeometry(0.24, 0.03, 0.11, 0.006)), this.mat('chrome'), stack);
-    top.position.y = 0.07 + PLATES * 0.026 + 0.004;
+    top.position.y = plateY(PLATES) + 0.004;
     const stem = this.mesh(this.geo(rod(0.007, 0.36, 10)), this.mat('chrome'), stack);
-    stem.position.y = 0.07 + PLATES * 0.026 * 0.5;
+    stem.position.y = plateY(PLATES) - 0.17;
     const pin = this.mesh(this.geo(rod(0.006, 0.1, 10)), this.mat('chrome'), stack);
     pin.rotation.x = Math.PI / 2;
-    pin.position.set(0, 0.07 + 7 * 0.026, -0.06);
+    pin.position.set(0, plateY(PIN), -0.06);
     const pinHead = this.mesh(this.geo(ball(0.012)), this.mat('rubber'), stack);
-    pinHead.position.set(0, 0.07 + 7 * 0.026, -0.11);
-    const stackTop = 0.07 + PLATES * 0.026 + 0.02;
+    pinHead.position.set(0, plateY(PIN), -0.11);
+    const stackTop = plateY(PLATES) + 0.02;
+    // Capa: chapa atrás da pilha e montantes laterais do chão à travessa (a pilha segue à vista pelos lados).
+    const shroud = this.mesh(this.geo(padGeometry(0.3, guideTop, 0.012, 0.004)), this.mat('steel'), tower);
+    shroud.position.set(0, guideTop / 2, 0.32);
+    for (const x of [-0.15, 0.15]) {
+      const post = this.mesh(this.geo(padGeometry(0.03, guideTop, 0.03, 0.006)), this.mat('steel'), tower);
+      post.position.set(x, guideTop / 2, 0.31);
+    }
+    const bumper = this.mesh(this.geo(padGeometry(0.26, 0.05, 0.13, 0.01)), this.mat('rubber'), tower);
+    bumper.position.set(0, 0.045, 0.2);
     // Roldanas: a do carro (move só no plano do cabo) e duas fixas no topo.
     const wheel = new Group();
     this.group.add(wheel);
@@ -331,6 +370,11 @@ export class EquipmentView {
     const towerPt = (x: number, y: number, z: number) => new Vector3(tower.position.x + x * cy + z * sy, y, tower.position.z - x * sy + z * cy);
     const topWorld = towerPt(0, H - 0.04, 0.07);
     this.floor.push([tower.position.x, 0, tower.position.z]);
+    if (e.mirror) {
+      const t: Vec3 = [tower.position.x, H + 0.06, tower.position.z];
+      if (this.crossTop) this.beam(this.crossTop, t, 0.08);
+      else this.crossTop = t;
+    }
     this.updaters.push((r, i) => {
       if (r.kind !== 'cable' || i !== index) return;
       const lift = Math.min(0.5, Math.max(0, cableLength(r) - Lmin));

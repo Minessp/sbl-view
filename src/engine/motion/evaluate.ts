@@ -92,11 +92,13 @@ export const FINGERS = { grip: 0.85, rope: 0.9, loose: 0.15, flat: 0 } as const;
  * fecham, o resto (chão, banco) fica espalmado. `clip.fingers` sobrescreve.
  */
 function fingersOf(clip: MotionClip): Record<'r' | 'l', number> {
+  const leftReaches = clip.reach.some((r) => r.limb === 'arm' && r.side !== 'r');
   const holds = (s: 'r' | 'l'): number | null => {
     for (const e of clip.equipment) {
       if (e.kind === 'barbell') return FINGERS.grip;
       if (e.kind === 'dumbbell' && (s === 'r' || e.hands !== 'r')) return FINGERS.grip;
-      if (e.kind === 'cable' && (s === 'r' || e.handle !== 'single')) return e.handle === 'rope' ? FINGERS.rope : FINGERS.grip;
+      // Pegador simples: só a direita, salvo cabo espelhado ou a esquerda com alvo no mesmo pegador (pallof, lenhador).
+      if (e.kind === 'cable' && (s === 'r' || e.handle !== 'single' || e.mirror || leftReaches)) return e.handle === 'rope' ? FINGERS.rope : FINGERS.grip;
     }
     return null;
   };
@@ -488,7 +490,6 @@ function solveFrame(c: CompiledClip, u: number, ankleOffset: number) {
 function resolveEquipment(c: CompiledClip, pose: Pose, grips: Readonly<Record<'r' | 'l', Vec3>>, eq: Equipment): ResolvedEquipment[] {
   const sk = c.sk;
   const handAxis = (side: 'r' | 'l') => rotate(must(pose.world, `hand_${side}`, 'segmento').rotation, [1, 0, 0]);
-  const both = c.arms.some((a) => a.sides.length === 2) || c.clip.equipment.some((e) => e.kind === 'barbell');
   switch (eq.kind) {
     case 'barbell':
       return [
@@ -531,7 +532,8 @@ function resolveEquipment(c: CompiledClip, pose: Pose, grips: Readonly<Record<'r
       return [
         {
           kind: 'cable',
-          grips: eq.handle === 'single' ? [grips.r] : both || eq.handle !== 'bar' ? [grips.r, grips.l] : [grips.r],
+          // Barra, corda e V nas duas mãos (com ou sem alvo de braço); pegador simples só na direita.
+          grips: eq.handle === 'single' ? [grips.r] : [grips.r, grips.l],
           pulley: eq.pulley,
           handle: eq.handle,
           axis,
